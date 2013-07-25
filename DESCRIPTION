@@ -1,0 +1,12 @@
+Package: RTutor
+Type: Package
+Title: Creating R exercises with automatic assement of student's solutions
+Version: 0.1
+Date: 2013-07-25
+Author: Sebastian Kranz
+Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
+Description: Tools for creating R exercises with automatic assessment of student's solutions
+License: Programm code: GPL >= 2.0
+         Contributed problem sets: The problem sets can be freely used for own studies.
+			When using the contributed problem sets for teaching other persons, please send me a brief email and acknowledge the original author. 
+imports: restorepoint
