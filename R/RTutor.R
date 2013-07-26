@@ -126,10 +126,14 @@ set.sol.env = function(env) {
 }
 
 
+#' Get the previously set file name of the problem set the student is working on
+#' @export
 get.student.file = function() {
   get(".__rtutor_student.file",.GlobalEnv)
 }
 
+#' Specify the file of the problem set the student is working on
+#' @export
 set.student.file = function(student.file) {
   assign(".__rtutor_student.file", student.file, .GlobalEnv)
 }
