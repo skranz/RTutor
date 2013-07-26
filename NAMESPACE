@@ -1,4 +1,5 @@
 export(check.exercise)
+export(check.H0.rejected)
 export(check.var)
 export(get.problemset.structure.path)
 export(get.problemset.user.path)

@@ -20,25 +20,28 @@ check.var("x", exists=TRUE,length=TRUE, values=TRUE)
 
 #$ exercise 2 (simulate demand function)
 
+# Draw 
 # Simulate T outputs from a demand function
 # q = beta0 + beta1 * p + eps
+# 
 
 
 T = 1000 # Number of markets
-p = runif(T, 0,100) # Prices
 beta0 = 100
 beta1 = -1
 
+# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
 
-# Draw demand shocks eps from a normal distribution with mean 0 and variance 4
+# ii) Generate a vector of endogenous prices
 
-# Compute realized demand q
+# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
 
 
+###############
 #$ solution
+###############
 
 T = 1000 # Number of markets
-p = runif(T, 0,100) # Prices
 beta0 = 100
 beta1 = -1
 
@@ -46,17 +49,20 @@ beta1 = -1
 # Draw demand shocks eps from a normal distribution with mean 0 and variance 4
 eps = rnorm(T,0,4)
 
+# One solution to generate endogenous prices
+p = eps/2
+
 # Compute realized demand q
 q = beta0 + beta1 * p + eps
 
-
+################
 #$ tests
+################
 
 # Check given variables
 check.var(c("beta0","beta1","T"),
           exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
-check.var(c("p"),
-          exists=TRUE, length=TRUE, class=TRUE)
+
 
 # Check construction of eps
 check.var(c("eps"),
@@ -65,6 +71,13 @@ check.var(c("eps"),
 test.normality(eps)
 test.mean(eps,0)
 test.variance(eps,4)
+
+# Check p
+check.var(c("p"),
+          exists=TRUE, length=TRUE, class=TRUE)
+
+check.H0.rejected(cor.test(p,eps),failure.message="
+  I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p.value}}). Try harder to generate prices that are 'more endogenous'.")
 
 # Check q
 check.var(c("q"),

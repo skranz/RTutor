@@ -33,9 +33,9 @@ beta1 = -1
 
 
 # Draw demand shocks eps from a normal distribution with mean 0 and variance 4
-
+eps=rnorm(T,0,2)
 # Compute realized demand q
-
+q = beta0 + beta1 * p + eps
 
 #### end exercise 2 (simulate demand function)
 check.exercise("2 (simulate demand function)")

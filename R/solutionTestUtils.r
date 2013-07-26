@@ -1,4 +1,5 @@
 
+
 #' Test: Compare students variables with those from the given solutions
 #' @export 
 check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE, verbose=FALSE, student.env = get.student.env(),  sol.env = get.sol.env()) {
@@ -68,6 +69,8 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   return(TRUE)
 }
 
+
+
 #' A helper function for hypothesis test about whether student solution is correct
 #' @export 
 hypothesis.test.result = function(p.value, alpha.warning=0.05, alpha.fail = 0.0001, verbose=FALSE) {
@@ -124,11 +127,36 @@ sigma.test = function (x, sigma = 1, sigmasq = sigma^2,
   names(out$estimate) <- paste("var of", out$data.name)
   return(out)}
 
+
+#' Check whether a certain H0 could be significantly rejected with a specified statistical test
+#' @export 
+check.H0.rejected = function(test.expr, alpha =0.05, failure.message, student.env=get.student.env()) {
+  test.expr = substitute(test.expr)
+  
+  test.res = eval(test.expr, student.env)
+  p.value = test.res$p.value
+  
+  if (missing(failure.message)) {
+    expr.str = deparse(text.expr)
+  
+    failure.message = paste0("Failure: I couldn't significantly reject the null hypothesis from the test '", expr.str, "', p.value = ", round(p.value*100,4), "%")
+  } else{
+    
+  }
+  if (p.value > alpha) {
+    message(failure.message)
+    return(FALSE)
+  }
+  return(TRUE)
+}
+
+
 #' Test: The variance of the distribution from which a vector of random numbers has been drawn
 #' @export
 test.variance = function(vec, true.val,alpha.warning=0.05,alpha.fail=0.0001, test = "t.test",student.env=get.student.env(),..., digits=7,verbose=FALSE) {
-
+  call.str = as.character(match.call())
   var.name = call.str[2]
+  
   if (verbose)
     cat(paste0("\nTest variance of ",call.str[2],  " with chi-square test:"))
   res = sigma.test(vec,sigmasq=true.val)
