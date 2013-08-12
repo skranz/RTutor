@@ -209,7 +209,7 @@ library(RTutor)
 
 <p>We first need to generate a folder in which some example files will be generated that help us to build a new problem set. First decide on a name for the problemset, e.g. &ldquo;my ps&rdquo; and generate a parent folder in which you want to save your problemsets, e.g. &ldquo;C:/problemsets&rdquo;. (Henceforth I will always assume that you named your problem set &ldquo;my ps&rdquo;. Just replace &ldquo;my ps&rdquo; everywhere by your own name) Then run the following code:</p>
 
-<pre><code class="r">develop.problem.set(name = &quot;my ps&quot;, parent.path = &quot;C:/libraries/RTutor/problemsets&quot;)
+<pre><code class="r">develop.problem.set(name=&quot;my ps&quot;,parent.path=&quot;C:/libraries/RTutor/problemsets&quot;)
 </code></pre>
 
 <p>It generates a new folder below parent.path with the name of the problem set, here &ldquo;C:/problemsets/my ps&rdquo;.</p>
@@ -298,7 +298,7 @@ y = 2+3&quot;
 
 <p>The command</p>
 
-<pre><code class="r"># $ problem_set my ps
+<pre><code class="r">#$ problem_set my ps
 </code></pre>
 
 <p>simply sets the name of the problem set equal to the text after problem_set. Here the name is set to &ldquo;my ps&rdquo;. As in this example, the name of a problem set can contain spaces.</p>
@@ -337,7 +337,7 @@ y = 2+3&quot;
 
 <p>This command is at the start of an exercise. After the word exercise, a name of the exercise is specified, e.g.</p>
 
-<pre><code class="r"># $ exercise a)
+<pre><code class="r">#$ exercise a)
 </code></pre>
 
 <p>generates an exercise with name &ldquo;a)&rdquo;. So far, we don&#39;t use any R code directly after the command.</p>
@@ -413,68 +413,75 @@ y = 2+3&quot;
 
 <pre><code class="r">
 
-############################################################### $ exercise
-############################################################### b)
+###############################################################
+#$ exercise b)
+###############################################################
 
-# $ task #######################################################
+#$ task #######################################################
 
-# Draw Simulate T outputs from a demand function q = beta0 + beta1 * p +
-# eps
+# Draw 
+# Simulate T outputs from a demand function
+# q = beta0 + beta1 * p + eps
+# 
 
 
-T = 1000  # Number of markets
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
 
-# i) Draw T demand shocks eps from a normal distribution with mean 0 and
-# variance 4
+# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
 
 # ii) Generate a vector of endogenous prices
 
 # iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
 
 
-# $ solution ###################################################
-T = 1000  # Number of markets
+#$ solution ###################################################
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
-# Draw demand shocks eps from a normal distribution with mean 0 and
-# variance 4
-eps = rnorm(T, 0, 2)
+# Draw demand shocks eps from a normal distribution with mean 0 and variance 4
+eps = rnorm(T,0,2)
 # One solution to generate endogenous prices
 p = eps/2
 # Compute realized demand q
 q = beta0 + beta1 * p + eps
-# $ tests ######################################################
+
+
+#$ tests ######################################################
 
 # Check given variables
-check.var(c(&quot;beta0&quot;, &quot;beta1&quot;, &quot;T&quot;), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
+check.var(c(&quot;beta0&quot;,&quot;beta1&quot;,&quot;T&quot;),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
 
 # Check construction of eps
-check.var(c(&quot;eps&quot;), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c(&quot;eps&quot;),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 
 # Check p
-check.var(c(&quot;p&quot;), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c(&quot;p&quot;),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = &quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=&quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
 
 # Check q
-check.var(c(&quot;q&quot;), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c(&quot;q&quot;),
+          exists=TRUE, length=TRUE, class=TRUE)
 
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = &quot;Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)&quot;)
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+  },  failure.message = &quot;Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)&quot;
+)
 
-# $ hints ######################################################
+#$ hints ######################################################
 
-# $ end_exercise
+#$ end_exercise
 
 </code></pre>
 
@@ -491,9 +498,10 @@ holds.true({
 
 <h3>check.var</h3>
 
-<pre><code class="r">check.var(c(&quot;beta0&quot;, &quot;beta1&quot;, &quot;T&quot;), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
-check.var(c(&quot;eps&quot;), exists = TRUE, length = TRUE, class = TRUE)
+<pre><code class="r">check.var(c(&quot;beta0&quot;,&quot;beta1&quot;,&quot;T&quot;),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
+check.var(c(&quot;eps&quot;),
+          exists=TRUE, length=TRUE, class=TRUE)
 </code></pre>
 
 <p>The command check.var compares the users variables with the corresponding variables in the specified solution. We can check different aspects, by setting that flag TRUE</p>
@@ -509,9 +517,9 @@ check.var(c(&quot;eps&quot;), exists = TRUE, length = TRUE, class = TRUE)
 
 <h3>test.normality, test.mean test.variance</h3>
 
-<pre><code class="r">test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+<pre><code class="r">test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 </code></pre>
 
 <p>These three tests are used to determine in a statistical fashion whether eps satisfies the null hypothesises:</p>
@@ -528,10 +536,10 @@ test.variance(eps, 4)
 
 <p>For the prices p we first check existence, lengt and class with check.var. Then we implement a manual test whether p is indeed endogenous with the function test.H0.rejected.</p>
 
-<pre><code class="r">check.var(c(&quot;p&quot;), exists = TRUE, length = TRUE, class = TRUE)
+<pre><code class="r">check.var(c(&quot;p&quot;), exists=TRUE, length=TRUE, class=TRUE)
 
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = &quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=&quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
 
 </code></pre>
 
@@ -547,11 +555,13 @@ test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05,
 
 <p>Finally, we check the simulated output q.</p>
 
-<pre><code class="r">check.var(c(&quot;q&quot;), exists = TRUE, length = TRUE, class = TRUE)
+<pre><code class="r">check.var(c(&quot;q&quot;),exists=TRUE, length=TRUE, class=TRUE)
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = &quot;Sorry, you have not specified the correct demand equation q = ...&quot;)
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+},
+  failure.message = &quot;Sorry, you have not specified the correct demand equation q = ...&quot;
+)
 </code></pre>
 
 <p>holds.true is a quite general testing function that checks whether a boolean condition (or all elements of a boolean vector) hold true given the student&#39;s solution. The first argument in {} is some code that will be evaluted given the student&#39;s solution. The last line of that code must be a boolean condition (or a vector of boolean condition). The test fails if one element of the boolean vector is false. Again, we specify a manual failure.message.</p>

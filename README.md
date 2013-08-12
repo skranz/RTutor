@@ -34,7 +34,7 @@ We first need to generate a folder in which some example files will be generated
 
 
 ```s
-develop.problem.set(name = "my ps", parent.path = "C:/libraries/RTutor/problemsets")
+develop.problem.set(name="my ps",parent.path="C:/libraries/RTutor/problemsets")
 ```
 
 
@@ -121,7 +121,7 @@ The command
 
 
 ```s
-# $ problem_set my ps
+#$ problem_set my ps
 ```
 
 
@@ -162,7 +162,7 @@ I will now explain the different commands
 This command is at the start of an exercise. After the word exercise, a name of the exercise is specified, e.g.
 
 ```s
-# $ exercise a)
+#$ exercise a)
 ```
 
 generates an exercise with name "a)". So far, we don't use any R code directly after the command.
@@ -244,68 +244,75 @@ As said before, well specified tests that analyse the student's solution are cru
 ```s
 
 
-############################################################### $ exercise
-############################################################### b)
+###############################################################
+#$ exercise b)
+###############################################################
 
-# $ task #######################################################
+#$ task #######################################################
 
-# Draw Simulate T outputs from a demand function q = beta0 + beta1 * p +
-# eps
+# Draw 
+# Simulate T outputs from a demand function
+# q = beta0 + beta1 * p + eps
+# 
 
 
-T = 1000  # Number of markets
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
 
-# i) Draw T demand shocks eps from a normal distribution with mean 0 and
-# variance 4
+# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
 
 # ii) Generate a vector of endogenous prices
 
 # iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
 
 
-# $ solution ###################################################
-T = 1000  # Number of markets
+#$ solution ###################################################
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
-# Draw demand shocks eps from a normal distribution with mean 0 and
-# variance 4
-eps = rnorm(T, 0, 2)
+# Draw demand shocks eps from a normal distribution with mean 0 and variance 4
+eps = rnorm(T,0,2)
 # One solution to generate endogenous prices
 p = eps/2
 # Compute realized demand q
 q = beta0 + beta1 * p + eps
-# $ tests ######################################################
+
+
+#$ tests ######################################################
 
 # Check given variables
-check.var(c("beta0", "beta1", "T"), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
+check.var(c("beta0","beta1","T"),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
 
 # Check construction of eps
-check.var(c("eps"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("eps"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 
 # Check p
-check.var(c("p"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("p"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = " I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
 
 # Check q
-check.var(c("q"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("q"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)")
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+  },  failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)"
+)
 
-# $ hints ######################################################
+#$ hints ######################################################
 
-# $ end_exercise
+#$ end_exercise
 
 ```
 
@@ -325,9 +332,10 @@ Let me explain the different used tests:
 ### check.var
 
 ```s
-check.var(c("beta0", "beta1", "T"), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
-check.var(c("eps"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("beta0","beta1","T"),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
+check.var(c("eps"),
+          exists=TRUE, length=TRUE, class=TRUE)
 ```
 
 The command check.var compares the users variables with the corresponding variables in the specified solution. We can check different aspects, by setting that flag TRUE
@@ -343,9 +351,9 @@ Since eps shall be a vector of random variables, it does not make sense to check
 
 
 ```s
-test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 ```
 
 
@@ -362,10 +370,10 @@ For the prices p we first check existence, lengt and class with check.var. Then 
 
 
 ```s
-check.var(c("p"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("p"), exists=TRUE, length=TRUE, class=TRUE)
 
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = " I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
 
 ```
 
@@ -381,11 +389,13 @@ If the test fails, we can specify a manual failure.message that will be shown to
 Finally, we check the simulated output q.
 
 ```s
-check.var(c("q"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("q"),exists=TRUE, length=TRUE, class=TRUE)
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = "Sorry, you have not specified the correct demand equation q = ...")
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+},
+  failure.message = "Sorry, you have not specified the correct demand equation q = ..."
+)
 ```
 
 holds.true is a quite general testing function that checks whether a boolean condition (or all elements of a boolean vector) hold true given the student's solution. The first argument in {} is some code that will be evaluted given the student's solution. The last line of that code must be a boolean condition (or a vector of boolean condition). The test fails if one element of the boolean vector is false. Again, we specify a manual failure.message.
