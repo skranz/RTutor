@@ -1,0 +1,550 @@
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 11:53:29",
+"user.seed": 1376128409,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      1,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:53:29",
+"user.seed": 1376128409,
+"code.changed": true,
+"failure.short": "wrong variance eps: is 5.03 shall 4, p.value = 8.34e-08",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2.2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 11:55:23",
+"user.seed": 1376128523,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      1,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:55:23",
+"user.seed": 1376128523,
+"code.changed": true,
+"failure.short": "wrong variance eps: is 4.87 shall 4, p.value = 5.67e-06",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2.2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 11:55:33",
+"user.seed": 1376128533,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      1,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:55:48",
+"user.seed": 1376128548,
+"code.changed": true,
+"failure.short": "wrong variance eps: is 4.62 shall 4, p.value = 0.000849",
+"checks":      2,
+"attempts":      2,
+"solved": false,
+"was.solved": false,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2.2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 10+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:55:54",
+"user.seed": 1376128554,
+"code.changed": true,
+"failure.short": "wrong variance eps: is 4.9 shall 4, p.value = 2.58e-06",
+"checks":      3,
+"attempts":      3,
+"solved": false,
+"was.solved": false,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2.2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:56:07",
+"user.seed": 1376128567,
+"code.changed": true,
+"failure.short": "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)",
+"checks":      4,
+"attempts":      4,
+"solved": false,
+"was.solved": false,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 10+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:56:17",
+"user.seed": 1376128577,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      5,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 11:56:24",
+"user.seed": 1376128584,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      5,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:03:06",
+"user.seed": 1376132586,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      5,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:03:27",
+"user.seed": 1376132607,
+"code.changed": true,
+"failure.short": "evaluation error in \n  x = 2 * 5 * a\n  Objekt 'a' nicht gefunden",
+"checks":      2,
+"attempts":      1,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5*a\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:03:43",
+"user.seed": 1376132623,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      3,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:03:44",
+"user.seed": 1376132624,
+"code.changed": true,
+"failure.short": "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)",
+"checks":      6,
+"attempts":      5,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 10+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:04:09",
+"user.seed": 1376132649,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      7,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:05:43",
+"user.seed": 1376132743,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      7,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:05:56",
+"user.seed": 1376132756,
+"code.changed": true,
+"failure.short": "wrong values(x)",
+"checks":      4,
+"attempts":      1,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*4\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:06:20",
+"user.seed": 1376132780,
+"code.changed": false,
+"failure.short": "wrong values(x)",
+"checks":      4,
+"attempts":      1,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*4\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:06:24",
+"user.seed": 1376132784,
+"code.changed": true,
+"failure.short": "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)",
+"checks":      8,
+"attempts":      5,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 10+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [
+ "eps looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of 0.0364." 
+] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:12:19",
+"user.seed": 1376133139,
+"code.changed": false,
+"failure.short": "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)",
+"checks":      8,
+"attempts":      5,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 10+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:12:33",
+"user.seed": 1376133153,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      9,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:12:37",
+"user.seed": 1376133157,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      9,
+"attempts":      5,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100+beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [
+ "eps looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of 0.00402." 
+] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:12:53",
+"user.seed": 1376133173,
+"code.changed": true,
+"failure.short": "wrong values(x)",
+"checks":      5,
+"attempts":      1,
+"solved": false,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*4 \n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-10 13:13:01",
+"user.seed": 1376133181,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      6,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x   \nx = 2*5\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-10 13:13:15",
+"user.seed": 1376133195,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":     10,
+"attempts":      5,
+"solved": true,
+"was.solved": true,
+"user.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\neps = rnorm(T,0,2)\n\n# ii) Generate a vector of endogenous prices\np = runif(T,10,20)+0.5*eps\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\nq = 100 + beta1*p+eps\n\n###############\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:25:45",
+"stud.seed": 1376216745,
+"code.changed": true,
+"failure.short": "x does not exist",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \n\n# hint.for(\"1 (a simple calculation)\")\n\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:28:38",
+"stud.seed": 1376216918,
+"code.changed": true,
+"failure.short": "evaluation error in \n  hint.for(\"1 (a simple calculation)\")\n  Versuch weniger als ein Element zu wählen",
+"checks":      2,
+"attempts":      2,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \n\nhint.for(\"1 (a simple calculation)\")\n\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:28:46",
+"stud.seed": 1376216926,
+"code.changed": true,
+"failure.short": "evaluation error in \n  hint.for(\"1 (a simple calculation)\")\n  Versuch weniger als ein Element zu wählen",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \n\nhint.for(\"1 (a simple calculation)\")\n\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:37:09",
+"stud.seed": 1376217429,
+"code.changed": true,
+"failure.short": "x does not exist",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \n\n# hint.for(\"1 (a simple calculation)\")\n\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:38:45",
+"stud.seed": 1376217525,
+"code.changed": true,
+"failure.short": "x does not exist",
+"checks":      2,
+"attempts":      2,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \n\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:39:23",
+"stud.seed": 1376217563,
+"code.changed": true,
+"failure.short": "wrong values(x)",
+"checks":      3,
+"attempts":      3,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*4\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:39:30",
+"stud.seed": 1376217570,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      4,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "2 (simulate demand function)",
+"date": "2013-08-11 12:39:30",
+"stud.seed": 1376217570,
+"code.changed": true,
+"failure.short": "eps does not exist",
+"checks":      1,
+"attempts":      1,
+"solved": false,
+"was.solved": false,
+"stud.code": "#### Exercise 2 (simulate demand function)\n###########################################\n\n\n# Draw \n# Simulate T outputs from a demand function\n# q = beta0 + beta1 * p + eps\n# \n\n\nT = 1000 # Number of markets\nbeta0 = 100\nbeta1 = -1\n\n# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4\n\n# ii) Generate a vector of endogenous prices\n\n# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps\n\n\n\n#### end exercise 2 (simulate demand function)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:40:22",
+"stud.seed": 1376217622,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      4,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:40:51",
+"stud.seed": 1376217651,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      4,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:41:13",
+"stud.seed": 1376217673,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      4,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:41:28",
+"stud.seed": 1376217688,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      5,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\n#hint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:42:38",
+"stud.seed": 1376217758,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      6,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\n\nhint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}
+{
+ "ps.name": "examples",
+"ex.name": "1 (a simple calculation)",
+"date": "2013-08-11 12:42:44",
+"stud.seed": 1376217764,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      7,
+"attempts":      4,
+"solved": true,
+"was.solved": true,
+"stud.code": "#### Exercise 1 (a simple calculation)\n###########################################\n\n# Compute 2*5 and store it in the variable x  \nx = 2*5\n\n#hint.for(\"1 (a simple calculation)\")\n\n#### end exercise 1 (a simple calculation)",
+"warnings": [] 
+}

@@ -3,7 +3,8 @@
 \title{Check whether a certain H0 could be significantly rejected with a specified statistical test}
 \usage{
   check.H0.rejected(test.expr, alpha = 0.05,
-    failure.message, student.env = get.student.env())
+    failure.message, ex = get.ex(),
+    student.env = ex$student.env)
 }
 \description{
   Check whether a certain H0 could be significantly

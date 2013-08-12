@@ -11,32 +11,26 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 
 ### 1. Install the newest version of RTutor
 You first need to install some other packages. Simply run in R
-
-```r
-install.packages("devtools", "whisker", "stringr")
+```{r eval=FALSE}
+install.packages("devtools","whisker","stringr")
 
 ```
-
 To install the newest version of restorepoint and RTutor from Github run then
-
-```r
+```{r eval=FALSE}
 library(devtools)
-install_github(repo = "restorepoint", username = "skranz")
-install_github(repo = "RTutor", username = "skranz")
+install_github(repo="restorepoint", username="skranz")
+install_github(repo="RTutor", username="skranz")
 library(restorepoint)
 library(RTutor)
 ```
-
 
 ### 2. Create template files for developing a new problem set
 
 We first need to generate a folder in which some example files will be generated that help us to build a new problem set. First decide on a name for the problemset, e.g. "my ps" and generate a parent folder in which you want to save your problemsets, e.g. "C:/problemsets". (Henceforth I will always assume that you named your problem set "my ps". Just replace "my ps" everywhere by your own name) Then run the following code:
 
-
-```r
-develop.problem.set(name = "my ps", parent.path = "C:/libraries/RTutor/problemsets")
+```{r eval=FALSE}
+develop.problem.set(name="my ps",parent.path="C:/libraries/RTutor/problemsets")
 ```
-
 
 It generates a new folder below parent.path with the name of the problem set, here "C:/problemsets/my ps".
 
@@ -83,8 +77,7 @@ You can now change the structure of your problem set. This is explained in detai
 
 If you open "my ps_struc.r", you see an example structure of a problem set. Here is the header and structure for the first exercise:
 
-
-```r
+```{r eval=FALSE, tidy=FALSE}
 #$ problem_set my ps
 
 
@@ -113,25 +106,21 @@ y = 2+3"
 
 ```
 
-
 Lines that start with #$ are special commands that are used by RTutor to parse different aspects of the problem sets. Other lines are all valid R commands. I explain the commands in detail:
 
 ### Specify name of a problem set
 The command
 
-
-```r
-# $ problem_set my ps
+```{r eval=FALSE}
+#$ problem_set my ps
 ```
-
 
 simply sets the name of the problem set equal to the text after problem_set. Here the name is set to "my ps". As in this example, the name of a problem set can contain spaces.
 
 ### Specify an exercise
 A problem set can have several exercises. Each exercises must have the following command lines in **exactly the order shown below**. After most command lines some R code can be entered.  
 
-
-```r
+```{r eval=FALSE, tidy=FALSE}
 #$ exercise name_of_exercise
 
   # No code will be entered here 
@@ -156,40 +145,34 @@ A problem set can have several exercises. Each exercises must have the following
 #$ end_exercise
 ```
 
-
 I will now explain the different commands
 #### #$ exercise
 This command is at the start of an exercise. After the word exercise, a name of the exercise is specified, e.g.
-
-```r
-# $ exercise a)
+```{r eval=FALSE}
+#$ exercise a)
 ```
-
 generates an exercise with name "a)". So far, we don't use any R code directly after the command.
 
 #### #$ task
 Below this command, you enter the text will be shown in the empty problem set given to the user. The text should make clear, what the student shall do and where she should enter her code.  Unless, you have a good reason, this text should be valid R code, i.e. everything that is used for explanations should be commented with #.
 
 Example:
-
-```r
+```{r eval=FALSE,tidy=FALSE}
 #$ task #######################################################
 
 # Compute 2*5 and store it in the variable x  
 
-```
 
+```
 
 #### #$ solution
 Below this command, you enter R code that completely solves the exercise.
 Example:
-
-```r
+```{r eval=FALSE,tidy=FALSE}
 #$ solution ###################################################
 
 x <- 2*5
 ```
-
 
 #### #$ tests
 Below this command you specify different tests that will be performed on the student's solution to check whether some mistake can be found. If something wrong is encountered, the tests give feedback to the student.
@@ -200,14 +183,12 @@ The simple test in our example below, checks the following:
   * Has x the same length as in the given solution, i.e. 1
   * Has x the same value as in the given solution, i.e. x=10
 
-
-```r
+```{r eval=FALSE,tidy=FALSE}
 #$ tests ###################################################
 
 check.var("x", exists=TRUE,length=TRUE, values=TRUE)
 
 ```
-
 If one test fails, e.g. if x does not exist. The user will be shown a standard failure message and no more code will be checked. We consider a student's solution "correct" if no test fails, i.e. we are not able to falsify the correctness.
 
 Good and well designed tests are the key component of a good interactive problem set. There already exist several functions, like check.var, that can be used to perform different sorts of tests. They are explained in some detail in the next section.
@@ -219,8 +200,7 @@ In the code below the #$ hints command, you can specify several hints that can b
 
 The example generates a hint, that will give the user the solution to a similar exercise and that should be sufficient to solve the current exercise, even without any R knowledge.
 
-
-```r
+```{r eval=FALSE,tidy=FALSE}
 #$ hints ###################################################
 
 add.hint("Hint 1",{cat('
@@ -228,7 +208,6 @@ add.hint("Hint 1",{cat('
 y = 2+3"
 ')})
 ```
-
 
 I have not yet well worked out when and how hints shall be shown. One could think of the user asking for a hint, by calling a function hint(). Alternatively, one could offer the student a hint if he fails to often. Any ideas are very welcome.
 
@@ -240,75 +219,80 @@ This command simply indicates that the specification of the exercise is done. Af
 
 As said before, well specified tests that analyse the student's solution are crucial for a good problem set. Here I want to give an overview of some functions that can generate the test. A more detailed description of the test functions can be found in the R-help of the RTutor package. Consider the specification of exercise "b)" in the example file.
 
-
-```r
-
-
-############################################################### $ exercise
-############################################################### b)
-
-# $ task #######################################################
-
-# Draw Simulate T outputs from a demand function q = beta0 + beta1 * p +
-# eps
+```{r eval=FALSE, tidy=TRUE}
 
 
-T = 1000  # Number of markets
+###############################################################
+#$ exercise b)
+###############################################################
+
+#$ task #######################################################
+
+# Draw 
+# Simulate T outputs from a demand function
+# q = beta0 + beta1 * p + eps
+# 
+
+
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
 
-# i) Draw T demand shocks eps from a normal distribution with mean 0 and
-# variance 4
+# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
 
 # ii) Generate a vector of endogenous prices
 
 # iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
 
 
-# $ solution ###################################################
-T = 1000  # Number of markets
+#$ solution ###################################################
+T = 1000 # Number of markets
 beta0 = 100
 beta1 = -1
-# Draw demand shocks eps from a normal distribution with mean 0 and
-# variance 4
-eps = rnorm(T, 0, 2)
+# Draw demand shocks eps from a normal distribution with mean 0 and variance 4
+eps = rnorm(T,0,2)
 # One solution to generate endogenous prices
 p = eps/2
 # Compute realized demand q
 q = beta0 + beta1 * p + eps
-# $ tests ######################################################
+#$ tests ######################################################
 
 # Check given variables
-check.var(c("beta0", "beta1", "T"), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
+check.var(c("beta0","beta1","T"),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
 
 # Check construction of eps
-check.var(c("eps"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("eps"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 
 # Check p
-check.var(c("p"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("p"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = " I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
 
 # Check q
-check.var(c("q"), exists = TRUE, length = TRUE, class = TRUE)
+check.var(c("q"),
+          exists=TRUE, length=TRUE, class=TRUE)
 
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)")
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+},
+  failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)"
+)
 
-# $ hints ######################################################
+#$ hints ######################################################
 
-# $ end_exercise
+#$ end_exercise
+
 
 ```
-
 
 Tests are performed in the following order:
 
@@ -323,13 +307,12 @@ Tests are performed in the following order:
 Let me explain the different used tests:
 
 ### check.var
-
-```r
-check.var(c("beta0", "beta1", "T"), exists = TRUE, length = TRUE, class = TRUE, 
-    values = TRUE)
-check.var(c("eps"), exists = TRUE, length = TRUE, class = TRUE)
+```{r eval=FALSE}
+check.var(c("beta0","beta1","T"),
+          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
+check.var(c("eps"),
+          exists=TRUE, length=TRUE, class=TRUE)
 ```
-
 The command check.var compares the users variables with the corresponding variables in the specified solution. We can check different aspects, by setting that flag TRUE
 
   * exists does the variable exist at all
@@ -341,13 +324,11 @@ Since eps shall be a vector of random variables, it does not make sense to check
 
 ### test.normality, test.mean test.variance
 
-
-```r
-test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
-test.mean(eps, 0)
-test.variance(eps, 4)
+```{r eval=FALSE}
+test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
+test.mean(eps,0)
+test.variance(eps,4)
 ```
-
 
 These three tests are used to determine in a statistical fashion whether eps satisfies the null hypothesises:
   
@@ -360,15 +341,13 @@ The tests perform statistical tests on the given vector and return a failure if 
 ### test.H0.rejected and test.H0
 For the prices p we first check existence, lengt and class with check.var. Then we implement a manual test whether p is indeed endogenous with the function test.H0.rejected.
 
+```{r eval=FALSE}
+check.var(c("p"), exists=TRUE, length=TRUE, class=TRUE)
 
-```r
-check.var(c("p"), exists = TRUE, length = TRUE, class = TRUE)
-
-test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
-    failure.message = " I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
+test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
+                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
 
 ```
-
 
 The first argument to test.H0.rejected is an expression that calls a statistical test, that returns a list that has an element p.value. Here we test the correlation between prices and eps by calling cor.test(p,eps). This expression will be evaluated with the student's solution. The student's solution passes our test , if we can **reject** the null hypothesis of this test,cor(p,eps)=0, at a level of alpha.failure = 0.05. (Recall from your econometrics classes that an explanatory variable p is endogenous if it is correlated with the error term eps.)
 
@@ -379,13 +358,13 @@ If the test fails, we can specify a manual failure.message that will be shown to
 
 ### holds.true
 Finally, we check the simulated output q.
-
-```r
-check.var(c("q"), exists = TRUE, length = TRUE, class = TRUE)
+```{r eval=FALSE}
+check.var(c("q"),exists=TRUE, length=TRUE, class=TRUE)
 holds.true({
-    q.shall = beta0 + beta1 * p + eps
-    q == q.shall
-}, failure.message = "Sorry, you have not specified the correct demand equation q = ...")
+  q.shall = beta0+beta1*p+eps
+  q == q.shall
+},
+  failure.message = "Sorry, you have not specified the correct demand equation q = ..."
+)
 ```
-
 holds.true is a quite general testing function that checks whether a boolean condition (or all elements of a boolean vector) hold true given the student's solution. The first argument in {} is some code that will be evaluted given the student's solution. The last line of that code must be a boolean condition (or a vector of boolean condition). The test fails if one element of the boolean vector is false. Again, we specify a manual failure.message.

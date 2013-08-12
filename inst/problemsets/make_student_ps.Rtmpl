@@ -1,0 +1,11 @@
+# Run this file to generate an empty problem set for students from your structure
+# {{ps_name}}_struc.r
+
+library(restorepoint)
+set.restore.point.options(deep.copy=FALSE)
+library(whisker)
+library(RTutor)  
+
+setwd("{{ps_path}}")
+ps = init.problem.set("{{ps_name}}","{{ps_path}}")
+create.stud.ps(ps,ps.dir = "{{ps_path}}")

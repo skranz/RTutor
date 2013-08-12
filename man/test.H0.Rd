@@ -1,0 +1,43 @@
+\name{test.H0}
+\alias{test.H0}
+\title{Check whether a certain null hypothesis is not significantly rejected}
+\usage{
+  test.H0(test.expr, p.value, test.name = "",
+    alpha.warning = 0.05, alpha.failure = 0.001,
+    short.message, warning.message, failure.message,
+    check.warning = TRUE, ex = get.ex(),
+    stud.env = ex$stud.env, ...)
+}
+\arguments{
+  \item{test.expr}{an expression that calls a test which
+  will be evaluated in stud.env. The test must return a
+  list that contains a field "p.value"}
+
+  \item{p.value}{Instead of providing test.expr, one can
+  directly provide a p.value from a previously run test}
+
+  \item{test.name}{an optional test.name that can be used
+  to fill the {{test_name}} whiskers in warning or failure
+  messages.}
+
+  \item{alpha.failure}{default=0.001 the critical p.value
+  below which the stud code is considered wrong}
+
+  \item{alpha.warning}{default=0.05 a p.value below a
+  warning is printed that the code may be wrong}
+
+  \item{short.message,failure.messages,}{warning.messages
+  Messages in case of a failure and warning and short
+  message for the log.file}
+
+  \item{check.warning}{if FALSE don't check for a warning}
+}
+\value{
+  TRUE if H0 cannot be rejected, FALSE if not and "warning"
+  if it can be weakly rejected
+}
+\description{
+  Check whether a certain null hypothesis is not
+  significantly rejected
+}
+

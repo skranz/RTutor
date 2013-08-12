@@ -1,0 +1,17 @@
+\name{add.hint}
+\alias{add.hint}
+\title{Add a hint to an exercise.}
+\usage{
+  add.hint(hint.name, code, cond = NULL, ex = get.ex())
+}
+\arguments{
+  \item{hint.name}{A name for the hint}
+
+  \item{code}{R code inside {} that will be evaluated in
+  sol.env when the hint is shown. A hint could show
+  messages via cat, but it could also show a plot.}
+}
+\description{
+  Add a hint to an exercise.
+}
+

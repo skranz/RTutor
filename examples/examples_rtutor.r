@@ -1,11 +1,9 @@
 examples = function() {  
-  library(restorepoint)
-  library(RTutor)
-  
-  set.problemset.structure.path("C:/libraries/RTutor/RTutor/problemsets/")
-  set.problemset.user.path("C:/libraries/RTutor/RTutor/problemsets/")
-  
-  ps = load.problem.set("examples")
-  write.ps.skeleton(ps)
+  library(restorepoint); set.restore.point.options(deep.copy=FALSE)
+  library(whisker)
+  library(RTutor)  
+  ps = init.problem.set("examples","C:/libraries/RTutor/RTutor/problemsets")
+  ps
+  create.stud.ps(ps,ps.dir = "C:/libraries/RTutor/RTutor/problemsets")
   
 }

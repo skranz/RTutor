@@ -2,7 +2,7 @@
 
 #' Test: Compare students variables with those from the given solutions
 #' @export 
-check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE, verbose=FALSE, student.env = get.student.env(),  sol.env = get.sol.env()) {
+check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE, verbose=FALSE, ex=get.ex(),stud.env = ex$stud.env,  sol.env = ex$sol.env) {
   
   if (verbose) {
     str = paste(
@@ -18,9 +18,11 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   
   
   if (exists != FALSE) {
+    short.message = paste0("{{var}} does not exist")
+    failure.message = paste0("You have not generated the variable {{var}}")
     for (var in vars) {
-      if (!exists(var,student.env, inherits=FALSE)) {
-        message(paste0("Uups, you have not even generated the variable ",var, "."))
+      if (!exists(var,stud.env, inherits=FALSE)) {
+        add.failure(ex,short.message,failure.message, var = var)
         return(FALSE)
       }
     }
@@ -28,12 +30,13 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
       cat(" ok!")
   }
   if (length != FALSE) {
+    short.message = paste0("wrong length {{var}}: is {{length_stud}} must {{length_sol}}")
+    failure.message = paste0("Your variable {{variable}} has length {{length_stud}} but must have {{length.sol}}")
     for (var in vars) {
-      var.user = get(var,student.env)
+      var.stud = get(var,stud.env)
       var.sol = get(var,sol.env)
-      
-      if (!length(var.user)==length(var.sol)) {
-        message(paste0("Your variable ", var, " has the wrong length. Length should be ", length(var.sol), " but it is ",length(var.user)))
+      if (!length(var.stud)==length(var.sol)) {
+        add.failure(ex,short.message, failure.message, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
         return(FALSE)
       }
     }
@@ -42,11 +45,12 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   }  
   if (class != FALSE) {
     for (var in vars) {
-      var.user = get(var,student.env)
+      var.stud = get(var,stud.env)
       var.sol = get(var,sol.env)
       
-      if (!class(var.user)==class(var.sol)) {
-        message(paste0("Tricky, your variable ", var, " has a wrong type. It should be ", class(var.sol), " but it is ",class(var.user)))
+      if (!class(var.stud)==class(var.sol)) {
+        add.failure(ex,paste0("class(", var,")=",class(var.stud),"!=",class(var.sol)),
+                    paste0("Your variable ", var, " has a wrong type. It should be ", class(var.sol), " but it is ",class(var.stud)))
         return(FALSE)
       }
     }
@@ -55,11 +59,12 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   }  
   if (values != FALSE) {
     for (var in vars) {
-      var.user = get(var,student.env)
+      var.stud = get(var,stud.env)
       var.sol = get(var,sol.env)
       
-      if (! all(var.user==var.sol)) {
-        message(paste0("Sorry, but the values of ", var, " are not correct."))
+      if (! all(var.stud==var.sol)) {
+        add.failure(ex,paste0("wrong values(", var,")"),
+                    paste0("Sorry, but the values of ", var, " are not correct."))
         return(FALSE)
       }
     }
@@ -73,8 +78,8 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
 
 #' A helper function for hypothesis test about whether student solution is correct
 #' @export 
-hypothesis.test.result = function(p.value, alpha.warning=0.05, alpha.fail = 0.0001, verbose=FALSE) {
-  if (p.value < alpha.fail) {
+hypothesis.test.result = function(p.value, alpha.warning=0.05, alpha.failure = 0.0001, verbose=FALSE) {
+  if (p.value < alpha.failure) {
     if (verbose)
       message("  H0 is highly significantly rejected... check fails!")
     return(FALSE)
@@ -128,122 +133,170 @@ sigma.test = function (x, sigma = 1, sigmasq = sigma^2,
   return(out)}
 
 
-#' Check whether a certain H0 could be significantly rejected with a specified statistical test
+#' Test whether a certain H0 can be significantly rejected
+#' 
+#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
+#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
+#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
+#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
+#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
+#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
+#' @param check.warning if FALSE don't check for a warning 
+#' @return TRUE if H0 can be rejected, FALSE if not and "warning" if it can be weakly rejected
 #' @export 
-check.H0.rejected = function(test.expr, alpha =0.05, failure.message, student.env=get.student.env()) {
-  test.expr = substitute(test.expr)
-  
-  test.res = eval(test.expr, student.env)
-  p.value = test.res$p.value
-  
-  if (missing(failure.message)) {
-    expr.str = deparse(text.expr)
-  
-    failure.message = paste0("Failure: I couldn't significantly reject the null hypothesis from the test '", expr.str, "', p.value = ", round(p.value*100,4), "%")
-  } else{
-    
+test.H0.rejected = function(test.expr,p.value,test.name="",
+                            alpha.warning = 0.01,alpha.failure =0.05,
+                            short.message,warning.message,failure.message,check.warning=TRUE,
+                            ex=get.ex(),stud.env = ex$stud.env,...)
+{
+  if (!missing(test.expr)) {
+    test.expr = substitute(test.expr)
+    if (test.name=="") {
+      test.name = deparse(test.expr)
+    }
   }
-  if (p.value > alpha) {
-    message(failure.message)
+  if (missing(p.value)) {
+    test.res = eval(test.expr, stud.env)
+    p.value = test.res$p.value
+  }
+    
+  if (missing(short.message)) {
+    short.message = paste0("Fail to reject '{{test_name}}', p.value = {{p_value}}")
+  }
+  if (missing(failure.message)) {
+    failure.message = paste0("I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}")
+  }
+  if (missing(warning.message)) {
+    warning.message = paste0("The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.")
+  }  
+  if (p.value > alpha.failure) {
+    add.failure(ex,short.message,failure.message,test_name=test.name,p_value=p.value)
     return(FALSE)
+  }
+  
+  if (p.value > alpha.warning & check.warning) {
+    add.warning(ex,short.message,warning.message,test_name=test.name,p_value=p.value)
+    return("warning")
+  }
+  
+  return(TRUE)
+}
+
+#' Check whether a certain null hypothesis is not significantly rejected
+#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
+#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
+#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
+#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
+#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
+#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
+#' @param check.warning if FALSE don't check for a warning 
+#' @return TRUE if H0 cannot be rejected, FALSE if not and "warning" if it can be weakly rejected
+#' @export 
+test.H0 = function(test.expr,p.value,test.name="",
+                   alpha.warning = 0.05,alpha.failure =0.001,
+                  short.message,warning.message,failure.message,
+                  check.warning=TRUE,
+                  ex=get.ex(),stud.env = ex$stud.env,...) {
+  if (!missing(test.expr)) {
+    test.expr = substitute(test.expr)
+    if (test.name=="") {
+      test.name = deparse(test.expr)
+    }
+  }
+  if (missing(p.value)) {
+    test.res = eval(test.expr, stud.env)
+    p.value = test.res$p.value
+  }
+  if (missing(short.message)) {
+    short.message = paste0("rejected '{{test_name}}' has p.value = {{p_value}}")
+  }
+  if (missing(failure.message)) {
+    failure.message = paste0("The null hypothesis from the test '{{test_name}}' shall hold, but it is rejected at p.value = {{p_value}}")
+  }
+  if (missing(warning.message)) {
+    warning.message = paste0("The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.")
+  }  
+  if (p.value < alpha.failure) {
+    add.failure(ex,short.message,failure.message,test.name=test.name,p_value=p.value,...)
+    return(FALSE)
+  }
+  
+  if (p.value < alpha.warning & check.warning) {
+    add.warning(ex,short.message,warning.message,test.name=test.name,p_value=p.value,...)
+    return("warning")
   }
   return(TRUE)
 }
 
-
 #' Test: The variance of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.variance = function(vec, true.val,alpha.warning=0.05,alpha.fail=0.0001, test = "t.test",student.env=get.student.env(),..., digits=7,verbose=FALSE) {
+test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, ex=get.ex(),stud.env = ex$stud.env,...) {
   call.str = as.character(match.call())
   var.name = call.str[2]
-  
-  if (verbose)
-    cat(paste0("\nTest variance of ",call.str[2],  " with chi-square test:"))
-  res = sigma.test(vec,sigmasq=true.val)
-  p.value = res$p.value
-  if (verbose)
-    cat(paste0("  H0: Var(",call.str[2],")=",true.val,
-               ", Var.obs(",call.str[2],")=", round(var(vec),digits),
-               ", p.value = ", round(p.value*100,4),"% "))
-  
-  res = hypothesis.test.result(p.value=p.value,alpha.warning=alpha.warning, alpha.fail=alpha.fail, verbose=verbose)
-  if (res =="warning") {
-    if (!verbose)
-      message(paste0("Warning: ", var.name, " has suspicious variance! \n I am not sure if your random variable '", var.name, "'' really with sample variance ",round(var(vec),5)," comes from a distribution with variance ", true.val,". A chi-square test tells me that if that null hypthesis were true, the probability would be just around ",round(p.value*100,4),"% to get such extreme values in your sample."))
-    
-  } else if (res==FALSE) {
-    message(paste0("Failure: ", var.name, " has wrong variance! \nI really don't believe that your random variable '", var.name, "' with sample variance ", round(var(vec),5)," comes from a distribution with variance ", true.val,". A chi-square test tells me that if that really were true, the probability would be just around ",round(p.value*100,15),"% to get such an extreme sample."))
-    
+  p.value = sigma.test(vec,sigmasq=true.val)$p.value
+
+  if (missing(short.message)) {
+    short.message ="wrong variance {{var}}: is {{vari_stud}} shall {{vari_sol}}, p.value = {{p_value}}"
   }
-  return(res)
-  
+  if (missing(failure.message)) {
+    failure.message = "{{var}} has wrong variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypothesis were true, it would be very unlikely (p.value={{p_value}}) to get a sample as extreme as yours!"
+  }
+  if (missing(warning.message)) {
+    warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample variance"
+  }
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,ex=ex,
+  var = var.name, vari_stud = var(vec), vari_sol=true.val,...)
 } 
 
 #' Test: The mean of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.mean = function(vec, true.val, alpha.warning=0.05,alpha.fail=0.0001, test = "t.test",student.env=get.student.env(),..., digits=7, verbose=FALSE) {
+test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, ex=get.ex(),stud.env = ex$stud.env,...) {
   call.str = as.character(match.call())
-  restore.point("test.mean")
   stopifnot(test=="t.test")
   var.name = call.str[2]
-  
-  if (verbose)
-    cat(paste0("\nTest mean of ",call.str[2],  " with t-test:"))
-  res = t.test(vec,mu=true.val)
-  p.value = res$p.value
-  if (verbose)
-    cat(paste0("  H0: E(",call.str[2],")=",true.val,
-             ", E.obs(",call.str[2],")=", round(mean(vec),digits),
-             ", p.value = ", round(p.value*100,4),"% "))
-  
-  res = hypothesis.test.result(p.value=p.value,alpha.warning=alpha.warning, alpha.fail=alpha.fail, verbose=verbose)
-  
-  if (res =="warning") {
-    if (!verbose)
-      message(paste0("Warning: I am not sure if your random variable '", var.name, "'' really comes from a distribution with mean ", true.val,". A t-test tells me that if that null hypothesis were really true, the probability would be just around ",round(p.value*100,4),"% to get such extreme values in your sample."))
-    
-  } else if (res==FALSE) {
-    message(paste0("Failure: I really don't believe that your random variable '", var.name, "' with sample average ", round(mean(vec),5)," comes from a distribution with mean ", true.val,". A t-test tells me that if that really were true, the probability would be just around ",round(p.value*100,15),"% to get such an extreme sample."))
-    
+  p.value = t.test(vec,mu=true.val)$p.value
+
+  if (missing(short.message)) {
+    short.message ="wrong mean {{var}}: is {{mean_stud}} shall {{mean_sol}}, p.value = {{p_value}}"
   }
-  return(res)
-  
-  
-  return(hypothesis.test.result(p.value=p.value,alpha.warning=alpha.warning, alpha.fail=alpha.fail))
+  if (missing(failure.message)) {
+    failure.message = "{{var}} has wrong mean! \n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypothesis were true, it would be very unlikely (p.value={{p_value}}) to get a sample mean as extreme as yours!"
+  }
+  if (missing(warning.message)) {
+    warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
+  }
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,ex=ex,
+        var = var.name, mean_stud = mean(vec), mean_sol=true.val,...)
 }
 
 #' Test: Has a vector of random numbers been drawn from a normal distribution?
 #' @export
-test.normality = function(vec, alpha.warning=0.05,alpha.fail=0.0001, student.env=get.student.env(),..., digits=7, verbose=FALSE) {
+test.normality = function(vec,short.message,warning.message,failure.message,ex=get.ex(),stud.env = ex$stud.env,...) {
   call.str = as.character(match.call())
   restore.point("test.normality")
   var.name=call.str[2]
-  if (verbose)
-    cat(paste0("\nTest normality of ",call.str[2],  " with Shapiro-Wilk test"))
-  res = shapiro.test(vec)
-  p.value = res$p.value
-  if (verbose)
-    cat(paste0("  H0: ",call.str[2]," is normally distributed",
-             ", p.value = ", round(p.value*100,4),"% "))
+  p.value = shapiro.test(vec)$p.value
   
-  res = hypothesis.test.result(p.value=p.value,alpha.warning=alpha.warning, alpha.fail=alpha.fail, verbose=verbose)
-  if (res =="warning") {
-    if (!verbose)
-      message(paste0("Warning: ", var.name, " looks not very normally distributed.\n I am not sure if '", var.name, "'' is really drawn from a normal distribution. A Shapiro-Wilk test tells me that if that null hypthesis were true, the probability would be just around ",round(p.value*100,4),"% to get such a non-normally looking sample."))
-    
-  } else if (res==FALSE) {
-    message(paste0("Failure: ", var.name, " is by far to unnormal! \n A Shapiro-Wilk test tells me that if ", var.name," were really drawn from a normal distribution, the probability would be just around ",round(p.value*100,15),"% to get such an non-normal sample."))
+  if (missing(short.message)) {
+    short.message ="{{var}} not normally distributed, p.value = {{p_value}}"
   }
-  return(res)
+  if (missing(failure.message)) {
+    failure.message = "{{var}} looks really not normally distributed.\n A Shapiro-Wilk test rejects normality at an extreme significance level of {{p_value}}."
+  }
+  if (missing(warning.message)) {
+    warning.message = "{{var}} looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of {{p_value}}."
+  }
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,ex=ex,
+        var = var.name,...)
 }
 
-#' Test: Does a certain condition on the user's generated variables hold true
+#' Test: Does a certain condition on the stud's generated variables hold true
 #' @export
-holds.true = function(cond, failure.message="Failure in holds.true", student.env=get.student.env()) {
+holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",ex=get.ex(),stud.env = ex$stud.env,...) {
   restore.point("holds.true")
   cond = substitute(cond)
-  if (!all(eval(cond,student.env))) {
-    message(failure.message)
+  if (!all(eval(cond,stud.env))) {
+    add.failure(ex,short.message,failure.message,...)
     return(FALSE)
   }
   #cat(paste0("\n",message, "... ok!"))

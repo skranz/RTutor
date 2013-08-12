@@ -1,8 +1,9 @@
-\name{write.ps.skeleton}
-\alias{write.ps.skeleton}
+\name{create.stud.ps}
+\alias{create.stud.ps}
 \title{Generate a problem set skeleton for a student and save it in a file}
 \usage{
-  write.ps.skeleton(ps, file = ps$user.file)
+  create.stud.ps(ps, file = ps$stud.file,
+    ps.dir = "C:/...", game.mode = FALSE)
 }
 \description{
   Generate a problem set skeleton for a student and save it
