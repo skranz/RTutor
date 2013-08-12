@@ -12,14 +12,14 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 ### 1. Install the newest version of RTutor
 You first need to install some other packages. Simply run in R
 
-```r
+```s
 install.packages("devtools", "whisker", "stringr")
 
 ```
 
 To install the newest version of restorepoint and RTutor from Github run then
 
-```r
+```s
 library(devtools)
 install_github(repo = "restorepoint", username = "skranz")
 install_github(repo = "RTutor", username = "skranz")
@@ -33,7 +33,7 @@ library(RTutor)
 We first need to generate a folder in which some example files will be generated that help us to build a new problem set. First decide on a name for the problemset, e.g. "my ps" and generate a parent folder in which you want to save your problemsets, e.g. "C:/problemsets". (Henceforth I will always assume that you named your problem set "my ps". Just replace "my ps" everywhere by your own name) Then run the following code:
 
 
-```r
+```s
 develop.problem.set(name = "my ps", parent.path = "C:/libraries/RTutor/problemsets")
 ```
 
@@ -84,7 +84,7 @@ You can now change the structure of your problem set. This is explained in detai
 If you open "my ps_struc.r", you see an example structure of a problem set. Here is the header and structure for the first exercise:
 
 
-```r
+```s
 #$ problem_set my ps
 
 
@@ -120,7 +120,7 @@ Lines that start with #$ are special commands that are used by RTutor to parse d
 The command
 
 
-```r
+```s
 # $ problem_set my ps
 ```
 
@@ -131,7 +131,7 @@ simply sets the name of the problem set equal to the text after problem_set. Her
 A problem set can have several exercises. Each exercises must have the following command lines in **exactly the order shown below**. After most command lines some R code can be entered.  
 
 
-```r
+```s
 #$ exercise name_of_exercise
 
   # No code will be entered here 
@@ -161,7 +161,7 @@ I will now explain the different commands
 #### #$ exercise
 This command is at the start of an exercise. After the word exercise, a name of the exercise is specified, e.g.
 
-```r
+```s
 # $ exercise a)
 ```
 
@@ -172,7 +172,7 @@ Below this command, you enter the text will be shown in the empty problem set gi
 
 Example:
 
-```r
+```s
 #$ task #######################################################
 
 # Compute 2*5 and store it in the variable x  
@@ -184,7 +184,7 @@ Example:
 Below this command, you enter R code that completely solves the exercise.
 Example:
 
-```r
+```s
 #$ solution ###################################################
 
 x <- 2*5
@@ -201,7 +201,7 @@ The simple test in our example below, checks the following:
   * Has x the same value as in the given solution, i.e. x=10
 
 
-```r
+```s
 #$ tests ###################################################
 
 check.var("x", exists=TRUE,length=TRUE, values=TRUE)
@@ -220,7 +220,7 @@ In the code below the #$ hints command, you can specify several hints that can b
 The example generates a hint, that will give the user the solution to a similar exercise and that should be sufficient to solve the current exercise, even without any R knowledge.
 
 
-```r
+```s
 #$ hints ###################################################
 
 add.hint("Hint 1",{cat('
@@ -241,7 +241,7 @@ This command simply indicates that the specification of the exercise is done. Af
 As said before, well specified tests that analyse the student's solution are crucial for a good problem set. Here I want to give an overview of some functions that can generate the test. A more detailed description of the test functions can be found in the R-help of the RTutor package. Consider the specification of exercise "b)" in the example file.
 
 
-```r
+```s
 
 
 ############################################################### $ exercise
@@ -324,7 +324,7 @@ Let me explain the different used tests:
 
 ### check.var
 
-```r
+```s
 check.var(c("beta0", "beta1", "T"), exists = TRUE, length = TRUE, class = TRUE, 
     values = TRUE)
 check.var(c("eps"), exists = TRUE, length = TRUE, class = TRUE)
@@ -342,7 +342,7 @@ Since eps shall be a vector of random variables, it does not make sense to check
 ### test.normality, test.mean test.variance
 
 
-```r
+```s
 test.normality(eps, alpha.failure = 0.001, alpha.warning = 0.05)
 test.mean(eps, 0)
 test.variance(eps, 4)
@@ -361,7 +361,7 @@ The tests perform statistical tests on the given vector and return a failure if 
 For the prices p we first check existence, lengt and class with check.var. Then we implement a manual test whether p is indeed endogenous with the function test.H0.rejected.
 
 
-```r
+```s
 check.var(c("p"), exists = TRUE, length = TRUE, class = TRUE)
 
 test.H0.rejected(cor.test(p, eps), check.warning = FALSE, alpha.failure = 0.05, 
@@ -380,7 +380,7 @@ If the test fails, we can specify a manual failure.message that will be shown to
 ### holds.true
 Finally, we check the simulated output q.
 
-```r
+```s
 check.var(c("q"), exists = TRUE, length = TRUE, class = TRUE)
 holds.true({
     q.shall = beta0 + beta1 * p + eps
