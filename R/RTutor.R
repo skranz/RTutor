@@ -6,7 +6,6 @@ develop.problem.set = function(name,parent.path) {
   restore.point("develop.problem.set")
   RTutor.path = path.package("RTutor")
   
-  name = "my_first_ps"
   ps.path = paste0(parent.path,"/",name)
   message(paste0("Create directory ", ps.path))
   dir.create(ps.path, recursive=TRUE)
