@@ -4,7 +4,10 @@
 \usage{
   test.H0.rejected(test.expr, p.value, test.name = "",
     alpha.warning = 0.01, alpha.failure = 0.05,
-    short.message, warning.message, failure.message,
+    short.message = "Fail to reject '{{test_name}}', p.value = {{p_value}}",
+    warning.message = "The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
+    failure.message = "I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
+    success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
     check.warning = TRUE, ex = get.ex(),
     stud.env = ex$stud.env, ...)
 }

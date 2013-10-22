@@ -4,6 +4,7 @@
 \usage{
   test.normality(vec, short.message, warning.message,
     failure.message, ex = get.ex(), stud.env = ex$stud.env,
+    success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",
     ...)
 }
 \description{

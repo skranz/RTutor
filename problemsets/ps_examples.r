@@ -7,6 +7,7 @@
 ps.dir =  "C:/libraries/RTutor/RTutor/problemsets" # your working directory
 ps.file = "ps_examples.r" # this file
 
+#reset.ps()
 library(RTutor)
 check.problem.set("examples", ps.dir, ps.file)
 
@@ -17,7 +18,6 @@ check.problem.set("examples", ps.dir, ps.file)
 # Compute 2*5 and store it in the variable x  
 x = 2*5
 
-#hint.for("1 (a simple calculation)")
 
 #### end exercise 1 (a simple calculation)
 
@@ -39,10 +39,15 @@ beta1 = -1
 
 # i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
 
+eps = rnorm(1000,0,2)
+
 # ii) Generate a vector of endogenous prices
+
+p = rnorm(1000) + eps
 
 # iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
 
+q = beta0+beta1*p+eps
 
 
 #### end exercise 2 (simulate demand function)

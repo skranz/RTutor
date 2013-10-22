@@ -5,6 +5,7 @@
   test.H0(test.expr, p.value, test.name = "",
     alpha.warning = 0.05, alpha.failure = 0.001,
     short.message, warning.message, failure.message,
+    success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
     check.warning = TRUE, ex = get.ex(),
     stud.env = ex$stud.env, ...)
 }

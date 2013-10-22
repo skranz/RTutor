@@ -4,6 +4,7 @@
 \usage{
   test.variance(vec, true.val, test = "t.test",
     short.message, warning.message, failure.message,
+    success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!",
     ex = get.ex(), stud.env = ex$stud.env, ...)
 }
 \description{

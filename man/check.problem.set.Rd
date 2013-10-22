@@ -3,7 +3,7 @@
 \title{Checks a student problem set}
 \usage{
   check.problem.set(name, stud.path, stud.short.file,
-    reset = FALSE, game.mode = FALSE)
+    reset = FALSE)
 }
 \description{
   The command will be put at the top of a student's problem
