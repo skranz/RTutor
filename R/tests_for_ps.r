@@ -10,28 +10,40 @@ show.success.message = function(success.message,..., ex=get.ex()) {
 
 
 
-#' Test: Compare students variables with those from the given solutions
+#' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
 #' @param vars a variable name or vector of variable names
 #' @param exists shall existence be checked (similar length, class, values)
 #' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
-#' @param failure.text.add a text that will be added to all failure messages
+#' @param failure.message.add a text that will be added to all failure messages
+#' @param expr
 #' @export 
-check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
+check.var = function(vars, expr=NULL,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   failure.exists="You have not generated the variable {{var}}.",
   failure.length="Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
   failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
   failure.values = "Your variable {{var}} has wrong values.",
-  failure.text.add = NULL,
-  success.message = "Great, {{vars}} has correct {{tests}}.", 
+  failure.message.add = NULL,
+  success.message = "Great, {{vars}} has correct {{tests}}.", hint.name = NULL,
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env) {
     
-  if (!is.null(failure.text.add)) {
-    failure.exists = paste0(failure.exists,"\n", failure.text.add)
-    failure.length = paste0(failure.length,"\n", failure.text.add)
-    failure.class = paste0(failure.class,"\n", failure.text.add)
-    failure.values = paste0(failure.values,"\n", failure.text.add)
+  set.current.hint(hint.name)
+  
+  if (!is.null(failure.message.add)) {
+    failure.exists = paste0(failure.exists,"\n", failure.message.add)
+    failure.length = paste0(failure.length,"\n", failure.message.add)
+    failure.class = paste0(failure.class,"\n", failure.message.add)
+    failure.values = paste0(failure.values,"\n", failure.message.add)
   }
   
+  expr = substitute(expr)
+  if (!is.null(expr)) {
+    if (length(vars)>1)
+      stop("Error in check.var: if you provide expr, you can only check a single variable!")
+    vars.sol = list(eval(expr,stud.env))
+  } else {
+    vars.sol = lapply(vars, function(var) get(var,sol.env)) 
+  }
+  names(vars.sol) = vars
   
   if (exists != FALSE) {
     short.message = paste0("{{var}} does not exist")
@@ -42,11 +54,13 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
       }
     }
   }
+  
+  
   if (length != FALSE) {
     short.message = paste0("wrong length {{var}}: is {{length_stud}} must {{length_sol}}")
     for (var in vars) {
       var.stud = get(var,stud.env)
-      var.sol = get(var,sol.env)
+      var.sol = vars.sol[[var]]
       if (!length(var.stud)==length(var.sol)) {
         add.failure(ex,short.message, failure.length, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
         return(FALSE)
@@ -56,7 +70,7 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   if (class != FALSE) {
     for (var in vars) {
       var.stud = get(var,stud.env)
-      var.sol = get(var,sol.env)
+      var.sol = vars.sol[[var]]
       short.message = "wrong class {{var}}: is {{class_stud}} must {{class_sol}}"
       class.stud = class(var.stud)[1]
       class.sol = class(var.sol)[1]
@@ -72,7 +86,8 @@ check.var = function(vars,exists=FALSE, length=FALSE, class=FALSE, values=FALSE,
   if (values != FALSE) {
     for (var in vars) {
       var.stud = get(var,stud.env)
-      var.sol = get(var,sol.env)
+      var.sol = vars.sol[[var]]
+
       
       if (! all(var.stud==var.sol)) {
         add.failure(ex,"wrong values of {{var}}", failure.values, var=var)
@@ -176,8 +191,10 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
   warning.message="The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
   failure.message="I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
   success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-  check.warning=TRUE, ex=get.ex(),stud.env = ex$stud.env,...)
+  check.warning=TRUE, ex=get.ex(),stud.env = ex$stud.env, hint.name=NULL,...)
 {
+  set.current.hint(hint.name)
+  
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
     if (test.name=="") {
@@ -218,8 +235,10 @@ test.H0 = function(test.expr,p.value,test.name="",
                   short.message,warning.message,failure.message,
                    success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
                    
-                  check.warning=TRUE,
+                  check.warning=TRUE, hint.name=NULL,
                   ex=get.ex(),stud.env = ex$stud.env,...) {
+  set.current.hint(hint.name)
+  
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
     if (test.name=="") {
@@ -317,8 +336,10 @@ test.normality = function(vec,short.message,warning.message,failure.message,ex=g
 
 #' Test: Does a certain condition on the stud's generated variables hold true
 #' @export
-holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",ex=get.ex(),stud.env = ex$stud.env,...) {
+holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",hint.name=NULL,ex=get.ex(),stud.env = ex$stud.env,...) {
   restore.point("holds.true")
+  set.current.hint(hint.name)
+  
   cond = substitute(cond)
   cond.str = deparse(cond)
   if (!all(eval(cond,stud.env))) {

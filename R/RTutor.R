@@ -13,22 +13,26 @@ add.hint = function(hint.name, code,cond=NULL, ex=get.ex()) {
   ex$hints[[hint.name]]=hint
 }
 
-#' Can be called by a student to see a hint for the specified exercise.
-#' 
-#' Preliminary. The procedure how hints are given may well change. 
+#' Shows a hint for the current problem.
 #' @export
-hint.for = function(ex.name,ps=get.ps()) {
-  restore.point("hint.for")
-  ex = ps$ex[[ex.name]]
-  hint.id = min(ex$prev.hint + 1, length(ex$hints))
-  if (hint.id==0) {
-    message("Sorry, but I have no hints stored...")
+hint = function() {
+  ex=get.ex()
+  ps=get.ps()
+  
+  hint.name = ex$hint.name
+  if (is.null(hint.name)) {
+    message("Sorry, but there is no hint for your current problem.")
+    return()
   }
-  hint = ex$hints[[hint.id]]
-  cat(paste0("\nHint ", hint$name,":"))
+  hint = ex$hints[[hint.name]]
+  #cat(paste0("\nHint ", hint$name,":"))
   eval(hint$code,ex$sol.env)
 }
 
+#' Called by a test, sets the current hint
+set.current.hint = function(hint.name=NULL, ex=get.ex()) {
+  ex$hint.name = hint.name
+}
 
 print.Problemset = function(ps) {
   print(as.list(ps))

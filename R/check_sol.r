@@ -51,7 +51,10 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE) {
     ret = check.exercise(ex.name,new.code[ex.name])
     log.exercise(ex)
     if (ret==FALSE) {
-      stop(ex$failure.message, call.=FALSE, domain=NA)
+      message = ex$failure.message
+      if (!is.null(ex$hint.name))
+        message = paste0(message,"\nIf you want a hint, type hint() in the R console and press Enter.")
+      stop(message, call.=FALSE, domain=NA)
     } else if (ret=="warning") {
       message = paste0(ex$warning.messages,collapse="\n\n")
       message(paste0("Warning: ", message))

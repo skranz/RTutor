@@ -23,10 +23,9 @@ w = rep (5,91)
 e = q/w
 
 #$ tests ######################################################
-check.var("x", exists=TRUE,length=TRUE, values=TRUE, class = TRUE)
-show.success.message("Wow x looks great!")
-check.var("y", exists=TRUE,length=TRUE, values=TRUE, class = TRUE)
-check.var("q", exists=TRUE,length=TRUE, values=TRUE, class = TRUE)
+check.var("x", exists=TRUE,length=TRUE, values=TRUE, class = TRUE, hint.name="1")
+check.var("y", exists=TRUE,length=TRUE, values=TRUE, class = TRUE, hint.name="1")
+check.var("q", exists=TRUE,length=TRUE, values=TRUE, class = TRUE, hint.name="seq")
 check.var("w", exists=TRUE,length=TRUE, values=TRUE, class = TRUE)
 check.var("e", exists=TRUE,length=TRUE, values=TRUE, class = TRUE)
 
@@ -36,6 +35,9 @@ add.hint("1",{cat('
 y = 2+3
 or 
 y <- 2+3"
+')})
+add.hint("seq",{cat('
+Search in Google for "R generate a sequence of numbers" and check the shown mailing list answers or R help files for a command that can generate such sequences.
 ')})
 #$ end_exercise
 ###############################################################
@@ -57,22 +59,10 @@ m[2,]= a
 m.squ = m%*%t(m)
 #$ tests ######################################################
 check.var("z", exists=TRUE,length=TRUE, class = TRUE)
-check.var("a", exists=TRUE,length=TRUE, class = TRUE)
-holds.true({
-   a.shall = z*x
-   a.shall == a
-  },
-  failure.message = "Sorry, you have not specified the correct equation a = x*z"
-)
+check.var("a", {x*z}, exists=TRUE,length=TRUE, class = TRUE, values = TRUE)
 check.var("m", exists=TRUE,length=TRUE, class = TRUE)
-check.var("m.squ", exists=TRUE,length=TRUE, class = TRUE)
+check.var("m.squ",m%*%t(m), exists=TRUE,length=TRUE, class = !TRUE, values=TRUE)
 
-holds.true({
-  m.squ.shall = m%*%(t(m))
-  m.squ.shall == m.squ
-},
-           failure.message = "Sorry, you have not multiplicated correctly"
-)
 
 
 #$ hints ######################################################
@@ -102,31 +92,18 @@ t = c(r[1,1]^2,r[2,2]^2,r[3,3]^2,r[4,4]^2)
 
 check.var("n", exists=TRUE,length=TRUE, class = TRUE)
 check.var("r", exists=TRUE,length=TRUE, class = TRUE)
+check.var("index", exists=TRUE,length=TRUE, class = TRUE, values=TRUE,
+          expr = c(sum(n[1,]),mean(n[2,]), max(n[3,]), var(n[4,])),
+          hint.name = "hint.index")
 
-holds.true({
-  index.shall = c(sum(n[1,]),mean(n[2,]), max(n[3,]), var(n[4,]))
-  index.shall == index
-},
-           failure.message = "Sorry, one of your entries in index is wrong.
-Try to check for hints for this exercise with
-the hint.for function"
-)
-holds.true({
-  r.shall = n*index
-  r.shall == r
-},
-           failure.message = "Sorry, r is not defined correctly"
-)
-holds.true({
-  t.shall = c(r[1,1]^2,r[2,2]^2,r[3,3]^2,r[4,4]^2)
-  t.shall == t
-},
-           failure.message = "Sorry, t is not defined correctly"
-)
+check.var("r", exists=TRUE,length=TRUE, class = TRUE, values=TRUE,
+          expr = n*index)
 
+check.var("t", exists=TRUE,length=TRUE, class = TRUE, values=TRUE,
+          expr =c(r[1,1]^2,r[2,2]^2,r[3,3]^2,r[4,4]^2))
 
 #$ hints ######################################################
-add.hint("2",{cat('
+add.hint("hint.index",{cat('
  The following code is used to define the mean variance sums and 
  maxima for a vector x
  m = mean(x)

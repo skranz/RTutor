@@ -25,10 +25,10 @@ check.problem.set("intro", ps.dir, ps.file)
 x = 5
 y  = 3*x
 
-q = seq(1,10,by = 0.1)
+q = seq(1,10,by = 0.2)
 w = rep(5,91)
 
-e = q / w
+e = q / w 
 
 #### end exercise a)
 
@@ -45,7 +45,7 @@ e = q / w
 # iv) F?hre die Matrixmultiplikation m.squ = m*m' durch
 
 z = 1:5
-a = x*z
+a = z*x
 m = rbind(z,a)
 m.squ = m %*% t(m)
 
@@ -61,9 +61,13 @@ m.squ = m %*% t(m)
 # der ersten Zeile der Matrix n ist, der zweite Eintrag der Mittelwert
 # von Zeile 2, der dritte soll das Maximum von Zeile 3 enthalten
 # und der 4. die Varianz der 4. Zeile.
-# hint.for("c)")
 #iii) Belege Variable r durch eine elementweise Multiplikation von m und index
 # iv) Sei t ein Vektor aus den quadrierten Werten der Diagonalen von r
+
+n = matrix(16,4,4)
+index = c(mean(n[1,]), mean(n[2,]), max(n[3,]), var(n[4,]))
+r = n * index
+t = diag(r)^2
 
 #### end exercise c)
 
