@@ -894,3 +894,59 @@
 "stud.code": "###########################################\n\n#i) Erstelle eine 4x4 Matrix n und f?lle sie mit beliebigen Werten\n#ii) Erstelle einen Vektor index, dessen erster Eintrag die Summe\n# der ersten Zeile der Matrix n ist, der zweite Eintrag der Mittelwert\n# von Zeile 2, der dritte soll das Maximum von Zeile 3 enthalten\n# und der 4. die Varianz der 4. Zeile.\n#iii) Belege Variable r durch eine elementweise Multiplikation von m und index\n# iv) Sei t ein Vektor aus den quadrierten Werten der Diagonalen von r\n\nn = matrix(16,4,4)\nindex = c(mean(n[1,]), mean(n[2,]), max(n[3,]), var(n[4,]))\nr = n * index\nt = diag(r)^2\n",
 "warnings": [] 
 }
+{
+ "ps.name": "intro",
+"ex.name": "b)",
+"date": "2013-10-23 21:27:06",
+"stud.seed": 1382556426,
+"code.changed": false,
+"failure.short": "No failure message recorded",
+"checks":      1,
+"attempts":      1,
+"solved": true,
+"was.solved": true,
+"stud.code": "###########################################\n\n# i) Erstelle einen Vektor z mit den f?nf beliebigen Werten\n# ii) Multiplizere den Vektor mit x und speichere das Ergebnis \n#     in a\n# iii) Erstelle eine Matrix 2x5 m aus den Vektoren z und a\n# iv) F?hre die Matrixmultiplikation m.squ = m*m' durch\n\nz = 1:5\na = z*x\nm = rbind(z,a)\nm.squ = m %*% t(m)\n",
+"warnings": [] 
+}
+{
+ "ps.name": "intro",
+"ex.name": "a)",
+"date": "2013-10-23 21:27:22",
+"stud.seed": 1382556442,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      2,
+"attempts":      2,
+"solved": true,
+"was.solved": true,
+"stud.code": "###########################################\n\n# Grundlagen\n# i) Erstelle zwei Variablen x und y und belege x mit dem Wert 5\n# und y mit dem Wert aus (1+2)*x\n# ii) Erstelle einen Vektor q mit den Zahlen von 1 - 10 mit Schrittweite 0.1\n# iii) Erstelle einen Vektor w der aus 91 F?nfen besteht\n# iv) Erstelle den Vektor e als Quotient von q und w\n#hint.for(\"a)\")\n\nx = 5\ny  = 3*x\n\nq = seq(1,10,by = 0.1)\nw = rep(5,91)\n\ne = q / w \n",
+"warnings": [] 
+}
+{
+ "ps.name": "intro",
+"ex.name": "a)",
+"date": "2013-10-23 21:27:28",
+"stud.seed": 1382556448,
+"code.changed": true,
+"failure.short": "wrong length q: is 46 must 91",
+"checks":      3,
+"attempts":      2,
+"solved": false,
+"was.solved": true,
+"stud.code": "###########################################\n\n# Grundlagen\n# i) Erstelle zwei Variablen x und y und belege x mit dem Wert 5\n# und y mit dem Wert aus (1+2)*x\n# ii) Erstelle einen Vektor q mit den Zahlen von 1 - 10 mit Schrittweite 0.1\n# iii) Erstelle einen Vektor w der aus 91 F?nfen besteht\n# iv) Erstelle den Vektor e als Quotient von q und w\n#hint.for(\"a)\")\n\nx = 5\ny  = 3*x\n\nq = seq(1,10,by = 0.2)\nw = rep(5,91)\n\ne = q / w \n",
+"warnings": [] 
+}
+{
+ "ps.name": "intro",
+"ex.name": "a)",
+"date": "2013-10-23 21:29:24",
+"stud.seed": 1382556564,
+"code.changed": true,
+"failure.short": "No failure message recorded",
+"checks":      4,
+"attempts":      2,
+"solved": true,
+"was.solved": true,
+"stud.code": "###########################################\n\n# Grundlagen\n# i) Erstelle zwei Variablen x und y und belege x mit dem Wert 5\n# und y mit dem Wert aus (1+2)*x\n# ii) Erstelle einen Vektor q mit den Zahlen von 1 - 10 mit Schrittweite 0.1\n# iii) Erstelle einen Vektor w der aus 91 F?nfen besteht\n# iv) Erstelle den Vektor e als Quotient von q und w\n#hint.for(\"a)\")\n\nx = 5\ny  = 3*x\n\nq = seq(1,10,by = 0.1)\nw = rep(5,91)\n\ne = q / w \n",
+"warnings": [] 
+}

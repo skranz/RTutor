@@ -91,7 +91,6 @@ t = c(r[1,1]^2,r[2,2]^2,r[3,3]^2,r[4,4]^2)
 #$ tests ######################################################
 
 check.var("n", exists=TRUE,length=TRUE, class = TRUE)
-check.var("r", exists=TRUE,length=TRUE, class = TRUE)
 check.var("index", exists=TRUE,length=TRUE, class = TRUE, values=TRUE,
           expr = c(sum(n[1,]),mean(n[2,]), max(n[3,]), var(n[4,])),
           hint.name = "hint.index")

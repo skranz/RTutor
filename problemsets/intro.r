@@ -25,7 +25,7 @@ check.problem.set("intro", ps.dir, ps.file)
 x = 5
 y  = 3*x
 
-q = seq(1,10,by = 0.2)
+q = seq(1,10,by = 0.1)
 w = rep(5,91)
 
 e = q / w 
