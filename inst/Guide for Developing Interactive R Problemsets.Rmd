@@ -12,7 +12,9 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 ### 1. Install the newest version of RTutor
 You first need to install some other packages. Simply run in R
 ```{r eval=FALSE}
-install.packages("devtools","whisker","stringr")
+install.packages("devtools")
+install.packages("whisker")
+install.packages("stringr")
 
 ```
 To install the newest version of restorepoint and RTutor from Github run then
@@ -94,7 +96,7 @@ If you open "my ps_struc.r", you see an example structure of a problem set. Here
 x <- 2*5
 
 #$ tests ######################################################
-check.var("x", exists=TRUE,length=TRUE, values=TRUE)
+check.var("x", exists=TRUE,length=TRUE, values=TRUE,hint.name="Hint 1")
 
 #$ hints ######################################################
 add.hint("Hint 1",{cat('
@@ -186,7 +188,7 @@ The simple test in our example below, checks the following:
 ```{r eval=FALSE,tidy=FALSE}
 #$ tests ###################################################
 
-check.var("x", exists=TRUE,length=TRUE, values=TRUE)
+check.var("x", exists=TRUE,length=TRUE, values=TRUE, hint.name="Hint 1")
 
 ```
 If one test fails, e.g. if x does not exist. The user will be shown a standard failure message and no more code will be checked. We consider a student's solution "correct" if no test fails, i.e. we are not able to falsify the correctness.
@@ -194,11 +196,11 @@ If one test fails, e.g. if x does not exist. The user will be shown a standard f
 Good and well designed tests are the key component of a good interactive problem set. There already exist several functions, like check.var, that can be used to perform different sorts of tests. They are explained in some detail in the next section.
 If more functions are needed, e.g. a function that scans the code of the user for a particular command, send me an email or file an issue on GitHub.
 
+The parameter hint.name can specify a hint that will be shown to the user if the test fails and the user then types hint() in the R console.
+
 #### #$ hints
 
-In the code below the #$ hints command, you can specify several hints that can be shown to the student.  You can call here the function add.hint that allows to add a hint to the exercise.
-
-The example generates a hint, that will give the user the solution to a similar exercise and that should be sufficient to solve the current exercise, even without any R knowledge.
+In the code below the #$ hints command, you can specify several hints that can be shown if the student types hint() in the R console after a failed test.  In this section you specify hints using the add.hint function:
 
 ```{r eval=FALSE,tidy=FALSE}
 #$ hints ###################################################
@@ -209,7 +211,7 @@ y = 2+3"
 ')})
 ```
 
-I have not yet well worked out when and how hints shall be shown. One could think of the user asking for a hint, by calling a function hint(). Alternatively, one could offer the student a hint if he fails to often. Any ideas are very welcome.
+The first argument is a name of the hint, that can be used in the argument hint.name of a test to assign the hint to a specific test. (One hint can be assigned to multiple tests.)
 
 #### #$ end exercise
 
@@ -276,16 +278,16 @@ check.var(c("p"),
           exists=TRUE, length=TRUE, class=TRUE)
 
 test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
-                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.")
+                 failure.message=" I couldn't significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are 'significantly' endogenous.",
+                 success.message="Great, it looks as if p is indeed endogenous!")
 
 # Check q
 check.var(c("q"),
           exists=TRUE, length=TRUE, class=TRUE)
 
-holds.true({
-  q.shall = beta0+beta1*p+eps
-  q == q.shall
-  },  failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)"
+check.var("q", expr = beta0+beta1*p+eps,
+      failure.message = "Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)",
+      success.message = "Great, q looks correct!"
 )
 
 #$ hints ######################################################

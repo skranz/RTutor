@@ -14,7 +14,7 @@
 x <- 2*5
 
 #$ tests ######################################################
-check.var("x", exists=TRUE,length=TRUE, values=TRUE)
+check.var("x", exists=TRUE,length=TRUE, values=TRUE,hint.name="Hint 1")
 
 #$ hints ######################################################
 add.hint("Hint 1",{cat('

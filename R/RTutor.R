@@ -15,11 +15,8 @@ add.hint = function(hint.name, code,cond=NULL, ex=get.ex()) {
 
 #' Shows a hint for the current problem.
 #' @export
-hint = function() {
-  ex=get.ex()
-  ps=get.ps()
+hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
   
-  hint.name = ex$hint.name
   if (is.null(hint.name)) {
     message("Sorry, but there is no hint for your current problem.")
     return()
