@@ -6,9 +6,7 @@
     stud.short.file = paste0(prefix, name, ".r"),
     log.file = paste0(prefix, name, ".log"),
     state.file = paste0(prefix, name, ".Rdata"),
-    structure.path = stud.path,
-    structure.file = paste0(prefix, name, "_struc.r"),
-    prefix = "")
+    prefix = "", require.stud.file = TRUE)
 }
 \arguments{
   \item{name}{the name of the problem set}

@@ -7,5 +7,5 @@ library(whisker)
 library(RTutor)  
 
 setwd("{{ps_path}}")
-ps = init.problem.set("{{ps_name}}","{{ps_path}}")
-create.stud.ps(ps,ps.dir = "{{ps_path}}")
+create.empty.ps("{{ps_name}}",dir = "{{ps_path}}")
+ps = get.ps()

@@ -1,21 +1,15 @@
-\name{check.var}
-\alias{check.var}
+\name{check.expr}
+\alias{check.expr}
 \title{Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution}
 \usage{
-  check.var(vars, expr = NULL, check.all = FALSE,
-    exists = check.all, length = check.all,
-    class = check.all, values = check.all,
-    tol = .Machine$double.eps^0.5,
-    failure.exists = "You have not yet generated the variable {{var}}.",
-    failure.length = "Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
-    failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
-    failure.values = "Your variable {{var}} has wrong values.",
-    failure.message.add = NULL,
-    success.message = "Great, {{vars}} has correct {{tests}}.",
+  check.expr(check.expr, correct.expr,
+    failure.message = "{{check_expr}} has the wrong values!",
+    success.message = "Great, {{check_expr}} seems correct.",
     hint.name = NULL, ex = get.ex(),
     stud.env = ex$stud.env, verbose = FALSE,
-    unsubst.expr = NULL, str.expr = NULL,
-    sol.env = ex$sol.env)
+    unsubst.check.expr = NULL, unsubst.correct.expr = NULL,
+    str.check.expr = NULL, str.correct.expr = NULL,
+    sol.env = ex$sol.env, tol = .Machine$double.eps^0.5)
 }
 \arguments{
   \item{vars}{a variable name or vector of variable names}

@@ -1,12 +1,12 @@
 \name{create.stud.ps}
 \alias{create.stud.ps}
-\title{Generate a problem set skeleton for a student and save it in a file}
+\title{Internal function to generate a problem set skeleton for a student and save it in a file}
 \usage{
   create.stud.ps(ps, file = ps$stud.file,
     ps.dir = "C:/...")
 }
 \description{
-  Generate a problem set skeleton for a student and save it
-  in a file
+  Internal function to generate a problem set skeleton for
+  a student and save it in a file
 }
 

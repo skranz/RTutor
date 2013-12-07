@@ -5,9 +5,22 @@
 #' 
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE) {  
+check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST") {  
   restore.point("check.problem.set", deep.copy=FALSE)
+  if (set.warning.1) {
+    if (options()$warn<1)
+      options(warn=1)
+  }
+  
+  if (user.name=="ENTER A USER NAME HERE") {
+    stop('You have not picked a user name. Change the variable user.name in your problem set file from ""ENTER A USER NAME HERE" to some user.name that you can freely pick.')
+  }
+  
   ps = get.or.init.problem.set(name,stud.path, stud.short.file, reset)
+
+  user = get.user(user.name)  
+  
+  
   
   ps$stud.code = readLines(ps$stud.file)
   
@@ -172,6 +185,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
 #' Extracts the stud's code of a given exercise
 #' @export
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
+  restore.point("extract.exercise.code")
   txt = stud.code
   start.command = extract.command(txt,paste0("#### Exercise ",ex.name))
   if (is.null(start.command)) {

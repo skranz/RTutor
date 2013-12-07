@@ -50,7 +50,15 @@ get.empty.ex.code = function(ex) {
   )      
 } 
 
-#' Generate a problem set skeleton for a student and save it in a file
+#' Generate an problem set for a student in folder dir
+#' @export
+create.empty.ps = function(ps.name, dir = getwd()) {
+  ps = init.problem.set(ps.name,dir, require.stud.file=FALSE)
+  create.stud.ps(ps,ps.dir=dir)
+  message(paste0("I generated an empty problem set file ", ps$stud.file, ". You can open it in RStudio an work on it."))
+}
+
+#' Internal function to generate a problem set skeleton for a student and save it in a file
 #' @export
 create.stud.ps = function(ps, file = ps$stud.file, ps.dir="C:/...") {
   restore.point("create.stud.ps")
@@ -58,15 +66,23 @@ create.stud.ps = function(ps, file = ps$stud.file, ps.dir="C:/...") {
   ex.str = lapply(ps$ex, get.empty.ex.code)
   
   str = paste0("#### Problemset ", ps$name,"\n\n",
-               '
+'
+# Remove comments if you need to install packages
+# install.packages("devtools");install.packages("whisker");install.packages("stringr")
+# library(devtools)
+# install_github(repo = "restorepoint", username = "skranz")
+# install_github(repo = "RTutor", username = "skranz")
+
 # To check your solutions in RStudio save (Ctrl-s) and then source (Ctrl-Shift-s)
 # If you check "Source on Save" in RStudio you just have to save (Ctrl-s)
 
-ps.dir =  "',ps.dir,'" # your working directory
+ps.dir =  "',ps.dir,'" # the folder in which this file is stored
 ps.file = "', ps$prefix, ps$name,'.r" # this file
+user.name = "ENTER A USER NAME HERE" # your user name
+
 
 library(RTutor)
-check.problem.set("',ps$name,'", ps.dir, ps.file)
+check.problem.set("',ps$name,'", ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ', paste0(ex.str,collapse="\n"))
   
   cat(str)

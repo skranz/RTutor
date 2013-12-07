@@ -13,7 +13,9 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 You first need to install some other packages. Simply run in R
 
 ```s
-install.packages("devtools", "whisker", "stringr")
+install.packages("devtools")
+install.packages("whisker")
+install.packages("stringr")
 
 ```
 

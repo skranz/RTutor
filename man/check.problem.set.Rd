@@ -3,7 +3,8 @@
 \title{Checks a student problem set}
 \usage{
   check.problem.set(name, stud.path, stud.short.file,
-    reset = FALSE)
+    reset = FALSE, set.warning.1 = TRUE,
+    user.name = "GUEST")
 }
 \description{
   The command will be put at the top of a student's problem

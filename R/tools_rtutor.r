@@ -1,5 +1,13 @@
 # Some tool functions
 
+print.example = function(code) {
+  cat(paste0("\n",code,"\n"))
+  print(eval(parse(text=code,srcfile=NULL)))
+}
+
+examples.print.example = function() {
+  print.example('rep(c("A","B","C"),length.out = 10)')
+}
 
 signif.or.round = function(val, digits=3) {
   if (val>10^digits)

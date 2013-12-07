@@ -6,7 +6,7 @@
     failure.message = "Failure in holds.true",
     success.message = "Great, the condition {{cond}} holds true in your solution!",
     hint.name = NULL, ex = get.ex(),
-    stud.env = ex$stud.env, ...)
+    stud.env = ex$stud.env, cond.str = NULL, ...)
 }
 \description{
   Test: Does a certain condition on the stud's generated

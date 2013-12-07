@@ -9,4 +9,4 @@ Description: Tools for creating R exercises with automatic assessment of student
 License: Programm code: GPL >= 2.0
          Contributed problem sets: The problem sets can be freely used for own studies.
 			When using the contributed problem sets for teaching other persons, please send me a brief email and acknowledge the original author. 
-Imports: restorepoint, whisker, stringr
+Depends: restorepoint, whisker, stringr
