@@ -413,7 +413,7 @@ test.mean = function(vec, true.val, test = "t.test", short.message,warning.messa
     failure.message = "{{var}} has wrong mean! \n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypothesis were true, it would be very unlikely (p.value={{p_value}}) to get a sample mean as extreme as yours!"
   }
   if (missing(warning.message)) {
-    warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
+    warning.message = "{{var}} has a suspicious mean!\n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
   }
   test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,ex=ex,
         var = var.name, mean_stud = mean(vec), mean_sol=true.val,...)
@@ -425,6 +425,10 @@ test.normality = function(vec,short.message,warning.message,failure.message,ex=g
   call.str = as.character(match.call())
   restore.point("test.normality")
   var.name=call.str[2]
+  
+  # Cannot use more than 5000 observations
+  if (length(vec)>5000)
+    vec = vec[sample.int(n=length(vec), size=5000)]
   p.value = shapiro.test(vec)$p.value
   
   if (missing(short.message)) {

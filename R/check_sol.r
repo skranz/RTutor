@@ -5,12 +5,14 @@
 #' 
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST") {  
+check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive()) {  
   restore.point("check.problem.set", deep.copy=FALSE)
+  if (!do.check) return("not checked")
   if (set.warning.1) {
     if (options()$warn<1)
       options(warn=1)
   }
+  
   
   if (user.name=="ENTER A USER NAME HERE") {
     stop('You have not picked a user name. Change the variable user.name in your problem set file from ""ENTER A USER NAME HERE" to some user.name that you can freely pick.')
@@ -168,7 +170,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
     }
   }
   if (had.warning) {
-    message("\n Hmm... overall, I am not sure if your solution is right or not, look at the warnings.")
+    message("\nHmm... overall, I am not sure if your solution is right or not, look at the warnings.")
     return(invisible("warning"))
   } else {
     cat(paste0("\nCongrats, I could not find an error in exercise ", ex$name,"!"))
@@ -187,11 +189,11 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.exercise.code")
   txt = stud.code
-  start.command = extract.command(txt,paste0("#### Exercise ",ex.name))
+  start.command = extract.command(txt,paste0("#' ## Exercise ",ex.name))
   if (is.null(start.command)) {
     if (warn.if.missing)
       message(paste0("Warning: Exercise ", ex.name, " not found. Your code must have the line:\n",
-                     paste0("#### Exercise ",ex.name)))
+                     paste0("#' ## Exercise ",ex.name)))
     return(NA)
   }
   end.command =  extract.command(txt,paste0("#### end exercise ",ex.name))
