@@ -1,4 +1,14 @@
-give.award = function(award, user = get.user()) {
+
+
+tell.story = function(text) {
+  
+}
+
+give.prize = function(prize.text=NULL, prize.code=NULL,...) {
+  
+}
+
+give.award = function(award, prize.text = NULL, prize.code = NULL, user = get.user()) {
   if (has.award(award, user))
     return(TRUE)
   
@@ -6,6 +16,8 @@ give.award = function(award, user = get.user()) {
 *************************************************
 * Congrats, you earned the award "', award, '"
 *************************************************
+
+PS: awards() shows all your awards
 '))
   user$awards = c(user$awards,award)
   update.user()

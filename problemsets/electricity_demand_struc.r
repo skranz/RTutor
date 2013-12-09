@@ -10,8 +10,7 @@
 #' - Es gibt folgende lineare Nachfragefunktion
 #'    D =beta0+beta1*p+beta2*peak+eps
 
-#' Wir haben folgende Parameterwerte
-
+# Wir haben folgende Parameterwerte
 beta0 = 100
 beta1 = -1
 beta2 = 1
@@ -43,9 +42,11 @@ sigma.eps = 5
 
 #' vi) Zeigen Sie mit Hilfe des Befehls summary(reg) eine detailierte Analyse der Regression.
 
+# Code hier einfügen...
 
 #' vii) Schätzen Sie eine verkürzte Schätzgleichung in der Sie die nachgefragte Menge D nur auf den Preis p regressieren. Speichern Sie das Ergbnis in der Variable reg2 und überlegen Sie zuvor theoretisch, ob hier ein Endogenitätsproblem besteht und ob der KQ-Schätzer entsprechend konsistent oder inkonsistent ist. Vergleichen Sie Ihre theoretische Überlegung mit dem Regressionsergebniss.
 
+# Code hier einfügen...
 
 #$ solution ###################################################
 
@@ -134,8 +135,7 @@ add.hint("peak.hint",{
 #' - Die Preise p sollen ähnlich wie im Merrit-Order den variablen Kosten des teuersten produzierenden Kraftwerks entsprechen.
 #' - Simulieren und schätzen Sie dieses neue Modell ähnlich wie in Auggabe 5.4
 
-#' Wir haben folgende Parameterwerte
-
+# Wir haben folgende Parameterwerte
 beta0 = 100
 beta1 = -1
 beta2 = 1
@@ -162,21 +162,23 @@ sigma.eps = 5 # Standardabweichung der Nachfrageschocks
 
 #' v) Führen Sie mit dem Befehl lm eine lineare Regression durch mit der Sie die Parameter der Nachfragefunktion schätzen. Speichern Sie das Ergebniss der Regression in der Variable 'reg' ab.
 
-
 # Code hier einfügen...
-
 
 #' vi) Zeigen Sie mit Hilfe des Befehls summary(reg) eine detailierte Analyse der Regression.
 
+# Code hier einfügen...
 
 #' vii) Schätzen Sie eine verkürzte Schätzgleichung in der Sie die nachgefragte Menge D nur auf den Preis p regressieren. Speichern Sie das Ergbnis in der Variable reg2 und überlegen Sie zuvor theoretisch, ob hier ein Endogenitätsproblem besteht und ob der KQ-Schätzer entsprechend konsistent oder inkonsistent ist. Vergleichen Sie Ihre theoretische Überlegung mit dem Regressionsergebniss.
 
+# Code hier einfügen...
+
 #' viii) Nutzen Sie den Befehl confint um für reg2 die 99% Konfidenzintervalle für beide geschätzten Koeffizienten zu berechnen. Speichern Sie das Konfidenzintervall in der Variable ci2 Wenn alle Anahmen des linearen Regressionsmodells erfüllt sind, haben diese Konfidenzintervalle die Eigenschaft, dass in 99% der Fälle die wahren Koeffizienten beta0 und beta1 in diesen Konfidenzintervallen liegen. Scheinen die Konfidenzintervalle für reg2 korrekt zu sein oder nicht? Vergleichen Sie mit dem Konfidenzintervallen für reg. 
 
-ci2 = CHANGE_THIS_VALUE    # 99% Konfidenzinterval für reg2
-ci2
 
-# Zeige nun noch Konfidenzintervall für reg
+# Code unten anpassen...
+# ci2 = ...    # 99% Konfidenzinterval für reg2
+
+# Zeige auch noch Konfidenzintervall für reg
 
 
 #$ solution ###################################################
@@ -193,7 +195,7 @@ p = runif(T,0,1) + 0.5*peak
 D = beta0+beta1*p+beta2*peak + eps
 reg = lm(D~p+peak)
 reg2 = lm(D~p)
-
+ci2 = confint(reg2,level = 0.99)
 
 #$ tests ######################################################
 
@@ -239,7 +241,7 @@ check.regression("reg2","lm(D~p)", failure.message = "Your regression reg2 seems
 check.var("ci2",exists=TRUE, length=TRUE, class=TRUE)
 
 check.var("ci2",confint(reg2,level=0.99),values=TRUE, failure.message="Your confidence intervals ci2 for reg2 seem incorrect. Have you set the confidence level to 99%? Take a look at the help for confint to learn how to do that.")
-
+give.award("Confidence Shaker")
 
 #$ hints ######################################################
 add.hint("rnorm",{
@@ -270,13 +272,12 @@ add.hint("peak.hint",{
 #' - Preise sollen nun gemäß des Merrit-Order Modells bestimmt werden
 
 #' - Die Merrit-Order soll wie folgt beschrieben sein:
-#'    c[t](Q[t])=Q[t]-gamma*w[t]
+#'    c[t]= Q[t]-gamma*w[t]
 #' – c[t]: Grenzkosten der Stromproduktion (variable Kosten des teuersten noch produzierenden Kraftwerks) in Periode t = Preis in Periode t
 #' - Q[t]: Produzierte Strommenge in Periode t
 #' – w[t] <= Q[t] gelieferte Windenergie in Periode t
 
-#' Wir haben folgende Parameterwerte
-
+# Wir haben folgende Parameterwerte
 beta0 = 100
 beta1 = -1
 beta2 = 1
@@ -287,6 +288,7 @@ sigma.eps = 5 # Standardabweichung der Nachfrageschocks
 
 #' i) Simulieren Sie T normalverteilte Nachfrageshocks eps mit Standardabweichung sigma.eps und Mittelwert 0
 
+# Code hier einfügen...
 
 #' ii) Generieren Sie einen Vektor peak der Länge T der abwechselnd jeweils eine 0 und eine 1 enthält
 
@@ -306,9 +308,7 @@ sigma.eps = 5 # Standardabweichung der Nachfrageschocks
 
 #' vi) Schätzen Sie die Nachfragefunktion und speichern Sie das Ergebniss der Regression in der Variable 'reg' ab. Überlegen Sie zuvor theoretisch, ob hier ein Endogenitätsproblem besteht und ob der KQ-Schätzer entsprechend konsistent oder inkonsistent ist. Vergleichen Sie Ihre theoretische Überlegung mit dem Regressionsergebniss.
 
-
 # Code hier einfügen...
-
 
 
 #$ solution ###################################################
@@ -350,6 +350,8 @@ check.var("peak",exists=TRUE, length=TRUE, class=TRUE, values=TRUE, hint.name="p
 
 # Check p
 check.var("p",gamma/(1-beta1*gamma)*(beta0+beta2*peak-w+eps),,exists=TRUE, length=TRUE, class=TRUE,values = TRUE, hint.name = "price.hint")
+
+give.award("Equilibrium Calculator")
 
 
 # Check D

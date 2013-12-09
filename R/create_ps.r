@@ -76,6 +76,7 @@ create.stud.ps = function(ps, file = ps$stud.file, ps.dir="C:/...") {
 
 # Remove comments below if you need to install packages
 # install.packages('devtools');install.packages('whisker');install.packages('stringr')
+# install.packages('RJSONIO');
 # library(devtools)
 # install_github(repo = 'restorepoint', username = 'skranz')
 # install_github(repo = 'RTutor', username = 'skranz')
