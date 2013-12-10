@@ -1,5 +1,10 @@
 # Direct testing functions
 
+#' Tests whether a package is loaded. Not yet implemented for speed reasons
+#' @export
+check.package = function(package) {
+  return(TRUE)
+}
 
 #' Simply shows a success message when this test is reached for the first time!
 #' @export 
@@ -8,7 +13,7 @@ show.success.message = function(success.message,..., ex=get.ex()) {
   return(TRUE)
 }
 
-check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct.")) {
+check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct."), tol = 1e-10) {
   restore.point("check.regression")
   
   set.current.hint(hint.name)
@@ -22,7 +27,7 @@ check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.e
     coef2 = coef(',str.expr,')
     if (length(coef1) != length(coef2))
       return(FALSE)
-    all.equal(sort(coef1),sort(coef2), check.attributes=FALSE) & setequal(names(coef1),names(coef2))
+    isTRUE(max(sort(coef1)-sort(coef2))<',tol,') & setequal(names(coef1),names(coef2))
   }
   ')
   ret = holds.true(cond.str = cond.str, success.message = success.message,

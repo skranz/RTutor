@@ -120,6 +120,12 @@ awards.details = function() {
 
 "Omitted Variable Bias" = "You have run an OLS regression where you omitted (left out) an explanatory variable that is correlated with another explanatory variable. Such a story cannot end well... The omitted variable becomes part of the error term, the error term is then correlated with an explanatory variable, you get an endogeniety problem and your OLS estimate is inconsistent and biased!",
 
+"Playing the Wind" = "Musicians may use a piano, violine or trumpet as instrument, you used the wind directly!",
+
+"Two stages for Consistency" = "You consistently estimated a demand equation with an endogenous price via a manual implementation of the 2SLS (two stage least squares) procedure!",
+
+"Consistent IV" = "You consistently estimated a demand function with an endogenous price with an instrumental variable estimator using the ivreg function in the package AER. Better use ivreg instead of manual 2SLS (two stage least squares) since it will have correct standard errors.",
+
 "An Inconsistent Demand" = "You have estimated via OLS a demand function with an endogenous price, which was simulated with a simple market model. And guess what? You got an inconsistent estimate!"
     )
 }
