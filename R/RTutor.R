@@ -49,7 +49,7 @@ get.or.init.problem.set = function(name,stud.path, stud.short.file, reset=FALSE,
   
   # Just take current problem set information
   if (!is.null(ps)) {
-    if (ps$name == name & ps$stud.path==stud.path & ps$stud.short.file == stud.short.file)
+    if (isTRUE(ps$name == name & ps$stud.path==stud.path & ps$stud.short.file == stud.short.file))
       return(ps)
   }
   

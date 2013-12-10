@@ -13,20 +13,28 @@ give.award = function(award, prize.text = NULL, prize.code = NULL, user = get.us
     return(TRUE)
   
   message(paste0('
-*************************************************
+**********************************************************
 * Congrats, you earned the award "', award, '"
-*************************************************
+**********************************************************
 
 PS: awards() shows all your awards
 '))
   user$awards = c(user$awards,award)
+  user$awards.granted.in[[award]] = paste0(get.ps()$name, " ", get.ex()$name)
   update.user()
   return(TRUE)
 }
 
-awards = function(user = get.user()) {
-  cat(paste0("Hi ",user$name,", you have earned the following awards:\n"))
-  print(user$awards)
+awards = function(user = get.user(), details=TRUE) {
+  cat(paste0("Hi ",user$name,", you have earned ", length(user$awards)," awards:\n"))
+  if (!details) {
+    print(user$awards)
+  } else {
+    ad = awards.details()[user$awards]
+    for (i in seq_along(ad)) {
+      cat(paste0("\n*** ",user$awards[i], " ***\n", ad[[i]]," (Awarded in ", user$awards.granted.in[user$awards[[i]]], ")\n"))
+    }
+  }
 }
 
 has.award = function(award,user=get.user()) {
@@ -72,7 +80,7 @@ get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
 }
 
 init.user = function(user.name="GUEST") {
-  user = as.environment(list(name=user.name, awards = NULL))
+  user = as.environment(list(name=user.name, awards = NULL, awards.granted.in = list()))
   assign(".__rtutor_user.name",user.name,.GlobalEnv)  
   assign(".__rtutor_user",user,.GlobalEnv)
   user
@@ -96,4 +104,22 @@ save.user = function(user=get.user(user.name), user.name = get.user.name(), dir 
   # Backup
   file = paste0(dir,"/rtutor_user_",user.name,".RData")
   save(user, file=file)
+}
+
+awards.details = function() {
+  list(
+"Random Shocker" = "You have simulated a vector of random shocks for a regression model.",
+
+"Regression Runner" = "You have run a linear regression in R with the command lm.",
+
+"Confidence Shaker" = "You have computed a confidence interval for an OLS regression with an endogenous variable and saw that the confidence interval is rubbish if you have an endogeniety problem.",
+
+"Equilibrium Calculator" = "You have derived the correct formula for equilibrium prices of a competitive market and simulated these prices in R.",
+
+"Creator of Endogeniety" = "You have simulated an endogeonus explanatory variable in a regression model.",
+
+"Omitted Variable Bias" = "You have run an OLS regression where you omitted (left out) an explanatory variable that is correlated with another explanatory variable. Such a story cannot end well... The omitted variable becomes part of the error term, the error term is then correlated with an explanatory variable, you get an endogeniety problem and your OLS estimate is inconsistent and biased!",
+
+"An Inconsistent Demand" = "You have estimated via OLS a demand function with an endogenous price, which was simulated with a simple market model. And guess what? You got an inconsistent estimate!"
+    )
 }
