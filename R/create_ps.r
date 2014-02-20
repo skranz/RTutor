@@ -41,6 +41,8 @@ add.exercise = function(ex,ps=get.ps()) {
 }
 
 get.empty.ex.code = function(ex) {
+  restore.point("get.empty.ex.code")
+  
   paste0("############################################\n",
          "#' ## Exercise ", ex$name,"\n",
          "############################################\n\n",

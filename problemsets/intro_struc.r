@@ -40,10 +40,15 @@ add.hint("seq",{cat('
 Search in Google for "R generate a sequence of numbers" and check the shown mailing list answers or R help files for a command that can generate such sequences.
 ')})
 #$ end_exercise
+
+
 ###############################################################
 #$ exercise b)
 ###############################################################
 #$ task #######################################################
+
+x = 3
+
 # i) Erstelle einen Vektor z mit den f?nf beliebigen Werten
 # ii) Multiplizere den Vektor mit x und speichere das Ergebnis 
 #     in a

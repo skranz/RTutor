@@ -1,5 +1,17 @@
 # Some tool functions
 
+str.left.of = function(str,pattern,...) {
+  pos = str.locate.first(str, pattern,...)
+  substring(str,1,pos[,1]-1)
+}
+
+
+str.right.of = function(str,pattern,...) {
+  pos = str.locate.first(str, pattern,...)
+  substring(str,pos[,2]+1,)
+}
+
+
 print.example = function(code) {
   cat(paste0("\n",code,"\n"))
   print(eval(parse(text=code,srcfile=NULL)))
@@ -29,9 +41,10 @@ replace.whisker = function(txt,...,signif.digits=3) {
 
 
 extract.command = function(txt,command) {
+  #restore.point("extract.command")
   lines = which(substring(txt,1,nchar(command))==command)
   if (length(lines)==0)
     return(NULL)
   val = str_trim(substring(txt[lines],nchar(command)+1))
-  data.frame(line=lines, val=val)
+  data.frame(line=lines, val=val, stringsAsFactors=FALSE)
 } 

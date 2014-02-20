@@ -144,9 +144,17 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   
   # Evaluate official solution or recycle previous evaluation  
   if (is.null(ex$sol.env)) {
-    sol.env = new.env(parent=.GlobalEnv)
-    eval(ex$sol, sol.env)
+    sol.env = new.env(parent=.GlobalEnv)    
     ex$sol.env = sol.env
+
+    tryCatch( eval(ex$sol, sol.env),
+      error = function(e) {
+        str = paste0("Uups, an error occured while running the official solution:\n",
+                     as.character(e),
+                     "\nI don't test your solution. You may contact the creator of the problem set.")
+        stop(str)
+      }
+    )
   } else {
     sol.env = ex$sol.env
   }

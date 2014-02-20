@@ -97,6 +97,154 @@ check.expr = function(check.expr, correct.expr,failure.message = "{{check_expr}}
   return(TRUE)
 }
 
+check.quiz = function(vars, empty="",
+    failure.message= "You have not yet assigned the correct answer to {{var}}.",
+    sucess.message = "Great, your answer for {{var}} is correct!",
+    empty.message = "You have not yet assigned an answer to {{var}}."
+  , hint.name = NULL, ex=get.ex(),stud.env = ex$stud.env, sol.env = ex$sol.env  ){
+
+  restore.point("check.quiz")
+  for (var in vars) {
+    ret = check.var(vars=var,check.all=TRUE,failure.exists = empty.message,failure.length=failure.message, failure.class=failure.message, failure.values = failure.message, success.message=sucess.message, hint.name = hint.name, ex=ex,stud.env = stud.env, verbose=FALSE,   sol.env = sol.env )
+    if (!ret)
+      return(FALSE)
+  }
+  return(TRUE)
+}
+
+check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ex=get.ex(),stud.env = ex$stud.env, hint.name=NULL) {
+  
+  if (!is.null(unsubst.expr)) {
+    expr = unsubst.expr
+  } else if (!is.null(str.expr)) {
+    expr = parse(text=str.expr, srcfile = NULL)
+  } else {
+    expr = substitute(expr)
+  }
+  
+  class = class(eval(expr,envir=stud.env))
+  if (any(class %in% classes))
+    return(TRUE)
+  
+  if (is.null(str.expr))
+    str.expr = deparse(expr)
+  
+  if (length(classes)>1) {
+    failure.message=paste0(str.expr, " has class ", paste0(class,collapse=" and ")," but it should be one of ", paste0(classes, collapse=", "),".")
+  } else {
+    failure.message=paste0(str.expr, " has wrong class. It should be ", paste0(classes, collapse=", "),".")    
+  }
+  add.failure(ex,failure.message,failure.message)
+  return(FALSE)
+  
+}
+
+#' Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
+#' @param df name of the data frame or matrix
+#' @param col name of the column
+#' @param expr
+#' @param exists shall existence be checked (similar length, class, values)
+#' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
+#' @param failure.message.add a text that will be added to all failure messages
+
+#' @export 
+check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","matrix"),check.all = FALSE,exists=check.all, length=check.all, class=check.all, values=check.all,tol = .Machine$double.eps ^ 0.5,
+    failure.exists="{{df}} does not have a column {{col}}.",
+    failure.length="{{df}} has {{length_stud}} rows but it shall have {{length_sol}} rows.",
+    failure.class = "Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
+    failure.values = "Column {{col}} of {{df}} has wrong values.",
+    failure.message.add = NULL,
+    success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.", hint.name = NULL,
+    ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,sol.env = ex$sol.env) {
+    
+  
+  if (!is.null(unsubst.expr)) {
+    expr = unsubst.expr
+  } else if (!is.null(str.expr)) {
+    expr = parse(text=str.expr, srcfile = NULL)
+  } else {
+    expr = substitute(expr)
+  }
+
+  restore.point("check.col")
+  set.current.hint(hint.name)
+  
+  ret = check.var(df,exists =TRUE, hint.name=hint.name)
+  if (!ret) return(FALSE)
+  ret = check.class(str.expr = df,classes=class.df, stud.env=stud.env, ex=ex, hint.name=hint.name)
+  if (!ret) return(FALSE)
+  
+  dat =  get(df,stud.env)
+  
+  if (!is.null(failure.message.add)) {
+    failure.exists = paste0(failure.exists,"\n", failure.message.add)
+    failure.length = paste0(failure.length,"\n", failure.message.add)
+    failure.class = paste0(failure.class,"\n", failure.message.add)
+    failure.values = paste0(failure.values,"\n", failure.message.add)
+  }
+  
+  if (!is.null(expr)) {
+    var.sol = list(eval(expr,stud.env))
+  } else {
+    var.sol = get(df,sol.env)[[col]] 
+  }
+  
+  if (exists != FALSE) {
+    if (is.character(col)) {
+      does.exist = col %in% colnames(dat)
+    } else {
+      does.exist = NCOL(dat)>=col
+    }
+    if (!does.exist) {
+      add.failure(ex,failure.exists,failure.exists, col = col,df=df)
+      return(FALSE)
+    }
+  }
+  
+  var.stud = dat[,col]
+  
+  if (length != FALSE) {
+    if (!length(var.stud)==length(var.sol)) {
+      add.failure(ex,failure.length, failure.length, col=col,df=df, length_stud = length(var.stud), length_sol=length(var.sol))
+      return(FALSE)
+    }
+  }  
+  if (class != FALSE) {
+    class.stud = class(var.stud)[1]
+    class.sol = class(var.sol)[1]
+    if (class.stud == "integer") class.stud = "numeric"
+    if (class.sol == "integer") class.sol = "numeric"
+    
+    if (class.stud!=class.sol) {
+      add.failure(ex,failure.class, failure.class, col=col,df=df, class_stud=class.stud, class_sol = class.sol)
+      return(FALSE)
+    }
+  }  
+  if (values != FALSE) {
+    if (is.numeric(var.stud) & is.numeric(var.sol)) {
+      if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
+        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        return(FALSE)
+      }
+      if (!identical(is.na(var.stud),is.na(var.sol))) {
+        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        return(FALSE)        
+      }
+      
+    } else {
+      if (! all(var.stud==var.sol)) {
+        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        return(FALSE)
+      }
+    }
+  }
+  
+  tests.str = flags.to.string(length=length,class=class,values=values)
+  add.success(ex,success.message, col=col, df=df, tests=tests.str)
+  return(TRUE)
+}
+
+
 
 #' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
 #' @param vars a variable name or vector of variable names
@@ -193,9 +341,13 @@ check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=
           return(FALSE)
         }
       } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
-        if (max(abs(var.stud-var.sol))>tol ) {
-          add.failure(ex,"wrong values of {{var}}", failure.values, var=var)
+        if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
+          add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
           return(FALSE)
+        }
+        if (!identical(is.na(var.stud),is.na(var.sol))) {
+          add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+          return(FALSE)        
         }
         
       } else {

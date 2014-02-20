@@ -1,0 +1,7 @@
+"American Economic Review Data Grabber":
+	info: "You downloaded data from an AER article from the AER website and imported (at least some of) the data into R. There are a lot of really good articles with available data on the AER website. This helps you to reproduce and understand the research and to test your own ideas!"
+	link: www.aer.web
+"Random Shocker":
+ 	info: "You have simulated a vector of random shocks for a regression model.",
+
+

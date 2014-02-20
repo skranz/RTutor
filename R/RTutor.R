@@ -116,5 +116,34 @@ examples = function() {
   
 }
 
+#' Create a zip file of a students solution that can be uploaded 
+zip.solution = function(ps.name = get.ps()$name, user.name=get.user()$name, dir = get.ps()$stud.path) {
+  restore.point("zip.solution")
+  
+  old.dir = getwd()
+  setwd(dir)
+  files = paste0(ps.name,c(".log",".r"))
+  zip.file = paste0(dir,"/solution_", gsub(" ","_",ps.name,fixed=TRUE), "_by_", user.name, ".zip")
+  
+  zip(zip.file, files)
+  message(paste0("Created zipped solution ", zip.file))
+  setwd(old.dir)
+}
+
+unzip.solutions = function(dir = getwd(), dest.dir = dir) {
+  restore.point("unzip.solutions")
+  files = c(list.files(path=dir,pattern=glob2rx("*.zip"), recursive=check.sub.dir, full.names=TRUE),
+            list.files(path=dir,pattern=glob2rx("*.ZIP"), recursive=check.sub.dir, full.names=TRUE))
+
+  lapply(files, function(file) {
+    restore.point("zwsdhd")
+    subdir =  paste0(dest.dir,"/solutions/",str.left.of(basename(file),"."))
+    dir.create(subdir)
+    unzip(file, exdir=subdir, overwrite=TRUE)
+    message(paste0("Unzipped ", file))
+  })
+  
+}
+
 #shell('START mailto:sebkranz@gmail.com?subject=Test_Mailto&body=see_attachment')
 

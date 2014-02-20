@@ -108,7 +108,14 @@ save.user = function(user=get.user(user.name), user.name = get.user.name(), dir 
 
 awards.details = function() {
   list(
+"American Economic Review Data Grabber" = "You downloaded data from an AER article from the AER website and imported (at least some of) the data into R. There are a lot of really good articles with available data on the AER website. This helps you to reproduce and understand the research and to test your own ideas!",   
+    
+"Column Identificator" = "You correctly identified the meanings of columns from a real world data set.",
+
 "Random Shocker" = "You have simulated a vector of random shocks for a regression model.",
+
+"Price Peaker" = "You have simulated prices that are correlated with peak- off-peak hours.",
+
 
 "Regression Runner" = "You have run a linear regression in R with the command lm.",
 
@@ -120,7 +127,7 @@ awards.details = function() {
 
 "Omitted Variable Bias" = "You have run an OLS regression where you omitted (left out) an explanatory variable that is correlated with another explanatory variable. Such a story cannot end well... The omitted variable becomes part of the error term, the error term is then correlated with an explanatory variable, you get an endogeniety problem and your OLS estimate is inconsistent and biased!",
 
-"Playing the Wind" = "Musicians may use a piano, violine or trumpet as instrument, you used the wind directly!",
+"Playing the Wind" = "Musicians may play a piano, violine or trumpet, but you used the wind as instrument!",
 
 "Two stages for Consistency" = "You consistently estimated a demand equation with an endogenous price via a manual implementation of the 2SLS (two stage least squares) procedure!",
 

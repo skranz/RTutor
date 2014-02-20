@@ -73,12 +73,15 @@ init.problem.set = function(name,stud.path, stud.short.file=paste0(prefix,name,"
 
 #' Parse the structure of a problem set from a file
 parse.ps.structure =  function(ps=get.ps(),file=ps$structure.file) {
-  restore.point("parse.ps.structure", deep.copy=TRUE)
+  restore.point("parse.ps.structure")
   txt = readLines(file)
   library(stringr)
   
   ps.name= extract.command(txt, "#$ problem_set")[,2]
   ex_start = extract.command(txt, "#$ exercise")
+  # Exercise names: remove # and trailing " "
+  ex_start$val = str.trim(gsub("#"," ", ex_start$val,fixed=TRUE))
+
   ex_end = extract.command(txt,"#$ end_exercise")
   
   ex.df = data.frame(start=ex_start$line, end=ex_end$line, name=ex_start$val)
@@ -88,53 +91,71 @@ parse.ps.structure =  function(ps=get.ps(),file=ps$structure.file) {
   
   i = 1
   for (i in 1:NROW(ex.df)) {
-    ex = new.env(parent=.GlobalEnv)
-    set.ex(ex)
-    ex$name = names(ex.li)[i]
+    ex.name = names(ex.li)[i]
+    
+    ex.txt = txt[(ex.df[i,"start"]+1):(ex.df[i,"end"]-1)]
+
+    ex = parse.exercise(ex.name,ex.txt)
+    
     if (i == NROW(ex.df)) {
       ex$next.ex = NULL  
     } else {
       ex$next.ex = i+1        
     }
-    ex.txt = txt[(ex.df[i,"start"]+1):(ex.df[i,"end"]-1)]
-    com = extract.command(ex.txt,"#$")$line     
-    #ex.task.txt = paste0(ex.txt[1:(com[1]-1)],collapse="\n")
-    ex$task.txt = paste0(ex.txt[(com[1]+1):(com[2]-1)],collapse="\n")
-    ex$sol.txt = paste0(ex.txt[(com[2]+1):(com[3]-1)],collapse="\n")
-    ex$tests.txt = paste0(ex.txt[(com[3]+1):(com[4]-1)],collapse="\n")
-    ex$hints.txt = paste0(ex.txt[(com[4]+1):length(ex.txt)],collapse="\n")
-    
-    # Replace whiskers
-    ex$task.txt = whisker.render(ex$task.txt,list(ex_name=ex$name))
-    
-    
-    ex$sol = parse(text=ex$sol.txt,srcfile=NULL)
-    ex$tests = as.list(parse(text=ex$tests.txt,srcfile=NULL))     
-    
-    ex$tests.stats = lapply(seq_along(ex$tests), function (i) {
-      list(
-        times.failed.before.ever.passed = 0,
-        times.failed = 0, # Times failed before last passed
-        ever.passed = FALSE,
-        passed = FALSE
-      )
-    })
-    # Run the code that generates hints
-    ex$prev.hint = 0
-    ex$hints = list()
-    eval(parse(text=ex$hints.txt,srcfile=NULL))
-    
-    ex$sol.env = NULL
-    ex$stud.env = NULL
-    ex$stud.code = paste0("###########################################\n\n",ex$task.txt,"\n")
-    ex$checks = 0
-    ex$attempts=0
-    ex$solved = FALSE
-    ex$was.solved = FALSE
-    
     ex.li[[i]] = ex
   }
   #ps$name = ps.name
   ps$ex = ex.li
   return(invisible(ps))
+}
+
+parse.exercise = function(ex.name, ex.txt) {
+  restore.point("parse.exercise")
+  ex = new.env(parent=.GlobalEnv)
+  ex$name = ex.name
+  set.ex(ex)
+  
+  com = extract.command(ex.txt,"#$")
+  str = gsub("#","",com$val,fixed=TRUE)
+  str = gsub("-","",str,fixed=TRUE)
+  com$name = str.trim(str)
+
+  com$end.line = c(com$line[-1]-1,length(ex.txt))
+  for (i in seq_along(com$name)) {
+    com.name.txt = paste0(com$name[i],".txt")
+    ex[[com.name.txt]] = paste0(ex.txt[(com$line[i]+1):com$end.line[i]],collapse="\n")
+  }
+  
+  # Replace whiskers
+  ex$task.txt = whisker.render(ex$task.txt,list(ex_name=ex$name))    
+  
+  if (length(ex$solution.txt)>0)
+    ex$sol = parse(text=ex$solution.txt,srcfile=NULL)
+
+  if (length(ex$tests.txt)>0)
+    ex$tests = as.list(parse(text=ex$tests.txt,srcfile=NULL))     
+  
+  ex$tests.stats = lapply(seq_along(ex$tests), function (i) {
+    list(
+      times.failed.before.ever.passed = 0,
+      times.failed = 0, # Times failed before last passed
+      ever.passed = FALSE,
+      passed = FALSE
+    )
+  })
+  # Run the code that generates hints
+  ex$prev.hint = 0
+  ex$hints = list()
+  if (length(ex$hints.txt)>0)
+    eval(parse(text=ex$hints.txt,srcfile=NULL))
+  
+  ex$sol.env = NULL
+  ex$stud.env = NULL
+  ex$stud.code = paste0("###########################################\n\n",ex$task.txt,"\n")
+  ex$checks = 0
+  ex$attempts=0
+  ex$solved = FALSE
+  ex$was.solved = FALSE
+  
+  return(ex)
 }
