@@ -29,15 +29,18 @@ check.call = function(
 check.file.exists = function(
   file,
   failure.message=paste0('Sorry, but I cannot find the file "', file,'" in your current working directory.'),
-  success.message=paste0('Great I found the file "', file,'"!'),
+  success.message=paste0('Great I found the file "', file,'"!'), ex = get.ex(), hint.name = NULL,
 ...) {
 # Check given variables
-  holds.true({file.exists(file)},
-             failure.message = failure.message,
-             success.message = success.message
-  )
-}
-
+  set.current.hint(hint.name)
+  restore.point("check.file.exists")
+  if (file.exists(file)) {
+    add.success(ex,success.message,...)
+    return(TRUE)    
+  }
+  add.failure(ex,failure.message,failure.message,...)
+  return(FALSE)
+}  
 
 check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct."), tol = 1e-10) {
   restore.point("check.regression")
