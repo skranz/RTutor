@@ -204,7 +204,7 @@ extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),w
                      paste0("#' ## Exercise ",ex.name)))
     return(NA)
   }
-  end.command =  extract.command(txt,paste0("#### end exercise ",ex.name))
+  end.command =  extract.command(txt,paste0("#' #### end of exercise ",ex.name))
   if (is.null(start.command)) {
     message(paste0("Warning: Exercise ", ex.name, " could not be parsed, since I can't find the end of the exercise. Your code needs at the end of the exercise the line:\n",
                    paste0("#### end exercise ",ex.name)))

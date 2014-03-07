@@ -43,11 +43,10 @@ add.exercise = function(ex,ps=get.ps()) {
 get.empty.ex.code = function(ex) {
   restore.point("get.empty.ex.code")
   
-  paste0("############################################\n",
-         "#' ## Exercise ", ex$name,"\n",
-         "############################################\n\n",
+  paste0("#' ## Exercise ", ex$name," ###########################\n",
+         "#'\n",
          ex$task.txt,"\n\n",
-         "#### end exercise ", ex$name, "\n"
+         "#' #### end of exercise ", ex$name, " ##################\n"
          #           'check.exercise("',ex$name,'")'
   )      
 } 
@@ -70,9 +69,9 @@ create.stud.ps = function(ps, file = ps$stud.file, ps.dir="C:/...") {
   ex.str = lapply(ps$ex, get.empty.ex.code)
   
   str = paste0("
-##############################################################
+#' #############################################################
 #' # Problemset ", ps$name,"
-##############################################################
+#' #############################################################
 
 #+ include=FALSE
 
