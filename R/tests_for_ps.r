@@ -14,14 +14,110 @@ show.success.message = function(success.message,..., ex=get.ex()) {
 }
 
 check.call = function(
-  call.str, check.args=TRUE,
-  success.message=NULL, failure.message = NULL,
+  call.str, check.args=TRUE, check.arg.val = NULL, check.arg.name = NULL,
+  success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
   hint.name = NULL,  ...) {
 
   restore.point("check.call")
   
-  cat("I have not yet implemented check.call")
+  
+  ex$stud.expr
+  if (is.null(ex$stud.expr.list))
+    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
+
+  check.expr.li = lapply(call.str, function(str) match.call.object(parse(text=str, srcfile=NULL)[[1]]))
+
+  
+  if (identical(check.args,TRUE) & is.null(check.arg.val) & is.null(check.arg.name)) {
+    
+    correct.expr = check.expr.li %in% ex$stud.expr.li
+    if (any(correct.expr)) {
+      if (is.null(success.message)) {
+        success.message = paste0("Great, you correctly called the command: ", call.str[which(correct.expr)[1]],"")  
+      }
+      add.success(ex,success.message,...)
+      return(TRUE)    
+    }
+
+    if (is.null(failure.message))
+      failure.message = no.command.failure.message
+    
+
+    add.failure(ex,failure.message,failure.message,...)
+    return(FALSE) 
+  }
+  
+  
+  
+  stud.call.name = sapply(ex$stud.expr.li,  name.of.call)    
+  check.call.name = sapply(check.expr.li,  name.of.call)
+  if (length(check.call.name)>1) {
+    cat("\ncheck.call with check.arg.val or check.arg.name works so far only with a single call that is to be checked!")
+    return(TRUE)
+  }
+  
+  if (is.null(success.message))
+    success.message = paste0("Great, you correctly called the command: '", call.str,"'")  
+
+  
+  stud.match = which(stud.call.name == check.call.name)
+  if (length(stud.match)==0) {
+    if (is.null(failure.message))
+      failure.message = default.failure.message
+    
+    add.failure(ex,failure.message,failure.message,...)
+    return(FALSE)
+  }
+
+  # Check those parameters that shall be checked by name
+  if (length(check.arg.name)>0) {
+    ch.args = args.of.call(check.expr.li[[1]])[check.arg.name]
+
+    ok = FALSE
+    for (i in stud.match) {
+      stud.args = args.of.call(ex$stud.expr.li[[i]])[check.arg.name]
+      if (identical(stud.args,ch.args)) {
+        ok = TRUE
+        break
+      }
+    }
+    if (!ok) {
+      if (is.null(failure.message))
+        failure.message = paste0("In your call to ", check.call.name, " not all of the parameters ", paste0(names(ch.args), collapse=", "), " are correct.")
+      add.failure(ex,failure.message,failure.message,...)
+      return(FALSE)
+    }
+  }
+
+  # Check those parameters that shall be checked by value
+  if (length(check.arg.val)>0) {
+    ch.args = args.of.call(check.expr.li[[1]])[check.arg.val]
+    ch.args.val = lapply(ch.args, function(call) eval(call, stud.env))
+    
+    ok = FALSE
+    i = stud.match[1]
+    for (i in stud.match) {
+      stud.args = args.of.call(ex$stud.expr.li[[i]])[check.arg.val]
+      stud.args.val = lapply(stud.args, function(call) eval(call, stud.env))
+      correct.val = sapply(names(ch.args), function(arg.name) {
+        identical(ch.args.val[[arg.name]],stud.args.val[[arg.name]])
+      })     
+      if (identical(stud.args,ch.args)) {
+        ok = TRUE
+        break
+      }
+    }
+    if (!ok) {
+      if (is.null(failure.message))
+        failure.message = paste0("In your call to ", check.call.name, " you don't have the correct values for the argument(s) ", paste0(names(ch.args)[!correct.val], collapse=", "), ".")
+      add.failure(ex,failure.message,failure.message,...)
+      return(FALSE)
+    }
+  }
+  
+  add.success(ex,success.message,...)
+  return(TRUE)    
 
 }
 

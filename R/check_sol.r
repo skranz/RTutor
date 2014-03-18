@@ -121,13 +121,16 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   ex$stud.seed = as.integer(Sys.time())
   
   has.error = FALSE
+  ex$stud.expr.li = NULL
   tryCatch( ex$stud.expr <- parse(text=ex$stud.code, srcfile=NULL),
             error = function(e) {
               ex$failure.message=ex$failure.short=paste0("parser error: ",geterrmessage())
               has.error <<- TRUE
             })
+  
   if (has.error)
     return(FALSE)
+  
   
   has.error = FALSE
   

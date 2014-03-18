@@ -67,6 +67,12 @@ name.of.call = function(call) {
   as.character(call[[1]])  
 }
 
+args.of.call = function(call) {
+  if (is.symbol(call))
+    return(NULL)
+  li = as.list(call[-1])
+  li
+}
 
 examples.code.has.call = function() {
   code.str = "
