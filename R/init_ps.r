@@ -65,6 +65,8 @@ init.problem.set = function(name,stud.path, stud.short.file=paste0(prefix,name,"
   ps$structure.file = structure.file
   ps$ex.last.mod = 1
   
+  ps$is.rmd.stud = str.ends.with(tolower(stud.short.file),".rmd")
+  
   setwd(stud.path)
   parse.ps.structure(ps=ps)
   return(invisible(ps))

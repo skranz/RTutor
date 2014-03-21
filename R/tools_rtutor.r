@@ -1,4 +1,13 @@
 # Some tool functions
+examples.qlist = function() {
+  qlist({x=5;3*x})
+}
+
+qlist = function (..., .env = parent.frame()) 
+{
+  as.list(match.call()[-1])
+  #structure(as.list(match.call()[-1]), env = .env, class = "quoted")
+}
 
 str.left.of = function(str,pattern,...) {
   pos = str.locate.first(str, pattern,...)

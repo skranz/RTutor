@@ -55,17 +55,69 @@ get.empty.ex.code = function(ex) {
 #' @export
 create.empty.ps = function(ps.name=get.ps()$name, dir = getwd()) {
   ps = init.problem.set(ps.name,dir, require.stud.file=FALSE)
-  create.stud.ps(ps,ps.dir=dir)
-  message(paste0("I generated an empty problem set file ", ps$stud.file, ". You can open it in RStudio an work on it."))
+  create.stud.ps.r(ps,ps.dir=dir)
+  create.stud.ps.rmd(ps,ps.dir=dir)
+  message(paste0("I generated the empty problem set files ", ps$stud.file, " (an .r and a .Rmd version). You can open them in RStudio."))
+  
 }
 
 # create.empty.ps()
 
+
 #' Internal function to generate a problem set skeleton for a student and save it in a file
 #' @export
-create.stud.ps = function(ps, file = ps$stud.file, ps.dir="C:/...") {
+create.stud.ps.rmd = function(ps, file = ps$stud.file, ps.dir="C:/...") {
+  restore.point("create.stud.ps.rmd")
+  
+  ex.str = lapply(ps$ex, get.empty.ex.code)
+  
+  file = paste0(str.left.of(file,"."),".Rmd")
+  
+  
+  str = paste0("
+#' #############################################################
+#' # Problemset ", ps$name,"
+#' #############################################################
+
+#+ include=FALSE
+
+# Remove comments below if you need to install packages
+# install.packages('devtools');install.packages('whisker');install.packages('stringr')
+# install.packages('RJSONIO');
+# library(devtools)
+# install_github(repo = 'restorepoint', username = 'skranz')
+# install_github(repo = 'RTutor', username = 'skranz')
+
+# To check your solutions in RStudio save (Ctrl-S) and then run all chunks (Ctrl-Alt-R)
+
+ps.dir =  '",ps.dir,"' # the folder in which this file is stored
+ps.file = '", ps$prefix, ps$name,".Rmd' # this file
+user.name = 'ENTER A USER NAME HERE' # your user name
+
+
+library(RTutor)
+check.problem.set('",ps$name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+
+#+ include=TRUE
+
+cat('Name: ', user.name)
+
+",paste0(ex.str,collapse="\n"))
+  
+  library(knitr)  
+  str = spin(text=str,knit=FALSE,format = "Rmd")  
+  writeLines(str,file)
+  invisible(str)
+}
+
+
+#' Internal function to generate a problem set skeleton for a student and save it in a file
+#' @export
+create.stud.ps.r = function(ps, file = ps$stud.file, ps.dir="C:/...") {
   restore.point("create.stud.ps")
   
+  file = paste0(str.left.of(file,"."),".r")
+
   ex.str = lapply(ps$ex, get.empty.ex.code)
   
   str = paste0("

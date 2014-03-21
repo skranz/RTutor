@@ -117,12 +117,12 @@ examples = function() {
 }
 
 #' Create a zip file of a students solution that can be uploaded 
-zip.solution = function(ps.name = get.ps()$name, user.name=get.user()$name, dir = get.ps()$stud.path) {
+zip.solution = function(ps.name = get.ps()$name, user.name=get.user()$name, dir = get.ps()$stud.path, make.html=TRUE) {
   restore.point("zip.solution")
   
   old.dir = getwd()
   setwd(dir)
-  files = paste0(ps.name,c(".log",".r"))
+  files = paste0(ps.name,c(".log",".r",".rmd",".html"))
   zip.file = paste0(dir,"/solution_", gsub(" ","_",ps.name,fixed=TRUE), "_by_", user.name, ".zip")
   
   zip(zip.file, files)

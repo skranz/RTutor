@@ -6,6 +6,110 @@ check.package = function(package) {
   return(TRUE)
 }
 
+check.function = function(code.or.name, ...,ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL) {
+
+  test.calls = eval(substitute(alist(...)))
+
+  restore.point("check.function")
+  
+  if (is.character(code.or.name)) {
+    fun.name = code.or.name
+    sol.fun = get(fun.name,sol.env)
+  } else {
+    env = new.env(parent=stud.env)
+    eval(code,env)
+    fun.name = ls(env)[1]
+    sol.fun = get(fun.name,env)
+  }
+  
+  if (!exists(fun.name,stud.env, inherits=FALSE)) {
+    short.failure = paste0(fun.name, " does not exist.")
+    failure.message = paste0("You have not yet created the function ",fun.name, ".")
+    add.failure(ex,short.failure,, var = var)
+    return(FALSE)
+  }
+
+  # Test calls
+  stud.tenv = new.env(parent=stud.env)
+  sol.tenv = new.env(parent=stud.env)
+  assign(fun.name, sol.fun,sol.tenv)
+  
+  i = 1
+  for (i in seq_along(test.calls)) {
+    sol.res = eval(test.calls[[i]], sol.env)
+    ok = TRUE
+    failure.message = ""
+    stud.res = tryCatch(eval(test.calls[[i]], stud.env),
+                        error = function(e) {
+                          failure.message <<- as.character(e)
+                          ok <<- FALSE
+                        })
+    if (!ok) {
+      add.failure(ex,failure.message,failure.message,...)
+      return(FALSE) 
+    }                    
+    
+    res = compare.values(stud.res, sol.res)
+    if (length(res)>0) {
+      call.str = paste0(deparse(test.calls[[i]]), collapse=";")
+      failure.message = paste0("Your function ",fun.name, " seems not ok. The call ", call.str, " returns wrong ", paste0(res, collapse=","),".")
+      add.failure(ex,failure.message,failure.message,...)
+      return(FALSE) 
+    }
+  }
+  
+  success.message = paste0("Great, I good not find an error in your function ", fun.name, "!")
+  add.success(ex,success.message,...)
+  return(TRUE)    
+}
+
+compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12) {
+  wrong = NULL
+  
+  if (class != FALSE) {
+    class.stud = class(var.stud)[1]
+    class.sol = class(var.sol)[1]
+    if (class.stud == "integer") class.stud = "numeric"
+    if (class.sol == "integer") class.sol = "numeric"
+      
+    if (class.stud!=class.sol) {
+      wrong = c(wrong,"class")
+    }
+  }  
+  
+  if (length != FALSE) {
+    if (!length(var.stud)==length(var.sol)) {
+      wrong = c(wrong,"length")
+    }
+  }
+  if (dim != FALSE) {
+    if (!identical(dim(var.stud),dim(var.sol))) {
+      wrong = c(wrong,"dim")
+    }
+  }  
+  if (names != FALSE) {
+    if (!identical(names(var.stud),names(var.sol))) {
+      wrong = c(wrong,"names")
+    }
+  }  
+  if (values != FALSE) {
+    if (is.list(var.sol) | is.environment(var.sol)) {
+      if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
+        wrong = c(wrong,"values")
+      }
+    } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
+      if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
+        wrong = c(wrong,"values")
+      } else if (!identical(is.na(var.stud),is.na(var.sol))) {
+        wrong = c(wrong,"values")
+      }        
+    } else {
+        wrong = c(wrong,"values")
+    }
+  }
+  wrong
+}
+
 #' Simply shows a success message when this test is reached for the first time!
 #' @export 
 show.success.message = function(success.message,..., ex=get.ex()) {
@@ -64,7 +168,7 @@ check.call = function(
   stud.match = which(stud.call.name == check.call.name)
   if (length(stud.match)==0) {
     if (is.null(failure.message))
-      failure.message = default.failure.message
+      failure.message = no.command.failure.message
     
     add.failure(ex,failure.message,failure.message,...)
     return(FALSE)
@@ -125,7 +229,7 @@ check.call = function(
 check.file.exists = function(
   file,
   failure.message=paste0('Sorry, but I cannot find the file "', file,'" in your current working directory.'),
-  success.message=paste0('Great I found the file "', file,'"!'), ex = get.ex(), hint.name = NULL,
+  success.message=paste0('Great, I have found the file "', file,'"!'), ex = get.ex(), hint.name = NULL,
 ...) {
 # Check given variables
   set.current.hint(hint.name)

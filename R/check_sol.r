@@ -44,13 +44,15 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
   
   code.check = code.changed
   
+  code.change.message = ""
   # If no code changed, check the last modified exercise
   if (!any(code.changed)) {
     if (!has.code[ps$ex.last.mod]) {
       ps$ex.last.mod=1
     }
     code.check[ps$ex.last.mod] = TRUE
-    message("I see no changes in your code... did you forget to save your file?")
+    code.change.message = "\nBTW: I see no changes in your code... did you forget to save your file?"
+   
   } else {
     ps$ex.last.mod = which(code.changed)[1]
   }
@@ -59,30 +61,46 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
   sum.correct = 0
   sum.warning = 0
   i = 1
-  for (i in which(code.check)) {
-    is.correct = FALSE
-    ex.name = ex.names[i]
-    ex = ps$ex[[ex.name]]
-    ret = check.exercise(ex.name,new.code[ex.name])
-    log.exercise(ex)
-    if (ret==FALSE) {
-      message = ex$failure.message
-      if (!is.null(ex$hint.name))
-        message = paste0(message,"\nIf you want a hint, type hint() in the R console and press Enter.")
-      stop(message, call.=FALSE, domain=NA)
-    } else if (ret=="warning") {
-      message = paste0(ex$warning.messages,collapse="\n\n")
-      message(paste0("Warning: ", message))
-      sum.warning = sum.warning+1
+  any.false = FALSE
+  was.checked = rep(FALSE,length(code.check))
+  while(!all(was.checked)) {
+    for (i in which(code.check)) {
+      is.correct = FALSE
+      ex.name = ex.names[i]
+      ex = ps$ex[[ex.name]]
+      ret <- FALSE
+      ret = tryCatch(check.exercise(ex.name,new.code[ex.name]),
+                     error = function(e) {ex$failure.message <- as.character(e)})
+                     
+      # Copy variables into global env
+      copy.into.env(source=ex$stud.env,dest=.GlobalEnv)
+      log.exercise(ex)
+      if (ret==FALSE) {
+        message = ex$failure.message
+        if (!is.null(ex$hint.name))
+          message = paste0(message,"\nIf you want a hint, type hint() in the R console and press Enter.")
+        message = paste(message,code.change.message)
+        any.false=TRUE
+        stop(message, call.=FALSE, domain=NA)
+      } else if (ret=="warning") {
+        message = paste0(ex$warning.messages,collapse="\n\n")
+        message(paste0("Warning: ", message))
+        sum.warning = sum.warning+1
+      }
+      is.correct = TRUE
+      if (is.correct)
+        sum.correct = sum.correct+1
+      #.Internal(stop(FALSE,""))
     }
-    is.correct = TRUE
-    if (is.correct)
-      sum.correct = sum.correct+1
-    #.Internal(stop(FALSE,""))
-  } 
-  if (sum.correct == length(ps$ex)) {
-    cat("\nYou have solved all exercises and I could not detect any error!")
+    was.checked[code.check]=TRUE
+    code.check = !code.check
+    
   }
+  if (!any.false) {
+    message("\nI tried but could not detect in your solution any ")
+    stop(" Congrats!", call.=FALSE, domain="")
+  }
+  stop("There were still errors in your solution.")
 }
 
 #' Check the student's solution of an exercise contained in stud.file
@@ -193,12 +211,22 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   }
 }
 
-
-
 #' Extracts the stud's code of a given exercise
 #' @export
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
-  restore.point("extract.exercise.code")
+  restore.point("extract.r.exercise.code")
+  
+  if (ps$is.rmd.stud) {
+    return(extract.rmd.exercise.code(ex.name,stud.code, ps,warn.if.missing))
+  } else {
+    return(extract.r.exercise.code(ex.name,stud.code, ps,warn.if.missing))    
+  }
+
+}
+
+
+extract.r.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
+  restore.point("extract.r.exercise.code")
   txt = stud.code
   start.command = extract.command(txt,paste0("#' ## Exercise ",ex.name))
   if (is.null(start.command)) {
@@ -219,6 +247,35 @@ extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),w
   
   # Return student's solution
   paste0(txt[(start+1):(end-1)],collapse="\n")
+}
+
+extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
+  restore.point("extract.rmd.exercise.code")
+  txt = stud.code
+  start.command = extract.command(txt,paste0("## Exercise ",ex.name))
+  if (is.null(start.command)) {
+    if (warn.if.missing)
+      message(paste0("Warning: Exercise ", ex.name, " not found. Your code must have the line:\n",
+                     paste0("#' ## Exercise ",ex.name)))
+    return(NA)
+  }
+  end.command =  extract.command(txt,paste0("#### end of exercise ",ex.name))
+  if (is.null(start.command)) {
+    message(paste0("Warning: Exercise ", ex.name, " could not be parsed, since I can't find the end of the exercise. Your code needs at the end of the exercise the line:\n",
+                   paste0("#### end exercise ",ex.name)))
+    return(NA)
+  }
+  
+  start = start.command$line
+  end =end.command$line
+  
+  str = txt[(start+1):(end-1)]
+  
+  # Get all code lines with an R code chunk
+  hf = str.starts.with(str,"```")
+  str = str[cumsum(hf) %% 2 == 1 & !hf]
+  
+  paste0(str, collapse="\n")
 }
 
 
