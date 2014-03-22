@@ -70,7 +70,8 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       ex = ps$ex[[ex.name]]
       ret <- FALSE
       ret = tryCatch(check.exercise(ex.name,new.code[ex.name]),
-                     error = function(e) {ex$failure.message <- as.character(e)})
+                     error = function(e) {ex$failure.message <- as.character(e)
+                                          return(FALSE)})
                      
       # Copy variables into global env
       copy.into.env(source=ex$stud.env,dest=.GlobalEnv)

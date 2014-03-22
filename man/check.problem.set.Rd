@@ -4,7 +4,7 @@
 \usage{
   check.problem.set(name, stud.path, stud.short.file,
     reset = FALSE, set.warning.1 = TRUE,
-    user.name = "GUEST")
+    user.name = "GUEST", do.check = interactive())
 }
 \description{
   The command will be put at the top of a student's problem

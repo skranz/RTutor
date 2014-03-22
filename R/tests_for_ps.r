@@ -6,7 +6,18 @@ check.package = function(package) {
   return(TRUE)
 }
 
-check.function = function(code.or.name, ...,ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL) {
+
+#' Checks a function written by the student
+#' 
+#' @param code.or.name a string containing the name of the function as specified in the solution
+#' @param ... you can add several test calls to the function. It will be checked whether the users' function returns the same values in those calls than the function in the solution. You can also have a code block wrapped in {} that ends with a call to the function. In this way you can e.g. specify a random seeds before calling the function.
+#' @param check.args if TRUE check the arguments of the user function. If a character vector only check the given arguments.
+#' @param check.defaults TRUE = check the default values of the arguments of the user function. If a character vector only check the default values of the given arguments.
+#' @param check.args.order if TRUE make sure that the checked arguments appear in the same order in the user function than in the solution
+#' @param allow.extra.args if TRUE the user function can have additional arguments (at the end) that are not in the solution
+#' @param hint.name name of a hint that is associated with this test
+#' @export
+check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.args = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL) {
 
   test.calls = eval(substitute(alist(...)))
 
@@ -25,10 +36,47 @@ check.function = function(code.or.name, ...,ex=get.ex(),stud.env = ex$stud.env, 
   if (!exists(fun.name,stud.env, inherits=FALSE)) {
     short.failure = paste0(fun.name, " does not exist.")
     failure.message = paste0("You have not yet created the function ",fun.name, ".")
-    add.failure(ex,short.failure,, var = var)
+    add.failure(ex,short.failure,failure.message, var = var)
     return(FALSE)
   }
+  
+  # Check the function's arguments
 
+  stud.fun = get(fun.name,stud.env)
+  stud.args = formals(stud.fun)
+  sol.args = formals(sol.fun)
+  
+  if (identical(check.args,TRUE)) check.args = names(sol.args)
+  if (identical(check.args,TRUE)) check.defaults = names(sol.args)
+  
+  if (is.character(check.args)) {
+    missing.args = setdiff(check.args, names(stud.args))
+    if (length(missing.args)>0) {
+      failure.message = paste0("Your function ", fun.name, " misses the argument(s) ", paste0(missing.args, collapse=", "),".")
+      add.failure(ex,failure.message,failure.message)
+      return(FALSE) 
+    }
+    arg.ind = seq_along(check.args)
+    if (check.args.order) {
+      if (!identical(names(stud.args)[arg.ind], check.args)) {
+        failure.message = paste0("Your function ", fun.name, " has the wrong order of arguments. Please arrange them as follows: ", paste0(check.args, collapse=", "),".")
+        add.failure(ex,failure.message,failure.message)
+        return(FALSE) 
+      }
+    }
+    if (!identical(stud.args[check.defaults], sol.args[check.defaults])) {
+      failure.message = paste0("Not all arguments of your function ", fun.name, " have the correct default value.")
+      add.failure(ex,failure.message,failure.message)
+      return(FALSE) 
+    }
+    if (!allow.extra.args) {
+      extra.args = set.diff(names(stud.args),names(sol.args))
+      failure.message =  paste0("Your function ", fun.name, " is not allowed to have the additional arguments ", paste0(extra.args, collapse=", "),".")
+      add.failure(ex,failure.message,failure.message)
+      return(FALSE) 
+    }
+  }
+  
   # Test calls
   stud.tenv = new.env(parent=stud.env)
   sol.tenv = new.env(parent=stud.env)
@@ -62,6 +110,7 @@ check.function = function(code.or.name, ...,ex=get.ex(),stud.env = ex$stud.env, 
   add.success(ex,success.message,...)
   return(TRUE)    
 }
+
 
 compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12) {
   wrong = NULL
@@ -117,6 +166,8 @@ show.success.message = function(success.message,..., ex=get.ex()) {
   return(TRUE)
 }
 
+#' Checks whether the user makes a particular function call in his code or call a particular R statement
+#' @export
 check.call = function(
   call.str, check.args=TRUE, check.arg.val = NULL, check.arg.name = NULL,
   success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
@@ -225,7 +276,8 @@ check.call = function(
 
 }
 
-
+#' Check whether a given file exists
+#' @export
 check.file.exists = function(
   file,
   failure.message=paste0('Sorry, but I cannot find the file "', file,'" in your current working directory.'),
@@ -242,6 +294,8 @@ check.file.exists = function(
   return(FALSE)
 }  
 
+#' Check whether an object from a call to lm, glm or some other regression function is correct
+#' @export 
 check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct."), tol = 1e-10) {
   restore.point("check.regression")
   
@@ -268,7 +322,8 @@ check.regression = function(var, str.expr,  hint.name = NULL, ex=get.ex(),stud.e
 
 
 
-#' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
+#' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution
+#' 
 #' @param vars a variable name or vector of variable names
 #' @param exists shall existence be checked (similar length, class, values)
 #' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
