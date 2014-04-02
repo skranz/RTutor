@@ -22,6 +22,8 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
   test.calls = eval(substitute(alist(...)))
 
   restore.point("check.function")
+  set.current.hint(hint.name)
+  
   
   if (is.character(code.or.name)) {
     fun.name = code.or.name
@@ -84,10 +86,10 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
   
   i = 1
   for (i in seq_along(test.calls)) {
-    sol.res = eval(test.calls[[i]], sol.env)
+    sol.res = eval(test.calls[[i]], sol.tenv)
     ok = TRUE
     failure.message = ""
-    stud.res = tryCatch(eval(test.calls[[i]], stud.env),
+    stud.res = tryCatch(eval(test.calls[[i]], stud.tenv),
                         error = function(e) {
                           failure.message <<- as.character(e)
                           ok <<- FALSE
@@ -114,6 +116,9 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
 
 compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12) {
   wrong = NULL
+  
+  if (identical(var.stud,var.sol))
+    return(NULL)
   
   if (class != FALSE) {
     class.stud = class(var.stud)[1]
@@ -175,7 +180,7 @@ check.call = function(
   hint.name = NULL,  ...) {
 
   restore.point("check.call")
-  
+  set.current.hint(hint.name)
   
   ex$stud.expr
   if (is.null(ex$stud.expr.list))
@@ -821,8 +826,11 @@ test.H0 = function(test.expr,p.value,test.name="",
 
 #' Test: The variance of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!", ex=get.ex(),stud.env = ex$stud.env,...) {
+test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!", ex=get.ex(),stud.env = ex$stud.env,hint.name=NULL,...) {
   call.str = as.character(match.call())
+
+  set.current.hint(hint.name)
+
   var.name = call.str[2]
   p.value = sigma.test(vec,sigmasq=true.val)$p.value
 
@@ -836,14 +844,19 @@ test.variance = function(vec, true.val, test = "t.test",short.message,warning.me
     warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample variance"
   }
   test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,ex=ex, success.message=success.message,
-  var = var.name, vari_stud = var(vec), vari_sol=true.val,...)
+  var = var.name, vari_stud = var(vec), vari_sol=true.val,hint.name=hint.name,...)
+  
+  
 } 
 
 #' Test: The mean of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired mean of {{mean_sol}}!", ex=get.ex(),stud.env = ex$stud.env,...) {
+test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired mean of {{mean_sol}}!", ex=get.ex(),stud.env = ex$stud.env,hint.name = NULL,...) {
   call.str = as.character(match.call())
+  set.current.hint(hint.name)
+
   stopifnot(test=="t.test")
+  
   var.name = call.str[2]
   p.value = t.test(vec,mu=true.val)$p.value
 
@@ -857,14 +870,16 @@ test.mean = function(vec, true.val, test = "t.test", short.message,warning.messa
     warning.message = "{{var}} has a suspicious mean!\n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
   }
   test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,ex=ex,
-        var = var.name, mean_stud = mean(vec), mean_sol=true.val,...)
+        var = var.name, mean_stud = mean(vec), mean_sol=true.val,hint.name=hint.name,...)
 }
 
 #' Test: Has a vector of random numbers been drawn from a normal distribution?
 #' @export
-test.normality = function(vec,short.message,warning.message,failure.message,ex=get.ex(),stud.env = ex$stud.env, success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",...) {
+test.normality = function(vec,short.message,warning.message,failure.message,ex=get.ex(),stud.env = ex$stud.env, success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",hint.name = NULL,...) {
   call.str = as.character(match.call())
   restore.point("test.normality")
+  set.current.hint(hint.name)
+
   var.name=call.str[2]
   
   # Cannot use more than 5000 observations
@@ -882,7 +897,7 @@ test.normality = function(vec,short.message,warning.message,failure.message,ex=g
     warning.message = "{{var}} looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of {{p_value}}."
   }
   test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,ex=ex,
-        var = var.name,...)
+        var = var.name,hint.name=hint.name,...)
 }
 
 #' Test: Does a certain condition on the stud's generated variables hold true

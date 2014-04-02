@@ -69,6 +69,18 @@ init.problem.set = function(name,stud.path, stud.short.file=paste0(prefix,name,"
   
   setwd(stud.path)
   parse.ps.structure(ps=ps)
+  
+  # Initialize stud.code once more
+  if (require.stud.file) {
+    ps$stud.code = readLines(ps$stud.file)
+    ex.names = names(ps$ex)
+    i = 1
+    for (i in seq_along(ps$ex)) {
+      ps$ex[[i]]$stud.code[[1]] = extract.exercise.code(ex.names[i],ps=ps)
+    }
+  }
+
+
   return(invisible(ps))
 }
 
@@ -153,6 +165,9 @@ parse.exercise = function(ex.name, ex.txt) {
   
   ex$sol.env = NULL
   ex$stud.env = NULL
+  
+  
+  
   ex$stud.code = paste0("###########################################\n\n",ex$task.txt,"\n")
   ex$checks = 0
   ex$attempts=0

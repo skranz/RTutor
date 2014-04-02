@@ -31,7 +31,7 @@ examples.print.example = function() {
 }
 
 signif.or.round = function(val, digits=3) {
-  if (val>10^digits)
+  if (any(val>10^digits))
     return(round(val))
   return(signif(val,digits))
 }
