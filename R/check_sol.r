@@ -5,7 +5,7 @@
 #' 
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive()) {  
+check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE) {  
   restore.point("check.problem.set", deep.copy=FALSE)
   if (!do.check) return("not checked")
   if (set.warning.1) {
@@ -18,14 +18,21 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
     stop('You have not picked a user name. Change the variable user.name in your problem set file from ""ENTER A USER NAME HERE" to some user.name that you can freely pick.')
   }
   
+  
+  #browser()
+  
+  if (verbose)
+    display("get.or.init.problem.set...")
   ps = get.or.init.problem.set(name,stud.path, stud.short.file, reset)
 
+  
+  
   user = get.user(user.name)  
   
   
   
+  old.code = sapply(ps$ex, function(ex) ex$stud.code[[1]])  
   ps$stud.code = readLines(ps$stud.file)
-  
   
   ex.names = names(ps$ex)
   new.code = sapply(ex.names, extract.exercise.code, ps=ps)
@@ -36,13 +43,18 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
   ex.names = ex.names[has.code]
   
   
-  i = 2
+  i = 1
   code.changed = sapply(seq_along(ex.names), function(i) {
-    ps$ex[[i]]$stud.code[[1]]!=new.code[[i]]
+    old.code[i]!=new.code[[i]]
   })
   names(code.changed) = names(new.code)  = ex.names
   
   code.check = code.changed
+
+  if (verbose) {
+    display("code.changed:")
+    print(code.changed)
+  }
   
   code.change.message = ""
   # If no code changed, check the last modified exercise
@@ -69,7 +81,12 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       ex.name = ex.names[i]
       ex = ps$ex[[ex.name]]
       ret <- FALSE
-      ret = tryCatch(check.exercise(ex.name,new.code[ex.name]),
+      
+      if (verbose) {
+        display("### Check exercise ", ex.name ," ######")
+      }
+
+      ret = tryCatch(check.exercise(ex.name,new.code[ex.name], verbose=verbose),
                      error = function(e) {ex$failure.message <- as.character(e)
                                           return(FALSE)})
                      
@@ -79,7 +96,7 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       if (ret==FALSE) {
         message = ex$failure.message
         if (!is.null(ex$hint.name))
-          message = paste0(message,"\nIf you want a hint, type hint() in the R console and press Enter.")
+          message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
         message = paste(message,code.change.message)
         any.false=TRUE
         stop(message, call.=FALSE, domain=NA)
@@ -108,8 +125,8 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
 #' @param ex.name The name of the exercise
 #' @param stud.code The code of the student's solution as a string (or vector of strings)
 #' @export 
-check.exercise = function(ex.name,stud.code,ps=get.ps()) {
-  restore.point("Exercise")
+check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
+  restore.point("check.exercise")
   
   cat(paste0("\n\n###########################################\n",
              "Check exercise ",ex.name,"...",
@@ -139,8 +156,29 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   ex$stud.env = new.env(parent=.GlobalEnv)
   ex$stud.seed = as.integer(Sys.time())
   
+  # Import variables from other exercises stud.env's
+  has.error = FALSE
+
+  if (verbose) {
+    display("import.stud.env.var...")
+  }
+
+  tryCatch(
+    import.stud.env.var(ex$settings$import.var, dest.env = ex$stud.env, ps = ps),
+     error = function(e) {
+      ex$failure.message=ex$failure.short=paste0("Error in check.exercise import.stud.env.var ",geterrmessage())
+      has.error <<- TRUE
+    })
+    
+  if (has.error)
+    return(FALSE)
+
   has.error = FALSE
   ex$stud.expr.li = NULL
+  if (verbose) {
+    display("parse stud.code...")
+  }
+
   tryCatch( ex$stud.expr <- parse(text=ex$stud.code, srcfile=NULL),
             error = function(e) {
               ex$failure.message=ex$failure.short=paste0("parser error: ",geterrmessage())
@@ -154,6 +192,11 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   has.error = FALSE
   
   set.seed(ex$stud.seed)
+  if (verbose) {
+    display("eval stud.code...")
+  }
+
+  #eval(ex$stud.expr, ex$stud.env)
   tryCatch( eval(ex$stud.expr, ex$stud.env),
             error = function(e) {
               # Evaluate expressions line by line and generate failure message
@@ -164,12 +207,17 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   if (has.error)
     return(FALSE)
   
+  
   # Evaluate official solution or recycle previous evaluation  
   if (is.null(ex$sol.env)) {
+    if (verbose) {
+      display("eval solution code...")
+    }
+
     sol.env = new.env(parent=.GlobalEnv)    
     ex$sol.env = sol.env
 
-    tryCatch( eval(ex$sol, sol.env),
+    tryCatch( suppressWarnings(eval(ex$sol, sol.env)),
       error = function(e) {
         str = paste0("Uups, an error occured while running the official solution:\n",
                      as.character(e),
@@ -182,11 +230,19 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   }
   
   had.warning = FALSE
+  if (verbose) {
+    display("run tests...")
+  }
+
   for (test.ind in seq_along(ex$tests)){
     test = ex$tests[[test.ind]]
     passed.before = ex$tests.stats[[test.ind]]$passed
     ex$success.message = NULL
     ex$test.ind = test.ind
+    if (verbose) {
+      display("  Test #", test.ind, ": ",deparse1(test))
+    }
+
     ret = eval(test,ex$stud.env)
     
     if (ret==FALSE) {
@@ -194,7 +250,8 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
     } else if (ret=="warning") {
       had.warning = TRUE
     } else {
-      if (!is.null(ex$success.message) & !passed.before) {
+      #if (!is.null(ex$success.message) & !passed.before) {
+      if (!is.null(ex$success.message)) {
         cat(paste0(ex$success.message,"\n"))
       }
     }
@@ -212,6 +269,25 @@ check.exercise = function(ex.name,stud.code,ps=get.ps()) {
   }
 }
 
+# Import variables from other exercises stud.env's
+import.stud.env.var = function(import.var.li, dest.env = get.ex()$stud.env, ps = get.ps()) {
+  restore.point("import.stud.env.var")
+  if (is.null(import.var.li))
+    return()
+  for (i in seq_along(import.var.li)) {
+    ex.name = names(import.var.li)[i]
+    source.env = ps$ex[[ex.name]]$stud.env
+    vars = import.var.li[[i]]
+    for (var in vars) {
+      if (!exists(var,source.env, inherits=FALSE))
+        stop(paste0("You first must correctly generate the variable '", var, "' in exercise ", ex.name, " before you can solve this exercise."))
+        assign(var, get(var,source.env),dest.env)
+    }
+  }
+  return()
+}
+
+
 #' Extracts the stud's code of a given exercise
 #' @export
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
@@ -228,50 +304,46 @@ extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),w
 
 extract.r.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.r.exercise.code")
+    restore.point("extract.rmd.exercise.code")
   txt = stud.code
-  start.command = extract.command(txt,paste0("#' ## Exercise ",ex.name))
-  if (is.null(start.command)) {
+  mr = extract.command(txt,paste0("#' ## Exercise "))
+  start.ind = which(str.starts.with(mr[,2],ex.name))
+  start.row = mr[start.ind,1]
+  if (length(start.row) == 0) {
     if (warn.if.missing)
       message(paste0("Warning: Exercise ", ex.name, " not found. Your code must have the line:\n",
                      paste0("#' ## Exercise ",ex.name)))
     return(NA)
   }
-  end.command =  extract.command(txt,paste0("#' #### end of exercise ",ex.name))
-                       
-  if (is.null(start.command)) {
-    message(paste0("Warning: Exercise ", ex.name, " could not be parsed, since I can't find the end of the exercise. Your code needs at the end of the exercise the line:\n",
-                   paste0("#### end exercise ",ex.name)))
-    return(NA)
+  if (length(start.row)>1) {
+    message("Warning: Your solution has ", length(start.row), " times exercise ", ex.name, " I just take the first.")
+    start.row = start.row[1]
+    start.ind = start.ind[1]
   }
-  
-  start = start.command$line
-  end =end.command$line
-  
-  # Return student's solution
-  paste0(txt[(start+1):(end-1)],collapse="\n")
+  end.row = c(mr[,1],length(txt)+1)[start.ind+1]-1
+  str = txt[(start.row+1):(end.row)]
+  paste0(str, collapse="\n")
 }
 
 extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.rmd.exercise.code")
   txt = stud.code
-  start.command = extract.command(txt,paste0("## Exercise ",ex.name))
-  if (is.null(start.command)) {
+  mr = extract.command(txt,paste0("## Exercise "))
+  start.ind = which(str.starts.with(mr[,2],ex.name))
+  start.row = mr[start.ind,1]
+  if (length(start.row) == 0) {
     if (warn.if.missing)
       message(paste0("Warning: Exercise ", ex.name, " not found. Your code must have the line:\n",
                      paste0("## Exercise ",ex.name)))
     return(NA)
   }
-  end.command =  extract.command(txt,paste0("#### end of exercise ",ex.name))
-  if (is.null(start.command)) {
-    message(paste0("Warning: Exercise ", ex.name, " could not be parsed, since I can't find the end of the exercise. Your code needs at the end of the exercise the line:\n",
-                   paste0("#### end exercise ",ex.name)))
-    return(NA)
+  if (length(start.row)>1) {
+    message("Warning: Your solution has ", length(start.row), " times exercise ", ex.name, " I just take the first.")
+    start.row = start.row[1]
+    start.ind = start.ind[1]
   }
-  
-  start = start.command$line
-  end =end.command$line
-  
-  str = txt[(start+1):(end-1)]
+  end.row = c(mr[,1],length(txt)+1)[start.ind+1]-1
+  str = txt[(start.row+1):(end.row)]
   
   # Get all code lines with an R code chunk
   hf = str.starts.with(str,"```")
@@ -283,13 +355,14 @@ extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps
 
 
 stepwise.eval.stud.expr = function(stud.expr, ex=get.ex(), stud.env = ex$stud.env()) {
+  restore.point("stepwise.eval.stud.expr")
   set.seed(ex$stud.seed)
   has.error = FALSE
   for (i in seq_along(stud.expr)) {
     part.expr = stud.expr[[i]]
     tryCatch( eval(part.expr, stud.env),
               error = function(e) {        
-                ex$failure.message = ex$failure.short= paste0("evaluation error in \n  ",deparse(part.expr),"\n  ",geterrmessage())
+                ex$failure.message = ex$failure.short= paste0("evaluation error in \n  ",deparse1(part.expr),"\n  ",geterrmessage())
                 has.error <<- TRUE
               }
     )

@@ -1,3 +1,38 @@
+deparse1 = function(call) {
+  paste0(deparse(call, width=500),collapse="")
+}
+
+nlist = function (...) 
+{
+    li = list(...)
+    li.names = names(li)
+    names = unlist(as.list(match.call())[-1])
+    if (!is.null(li.names)) {
+        no.names = li.names == ""
+        names(li)[no.names] = names[no.names]
+    }
+    else {
+        names(li) = names
+    }
+    li
+}
+
+display = function (..., collapse = "\n", sep = "") 
+{
+    str = paste("\n", paste(..., collapse = collapse, sep = sep), 
+        "\n", sep = "")
+    invisible(cat(str))
+}
+
+is.assignment = function(call) {
+  if (length(call)==1)
+    return(FALSE)
+  
+  char.op = as.character(call[[1]])
+  char.op == "=" | char.op == "<-"
+}
+
+
 # Some tool functions
 examples.qlist = function() {
   qlist({x=5;3*x})
@@ -58,81 +93,41 @@ extract.command = function(txt,command) {
   data.frame(line=lines, val=val, stringsAsFactors=FALSE)
 } 
 
-match.call.object = function(call) {
-  if (length(call)==1)
-    return(call)
-  ret = call
-  com <- paste0("match.call(", as.character(call[[1]]), ", call=call)")
-  tryCatch({
-    ret <- eval(parse(text=com,srcfile=NULL))
-  }, error = function(e) {}
-  )
-  ret
-}
 
-name.of.call = function(call) {
-  if (is.symbol(call))
-    return(as.character(call))
-  as.character(call[[1]])  
-}
-
-args.of.call = function(call) {
-  if (is.symbol(call))
-    return(NULL)
-  li = as.list(call[-1])
-  li
-}
-
-examples.code.has.call = function() {
-  code.str = "
-  plot(5,y=3)
-  x*2
-  x$a
-  x[['a']]
-  "
-  call.str = "plot(x=5,y=3,main='Hi')"
+get.txt.blocks = function(txt, start=NULL, end=NULL, start.with=NULL, end.with=NULL, complements=FALSE, inner = TRUE) {
+  restore.point("get.txt.blocks")
+  if (!is.null(start))
+    start.rows = which(str.trim(txt) == start)
+  if (!is.null(start.with))
+    start.rows = which(str.starts.with(txt, start.with))
+  if (!is.null(end))
+    end.rows = which(str.trim(txt) == end)
+  if (!is.null(end.with))
+    end.rows = which(str.starts.with(txt, end.with))
   
-  call.str = 'x[["a"]]'
-  
-  find.matching.calls(code.str, call.str)
-}
 
-
-find.matching.calls = function(code.str, call.str, call = parse(text=call.str, srcfile=NULL)[[1]]) {
-  
-  code.li = as.list(parse(text=code.str, srcfile=NULL))
-  call = 
-
-  code.names = sapply(code.li, name.of.call)
-  call.name = name.of.call(call)
-  
-  ind = which(code.names %in% call.name)
-  if (length(ind)==0) {
-    return(NULL)
+  if (length(start.rows)==0) {
+    if (complements)
+      return(list(txt))
+    return(list())
   }
-  return(code.li[ind])
+  if (!complements) {  
+    str = lapply(1:length(start.rows), function(i) txt[(start.rows[i]+inner):(end.rows[i]-inner)])
+  }
+  if (complements) {
+    n = length(start.rows)
+    new.start.rows = c(1,end.rows+inner)
+    end.rows = c(start.rows-inner, length(txt))
+    start.rows = new.start.rows
+    zero.len = start.rows > end.rows
+    start.rows = start.rows[!zero.len]
+    end.rows = end.rows[!zero.len]
+    if (length(start.rows)==0)
+      return(list())
+    str = lapply(1:length(start.rows), function(i) txt[(start.rows[i]):(end.rows[i])])
+
+  }
+  return(str)
+
   
-  as.list(code)
-  
-  co = code[[3]]
-  co
-  co = match.call.object(co)
-  
-  names(co)
-  as.character(co[[1]])
-  co[[2]]
-  co[[3]]
-  class(co[[1]])
-  call. = co
-  f()
-  
-  
-  names(co)
-  
-  args(co)
-  call_tree(co)
-  standardise_call(co)
-  str(co)
-  class(co)
-  co[[2]]
 }

@@ -49,13 +49,10 @@ get.or.init.problem.set = function(name,stud.path, stud.short.file, reset=FALSE,
   
   # Just take current problem set information
   if (!is.null(ps)) {
-    if (isTRUE(ps$name == name & ps$stud.path==stud.path & ps$stud.short.file == stud.short.file))
+    if (isTRUE(ps$name == name & ps$stud.path==stud.path & ps$stud.short.file == stud.short.file)) {
       return(ps)
+    }
   }
-  
-  # Check if a previous instance of the problem set has been stored and load it
-  
-  # ... not yet implemented ...
   
   # Initialize problem set newly
   return(init.problem.set(name,stud.path,stud.short.file))

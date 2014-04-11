@@ -1,7 +1,7 @@
 Package: RTutor
 Type: Package
 Title: Creating R exercises with automatic assement of student's solutions
-Version: 0.2.0
+Version: 0.3
 Date: 2013-07-25
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>

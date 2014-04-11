@@ -14,10 +14,10 @@ check.package = function(package) {
 #' @param check.args if TRUE check the arguments of the user function. If a character vector only check the given arguments.
 #' @param check.defaults TRUE = check the default values of the arguments of the user function. If a character vector only check the default values of the given arguments.
 #' @param check.args.order if TRUE make sure that the checked arguments appear in the same order in the user function than in the solution
-#' @param allow.extra.args if TRUE the user function can have additional arguments (at the end) that are not in the solution
+#' @param allow.extra.arg if TRUE the user function can have additional arguments (at the end) that are not in the solution
 #' @param hint.name name of a hint that is associated with this test
 #' @export
-check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.args = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL) {
+check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL) {
 
   test.calls = eval(substitute(alist(...)))
 
@@ -71,7 +71,7 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
       add.failure(ex,failure.message,failure.message)
       return(FALSE) 
     }
-    if (!allow.extra.args) {
+    if (!allow.extra.arg) {
       extra.args = set.diff(names(stud.args),names(sol.args))
       failure.message =  paste0("Your function ", fun.name, " is not allowed to have the additional arguments ", paste0(extra.args, collapse=", "),".")
       add.failure(ex,failure.message,failure.message)
@@ -101,7 +101,7 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
     
     res = compare.values(stud.res, sol.res)
     if (length(res)>0) {
-      call.str = paste0(deparse(test.calls[[i]]), collapse=";")
+      call.str = paste0(deparse1(test.calls[[i]]), collapse=";")
       failure.message = paste0("Your function ",fun.name, " seems not ok. The call ", call.str, " returns wrong ", paste0(res, collapse=","),".")
       add.failure(ex,failure.message,failure.message,...)
       return(FALSE) 
@@ -114,55 +114,7 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
 }
 
 
-compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12) {
-  wrong = NULL
-  
-  if (identical(var.stud,var.sol))
-    return(NULL)
-  
-  if (class != FALSE) {
-    class.stud = class(var.stud)[1]
-    class.sol = class(var.sol)[1]
-    if (class.stud == "integer") class.stud = "numeric"
-    if (class.sol == "integer") class.sol = "numeric"
-      
-    if (class.stud!=class.sol) {
-      wrong = c(wrong,"class")
-    }
-  }  
-  
-  if (length != FALSE) {
-    if (!length(var.stud)==length(var.sol)) {
-      wrong = c(wrong,"length")
-    }
-  }
-  if (dim != FALSE) {
-    if (!identical(dim(var.stud),dim(var.sol))) {
-      wrong = c(wrong,"dim")
-    }
-  }  
-  if (names != FALSE) {
-    if (!identical(names(var.stud),names(var.sol))) {
-      wrong = c(wrong,"names")
-    }
-  }  
-  if (values != FALSE) {
-    if (is.list(var.sol) | is.environment(var.sol)) {
-      if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
-        wrong = c(wrong,"values")
-      }
-    } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
-      if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
-        wrong = c(wrong,"values")
-      } else if (!identical(is.na(var.stud),is.na(var.sol))) {
-        wrong = c(wrong,"values")
-      }        
-    } else {
-        wrong = c(wrong,"values")
-    }
-  }
-  wrong
-}
+
 
 #' Simply shows a success message when this test is reached for the first time!
 #' @export 
@@ -171,115 +123,170 @@ show.success.message = function(success.message,..., ex=get.ex()) {
   return(TRUE)
 }
 
+
 #' Checks whether the user makes a particular function call in his code or call a particular R statement
 #' @export
-check.call = function(
-  call.str, check.args=TRUE, check.arg.val = NULL, check.arg.name = NULL,
-  success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
+check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL,
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
-  hint.name = NULL,  ...) {
+  hint.name = NULL, part=NULL, ...) {
 
+  expr = substitute(call)
   restore.point("check.call")
   set.current.hint(hint.name)
+    
+  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
+  ce = match.call.object(expr)
+  dce = describe.call(call.obj=ce)
+  check.na = dce$name
+  
+  if (is.null(ex$stud.expr.list))
+    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
+
+  stud.expr.li = ex$stud.expr.li
+  stud.na = sapply(stud.expr.li,  name.of.call)
+
+  ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
+  if (ret[[1]]==TRUE) {
+     success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
+     add.success(ex,success.message)
+     return(TRUE)
+  } else {
+    if (is.null(failure.message))
+      failure.message = paste0("You have not yet entered all correct commands", part.str,".")   
+    add.failure(ex,failure.message,failure.message,...)
+    return(FALSE)    
+  }
+}
+
+internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FALSE, ignore.arg=NULL,check.arg.by.value=TRUE) {
+  restore.point("internal.check.call")
+  check.na = dce$name
+  stud.na = sapply(stud.expr.li,  name.of.call)
+
+  
+  # Filter all student calls that have the same name of call 
+  stud.expr.li = stud.expr.li[which(stud.na == check.na)]
+  if (length(stud.expr.li)==0) {
+    return(list(FALSE,"not found"))
+  }
+
+  # Check if directly the same call exists
+  if (list(ce) %in% stud.expr.li) {
+    return(list(TRUE,deparse1(ce)))
+  }
+  
+  if (dce$type == "fun") {    
+    if (check.na %in% c("library")) {
+      check.arg.by.value = FALSE
+    }
+    
+    # Environment in which argument values shall be evaluated. Is a data frame
+    # if the function is a dplyer function like mutate(dat,...)
+    if (check.arg.by.value) {
+      val.env = stud.env
+      if (is.dplyr.fun(check.na)) {
+        val.env = eval(dce$arg[[".data"]],val.env)
+      }
+    } else {
+      val.env = NULL
+    }
+    
+    correct = sapply(stud.expr.li,check.call.args,check.call=ce, val.env = val.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg)
+    if (any(correct)) {
+      call.str = deparse1(stud.expr.li[[which(correct)[1]]])
+      return(list(TRUE, call.str))
+    }
+    return(list(FALSE,"wrong arg"))
+  }
+
+  # For the moment let us check everything but fun by the return value
+  if (dce$type != "fun") {
+    check.val = eval(ce, stud.env)
+    
+    se = stud.expr.li[[1]]
+    for (se in stud.expr.li) {
+      has.error = FALSE
+      tryCatch( stud.val <- eval(se, stud.env),
+        error = function(e) has.error <<- TRUE
+      )
+      if (!has.error) {
+        if (is.same(check.val, stud.val)) {
+          call.str = deparse1(se)
+          return(list(TRUE, call.str))
+        }
+      }
+    }
+    return(list(FALSE, "not found"))
+  }
+  return(list(TRUE, "test not implemented"))  
+}
+
+standardize.assign = function(call, null.if.no.assign=TRUE) {
+  char.op = as.character(call[[1]])
+  if (char.op == "=" | char.op == "<-") {
+    call[[1]] <- `<-`
+    return(call)
+  }
+  if (null.if.no.assign)
+    return(NULL)
+  call
+}
+
+#' Checks an assignment to a variable
+#' @export
+check.assign = function(
+  call, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
+  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
+  hint.name = NULL, part=NULL,  ...) {
+
+  call = substitute(call)
+
+  restore.point("check.assign")
+  set.current.hint(hint.name)
+        
+  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+
   ex$stud.expr
   if (is.null(ex$stud.expr.list))
     ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
 
-  check.expr.li = lapply(call.str, function(str) match.call.object(parse(text=str, srcfile=NULL)[[1]]))
+  check.expr = match.call.object(call)
+  check.expr = standardize.assign(check.expr)                              
 
+  stud.expr.li = lapply(as.list(ex$stud.expr), standardize.assign)
+  stud.expr.li = stud.expr.li[(!sapply(stud.expr.li,is.null))]
   
-  if (identical(check.args,TRUE) & is.null(check.arg.val) & is.null(check.arg.name)) {
-    
-    correct.expr = check.expr.li %in% ex$stud.expr.li
-    if (any(correct.expr)) {
-      if (is.null(success.message)) {
-        success.message = paste0("Great, you correctly called the command: ", call.str[which(correct.expr)[1]],"")  
-      }
-      add.success(ex,success.message,...)
-      return(TRUE)    
-    }
+  # Check names
+  var = paste0(as.character(check.expr[[2]]), collapse=",")
+  stud.var = sapply(stud.expr.li, function(e) paste0(as.character(e[[2]]), collapse=","))
+  stud.expr.li = stud.expr.li[stud.var == var]
 
+  if (length(stud.expr.li) == 0) {
     if (is.null(failure.message))
-      failure.message = no.command.failure.message
-    
-
+      failure.message = paste0("You have not yet made an assignment to ", var)
     add.failure(ex,failure.message,failure.message,...)
     return(FALSE) 
   }
-  
-  
-  
-  stud.call.name = sapply(ex$stud.expr.li,  name.of.call)    
-  check.call.name = sapply(check.expr.li,  name.of.call)
-  if (length(check.call.name)>1) {
-    cat("\ncheck.call with check.arg.val or check.arg.name works so far only with a single call that is to be checked!")
-    return(TRUE)
-  }
-  
-  if (is.null(success.message))
-    success.message = paste0("Great, you correctly called the command: '", call.str,"'")  
 
-  
-  stud.match = which(stud.call.name == check.call.name)
-  if (length(stud.match)==0) {
+  ce.rhs = match.call.object(check.expr[[3]])
+  dce.rhs = describe.call(call.obj=ce.rhs)
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]]))
+
+  ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env)
+  if (ret[[1]]==TRUE) {
+     success.message = paste0("Great,",part.str," you correctly assigned ", var, " = ",ret[[2]])
+     add.success(ex,success.message)
+     return(TRUE)
+  } else {
     if (is.null(failure.message))
-      failure.message = no.command.failure.message
-    
-    add.failure(ex,failure.message,failure.message,...)
-    return(FALSE)
+      failure.message = paste0("You have not made a correct assignment to ", var, part.str,".")   
+    add.failure(ex,failure.message,failure.message)
+    return(FALSE)    
   }
-
-  # Check those parameters that shall be checked by name
-  if (length(check.arg.name)>0) {
-    ch.args = args.of.call(check.expr.li[[1]])[check.arg.name]
-
-    ok = FALSE
-    for (i in stud.match) {
-      stud.args = args.of.call(ex$stud.expr.li[[i]])[check.arg.name]
-      if (identical(stud.args,ch.args)) {
-        ok = TRUE
-        break
-      }
-    }
-    if (!ok) {
-      if (is.null(failure.message))
-        failure.message = paste0("In your call to ", check.call.name, " not all of the parameters ", paste0(names(ch.args), collapse=", "), " are correct.")
-      add.failure(ex,failure.message,failure.message,...)
-      return(FALSE)
-    }
-  }
-
-  # Check those parameters that shall be checked by value
-  if (length(check.arg.val)>0) {
-    ch.args = args.of.call(check.expr.li[[1]])[check.arg.val]
-    ch.args.val = lapply(ch.args, function(call) eval(call, stud.env))
-    
-    ok = FALSE
-    i = stud.match[1]
-    for (i in stud.match) {
-      stud.args = args.of.call(ex$stud.expr.li[[i]])[check.arg.val]
-      stud.args.val = lapply(stud.args, function(call) eval(call, stud.env))
-      correct.val = sapply(names(ch.args), function(arg.name) {
-        identical(ch.args.val[[arg.name]],stud.args.val[[arg.name]])
-      })     
-      if (identical(stud.args,ch.args)) {
-        ok = TRUE
-        break
-      }
-    }
-    if (!ok) {
-      if (is.null(failure.message))
-        failure.message = paste0("In your call to ", check.call.name, " you don't have the correct values for the argument(s) ", paste0(names(ch.args)[!correct.val], collapse=", "), ".")
-      add.failure(ex,failure.message,failure.message,...)
-      return(FALSE)
-    }
-  }
-  
-  add.success(ex,success.message,...)
-  return(TRUE)    
-
 }
+
+
 
 #' Check whether a given file exists
 #' @export
@@ -360,7 +367,7 @@ check.expr = function(check.expr, correct.expr,failure.message = "{{check_expr}}
   val.check = eval(check.expr,stud.env)
   val.sol = eval(correct.expr,stud.env)
   
-  check.expr.str = deparse(check.expr)
+  check.expr.str = deparse1(check.expr)
   
   if (!identical(class(val.check),class(val.sol))) {
     add.failure(ex,failure.message, check_expr=check.expr.str)
@@ -416,7 +423,7 @@ check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ex=get.ex
     return(TRUE)
   
   if (is.null(str.expr))
-    str.expr = deparse(expr)
+    str.expr = deparse1(expr)
   
   if (length(classes)>1) {
     failure.message=paste0(str.expr, " has class ", paste0(class,collapse=" and ")," but it should be one of ", paste0(classes, collapse=", "),".")
@@ -444,7 +451,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
     failure.values = "Column {{col}} of {{df}} has wrong values.",
     failure.message.add = NULL,
     success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.", hint.name = NULL,
-    ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,sol.env = ex$sol.env) {
+    ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,sol.env = ex$sol.env, part=NULL) {
     
   
   if (!is.null(unsubst.expr)) {
@@ -549,7 +556,7 @@ check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=
   failure.values = "Your variable {{var}} has wrong values.",
   failure.message.add = NULL,
   success.message = "Great, {{vars}} has correct {{tests}}.", hint.name = NULL,
-  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,   sol.env = ex$sol.env) {
+  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,   sol.env = ex$sol.env, part=NULL) {
   
   
   if (!is.null(unsubst.expr)) {
@@ -575,7 +582,7 @@ check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=
   if (!is.null(expr)) {
     if (length(vars)>1)
       stop("Error in check.var: if you provide expr, you can only check a single variable!")
-    vars.sol = list(eval(expr,stud.env))
+    vars.sol = suppressWarnings(list(eval(expr,stud.env)))
   } else {
     vars.sol = lapply(vars, function(var) get(var,sol.env)) 
   }
@@ -720,7 +727,7 @@ sigma.test = function (x, sigma = 1, sigmasq = sigma^2,
   out$null.value <- c(variance = sigma^2)
   out$alternative <- alternative
   out$method <- "One sample Chi-squared test for variance"
-  out$data.name <- deparse(substitute(x))
+  out$data.name <- deparse1(substitute(x))
   names(out$estimate) <- paste("var of", out$data.name)
   return(out)
 }
@@ -750,7 +757,7 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
     if (test.name=="") {
-      test.name = deparse(test.expr)
+      test.name = deparse1(test.expr)
     }
   }
   if (missing(p.value)) {
@@ -794,7 +801,7 @@ test.H0 = function(test.expr,p.value,test.name="",
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
     if (test.name=="") {
-      test.name = deparse(test.expr)
+      test.name = deparse1(test.expr)
     }
   }
   if (missing(p.value)) {
@@ -907,7 +914,7 @@ holds.true = function(cond, short.message = failure.message,failure.message="Fai
   
   if (is.null(cond.str)) {
     cond = substitute(cond)
-    cond.str = deparse(cond)
+    cond.str = deparse1(cond)
   } else {
     cond = parse(text=cond.str,srcfile=NULL)
   }

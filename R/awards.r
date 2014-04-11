@@ -8,7 +8,7 @@ give.prize = function(prize.text=NULL, prize.code=NULL,...) {
   
 }
 
-give.award = function(award, prize.text = NULL, prize.code = NULL, user = get.user()) {
+give.award = function(award, level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
   if (has.award(award, user))
     return(TRUE)
   
@@ -60,7 +60,7 @@ clear.user = function(dir = get.ps()$stud.path) {
 get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
   restore.point("get.user")
   if (!exists(".__rtutor_user",.GlobalEnv)) {
-    file = paste0(dir,"/rtutor_user.RData")
+    file = paste0(dir,"/current_user.Ruser")
     if (file.exists(file)) {
       user = load.user(dir)
       if (is.null(user.name) | identical(user$name, user.name))
@@ -91,7 +91,7 @@ update.user = function(user=get.user()) {
 }
 
 load.user = function(dir = get.ps()$stud.path) {
-  file = paste0(dir,"/rtutor_user.Rdata")
+  file = paste0(dir,"/current_user.Ruser")
   load(file=file)
   assign(".__rtutor_user.name",user$name,.GlobalEnv)  
   assign(".__rtutor_user",user,.GlobalEnv)  
@@ -99,14 +99,14 @@ load.user = function(dir = get.ps()$stud.path) {
 }
 
 save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path) {
-  file = paste0(dir,"/rtutor_user.RData")
+  file = paste0(dir,"/current_user.Ruser")
   save(user, file=file)
   # Backup
-  file = paste0(dir,"/rtutor_user_",user.name,".RData")
+  file = paste0(dir,"/user_",user.name,".Ruser")
   save(user, file=file)
 }
 
-awards.details = function() {
+awards.details = function() {S
   list(
 "American Economic Review Data Grabber" = "You downloaded data from an AER article from the AER website and imported (at least some of) the data into R. There are a lot of really good articles with available data on the AER website. This helps you to reproduce and understand the research and to test your own ideas!",   
     

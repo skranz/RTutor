@@ -1,0 +1,221 @@
+examples.create.struc = function() {
+  setwd("D:/libraries/RTutor/problemsets/EmpIO1a")
+  create.struc("dplyr_car_sol.r",ps.name="test")
+
+  create.empty.ps("test", user.name = "seanbasti")
+}
+
+create.struc = function(sol.file, ps.name=NULL) {
+  restore.point("create.struc")  
+
+  txt = readLines(sol.file)
+  if (is.null(ps.name)) {
+    ps.name = str.trim(extract.command(txt,"#$ problem_set")[1,2])
+  }
+    
+  
+  ex.rows = extract.command(txt, "#$ exercise ")
+  ex.names = str.trim(str.left.of(ex.rows[,2],"#"))
+  rows = c(ex.rows[,1], length(txt)+1)
+  ex.txt = lapply(1:(length(rows)-1), function(i) txt[(rows[i]+1):(rows[i+1]-1)])
+  
+  ex.struc = sapply(seq_along(ex.txt), function(i) {
+    create.ex.struc(ex.names[i], ex.txt[[i]])
+  })
+  
+  file = paste0(ps.name,"_struc.r")  
+  txt = paste0('#$ problem_set ', ps.name,'\n\n', paste0(ex.struc, collapse="\n"),
+               '\n# create.empty.ps("',ps.name,'")')
+  writeLines(txt, file)
+}
+
+create.ex.struc = function(name, txt) {
+  restore.point("create.ex.struc")
+
+  te = new.env()
+  te$sol.txt = NULL
+  te$task.txt = NULL
+  te$test.txt = NULL
+  te$hint.txt = NULL
+  te$code.txt = NULL
+  te$part = NULL
+  te$block.head = NULL
+  te$last.e = NULL
+  te$code.to.task = FALSE
+  te$counter = 0
+  
+  code.stop = c("#<","#>","#$","#'")
+  
+  row = 0
+  while (row<length(txt)) {
+    row = row+1
+    str = txt[row]
+    ssub = substring(str,1,2)
+    if (str.trim(str)=="#s") {
+      add.struc.code(te)
+      te$code.to.task = TRUE
+    } else if (str.trim(str)=="#e") {
+      add.struc.code(te)
+      te$code.to.task = FALSE
+    } else if (ssub=="#'") {
+      add.struc.code(te)
+      add.struc.html.comment(te,str)
+    } else if (ssub=="#<") {
+      add.struc.code(te)
+      te$block.head = str
+    } else if (ssub=="#>") {
+      add.struc.block(te)
+    # Normal code
+    } else {
+      te$code.txt = c(te$code.txt, str)
+    }
+  }
+  add.struc.code(te)
+
+  
+  ex.code = paste0('
+#$ exercise ', name,' ############################################
+
+#$ settings #######################################################
+',paste0(te$settings.txt,collapse="\n"),'
+#$ task #######################################################
+',paste0(te$task.txt,collapse="\n"),'
+#$ solution ###################################################
+',paste0(te$sol.txt,collapse="\n"),'
+#$ tests ######################################################
+',paste0(te$test.txt,collapse="\n"),'
+#$ hints ######################################################
+',paste0(te$hint.txt,collapse="\n"),'
+
+#$ end_exercise
+')
+ #cat(ex.code)
+ ex.code
+}
+
+
+add.struc.block = function(te) {
+  restore.point("add.struc.block", deep.copy=TRUE)
+
+  type = str.trim(str.right.of(te$block.head,"#<"))
+  # Add test code
+  if (type == "") {
+    te$test.txt = c(te$test.txt,te$code.txt)
+  } else if (type == "add to hint") {
+    hint.txt = hint.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.code = te$code.txt)  
+    te$hint.txt[length(te$hint.txt)] <- hint.txt
+  } else if (type == "settings") {
+    te$settings.txt = c(te$settings.txt,te$code.txt)    
+  } else {
+    display("unknown block.head: ", te$block.head)
+  }
+  
+  te$code.txt = NULL
+  te$block.head = NULL
+}
+
+add.struc.html.comment = function(te, str) {
+  restore.point("add.struc.html.comment")
+  part.rows = which(grepl("#'[ ]?([a-z]|[ivx]*)\\)",str))
+  if (length(part.rows)>0)
+    te$part = str.right.of(str.left.of(str,")"),"#' ")
+  te$task.txt = c(te$task.txt, str)
+  #te$sol.txt = c(te$task.text, str)
+}
+
+add.struc.code = function(te) {
+  restore.point("add.struc.code", deep.copy=TRUE)
+
+  if (te$code.to.task) {
+    te$task.txt = c(te$task.txt, te$code.txt)
+  }
+
+  code.txt = str.trim(te$code.txt)
+  code.txt = code.txt[nchar(code.txt)>0]
+  
+  if (length(code.txt)>0) {
+    
+    
+    e.li = parse(text = te$code.txt, srcfile=NULL)
+    
+    if (length(e.li)>0) {
+      test.txt = sapply(seq_along(e.li), function(i) test.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
+      hint.txt = sapply(seq_along(e.li), function(i) hint.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
+    
+      te$counter = te$counter+length(e.li)
+      te$test.txt = c(te$test.txt,test.txt)
+      te$hint.txt = c(te$hint.txt,hint.txt)
+      te$last.e = e.li[[length(e.li)]]
+      enter.code.str =  "\n# enter your code here ...\n"
+      if (!te$code.to.task & 
+          !identical(te$task.txt[length(te$task.txt)], enter.code.str)) {
+        te$task.txt = c(te$task.txt, enter.code.str)
+      }
+    }
+  # Empty code.txt
+  } else {
+    te$last.e = NULL    
+  }
+  te$code.txt = NULL
+} 
+
+
+
+test.code.for.e = function(e, part="", counter=0) {
+  restore.point("test.code.for.e")
+  
+  part.str = ifelse(part=="","",paste0(",part='",part,")'"))
+  
+  if (is.assignment(e)) {
+    var = deparse1(e[[2]])
+    rhs = deparse1(e[[3]])
+    estr = deparse1(e)
+    
+    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+    code = paste0(
+      paste0("#check.var('", var,"', ", rhs, ", exists=TRUE,length=TRUE, class = TRUE,values=TRUE, hint.name = '",hint.name,"'",part.str,")"),
+      paste0("\ncheck.assign(", var, "<-",rhs,", hint.name = '",hint.name,"'", part.str,")")
+    )
+  } else {
+    estr = short = paste0(deparse(e),collapse="")
+    if (nchar(estr)>23) 
+      short = paste0(substring(estr,1,23),"...", counter)
+    
+    code = c(
+      paste0("check.call(", estr,", allow.extra.arg=FALSE, ignore.arg=NULL, hint.name = 'call ",short,"'",part.str,")")
+    )
+    
+  }
+  
+  code  
+}
+
+
+hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
+  
+  part.str = ifelse(part=="","",paste0(",part='",part,")'"))
+
+  if (!is.null(extra.code)) {
+    extra.code = paste0("\n  ",paste0(extra.code,collapse="\n  "))
+  }
+  
+  if (is.assignment(e)) {
+    var = deparse1(e[[2]])
+    rhs = deparse1(e[[3]])
+    estr = deparse1(e)
+
+    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+    code = paste0("add.hint('",hint.name,"',", 
+      "{\n  hint.for.assign(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
+    )
+  } else {
+    estr = short = paste0(deparse(e),collapse="")
+    if (nchar(estr)>23) 
+      short = paste0(substring(estr,1,23),"...", counter)
+    hint.name = paste0("call ",short)
+    code = paste0("add.hint('",hint.name,"',",
+      "{\n  hint.for.call(",estr,part.str,")", extra.code,"\n})"
+    )
+  }
+  code  
+}

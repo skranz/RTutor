@@ -20,69 +20,107 @@ examples.list.ps = function() {
 #' @param stud.path the path in which the stud has stored his file
 #' @param stud.file the file name in which the stud has stored her files 
 #' @export
-init.problem.set = function(name,stud.path, stud.short.file=paste0(prefix,name,".r"),
-                            log.file = paste0(prefix,name,".log"),
-                            state.file = paste0(prefix,name,".Rdata"),
-                            prefix = "", require.stud.file = TRUE) {
+init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r"),
+                            log.file = paste0(name,".log"),
+                            require.stud.file = TRUE, load.rps=TRUE) {
   restore.point("init.problem.set")
   
-  stud.file = paste0(stud.path,"/",stud.short.file)
-  if (require.stud.file & !file.exists(stud.file)){
-    stop(paste0("I could not find the problem set file ", stud.file, ". Please check the file name and folder and make sure this problem set file does indeed exist!"))    
-  }
-
-  # Search for structure file first in problem set folder
-  short.structure.file = paste0(prefix,name,"_struc.r")  
+  # Search for a binary or text version of the structure file 
   structure.path= stud.path    
-  structure.file = paste0(structure.path,"/",short.structure.file)
-
-  # if not found search in library folder
-  if (!file.exists(structure.file)) {
-    structure.path = paste0(find.package("RTutor"),"/problemsets")
-    structure.file = paste0(structure.path,"/",short.structure.file) 
-    if (!file.exists(structure.file)) {   
-      str = paste0("I could not find the problem set structure file '", short.structure.file, 
-                  "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You can get a list of all problem sets that are included in RTutor by running 'list.ps()'. If you don't see the problem set, try updating your RTutor version.")
-      stop(str)
-    }  
-  }
-  
-  ps = new.env()
-  class(ps) = c("Problemset","environment")
-  set.ps(ps)
-  
-  
-  
-  
-  ps$name = name
-  ps$prefix = prefix
-  ps$stud.path = stud.path
-  ps$stud.short.file = stud.short.file
-  ps$stud.file = paste0(stud.path,"/",stud.short.file)
-  ps$log.file = paste0(stud.path,"/",log.file)
-  ps$state.file = paste0(stud.path,"/",state.file)
-  ps$structure.path = structure.path
-  ps$structure.file = structure.file
-  ps$ex.last.mod = 1
-  
-  ps$is.rmd.stud = str.ends.with(tolower(stud.short.file),".rmd")
-  
-  setwd(stud.path)
-  parse.ps.structure(ps=ps)
-  
-  # Initialize stud.code once more
-  if (require.stud.file) {
-    ps$stud.code = readLines(ps$stud.file)
-    ex.names = names(ps$ex)
-    i = 1
-    for (i in seq_along(ps$ex)) {
-      ps$ex[[i]]$stud.code[[1]] = extract.exercise.code(ex.names[i],ps=ps)
+  structure.file = paste0(structure.path,"/",name,"_struc.r")
+  found.file = TRUE
+  # 1. r file in stud.path
+  if (file.exists(structure.file)) {
+    use.rps = FALSE
+  } else {
+    # 2. rps file in stud.path
+    structure.file = paste0(structure.path,"/",name,"_struc.rps")
+    # 3. rps file in library problem set path
+    if (file.exists(structure.file)) {
+      use.rps = TRUE
+    } else {
+      structure.path = paste0(find.package("RTutor"),"/problemsets")
+      structure.file = paste0(structure.path,"/",name,"_struc.rps")
+      if (file.exists(structure.file)) {
+        use.rps = TRUE
+      } else {
+        found.file = FALSE
+      }
     }
   }
 
 
+  # if not found search in library folder
+  if (!found.file) {
+    str = paste0("I could not find a problem set structure file '", paste0(name,"_struc.rps"), ,"' or '", paste0(name,"_struc.r"),
+                "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You can get a list of all problem sets that are included in RTutor by running 'list.ps()'. If you don't see the problem set, try updating your RTutor version.")
+    stop(str) 
+  }
+
+
+  if (use.rps) {
+    ps = load.binary.ps(file=structure.file)
+  } else {
+    ps = new.env()
+    class(ps) = c("Problemset","environment")
+    ps$structure.path = structure.path
+    ps$structure.file = structure.file
+
+    set.ps(ps)
+    
+    ps$name = name
+    ps$ex.last.mod = 1  
+    parse.ps.structure(ps=ps)
+    
+    # Save as rps
+    structure.file = paste0(structure.path,"/",name,"_struc.rps")
+    save.binary.ps(ps,structure.file)
+  }
+  ps$structure.path = structure.path
+  ps$structure.file = structure.file
+  ps$stud.path = stud.path
+
+  ps$has.stud.file = FALSE
+  if (require.stud.file) {
+    set.ps.stud.file(ps,stud.path,stud.short.file, log.file = log.file)
+  }
+  
   return(invisible(ps))
 }
+
+# Assigns a student file to ps and does all corresponding intializations
+set.ps.stud.file = function(ps, stud.path,stud.short.file, log.file = paste0(ps$name,".log") ) {
+  stud.file = paste0(stud.path,"/",stud.short.file)
+  if (!file.exists(stud.file)){
+    stop(paste0("I could not find the problem set file ", stud.file, ". Please check the file name and folder and make sure this problem set file does indeed exist!"))    
+  }
+  ps$has.stud.file = TRUE
+  
+  ps$stud.path = stud.path
+  ps$stud.short.file = stud.short.file
+  ps$stud.file = paste0(stud.path,"/",stud.short.file)
+  ps$log.file = paste0(stud.path,"/",log.file)
+  ps$is.rmd.stud = str.ends.with(tolower(stud.short.file),".rmd")
+
+  # Initialize stud.code once more
+  ps$stud.code = readLines(ps$stud.file)
+  ex.names = names(ps$ex)
+  i = 1
+  for (i in seq_along(ps$ex)) {
+    ps$ex[[i]]$stud.code[[1]] = extract.exercise.code(ex.names[i],ps=ps)
+  }
+}
+
+save.binary.ps = function(ps, file = paste0(ps$name,"_struc.rps")) {
+  save(ps, file=file)
+}
+
+
+load.binary.ps = function(ps.name, file = paste0(ps.name,"_struc.rps")) {
+  load(file)
+  return(ps)
+}
+
 
 
 #' Parse the structure of a problem set from a file
@@ -139,6 +177,10 @@ parse.exercise = function(ex.name, ex.txt) {
     com.name.txt = paste0(com$name[i],".txt")
     ex[[com.name.txt]] = paste0(ex.txt[(com$line[i]+1):com$end.line[i]],collapse="\n")
   }
+
+  ex$settings = new.env(parent=.GlobalEnv)
+  if (!is.null(ex$settings.txt))
+    eval(parse(text=ex$settings.txt,srcfile=NULL),ex$settings)
   
   # Replace whiskers
   ex$task.txt = whisker.render(ex$task.txt,list(ex_name=ex$name))    
@@ -160,6 +202,7 @@ parse.exercise = function(ex.name, ex.txt) {
   # Run the code that generates hints
   ex$prev.hint = 0
   ex$hints = list()
+  cat(ex$hints.txt)
   if (length(ex$hints.txt)>0)
     eval(parse(text=ex$hints.txt,srcfile=NULL))
   
