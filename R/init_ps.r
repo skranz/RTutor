@@ -25,6 +25,8 @@ init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r
                             require.stud.file = TRUE, load.rps=TRUE) {
   restore.point("init.problem.set")
   
+  #setwd(stud.path)
+  
   # Search for a binary or text version of the structure file 
   structure.path= stud.path    
   structure.file = paste0(structure.path,"/",name,"_struc.r")
@@ -34,13 +36,13 @@ init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r
     use.rps = FALSE
   } else {
     # 2. rps file in stud.path
-    structure.file = paste0(structure.path,"/",name,"_struc.rps")
+    structure.file = paste0(structure.path,"/",name,".rps")
     # 3. rps file in library problem set path
     if (file.exists(structure.file)) {
       use.rps = TRUE
     } else {
       structure.path = paste0(find.package("RTutor"),"/problemsets")
-      structure.file = paste0(structure.path,"/",name,"_struc.rps")
+      structure.file = paste0(structure.path,"/",name,".rps")
       if (file.exists(structure.file)) {
         use.rps = TRUE
       } else {
@@ -52,7 +54,7 @@ init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r
 
   # if not found search in library folder
   if (!found.file) {
-    str = paste0("I could not find a problem set structure file '", paste0(name,"_struc.rps"), ,"' or '", paste0(name,"_struc.r"),
+    str = paste0("I could not find a problem set structure file '", paste0(name,".rps"), ,"' or '", paste0(name,"_struc.r"),
                 "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You can get a list of all problem sets that are included in RTutor by running 'list.ps()'. If you don't see the problem set, try updating your RTutor version.")
     stop(str) 
   }
@@ -73,7 +75,7 @@ init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r
     parse.ps.structure(ps=ps)
     
     # Save as rps
-    structure.file = paste0(structure.path,"/",name,"_struc.rps")
+    structure.file = paste0(structure.path,"/",name,".rps")
     save.binary.ps(ps,structure.file)
   }
   ps$structure.path = structure.path
@@ -111,12 +113,12 @@ set.ps.stud.file = function(ps, stud.path,stud.short.file, log.file = paste0(ps$
   }
 }
 
-save.binary.ps = function(ps, file = paste0(ps$name,"_struc.rps")) {
+save.binary.ps = function(ps, file = paste0(ps$name,".rps")) {
   save(ps, file=file)
 }
 
 
-load.binary.ps = function(ps.name, file = paste0(ps.name,"_struc.rps")) {
+load.binary.ps = function(ps.name, file = paste0(ps.name,".rps")) {
   load(file)
   return(ps)
 }

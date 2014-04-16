@@ -1,37 +1,5 @@
 # All sorts of functions to create problem sets
 
-#' Init files for developing a new problem set with given name under the specified parent directory
-#' @export 
-develop.problem.set = function(name,parent.path) {
-  restore.point("develop.problem.set")
-  RTutor.path = path.package("RTutor")
-  
-  ps.path = paste0(parent.path,"/",name)
-  message(paste0("Create directory ", ps.path))
-  dir.create(ps.path, recursive=TRUE)
-  
-  dest.file = paste0(ps.path,"/make_student_ps.r")
-  if (file.exists(dest.file)) {
-    message(paste0("File ", dest.file, " already exists. I don't overwrite it."))
-  } else {
-    source.file = paste0(RTutor.path,"/problemsets/make_student_ps.Rtmpl")
-    txt = readLines(source.file)
-    txt = whisker.render(txt,list(ps_name=name,ps_path=ps.path))
-    writeLines(txt,dest.file)
-  }
-  
-  dest.file = paste0(ps.path,"/",name,"_struc.r")
-  if (file.exists(dest.file)) {
-    message(paste0("File ", dest.file, " already exists. I don't overwrite it."))
-  } else {
-    source.file = paste0(RTutor.path,"/problemsets/ps_struc.r")
-    txt = readLines(source.file)
-    txt[1] = paste0("#$ problem_set ", name)
-    writeLines(txt,dest.file)
-  }  
-}
-
-
 
 add.exercise = function(ex,ps=get.ps()) {
   ex.code = get.empty.ex.code(ex)

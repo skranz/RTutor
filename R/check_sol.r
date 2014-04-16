@@ -24,8 +24,7 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
   if (verbose)
     display("get.or.init.problem.set...")
   ps = get.or.init.problem.set(name,stud.path, stud.short.file, reset)
-
-  
+  set.ps(ps)
   
   user = get.user(user.name)  
   

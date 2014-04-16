@@ -9,9 +9,10 @@ give.prize = function(prize.text=NULL, prize.code=NULL,...) {
 }
 
 give.award = function(award, text="", level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
+  restore.point("give.award")
+
   if (has.award(award, user))
     return(TRUE)
-  
   message(paste0('
 **********************************************************
 * Congrats, you earned the award "', award, '"
@@ -19,8 +20,10 @@ give.award = function(award, text="", level=NULL,prize.text = NULL, prize.code =
 
 PS: awards() shows all your awards
 '))
-  user$awards = c(user$awards,award)
-  user$awards.granted.in[[award]] = paste0(get.ps()$name, " ", get.ex()$name)
+  award.name = award
+  award = list(name=award.name,text = text, level=level,
+               granted.in = paste0("ps. ",get.ps()$name, " ex. ", get.ex()$name))
+  user$awards[[award.name]] = award 
   update.user()
   return(TRUE)
 }
@@ -28,17 +31,16 @@ PS: awards() shows all your awards
 awards = function(user = get.user(), details=TRUE) {
   cat(paste0("Hi ",user$name,", you have earned ", length(user$awards)," awards:\n"))
   if (!details) {
-    print(user$awards)
+    print(names(user$awards))
   } else {
-    ad = awards.details()[user$awards]
-    for (i in seq_along(ad)) {
-      cat(paste0("\n*** ",user$awards[i], " ***\n", ad[[i]]," (Awarded in ", user$awards.granted.in[user$awards[[i]]], ")\n"))
+    for (ad in user$awards) {
+      cat(paste0("\n*** ",ad$name, " ***\n", ad$text," (Awarded in ", ad$granted.in, ")\n"))
     }
   }
 }
 
-has.award = function(award,user=get.user()) {
-  award %in% user$awards
+has.award = function(award.name,user=get.user()) {
+  award.name %in% names(user$awards)
 }
 
 
@@ -80,7 +82,7 @@ get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
 }
 
 init.user = function(user.name="GUEST") {
-  user = as.environment(list(name=user.name, awards = NULL, awards.granted.in = list()))
+  user = as.environment(list(name=user.name, awards = list()))
   assign(".__rtutor_user.name",user.name,.GlobalEnv)  
   assign(".__rtutor_user",user,.GlobalEnv)
   user

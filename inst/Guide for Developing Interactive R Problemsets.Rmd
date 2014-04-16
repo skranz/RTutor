@@ -50,7 +50,7 @@ mean(x)
 display("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
 #>
 #<
-give.award("mean means mean")
+give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
 #>
 ```
 
@@ -248,8 +248,9 @@ replaces the automatic test with a test that just checks whether a variable u ex
 RTutor has a series of helper functions for such manual tests.
 
 TO DO:
-1. Document functions for manual tests
-2. How to add hints for manual test functions (not yet implemented)
-2. Talk about _struc.r files for a deeper understanding
-3. Tips & Tricks for developing interactive problem sets 
+
+  1. Document functions for manual tests
+  2. How to add hints for manual test functions (not yet implemented)
+  3. Talk about _struc.r files for a deeper understanding
+  4. Tips & Tricks for developing interactive problem sets 
 
