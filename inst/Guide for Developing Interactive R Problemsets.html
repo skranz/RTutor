@@ -3,6 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
 
 <title>Tutorial for Developing Interactive R Problem Sets with RTutor</title>
 
@@ -180,391 +181,273 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>Tutorial for Developing Interactive R Problem Sets with RTutor</h1>
 
-<p><strong>Date: 2013-08-11</strong></p>
+<p><strong>Date: 2014-04-16</strong></p>
 
-<p><strong>Author: Sebastian Kranz</strong></p>
+<p><strong>Author: Sebastian Kranz, Ulm University</strong> </p>
 
-<p>RTutor is an R package that allows to develop interactive R exercises. The interactive exercises, can directly test a student&#39;s solution and provide hints if not everything is correct. A problems et is just a collection of interactive exercises. This document gives you an overview how to generate an interactive problem set. I assume that you are using RStudio.</p>
+<p>RTutor is an R package that allows to develop interactive R exercises. The interactive exercises directly test a student&#39;s solution and provide hints if not everything is correct. Unlike web-based approaches, as e.g. <a href="https://www.datacamp.com/">https://www.datacamp.com/</a>, RTutor is developed for off-line use directly with RStudio.  This document gives you an overview how to generate an interactive problem set.</p>
 
-<h2>A step by step guide</h2>
+<h2>I Brief overview</h2>
 
-<h3>1. Install the newest version of RTutor</h3>
+<h2>1. Install the newest version of RTutor</h2>
 
-<p>You first need to install some other packages. Simply run in R</p>
+<p>You first need to install some packages. Simply run in R</p>
 
-<pre><code class="r">install.packages(&quot;devtools&quot;, &quot;whisker&quot;, &quot;stringr&quot;)
+<pre><code class="r"># Install packages from CRAN
+install.packages(&quot;devtools&quot;)
+install.packages(&quot;whisker&quot;)
+install.packages(&quot;stringr&quot;)
+install.packages(&quot;JSONIO&quot;)
 
-</code></pre>
-
-<p>To install the newest version of restorepoint and RTutor from Github run then</p>
-
-<pre><code class="r">library(devtools)
+# Install packages from github
+library(devtools)
 install_github(repo = &quot;restorepoint&quot;, username = &quot;skranz&quot;)
+install_github(repo = &quot;stringtools&quot;, username = &quot;skranz&quot;)
 install_github(repo = &quot;RTutor&quot;, username = &quot;skranz&quot;)
 library(restorepoint)
 library(RTutor)
 </code></pre>
 
-<h3>2. Create template files for developing a new problem set</h3>
+<h2>2. Create a solution file</h2>
 
-<p>We first need to generate a folder in which some example files will be generated that help us to build a new problem set. First decide on a name for the problemset, e.g. &ldquo;my ps&rdquo; and generate a parent folder in which you want to save your problemsets, e.g. &ldquo;C:/problemsets&rdquo;. (Henceforth I will always assume that you named your problem set &ldquo;my ps&rdquo;. Just replace &ldquo;my ps&rdquo; everywhere by your own name) Then run the following code:</p>
+<p>The recommend way to create an interactive problem set is to write a solution file. It is an R file that contains as comments a description of the tasks as the student will see it, together with a solution to the problem set. In addition the solution can contain manual hints, tests or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
 
-<pre><code class="r">develop.problem.set(name=&quot;my ps&quot;,parent.path=&quot;C:/libraries/RTutor/problemsets&quot;)
+<p>Here is a small solution file with only one exercise. We will explain its structure in detail in the chapter on solution files.</p>
+
+<pre><code class="r">#$ exercise 1 Summary statistics #####################################
+
+#&#39; a) We often want to compute some summary statistic of a vector.
+#&#39; For example:
+#s
+x = 10:20
+# Computing the sum of x
+sum(x)
+#e
+#&#39; Now compute the mean of x.
+mean(x)
+#&lt; hint
+display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
+#&gt;
+#&lt;
+give.award(&quot;mean means mean&quot;)
+#&gt;
 </code></pre>
 
-<p>It generates a new folder below parent.path with the name of the problem set, here &ldquo;C:/problemsets/my ps&rdquo;.</p>
+<p>The problemset folder of the RTutor library contains several example solution files. </p>
 
-<p>The generated folder contains 2 files:</p>
+<h3>3. Generate a structure file and empty problem set for students</h3>
+
+<p>Assume your solution is in a file &ldquo;example_ps_sol.r&rdquo;. The following code generates the necessary files for students to use the interactive problem set.</p>
+
+<pre><code class="r">  #setwd(&quot;C:/ ... folder with your solution file&quot;)
+  create.struc(&quot;example_ps_sol.r&quot;,ps.name=&quot;example_ps&quot;)
+  create.empty.ps(&quot;example_ps&quot;)
+</code></pre>
+
+<p>The create.struc command generates the files</p>
 
 <ul>
-<li>my ps_struc.r</li>
-<li>make_student_ps.r</li>
+<li>example_ps.rps: a binary representation of the problem set structure</li>
+<li>examples_ps_struc.r: a human-readable representation of the problem set structure</li>
 </ul>
 
-<p>Note: If these files do already exist, the existing files are by default <strong>not</strong> overwritten. You have to delete them manually if you want to generate new template files.</p>
-
-<p>The file &ldquo;my ps_struc.r&rdquo; will contain all the <strong>structure</strong> of your problem set that specifies for several exercises:</p>
+<p>The create.empty.ps command then generates the files</p>
 
 <ul>
-<li>a task description shown to the student</li>
-<li>a solution for the exercise</li>
-<li>several tests that will check a student&#39;s solution and provide hints</li>
+<li>example_ps.rmd: empty problem set in R-markdown format</li>
+<li>example_ps.r: empty problem set in R format</li>
 </ul>
 
-<p>Originally, there is an example structure with two simple exercies. We will explain later in detail, how you create a structure for your own problem set..</p>
+<h3>4. Solving and checking the problem set as student</h3>
 
-<p>The file &ldquo;make_student_ps.r&rdquo; contains a few lines of code that will generate from your problem set structure an empty problem set for the student.</p>
+<p>A student that wants to use the problem set needs to copy the .rps file (the problem set structure) and an empty problem set either as R-markdown  .rmd file <strong>or</strong> as .r file to the same folder and open the problem set file with RStudio. (The advantage of the .rmd file is that it looks much nicer. I think the main advantage of .r files is that in RStudio one can save and check the problem set with a single short cut, while you need to separately save and check .rmd files)</p>
 
-<h3>3. Generate an empty problem set for students</h3>
-
-<p>Open the file &ldquo;make_student_ps.r&rdquo; and run all its code. In your problem set folder, a new file, &ldquo;my ps.r&rdquo; should now have been generated. This is the file that will be given to students and that they shall try to solve.</p>
-
-<h3>4. Feel like a student: Try to solve the problem set</h3>
-
-<p>Open the generated file &ldquo;my ps.r&rdquo; in RStudio. The file has some commands in the beginning, which are used to initialize RTutor. You can ignore them for the moment. Then there is a description for two exercises that tell you where you can enter your own code. Try to solve the exercises (or just exercise 1). Try also to make some mistakes, to check how whether these mistakes are found out.</p>
-
-<h3>5. Feel like a student: Check your solution</h3>
-
-<p>When you have written some code:</p>
+<p>The empty problem set files have some commands in the beginning, which are used to initialize RTutor and tell you, how you can check your solution. You first have to do 2 things:</p>
 
 <ol>
-<li>First <strong>save your file</strong> (Ctrl-s or press the &#39;disk symbol&#39;)</li>
-<li>Then source your file (Ctrl-Shift-s or press the symbol &#39;Source&#39; on top of your code to the right).</li>
+<li>Enter your user name at the specified place</li>
+<li>Specify the folder in which you have copied this file</li>
 </ol>
 
-<p>RTutor will now check the solutions to your exercise and either give you a message that something is wrong, some warning messages or says everything is fine. Try out yourself&hellip;  </p>
+<p>You can then start solving the problem set. To check your solution, you just have to</p>
 
-<p>Hint: In RStudio above the code window there is a check box &ldquo;Source on Save&rdquo;. I would recommend to check this box for &ldquo;my ps.r&rdquo;. Now you only have to press Ctrl-s to automatically save and check your problem set.</p>
-
-<h3>6. Change the structure of your problem set</h3>
-
-<p>You can now change the structure of your problem set. This is explained in detail in the next section. Once, you have changed the structure, you can test it again by repeating steps 4 and 5 (and perhaps step 3).</p>
-
-<h2>Specifying the structure of a problem set</h2>
-
-<p>If you open &ldquo;my ps_struc.r&rdquo;, you see an example structure of a problem set. Here is the header and structure for the first exercise:</p>
-
-<pre><code class="r">#$ problem_set my ps
-
-
-###############################################################
-#$ exercise a)
-###############################################################
-
-#$ task #######################################################
-# Compute 2*5 and store it in the variable x  
-
-
-#$ solution ###################################################
-
-x &lt;- 2*5
-
-#$ tests ######################################################
-check.var(&quot;x&quot;, exists=TRUE,length=TRUE, values=TRUE)
-
-#$ hints ######################################################
-add.hint(&quot;Hint 1&quot;,{cat(&#39;
-# The following code stores 2+3 in a variable y
-y = 2+3&quot;
-&#39;)})
-
-#$ end_exercise
-
-</code></pre>
-
-<p>Lines that start with #$ are special commands that are used by RTutor to parse different aspects of the problem sets. Other lines are all valid R commands. I explain the commands in detail:</p>
-
-<h3>Specify name of a problem set</h3>
-
-<p>The command</p>
-
-<pre><code class="r">#$ problem_set my ps
-</code></pre>
-
-<p>simply sets the name of the problem set equal to the text after problem_set. Here the name is set to &ldquo;my ps&rdquo;. As in this example, the name of a problem set can contain spaces.</p>
-
-<h3>Specify an exercise</h3>
-
-<p>A problem set can have several exercises. Each exercises must have the following command lines in <strong>exactly the order shown below</strong>. After most command lines some R code can be entered.  </p>
-
-<pre><code class="r">#$ exercise name_of_exercise
-
-  # No code will be entered here 
-
-#$ task
-
-  # Code that will be part of the empty problem set given to the student
-
-#$ solution
-
-  # Code that would correctly solve the exercise
-
-#$ tests
-
-  # Tests that will be performed on the student&#39;s code
-
-#$ hints
-
-  # Code that specifies hints that can be shown to the
-  # students in specified situations
-
-#$ end_exercise
-</code></pre>
-
-<p>I will now explain the different commands</p>
-
-<h4>#$ exercise</h4>
-
-<p>This command is at the start of an exercise. After the word exercise, a name of the exercise is specified, e.g.</p>
-
-<pre><code class="r">#$ exercise a)
-</code></pre>
-
-<p>generates an exercise with name &ldquo;a)&rdquo;. So far, we don&#39;t use any R code directly after the command.</p>
-
-<h4>#$ task</h4>
-
-<p>Below this command, you enter the text will be shown in the empty problem set given to the user. The text should make clear, what the student shall do and where she should enter her code.  Unless, you have a good reason, this text should be valid R code, i.e. everything that is used for explanations should be commented with #.</p>
-
-<p>Example:</p>
-
-<pre><code class="r">#$ task #######################################################
-
-# Compute 2*5 and store it in the variable x  
-
-</code></pre>
-
-<h4>#$ solution</h4>
-
-<p>Below this command, you enter R code that completely solves the exercise.
-Example:</p>
-
-<pre><code class="r">#$ solution ###################################################
-
-x &lt;- 2*5
-</code></pre>
-
-<h4>#$ tests</h4>
-
-<p>Below this command you specify different tests that will be performed on the student&#39;s solution to check whether some mistake can be found. If something wrong is encountered, the tests give feedback to the student.</p>
-
-<p>The simple test in our example below, checks the following:</p>
+<ol>
+<li>Save your problem set file (Ctrl-S) </li>
+<li>and then
 
 <ul>
-<li>Has the user generated a variable x</li>
-<li>Has x the same length as in the given solution, i.e. 1</li>
-<li>Has x the same value as in the given solution, i.e. x=10</li>
-</ul>
+<li>if your have an .r file: source your file (Ctrl-Shift-S) </li>
+<li>if you have an .rmd file: run all chuncks (Ctrl-Alt-R)</li>
+</ul></li>
+</ol>
 
-<pre><code class="r">#$ tests ###################################################
+<p>Hint: If you use a problem set as .r file, you can check the box &ldquo;Source on Save&rdquo; in RStudio. Then you only have to press Ctrl-S to automatically save and check your problem set.</p>
 
-check.var(&quot;x&quot;, exists=TRUE,length=TRUE, values=TRUE)
+<p>How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the student&#39;s solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type hint() in the R console to get a hint of how to solve the task that is not yet correct.</p>
 
+<h3>5. Iterate</h3>
+
+<p>You probably will iterate between writing a solution file, solving the problem set yourself and extending and improving the problem set until you have a nice version that you want to send out to the public.</p>
+
+<p>Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .r or .rmd file and tell them to install RStudio and RTutor as described above. </p>
+
+<h2>II  Writing Solution Files</h2>
+
+<p>Solution files are .r files that use comments for some special syntax in comments. A solution file consists of one or more exercises. An exercise starts with a line</p>
+
+<pre><code class="r">#$ exercise name_of_exercise #####################
 </code></pre>
 
-<p>If one test fails, e.g. if x does not exist. The user will be shown a standard failure message and no more code will be checked. We consider a student&#39;s solution &ldquo;correct&rdquo; if no test fails, i.e. we are not able to falsify the correctness.</p>
+<p>You can pick any name of the exercise (it can include spaces), but the line must start with </p>
 
-<p>Good and well designed tests are the key component of a good interactive problem set. There already exist several functions, like check.var, that can be used to perform different sorts of tests. They are explained in some detail in the next section.
-If more functions are needed, e.g. a function that scans the code of the user for a particular command, send me an email or file an issue on GitHub.</p>
-
-<h4>#$ hints</h4>
-
-<p>In the code below the #$ hints command, you can specify several hints that can be shown to the student.  You can call here the function add.hint that allows to add a hint to the exercise.</p>
-
-<p>The example generates a hint, that will give the user the solution to a similar exercise and that should be sufficient to solve the current exercise, even without any R knowledge.</p>
-
-<pre><code class="r">#$ hints ###################################################
-
-add.hint(&quot;Hint 1&quot;,{cat(&#39;
-# The following code stores 2+3 in a variable y
-y = 2+3&quot;
-&#39;)})
+<pre><code class="r">#$ exercise
 </code></pre>
 
-<p>I have not yet well worked out when and how hints shall be shown. One could think of the user asking for a hint, by calling a function hint(). Alternatively, one could offer the student a hint if he fails to often. Any ideas are very welcome.</p>
+<p>The trailing ####### are optional. They just help to navigate your solution file but will not be part of the name.</p>
 
-<h4>#$ end exercise</h4>
+<p>Let us start by just writing an exercise with solution, without yet adding some manual hints or tests. For example:</p>
 
-<p>This command simply indicates that the specification of the exercise is done. Afterwards, you can specify the structure of a new exercise, if you like.</p>
+<pre><code class="r">#$ exercise 1 Summary Statistics #####################################
 
-<h2>Specifying Tests</h2>
+#&#39; a) We often want to compute some summary statistic of a vector. For example:
+x = 10:20
+# Computing the sum of x
+sum(x)
+#&#39; Now compute the mean of x.
+mean(x)
+</code></pre>
 
-<p>As said before, well specified tests that analyse the student&#39;s solution are crucial for a good problem set. Here I want to give an overview of some functions that can generate the test. A more detailed description of the test functions can be found in the R-help of the RTutor package. Consider the specification of exercise &ldquo;b)&rdquo; in the example file.</p>
+<p>Comments starting with #&#39; will be transformed into non-code markdown text (as is default if you use the knitr to generate and .rmd or .html files from an .r file). Your description of the task should be put into such comments.</p>
+
+<p>Note that lines starting with #&#39; a) or (#&#39; b) etc.) define a &ldquo;part&rdquo; of an exercise. Parts will be used in messages shown from tests and hints to help the student see where a test has failed.</p>
+
+<p>You can already generate an empty problem set from this solution file (see step 3 of part I). Each chunk of code between #&#39; lines will be removed and replaced by a single line prompting the user to enter his solution:</p>
+
+<pre><code class="r"># enter your code here ...
+</code></pre>
+
+<h3>Showing code to students as part of exercise description</h3>
+
+<p>Actually, in our exercise the first code chuck is an example that shall be shown to the student and only the last line of code is a solution that will not be shown. We can make code being shown to students by wrapping it in a block starting with the line</p>
+
+<pre><code class="r"># s
+</code></pre>
+
+<p>and ending with a line</p>
+
+<pre><code class="r"># e
+</code></pre>
+
+<p>This means we can modify our code as follows:</p>
+
+<pre><code class="r">#$ exercise 1 Summary Statistics #####################################
+
+#&#39; a) We often want to compute some summary statistic of a vector.
+#&#39; For example:
+#s
+x = 10:20
+# Computing the sum of x
+sum(x)
+#e
+#&#39; Now compute the mean of x.
+mean(x)
+</code></pre>
+
+<p>Generate again the problem set structure and empty problem set. You see that the first code chunk is now shown in the empty problem set. The interactive problem set can already be used. It automatically tests the solution and if the test fails since mean(x) is not entered correctly, it gives the option to type hint() to get a hint.</p>
+
+<h3>Manual hints</h3>
+
+<p>RTutor tries to generate automatic hints that look at the students solution and try to give some advice while not telling too much. In particular, for very simple task the hint may reveal too much. For example, the automatic hint already tells the student the name of the function. (Often it is much harder to find the correct function arguments, though.)</p>
+
+<pre><code>hint()
+
+You must call the function &#39;mean&#39; in part a).
+</code></pre>
+
+<p>In our example, we want instead a manual hint that tells the student, how Google is a very powerful tool to find R commands for specific tasks. We include such a manual hint in our solution file as follows:</p>
 
 <pre><code class="r">
+#$ exercise 1 Summary statistics #####################################
 
-###############################################################
-#$ exercise b)
-###############################################################
-
-#$ task #######################################################
-
-# Draw 
-# Simulate T outputs from a demand function
-# q = beta0 + beta1 * p + eps
-# 
-
-
-T = 1000 # Number of markets
-beta0 = 100
-beta1 = -1
-
-# i) Draw T demand shocks eps from a normal distribution with mean 0 and variance 4
-
-# ii) Generate a vector of endogenous prices
-
-# iii) Compute realized demand q from demand function q=beta0+beta1*p+eps
-
-
-#$ solution ###################################################
-T = 1000 # Number of markets
-beta0 = 100
-beta1 = -1
-# Draw demand shocks eps from a normal distribution with mean 0 and variance 4
-eps = rnorm(T,0,2)
-# One solution to generate endogenous prices
-p = eps/2
-# Compute realized demand q
-q = beta0 + beta1 * p + eps
-
-
-#$ tests ######################################################
-
-# Check given variables
-check.var(c(&quot;beta0&quot;,&quot;beta1&quot;,&quot;T&quot;),
-          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
-
-# Check construction of eps
-check.var(c(&quot;eps&quot;),
-          exists=TRUE, length=TRUE, class=TRUE)
-
-test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
-test.mean(eps,0)
-test.variance(eps,4)
-
-# Check p
-check.var(c(&quot;p&quot;),
-          exists=TRUE, length=TRUE, class=TRUE)
-
-test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
-                 failure.message=&quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
-
-# Check q
-check.var(c(&quot;q&quot;),
-          exists=TRUE, length=TRUE, class=TRUE)
-
-holds.true({
-  q.shall = beta0+beta1*p+eps
-  q == q.shall
-  },  failure.message = &quot;Sorry, you have not specified the correct demand equation q = ... (or perhaps you have changed q somewhere later in the code)&quot;
-)
-
-#$ hints ######################################################
-
-#$ end_exercise
-
+#&#39; a) We often want to compute some summary statistic of a vector.
+#&#39; For example:
+#s
+x = 10:20
+# Computing the sum of x
+sum(x)
+#e
+#&#39; Now compute the mean of x.
+mean(x)
+#&lt; hint
+display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
+#&gt;
 </code></pre>
 
-<p>Tests are performed in the following order:</p>
+<p>This means we simply add after the command of the solution that will be tested, a block of the form</p>
 
-<ol>
-<li><p>Test that existing variables beta0, beta1, T are not changed</p></li>
-<li><p>Test that eps are created correctly from the specified normal distribution</p></li>
-<li><p>Test that prices p are correct and indeed endogenous</p></li>
-<li><p>Test that the output q is correct given the student&#39;s eps and p</p></li>
-</ol>
+<pre><code class="r">#&lt; hint
 
-<p>Let me explain the different used tests:</p>
-
-<h3>check.var</h3>
-
-<pre><code class="r">check.var(c(&quot;beta0&quot;,&quot;beta1&quot;,&quot;T&quot;),
-          exists=TRUE, length=TRUE, class=TRUE, values=TRUE)
-check.var(c(&quot;eps&quot;),
-          exists=TRUE, length=TRUE, class=TRUE)
+#&gt;
 </code></pre>
 
-<p>The command check.var compares the users variables with the corresponding variables in the specified solution. We can check different aspects, by setting that flag TRUE</p>
+<p>Inside the block, you enter some code that will be shown if the student types hint() after the test for the command failed. Often this will simply be a message, but you could also do other things, e.g. showing a plot, as hint. Note that the hint code will be evaluated in an environment that contains all variables the student has defined earlier. </p>
+
+<p>Sometimes you want to show the automatically generated hint but add some additional advice. You can do this by putting code inside the following block:</p>
+
+<pre><code class="r">#&lt; add to hint
+
+#&gt;
+</code></pre>
+
+<h3>Giving awards</h3>
+
+<p>Isn&#39;t it amazing when video game players play for hours and hours, doing sometimes quite repetitive and boring tasks, just in order to earn some virtual points or virtual trophies? Well it seems that many people can be motivated, at least to some degree, by such stuff. Since a main motivation for RTutor is to make learning R, as well as statistical and economic concepts, more interesting and entertaining, it seems natural to borrow some ideas from computer games.</p>
+
+<p>So far there is only a small thing: students can get <strong>awards</strong> if they have solved a problem. The received awards can be shown by typing awards() in the R console. Information on the awards is stored in a file with name user_username.ruser in your problem set folder. Here is an example, how you can add an award to your solution file:</p>
+
+<pre><code class="r">#&lt;
+give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
+#&gt;
+</code></pre>
+
+<p>Inside a #&lt; #&gt; block, you need to call give.award and have to specify a name of the award and can add some description text that may also be a bit informative. The award is granted once all tests for the solution above the award are passed.</p>
+
+<p>There may be more elements from computer games that may motivate some students (experience points, high scores, levels, duells, an underlying story) and perhaps some of them will be included at some point of time. Yet, for the moment it&#39;s just awards.</p>
+
+<h3>Manual tests</h3>
+
+<p>I tried my best to automatically test whether the student entered a correct solution or not. Yet sometimes we need to manually include specifice variants of tests in the solution file. Here is an example for such a manual test:</p>
+
+<pre><code class="r">#&#39; b) Save in the variable u a vector of 4 different numbers
+u = c(3,6,7,99)  
+#&lt; test
+check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+#&gt;
+</code></pre>
+
+<p>The automatic test would check whether one of the following two conditions is meet:</p>
 
 <ul>
-<li>exists does the variable exist at all</li>
-<li>length has the variable the same length as in the solution</li>
-<li>class has the variable the same class as in the solution (e.g. numeric, character,data.frame,&hellip;)</li>
-<li>values has the variable the same values as in the solution</li>
+<li>u has the same value than in the solution. This means u=c(2,5,6,98)+1 would also pass as correct solution</li>
+<li>u is generated by an equivalent call as in the solution (equivalent means the function name should be the same and the arguments should have the same value). This is useful if the solution is a call that generates a random variable like x = runif(1).</li>
 </ul>
 
-<p>Since eps shall be a vector of random variables, it does not make sense to check whether the values are identical to the randomly selected values in the solution. So we only test for existence, correct length and class.</p>
+<p>Yet in this example, the automatic test is too restrictive. The student shall just generate some arbitrary vector consisting of 4 numbers. The block</p>
 
-<h3>test.normality, test.mean test.variance</h3>
-
-<pre><code class="r">test.normality(eps, alpha.failure=0.001, alpha.warning=0.05)
-test.mean(eps,0)
-test.variance(eps,4)
+<pre><code class="r">#&lt; test
+check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+#&gt;
 </code></pre>
 
-<p>These three tests are used to determine in a statistical fashion whether eps satisfies the null hypothesises:</p>
+<p>replaces the automatic test with a test that just checks whether a variable u exists, and has the same length and class (numeric or integer) as an example solution c(3,6,7,99).</p>
 
-<ul>
-<li>normally distributed</li>
-<li>has mean 0</li>
-<li>has a variance of 4</li>
-</ul>
+<p>RTutor has a series of helper functions for such manual tests.</p>
 
-<p>The tests perform statistical tests on the given vector and return a failure if the null hypothesis can be rejected at a significance level below alpha.failure. If the p-value is above alpha.failure but above alpha.warning just a warning will be shown. If not provided manually, the default values are alpha.failure = 0.1% and alpha.warning = 5%. You can look in the help pages for RTutor to get more details on these functions.</p>
-
-<h3>test.H0.rejected and test.H0</h3>
-
-<p>For the prices p we first check existence, lengt and class with check.var. Then we implement a manual test whether p is indeed endogenous with the function test.H0.rejected.</p>
-
-<pre><code class="r">check.var(c(&quot;p&quot;), exists=TRUE, length=TRUE, class=TRUE)
-
-test.H0.rejected(cor.test(p,eps),check.warning=FALSE, alpha.failure=0.05,
-                 failure.message=&quot; I couldn&#39;t significantly reject the hypothesis that your prices are exogenous (H0: cor(p,eps)=0, p.value = {{p_value}}). Try harder to generate prices that are &#39;significantly&#39; endogenous.&quot;)
-
-</code></pre>
-
-<p>The first argument to test.H0.rejected is an expression that calls a statistical test, that returns a list that has an element p.value. Here we test the correlation between prices and eps by calling cor.test(p,eps). This expression will be evaluated with the student&#39;s solution. The student&#39;s solution passes our test , if we can <strong>reject</strong> the null hypothesis of this test,cor(p,eps)=0, at a level of alpha.failure = 0.05. (Recall from your econometrics classes that an explanatory variable p is endogenous if it is correlated with the error term eps.)</p>
-
-<p>We have a similar function test.H0 which would be passed if H0 can <strong>not be rejected</strong>.</p>
-
-<h4>failure.message</h4>
-
-<p>If the test fails, we can specify a manual failure.message that will be shown to the user. Our failure message contains the following whiskers: {{p_value}}. This part of the message will be replaced by the actual p-value of the test. Another whisker you can use is  &ldquo;{{test_name}}&rdquo; that will be replaced by the name of the test.</p>
-
-<h3>holds.true</h3>
-
-<p>Finally, we check the simulated output q.</p>
-
-<pre><code class="r">check.var(c(&quot;q&quot;),exists=TRUE, length=TRUE, class=TRUE)
-holds.true({
-  q.shall = beta0+beta1*p+eps
-  q == q.shall
-},
-  failure.message = &quot;Sorry, you have not specified the correct demand equation q = ...&quot;
-)
-</code></pre>
-
-<p>holds.true is a quite general testing function that checks whether a boolean condition (or all elements of a boolean vector) hold true given the student&#39;s solution. The first argument in {} is some code that will be evaluted given the student&#39;s solution. The last line of that code must be a boolean condition (or a vector of boolean condition). The test fails if one element of the boolean vector is false. Again, we specify a manual failure.message.</p>
+<p>TO DO:
+1. Document functions for manual tests
+2. How to add hints for manual test functions (not yet implemented)
+2. Talk about _struc.r files for a deeper understanding
+3. Tips &amp; Tricks for developing interactive problem sets </p>
 
 </body>
 

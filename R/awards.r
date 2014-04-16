@@ -8,7 +8,7 @@ give.prize = function(prize.text=NULL, prize.code=NULL,...) {
   
 }
 
-give.award = function(award, level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
+give.award = function(award, text="", level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
   if (has.award(award, user))
     return(TRUE)
   

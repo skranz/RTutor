@@ -22,7 +22,7 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   na = name.of.call(call)
   
   type = "fun"
-  if (na %in% c("+","-","*","/","%*%")) {
+  if (na %in% c("+","-","*","/","%*%","(")) {
     type="math"
   } else if (na == "%.%") { 
     type="chain"
@@ -36,6 +36,20 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   if (type=="chain") {
     return(describe.chain.call(call))
   }
+  if (type == "fun") {
+    if (is.null(call.str)) {
+      call.str = deparse1(call)
+    }
+    if (!has.substr(call.str,"(")) {
+      res = suppressWarnings(as.numeric(call.str))
+      if (is.na(res)) {
+        type = "var"
+      } else {
+        type = "number"
+      }
+    }
+  }
+  
   args = args.of.call(call) 
   list(name=na,type=type, args = args)
 }
@@ -168,11 +182,16 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
       wrong = c(wrong,"length")
     }
   }
+  if (!is.null(wrong))
+    return(wrong)
   if (dim != FALSE) {
     if (!identical(dim(var.stud),dim(var.sol))) {
       wrong = c(wrong,"dim")
     }
   }  
+  if (!is.null(wrong))
+    return(wrong)
+
   if (names != FALSE) {
     if (!identical(names(var.stud),names(var.sol))) {
       wrong = c(wrong,"names")
@@ -231,11 +250,16 @@ recursive.args.of.call = function(call,expand.names=NULL) {
 
 
 args.of.call = function(call, name.empty.arg = FALSE, prefix="") {
+  #restore.point("args.of.call")
   if (is.symbol(call))
     return(NULL)
   li = as.list(call[-1])
   if (name.empty.arg & length(li)>0) {
-    is.empty = which(names(li)=="")
+    if (is.null(names(li))) {
+      is.empty = seq_along(li)
+    } else {
+      is.empty = which(names(li)=="")
+    }
     names(li)[is.empty] <- paste0(prefix,is.empty) 
   }
   li

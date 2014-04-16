@@ -1,10 +1,35 @@
 examples.create.struc = function() {
   setwd("D:/libraries/RTutor/problemsets/EmpIO1a")
-  create.struc("dplyr_car_sol.r",ps.name="test")
+  create.struc("dplyr_car_sol.r",ps.name="dplyr_car")
 
-  create.empty.ps("test", user.name = "seanbasti")
+  create.empty.ps("dplyr_car", user.name = "seanbasti")
+  
+  
+  setwd("D:/libraries/RTutor/problemsets/intro")
+  create.struc("r_intro_sol.r",ps.name="r_intro")
+
+  create.empty.ps("r_intro", user.name = "seanbasti")
+
+  setwd("D:/libraries/RTutor/problemsets/intro")
+  create.struc("r_intro_sol.r",ps.name="r_intro")
+  create.empty.ps("r_intro", user.name = "seanbasti")
+
+  create.ps("example_sol.r","example")
 }
 
+#' Creates a problem set structure files and empty .r and .rmd solution files
+#' @param sol.file file name of the solution file
+#' @param ps.name name of the problem set
+#' @export
+create.ps = function(sol.file, ps.name, ...) {
+  create.struc(sol.file,ps.name)
+  create.empty.ps(ps.name, ...)
+}
+
+#' Creates a problem set structure file from a solution file
+#' @param sol.file file name of the solution file
+#' @param ps.name name of the problem set
+#' @export
 create.struc = function(sol.file, ps.name=NULL) {
   restore.point("create.struc")  
 
@@ -101,6 +126,15 @@ add.struc.block = function(te) {
   # Add test code
   if (type == "") {
     te$test.txt = c(te$test.txt,te$code.txt)
+  } else if (type == "test") {
+     test.txt = paste0(te$code.txt, collapse="\n")
+     te$test.txt[length(te$test.txt)] <- test.txt
+  } else if (type == "hint") {
+     hint.name = hint.name.for.e(te$last.e, counter=te$counter)  
+     hint.txt = paste0("add.hint('",hint.name,"',", 
+      "{\n",  paste0(te$code.txt, collapse="\n"),"\n})"
+     ,collapse="\n")
+    te$hint.txt[length(te$hint.txt)] <- hint.txt
   } else if (type == "add to hint") {
     hint.txt = hint.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.code = te$code.txt)  
     te$hint.txt[length(te$hint.txt)] <- hint.txt
@@ -188,6 +222,23 @@ test.code.for.e = function(e, part="", counter=0) {
   }
   
   code  
+}
+
+
+hint.name.for.e = function(e, counter=0) {
+  if (is.assignment(e)) {
+    var = deparse1(e[[2]])
+    rhs = deparse1(e[[3]])
+    estr = deparse1(e)
+
+    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+  } else {
+    estr = short = paste0(deparse(e),collapse="")
+    if (nchar(estr)>23) 
+      short = paste0(substring(estr,1,23),"...", counter)
+    hint.name = paste0("call ",short)
+  }
+  hint.name  
 }
 
 

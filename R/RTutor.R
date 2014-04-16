@@ -13,24 +13,6 @@ add.hint = function(hint.name, code,cond=NULL, ex=get.ex()) {
   ex$hints[[hint.name]]=hint
 }
 
-#' Shows a hint for the current problem.
-#' @export
-hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
-  
-  if (is.null(hint.name)) {
-    message("Sorry, but there is no hint for your current problem.")
-    return()
-  }
-  hint = ex$hints[[hint.name]]
-  #cat(paste0("\nHint ", hint$name,":"))
-  eval(hint$code,ex$sol.env)
-}
-
-#' Called by a test, sets the current hint
-set.current.hint = function(hint.name=NULL, ex=get.ex()) {
-  ex$hint.name = hint.name
-}
-
 print.Problemset = function(ps) {
   print(as.list(ps))
 }
@@ -85,11 +67,13 @@ set.ex = function(ex) {
 }
 
 
-log.exercise = function(ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed) {
+log.exercise = function(ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed, part=ex$part) {
   restore.point("log.exercise")
+  
+  user.name = get.user()$name
   if (!do.log)
     return
-  entry = list(ps.name = ps$name, ex.name=ex$name, date=as.character(ex$check.date), stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
+  entry = list(ps.name = ps$name, ex.name=ex$name, part=part, date=as.character(ex$check.date), user.name = user.name, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
 warnings=ex$warning.messages)
   
   library(RJSONIO)

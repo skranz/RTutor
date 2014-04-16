@@ -1,4 +1,52 @@
 
+#' Shows a hint for the current problem.
+#' @export
+hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
+  
+  if (is.null(hint.name)) {
+    message("Sorry, but there is no hint for your current problem.")
+    return()
+  }
+  hint = ex$hints[[hint.name]]
+  #cat(paste0("\nHint ", hint$name,":"))
+  eval(hint$code,ex$user.env)
+  log.hint(hint=hint, ex = ex, ps = ps)
+}
+
+#' Called by a test, sets the current hint
+set.current.hint = function(hint.name=NULL, ex=get.ex()) {
+  ex$hint.name = hint.name
+}
+
+
+#' Called by a test, sets the current hint
+set.part = function(part=NULL, ex=get.ex()) {
+  ex$part = part
+}
+
+
+log.hint = function(hint, ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed, part=ex$part ) {
+  restore.point("log.int")
+  if (!do.log)
+    return
+    
+  user.name = get.user()$name
+
+  hint.out = paste0(capture.output(eval(hint$code,ex$user.env)), collapse="\n")
+  
+  entry = list(ps.name = ps$name, ex.name=ex$name, part=part, date=as.character(ex$check.date), user.name = user.name, hint.name = hint$name, hint.out = hint.out, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
+warnings=ex$warning.messages)
+  
+  library(RJSONIO)
+  json.entry = toJSON(entry)
+  con = file(log.file,open="at")
+  
+  writeLines(json.entry, con)
+  close(con) 
+}
+
+
+
 hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL) {
   if (!is.null(call.obj)) {
     call = call.obj
@@ -76,9 +124,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     if (from.assign)
       display("I don't see a correct assignment to ", lhs, ", which should call the function '", check.na, "'",part.str,".\nLet me compare your assignments with my solution:\n", analyse.str)
     
-  }
-  
-  if (cde$type == "chain") {
+  } else if (cde$type == "chain") {
     restore.point("hint.for.call.chain")
     op = cde$name
     chain.na = sapply(cde$arg, name.of.call)
@@ -166,7 +212,15 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     } else if (fail==0) {
         display("Hmm, it actually looks like you have a correct command. It is strange that the test did not pass...")
     }
-  }  
+  }  else if (cde$type == "math") {
+    display("You have to enter the correct mathematical formula... Ok, I agree that this automatically generated hint may not be super useful.")
+  }  else if (cde$type == "var") {
+    if (!from.assign)
+      display("You shall simply show the variable ",cde$na, " by typing the variable name in your code.")
+  } else {
+    display("Sorry... I actually do not have a hint for you.")    
+  }
+  
   return(invisible())  
 
 }
