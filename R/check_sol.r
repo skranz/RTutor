@@ -92,6 +92,7 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       # Copy variables into global env
       copy.into.env(source=ex$stud.env,dest=.GlobalEnv)
       log.exercise(ex)
+      save.ups()
       if (ret==FALSE) {
         message = ex$failure.message
         if (!is.null(ex$hint.name))
@@ -110,7 +111,12 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       #.Internal(stop(FALSE,""))
     }
     was.checked[code.check]=TRUE
-    code.check = !code.check
+    # get.next exercise to check
+    last.check = i
+    old.code.check = code.check
+    code.check  = !old.code.check & seq_along(code.check) > i
+    if (!any(code.check))
+      code.check = !old.code.check 
     
   }
   if (!any.false) {
@@ -233,6 +239,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
     display("run tests...")
   }
 
+  ups = get.ups()
   for (test.ind in seq_along(ex$tests)){
     test = ex$tests[[test.ind]]
     passed.before = ex$tests.stats[[test.ind]]$passed
@@ -244,17 +251,29 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
 
     ret = eval(test,ex$stud.env)
     
+    if (is.na(ups$li[[ex$name]]$first.call.date[test.ind]))
+      ups$li[[ex$name]]$first.call.date[test.ind] = now()
+    
     if (ret==FALSE) {
+      if (!ups$li[[ex$name]]$success[test.ind])
+        ups$li[[ex$name]]$num.failed[test.ind] = ups$li[[ex$name]]$num.failed[test.ind]+1
+      set.ups(ups)
       return(FALSE)
     } else if (ret=="warning") {
       had.warning = TRUE
     } else {
-      #if (!is.null(ex$success.message) & !passed.before) {
-      if (!is.null(ex$success.message)) {
+      if (!is.null(ex$success.message) & !passed.before) {
+      #if (!is.null(ex$success.message)) {
         cat(paste0(ex$success.message,"\n"))
       }
     }
+    if (is.na(ups$li[[ex$name]]$success.date[test.ind])) {
+      ups$li[[ex$name]]$success[test.ind] <- TRUE
+      ups$li[[ex$name]]$success.date[test.ind] <- now()
+    }
+
   }
+  set.ups(ups)
   if (had.warning) {
     message("\nHmm... overall, I am not sure if your solution is right or not, look at the warnings.")
     return(invisible("warning"))

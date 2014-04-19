@@ -150,7 +150,7 @@ parse.ps.structure =  function(ps=get.ps(),file=ps$structure.file) {
     ex.txt = txt[(ex.df[i,"start"]+1):(ex.df[i,"end"]-1)]
 
     ex = parse.exercise(ex.name,ex.txt)
-    
+    ex$ind =i
     if (i == NROW(ex.df)) {
       ex$next.ex = NULL  
     } else {
@@ -204,7 +204,6 @@ parse.exercise = function(ex.name, ex.txt) {
   # Run the code that generates hints
   ex$prev.hint = 0
   ex$hints = list()
-  cat(ex$hints.txt)
   if (length(ex$hints.txt)>0)
     eval(parse(text=ex$hints.txt,srcfile=NULL))
   

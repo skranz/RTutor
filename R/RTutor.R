@@ -73,7 +73,7 @@ log.exercise = function(ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.l
   user.name = get.user()$name
   if (!do.log)
     return
-  entry = list(ps.name = ps$name, ex.name=ex$name, part=part, date=as.character(ex$check.date), user.name = user.name, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
+  entry = list(ps.name = ps$name, ex.name=ex$name, test.ind=ex$test.ind, part=part, date=as.character(ex$check.date), user.name = user.name, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
 warnings=ex$warning.messages)
   
   library(RJSONIO)
@@ -97,17 +97,25 @@ examples = function() {
   
 }
 
-#' Create a zip file of a students solution that can be uploaded 
-zip.solution = function(ps.name = get.ps()$name, user.name=get.user()$name, dir = get.ps()$stud.path, make.html=TRUE) {
+#' Create a zip file of your solution that can be submitted
+#' 
+#' Only works after you have once checked your problem set!
+zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.path) {
   restore.point("zip.solution")
+  
+  if (is.null(ps)) {
+    display("You must check your problem set before you can zip the solution")
+    return()
+  }
   
   old.dir = getwd()
   setwd(dir)
-  files = paste0(ps.name,c(".log",".r",".rmd",".html"))
-  zip.file = paste0(dir,"/solution_", gsub(" ","_",ps.name,fixed=TRUE), "_by_", user.name, ".zip")
+  #files = paste0(ps.name,c(".log",".r",".rmd",".html"))
+  files = c(ps$stud.file, ps$log.file, paste0(ps$stud.path,"/",user.name,"_",ps$name,".ups"))
+  zip.file = paste0(dir,"/solution_", gsub(" ","_",ps$name,fixed=TRUE), "_by_", user.name, ".zip")
   
   zip(zip.file, files)
-  message(paste0("Created zipped solution ", zip.file))
+  display(paste0("Created zipped solution ", zip.file))
   setwd(old.dir)
 }
 

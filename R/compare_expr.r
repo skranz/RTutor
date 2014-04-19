@@ -9,6 +9,18 @@ examples.describe.call = function() {
   describe.call(df %.% filter(x>80))
 }
 
+examples.describe.call = function() {
+  f = function(x) {
+    y = substitute(x)
+    describe.call(call.obj=y)
+  }
+  f(2*x)
+  f(plot(1))
+  f("Hi")
+  f(x)
+  f(3)
+}
+
 describe.call = function(call, call.obj=NULL, call.str=NULL) {
   if (!is.null(call.obj)) {
     call = call.obj
@@ -32,23 +44,28 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
     type="subset"
   } else if (na=="==" | na=="<" | na =="!=" | na=="<=" | na==">" | na==">=") {
     type="comp"
+  } else if (is.name(call)) {
+    type="var"
+  } else if (!is.call(call)) {
+    type=class(call)
   }
+
   if (type=="chain") {
     return(describe.chain.call(call))
   }
-  if (type == "fun") {
-    if (is.null(call.str)) {
-      call.str = deparse1(call)
-    }
-    if (!has.substr(call.str,"(")) {
-      res = suppressWarnings(as.numeric(call.str))
-      if (is.na(res)) {
-        type = "var"
-      } else {
-        type = "number"
-      }
-    }
-  }
+#   if (type == "fun") {
+#     if (is.null(call.str)) {
+#       call.str = deparse1(call)
+#     }
+#     if (!has.substr(call.str,"(")) {
+#       res = suppressWarnings(as.numeric(call.str))
+#       if (is.na(res)) {
+#         type = "var"
+#       } else {
+#         type = "numeric"
+#       }
+#     }
+#   }
   
   args = args.of.call(call) 
   list(name=na,type=type, args = args)

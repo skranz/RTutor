@@ -264,8 +264,8 @@ check.assign = function(
   stud.expr.li = stud.expr.li[(!sapply(stud.expr.li,is.null))]
   
   # Check names
-  var = paste0(as.character(check.expr[[2]]), collapse=",")
-  stud.var = sapply(stud.expr.li, function(e) paste0(as.character(e[[2]]), collapse=","))
+  var = deparse1(check.expr[[2]])
+  stud.var = sapply(stud.expr.li,function(e) deparse1(e[[2]]))
   stud.expr.li = stud.expr.li[stud.var == var]
 
   if (length(stud.expr.li) == 0) {
@@ -295,7 +295,7 @@ check.assign = function(
         }, error = function(e){})
       }
     } else {
-      ok = is.same(check.val,get(var,stud.env))
+      ok = is.same(check.val,try(eval(var,stud.env),silent=TRUE))
     }
     if (ok) {
      success.message = paste0("Great,",part.str," you correctly assigned ", var, part.str,"!")

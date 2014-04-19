@@ -7,12 +7,11 @@ examples.create.struc = function() {
   
   setwd("D:/libraries/RTutor/problemsets/intro")
   create.struc("r_intro_sol.r",ps.name="r_intro")
-
   create.empty.ps("r_intro", user.name = "seanbasti")
 
   setwd("D:/libraries/RTutor/problemsets/intro")
   create.struc("r_intro_sol.r",ps.name="r_intro")
-  create.empty.ps("r_intro", user.name = "seanbasti")
+  create.empty.ps("r_intro", user.name = "seanbasti",footer=zip.submit.footer.txt())
 
   create.ps("example_sol.r","example")
 }

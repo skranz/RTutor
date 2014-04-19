@@ -22,9 +22,17 @@ PS: awards() shows all your awards
 '))
   award.name = award
   award = list(name=award.name,text = text, level=level,
-               granted.in = paste0("ps. ",get.ps()$name, " ex. ", get.ex()$name))
+               granted.in = paste0("",get.ps()$name))
   user$awards[[award.name]] = award 
   update.user()
+  
+  ex = get.ex()
+  ups = get.ups()
+  ups$li[[ex$name]]$num.awards[ex$test.ind] = ups$li[[ex$name]]$num.awards[ex$test.ind]+1
+  set.ups(ups)
+  save.ups()
+
+  
   return(TRUE)
 }
 
@@ -34,7 +42,7 @@ awards = function(user = get.user(), details=TRUE) {
     print(names(user$awards))
   } else {
     for (ad in user$awards) {
-      cat(paste0("\n*** ",ad$name, " ***\n", ad$text," (Awarded in ", ad$granted.in, ")\n"))
+      cat(paste0("\n*** ",ad$name, " ***\n", ad$text," (awarded in ", ad$granted.in, ")\n"))
     }
   }
 }
@@ -58,6 +66,7 @@ clear.user = function(dir = get.ps()$stud.path) {
     file.remove(file)
   
 }
+
 # clear.user()
 get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
   restore.point("get.user")

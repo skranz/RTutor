@@ -2,7 +2,7 @@
 #' Shows a hint for the current problem.
 #' @export
 hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
-  
+  restore.point("hint")
   if (is.null(hint.name)) {
     message("Sorry, but there is no hint for your current problem.")
     return()
@@ -11,6 +11,13 @@ hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
   #cat(paste0("\nHint ", hint$name,":"))
   eval(hint$code,ex$user.env)
   log.hint(hint=hint, ex = ex, ps = ps)
+  
+  # Update ups statistics
+  ups = get.ups()
+  if (!ups$li[[ex$name]]$success[ex$test.ind]) {
+    ups$li[[ex$name]]$num.hint[ex$test.ind] = ups$li[[ex$name]]$num.hint[ex$test.ind]+1
+    save.ups()
+  }
 }
 
 #' Called by a test, sets the current hint
@@ -34,7 +41,7 @@ log.hint = function(hint, ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do
 
   hint.out = paste0(capture.output(eval(hint$code,ex$user.env)), collapse="\n")
   
-  entry = list(ps.name = ps$name, ex.name=ex$name, part=part, date=as.character(ex$check.date), user.name = user.name, hint.name = hint$name, hint.out = hint.out, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
+  entry = list(ps.name = ps$name, ex.name=ex$name, test.ind=ex$test.ind, part=part, date=as.character(ex$check.date), user.name = user.name, hint.name = hint$name, hint.out = hint.out, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
 warnings=ex$warning.messages)
   
   library(RJSONIO)
