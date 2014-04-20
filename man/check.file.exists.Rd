@@ -5,7 +5,7 @@
   check.file.exists(file,
     failure.message = paste0("Sorry, but I cannot find the file \"", file, "\" in your current working directory."),
     success.message = paste0("Great, I have found the file \"", file, "\"!"),
-    ex = get.ex(), hint.name = NULL, ...)
+    ex = get.ex(), hint.name = NULL, part = NULL, ...)
 }
 \description{
   Check whether a given file exists

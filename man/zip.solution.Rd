@@ -1,13 +1,11 @@
 \name{zip.solution}
 \alias{zip.solution}
-\title{Create a zip file of a students solution that can be uploaded}
+\title{Create a zip file of your solution that can be submitted}
 \usage{
-  zip.solution(ps.name = get.ps()$name,
-    user.name = get.user()$name, dir = get.ps()$stud.path,
-    make.html = TRUE)
+  zip.solution(ps = get.ps(), user.name = get.user()$name,
+    dir = ps$stud.path)
 }
 \description{
-  Create a zip file of a students solution that can be
-  uploaded
+  Only works after you have once checked your problem set!
 }
 

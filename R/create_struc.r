@@ -51,6 +51,21 @@ create.struc = function(sol.file, ps.name=NULL) {
   txt = paste0('#$ problem_set ', ps.name,'\n\n', paste0(ex.struc, collapse="\n"),
                '\n# create.empty.ps("',ps.name,'")')
   writeLines(txt, file)
+  
+  remove.ups(ps.name)
+  set.ps(NULL)
+}
+
+# remove old ups files when new problem set structure is generated 
+remove.ups = function(ps.name = get.ps()$name) {
+  set.ups(NULL)
+
+  files = list.files()
+  files = files[str.ends.with(files,paste0("_",ps.name,".ups"))]
+  if (length(files)>0) {
+    file.remove(files)
+  }
+  set.ups(NULL)
 }
 
 create.ex.struc = function(name, txt) {
@@ -128,12 +143,22 @@ add.struc.block = function(te) {
   } else if (type == "test") {
      test.txt = paste0(te$code.txt, collapse="\n")
      te$test.txt[length(te$test.txt)] <- test.txt
+  } else if (type == "test.arg") {    
+     test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse="\n"))  
+     te$test.txt[length(te$test.txt)] <- test.txt
   } else if (type == "hint") {
      hint.name = hint.name.for.e(te$last.e, counter=te$counter)  
      hint.txt = paste0("add.hint('",hint.name,"',", 
       "{\n",  paste0(te$code.txt, collapse="\n"),"\n})"
      ,collapse="\n")
     te$hint.txt[length(te$hint.txt)] <- hint.txt
+  } else if (str.starts.with(type,"hint")) { # hint with a name
+    hint.name = str.trim(str.right.of(type,"hint "))  
+    hint.txt = paste0("add.hint('",hint.name,"',", 
+      "{\n",  paste0(te$code.txt, collapse="\n"),"\n})"
+     ,collapse="\n")
+    te$hint.txt[length(te$hint.txt)] <- hint.txt
+    
   } else if (type == "add to hint") {
     hint.txt = hint.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.code = te$code.txt)  
     te$hint.txt[length(te$hint.txt)] <- hint.txt
@@ -194,10 +219,11 @@ add.struc.code = function(te) {
 
 
 
-test.code.for.e = function(e, part="", counter=0) {
+test.code.for.e = function(e, part="", extra.arg="", counter=0) {
   restore.point("test.code.for.e")
   
   part.str = ifelse(part=="","",paste0(",part='",part,")'"))
+  extra.arg = ifelse(extra.arg=="","",paste0(",",extra.arg))
   
   if (is.assignment(e)) {
     var = deparse1(e[[2]])
@@ -206,8 +232,8 @@ test.code.for.e = function(e, part="", counter=0) {
     
     hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
     code = paste0(
-      paste0("#check.var('", var,"', ", rhs, ", exists=TRUE,length=TRUE, class = TRUE,values=TRUE, hint.name = '",hint.name,"'",part.str,")"),
-      paste0("\ncheck.assign(", var, "<-",rhs,", hint.name = '",hint.name,"'", part.str,")")
+      #paste0("#check.var('", var,"', ", rhs, ", exists=TRUE,length=TRUE, class = TRUE,values=TRUE, hint.name = '",hint.name,"'",part.str,")"),
+      paste0("\ncheck.assign(", var, "<-",rhs,", hint.name = '",hint.name,"'", part.str,extra.arg,")")
     )
   } else {
     estr = short = paste0(deparse(e),collapse="")
@@ -215,7 +241,7 @@ test.code.for.e = function(e, part="", counter=0) {
       short = paste0(substring(estr,1,23),"...", counter)
     
     code = c(
-      paste0("check.call(", estr,", allow.extra.arg=FALSE, ignore.arg=NULL, hint.name = 'call ",short,"'",part.str,")")
+      paste0("check.call(", estr,", hint.name = 'call ",short,"'",part.str,extra.arg,")")
     )
     
   }

@@ -1,11 +1,16 @@
 #library(devtools); install_github(repo="RTutor", studname="skranz")
 
 
+.onLoad = function(...)  {
+  # If loaded as library overwrite restore.point to an empty function
+  assign("restore.point", function(...){}, envir=parent.env(environment()))
+}
+
+
 #' Add a hint to an exercise.
 #' 
 #' @param hint.name A name for the hint
 #' @param code R code inside {} that will be evaluated in sol.env when the hint is shown. A hint could show messages via cat, but it could also show a plot. 
-#' @export
 add.hint = function(hint.name, code,cond=NULL, ex=get.ex()) {
   code = substitute(code)
   restore.point("add.hint")
@@ -100,6 +105,7 @@ examples = function() {
 #' Create a zip file of your solution that can be submitted
 #' 
 #' Only works after you have once checked your problem set!
+#' @export
 zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.path) {
   restore.point("zip.solution")
   

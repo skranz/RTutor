@@ -1,0 +1,14 @@
+\name{check.call.args}
+\alias{check.call.args}
+\title{Checks whether arguments of stud.call are correct given the specification in check.call}
+\usage{
+  check.call.args(stud.call, check.call,
+    compare.vals = !is.null(val.env), val.env = NULL,
+    allow.extra.arg = FALSE, ignore.arg = NULL,
+    check.values = NULL)
+}
+\description{
+  Checks whether arguments of stud.call are correct given
+  the specification in check.call
+}
+

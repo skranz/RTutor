@@ -21,12 +21,14 @@ hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
 }
 
 #' Called by a test, sets the current hint
+#' @export
 set.current.hint = function(hint.name=NULL, ex=get.ex()) {
   ex$hint.name = hint.name
 }
 
 
-#' Called by a test, sets the current hint
+#' Called by a test, sets the current part
+#' @export
 set.part = function(part=NULL, ex=get.ex()) {
   ex$part = part
 }
@@ -53,7 +55,8 @@ warnings=ex$warning.messages)
 }
 
 
-
+#' Default hint for a call
+#' @export
 hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL) {
   if (!is.null(call.obj)) {
     call = call.obj
@@ -88,9 +91,9 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     
     if (length(stud.expr.li)==0) {
       if (!from.assign)
-        display("You must call the function '", check.na,"'", part.str,".")
+        display("You must correctly call the function '", check.na,"'", part.str,".")
       if (from.assign)
-        display("You must assign to ", lhs, " a call to the function '", check.na,"'", part.str,".")
+        display("You must assign to ", lhs, " a correct call to the function '", check.na,"'", part.str,".")
       return(invisible())
     }
     
@@ -232,6 +235,8 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
 }
 
+#' Default hint for an assignment
+#' @export
 hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL) {
   expr = substitute(expr)
   restore.point("hint.for.assign")

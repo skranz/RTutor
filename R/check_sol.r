@@ -13,6 +13,7 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
       options(warn=1)
   }
   
+  setwd(stud.path)
   
   if (user.name=="ENTER A USER NAME HERE") {
     stop('You have not picked a user name. Change the variable user.name in your problem set file from ""ENTER A USER NAME HERE" to some user.name that you can freely pick.')
@@ -120,8 +121,17 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
     
   }
   if (!any.false) {
-    message("\nI tried but could not detect in your solution any ")
-    stop(" Congrats!", call.=FALSE, domain="")
+    display("\n****************************************************",
+            "\nYou solved the problem set, congrats!")
+    stats()
+    display("
+To generate a zip file of your solution for submission, call
+
+  zip.solution()
+")
+    
+    msg = " I could not find any error in your problem set. Congrats!"
+    stop(msg, call.=FALSE, domain="")
   }
   stop("There were still errors in your solution.")
 }
@@ -252,7 +262,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
     ret = eval(test,ex$stud.env)
     
     if (is.na(ups$li[[ex$name]]$first.call.date[test.ind]))
-      ups$li[[ex$name]]$first.call.date[test.ind] = now()
+      ups$li[[ex$name]]$first.call.date[test.ind] = Sys.time()
     
     if (ret==FALSE) {
       if (!ups$li[[ex$name]]$success[test.ind])
@@ -269,7 +279,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
     }
     if (is.na(ups$li[[ex$name]]$success.date[test.ind])) {
       ups$li[[ex$name]]$success[test.ind] <- TRUE
-      ups$li[[ex$name]]$success.date[test.ind] <- now()
+      ups$li[[ex$name]]$success.date[test.ind] <- Sys.time()
     }
 
   }

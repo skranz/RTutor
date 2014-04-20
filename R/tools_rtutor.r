@@ -1,3 +1,39 @@
+copy.into.env <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(sys.parent(1)), 
+    names = NULL, exclude = NULL, from.restore.objects = FALSE, 
+    overwrite = TRUE, all.names = TRUE) 
+{
+    if (is.null(names)) {
+        if (is.environment(source)) {
+            names = ls(envir = source, all.names = all.names)
+        }
+        else {
+            names = names(source)
+        }
+    }
+    if (!overwrite) {
+        exclude = c(exclude, ls(envir = dest))
+    }
+    names = setdiff(names, exclude)
+    if (is.environment(source)) {
+        for (na in names) {
+            if (!from.restore.objects) {
+                assign(na, get(na, envir = source), envir = dest)
+            }
+            else {
+                tryCatch(assign(na, get(na, envir = source), 
+                  envir = dest), error = function(e) {
+                  message(paste("Variable ", na, " was missing."))
+                })
+            }
+        }
+    }
+    else if (is.list(source)) {
+        for (na in names) {
+            assign(na, source[[na]], envir = dest)
+        }
+    }
+}
+
 deparse1 = function(call) {
   paste0(deparse(call, width=500),collapse="")
 }
@@ -17,6 +53,8 @@ nlist = function (...)
     li
 }
 
+#' Displays the given text
+#' @export
 display = function (..., collapse = "\n", sep = "") 
 {
     str = paste("\n", paste(..., collapse = collapse, sep = sep), 

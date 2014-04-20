@@ -5,7 +5,7 @@
   check.expr(check.expr, correct.expr,
     failure.message = "{{check_expr}} has the wrong values!",
     success.message = "Great, {{check_expr}} seems correct.",
-    hint.name = NULL, ex = get.ex(),
+    hint.name = NULL, part = NULL, ex = get.ex(),
     stud.env = ex$stud.env, verbose = FALSE,
     unsubst.check.expr = NULL, unsubst.correct.expr = NULL,
     str.check.expr = NULL, str.correct.expr = NULL,

@@ -116,8 +116,20 @@ check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.en
   return(TRUE)
 }
 
-is.same = function(x,y) {
-  identical(x,y)
+is.same = function(x,y, tol=1e-10) {
+  restore.point("is.same")
+  if(identical(x,y))
+    return(TRUE)
+  if (length(x) !=length(y))
+    return(FALSE)
+  if (is.numeric(x) & is.numeric(y)) {
+    if (max(abs(x-y), na.rm=TRUE)>tol )
+      return(FALSE)
+    if (!identical(is.na(x),is.na(y)))
+      return(FALSE)        
+    return(TRUE)
+  }
+  return(FALSE)
 }
 
 compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL) {

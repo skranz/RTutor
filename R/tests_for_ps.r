@@ -154,6 +154,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
      add.success(ex,success.message)
      return(TRUE)
   } else {
+
     if (is.null(failure.message))
       failure.message = paste0("You have not yet entered all correct commands", part.str,".")   
     add.failure(ex,failure.message,failure.message,...)
@@ -265,6 +266,7 @@ check.assign = function(
   
   # Check names
   var = deparse1(check.expr[[2]])
+  var.expr = check.expr[[2]]
   stud.var = sapply(stud.expr.li,function(e) deparse1(e[[2]]))
   stud.expr.li = stud.expr.li[stud.var == var]
 
@@ -295,7 +297,12 @@ check.assign = function(
         }, error = function(e){})
       }
     } else {
-      ok = is.same(check.val,try(eval(var,stud.env),silent=TRUE))
+      tryCatch({
+          sval = eval(var.expr,stud.env)
+          if (is.same(check.val,sval)) {
+              ok <- TRUE
+          }
+        }, error = function(e){})
     }
     if (ok) {
      success.message = paste0("Great,",part.str," you correctly assigned ", var, part.str,"!")

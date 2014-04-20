@@ -9,7 +9,8 @@
     failure.message = "I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
     success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
     check.warning = TRUE, ex = get.ex(),
-    stud.env = ex$stud.env, hint.name = NULL, ...)
+    stud.env = ex$stud.env, hint.name = NULL, part = NULL,
+    ...)
 }
 \arguments{
   \item{test.expr}{an expression that calls a test which

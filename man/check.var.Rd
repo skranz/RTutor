@@ -15,7 +15,7 @@
     hint.name = NULL, ex = get.ex(),
     stud.env = ex$stud.env, verbose = FALSE,
     unsubst.expr = NULL, str.expr = NULL,
-    sol.env = ex$sol.env)
+    sol.env = ex$sol.env, part = NULL)
 }
 \arguments{
   \item{vars}{a variable name or vector of variable names}

@@ -4,9 +4,9 @@
 \usage{
   check.function(code.or.name, ..., check.args = TRUE,
     check.defaults = FALSE, check.args.order = TRUE,
-    allow.extra.args = TRUE, ex = get.ex(),
+    allow.extra.arg = TRUE, ex = get.ex(),
     stud.env = ex$stud.env, verbose = FALSE,
-    sol.env = ex$sol.env, hint.name = NULL)
+    sol.env = ex$sol.env, hint.name = NULL, part = NULL)
 }
 \arguments{
   \item{code.or.name}{a string containing the name of the
@@ -32,9 +32,9 @@
   checked arguments appear in the same order in the user
   function than in the solution}
 
-  \item{allow.extra.args}{if TRUE the user function can
-  have additional arguments (at the end) that are not in
-  the solution}
+  \item{allow.extra.arg}{if TRUE the user function can have
+  additional arguments (at the end) that are not in the
+  solution}
 
   \item{hint.name}{name of a hint that is associated with
   this test}

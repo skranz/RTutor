@@ -5,7 +5,7 @@
   holds.true(cond, short.message = failure.message,
     failure.message = "Failure in holds.true",
     success.message = "Great, the condition {{cond}} holds true in your solution!",
-    hint.name = NULL, ex = get.ex(),
+    hint.name = NULL, part = NULL, ex = get.ex(),
     stud.env = ex$stud.env, cond.str = NULL, ...)
 }
 \description{

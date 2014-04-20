@@ -13,7 +13,7 @@
     failure.values = "Column {{col}} of {{df}} has wrong values.",
     failure.message.add = NULL,
     success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.",
-    hint.name = NULL, ex = get.ex(),
+    hint.name = NULL, part = NULL, ex = get.ex(),
     stud.env = ex$stud.env, verbose = FALSE,
     unsubst.expr = NULL, str.expr = NULL,
     sol.env = ex$sol.env)
