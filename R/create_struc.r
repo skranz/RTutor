@@ -134,7 +134,7 @@ create.ex.struc = function(name, txt) {
 
 
 add.struc.block = function(te) {
-  restore.point("add.struc.block", deep.copy=TRUE)
+  restore.point("add.struc.block")
 
   type = str.trim(str.right.of(te$block.head,"#<"))
   # Add test code
@@ -157,7 +157,8 @@ add.struc.block = function(te) {
     hint.txt = paste0("add.hint('",hint.name,"',", 
       "{\n",  paste0(te$code.txt, collapse="\n"),"\n})"
      ,collapse="\n")
-    te$hint.txt[length(te$hint.txt)] <- hint.txt
+    
+    te$hint.txt[length(te$hint.txt)] <- paste0(te$hint.txt[length(te$hint.txt)],"\n",hint.txt)
     
   } else if (type == "add to hint") {
     hint.txt = hint.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.code = te$code.txt)  

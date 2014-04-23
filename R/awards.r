@@ -8,6 +8,8 @@ give.prize = function(prize.text=NULL, prize.code=NULL,...) {
   
 }
 
+#' Used in a solution file. Give an award to a student who made it so far
+#' @export
 give.award = function(award, text="", level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
   restore.point("give.award")
 
@@ -36,6 +38,8 @@ PS: awards() shows all your awards
   return(TRUE)
 }
 
+#' Show all your awards
+#' @export
 awards = function(user = get.user(), details=TRUE) {
   cat(paste0("Hi ",user$name,", you have earned ", length(user$awards)," awards:\n"))
   if (!details) {
@@ -51,7 +55,7 @@ has.award = function(award.name,user=get.user()) {
   award.name %in% names(user$awards)
 }
 
-
+#' @export
 get.user.name = function() {
   if (!exists(".__rtutor_user.name",.GlobalEnv)) {
     return("GUEST")
