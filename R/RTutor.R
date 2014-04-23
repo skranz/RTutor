@@ -117,7 +117,10 @@ zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.
   old.dir = getwd()
   setwd(dir)
   #files = paste0(ps.name,c(".log",".r",".rmd",".html"))
-  files = c(ps$stud.file, ps$log.file, paste0(ps$stud.path,"/",user.name,"_",ps$name,".ups"))
+  #files = c(ps$stud.file, ps$log.file, paste0(ps$stud.path,"/",user.name,"_",ps$name,".ups"))
+
+  files = c(ps$stud.short.file, paste0(ps$name,".log"), paste0(user.name,"_",ps$name,".ups"))
+  
   zip.file = paste0(dir,"/solution_", gsub(" ","_",ps$name,fixed=TRUE), "_by_", user.name, ".zip")
   
   zip(zip.file, files)
