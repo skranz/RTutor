@@ -2,10 +2,10 @@
 \alias{show.success.message}
 \title{Simply shows a success message when this test is reached for the first time!}
 \usage{
-  show.success.message(success.message, ..., ex = get.ex())
+show.success.message(success.message, ..., ex = get.ex())
 }
 \description{
-  Simply shows a success message when this test is reached
-  for the first time!
+Simply shows a success message when this test is reached
+for the first time!
 }
 

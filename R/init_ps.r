@@ -22,43 +22,32 @@ examples.list.ps = function() {
 #' @export
 init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r"),
                             log.file = paste0(name,".log"),
-                            require.stud.file = TRUE, load.rps=TRUE) {
+                            require.stud.file = TRUE, load.struc.file=FALSE) {
   restore.point("init.problem.set")
   
   #setwd(stud.path)
   
   # Search for a binary or text version of the structure file 
-  structure.path= stud.path    
-  structure.file = paste0(structure.path,"/",name,"_struc.r")
-  found.file = TRUE
-  # 1. r file in stud.path
-  if (file.exists(structure.file)) {
+  structure.path= stud.path      
+  if (load.struc.file) {
+    # 2. r file in stud.path
+    structure.file = paste0(structure.path,"/",name,"_struc.r")
+    if (!file.exists(structure.file))
+      stop(paste0("Structure file ", structure.file, " does not exist."))
     use.rps = FALSE
   } else {
-    # 2. rps file in stud.path
+    use.rps = TRUE
     structure.file = paste0(structure.path,"/",name,".rps")
-    # 3. rps file in library problem set path
-    if (file.exists(structure.file)) {
-      use.rps = TRUE
-    } else {
+    if (!file.exists(structure.file)) {
       structure.path = paste0(find.package("RTutor"),"/problemsets")
       structure.file = paste0(structure.path,"/",name,".rps")
-      if (file.exists(structure.file)) {
-        use.rps = TRUE
-      } else {
-        found.file = FALSE
+      if (!file.exists(structure.file)) {
+        str = paste0("I could not find the problem set .rps file '", paste0(name,".rps"),
+                "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You need to call the functions create.struc and create.empty.ps to generate the .rps file from a solution file.")
+        stop(str) 
       }
     }
   }
-
-
-  # if not found search in library folder
-  if (!found.file) {
-    str = paste0("I could not find a problem set structure file '", paste0(name,".rps"), ,"' or '", paste0(name,"_struc.r"),
-                "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You can get a list of all problem sets that are included in RTutor by running 'list.ps()'. If you don't see the problem set, try updating your RTutor version.")
-    stop(str) 
-  }
-
 
   if (use.rps) {
     ps = load.binary.ps(file=structure.file)
@@ -75,8 +64,8 @@ init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r
     parse.ps.structure(ps=ps)
     
     # Save as rps
-    structure.file = paste0(structure.path,"/",name,".rps")
-    save.binary.ps(ps,structure.file)
+    #structure.file = paste0(structure.path,"/",name,".rps")
+    #save.binary.ps(ps,structure.file)
   }
   ps$structure.path = structure.path
   ps$structure.file = structure.file
@@ -104,6 +93,12 @@ set.ps.stud.file = function(ps, stud.path,stud.short.file, log.file = paste0(ps$
   ps$log.file = paste0(stud.path,"/",log.file)
   ps$is.rmd.stud = str.ends.with(tolower(stud.short.file),".rmd")
 
+  if (ps$is.rmd.stud) {
+    ps$ex.initial.code = ps$ex.initial.code.rmd
+  } else {
+    ps$ex.initial.code = ps$ex.initial.code.r    
+  }
+  
   # Initialize stud.code once more
   ps$stud.code = readLines(ps$stud.file)
   ex.names = names(ps$ex)

@@ -2,7 +2,7 @@
 \alias{add.success}
 \title{Used inside tests: adds a failure to an exercise}
 \usage{
-  add.success(ex, message, ...)
+add.success(ex, message, ...)
 }
 \arguments{
   \item{ex}{the exercise (environment) that is currently
@@ -17,6 +17,6 @@
   that have whiskers}
 }
 \description{
-  Used inside tests: adds a failure to an exercise
+Used inside tests: adds a failure to an exercise
 }
 

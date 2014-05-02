@@ -189,7 +189,7 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
 }
 
 
-compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12) {
+compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12, details = TRUE) {
   wrong = NULL
   
   if (identical(var.stud,var.sol))
@@ -200,11 +200,17 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
     class.sol = class(var.sol)[1]
     if (class.stud == "integer") class.stud = "numeric"
     if (class.sol == "integer") class.sol = "numeric"
-      
-    if (class.stud!=class.sol) {
-      wrong = c(wrong,"class")
+    
+    if (class.stud != class.sol) {
+      if (details) {
+        wrong = c(wrong,paste0("class (is ", class.stud, " but shall be ", class.sol,")"))
+      } else {
+        wrong = c(wrong,"class")
+      }
     }
   }  
+  if (!is.null(wrong))
+    return(wrong)
   
   if (length != FALSE) {
     if (!length(var.stud)==length(var.sol)) {

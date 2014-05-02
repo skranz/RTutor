@@ -2,7 +2,7 @@
 \alias{add.warning}
 \title{Used inside tests: adds a warning to an exercise}
 \usage{
-  add.warning(ex, short, message, ...)
+add.warning(ex, short, message, ...)
 }
 \arguments{
   \item{ex}{the exercise (environment) that is currently
@@ -17,6 +17,6 @@
   that have whiskers}
 }
 \description{
-  Used inside tests: adds a warning to an exercise
+Used inside tests: adds a warning to an exercise
 }
 

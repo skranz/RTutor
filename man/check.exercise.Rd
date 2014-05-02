@@ -2,8 +2,7 @@
 \alias{check.exercise}
 \title{Check the student's solution of an exercise contained in stud.file}
 \usage{
-  check.exercise(ex.name, stud.code, ps = get.ps(),
-    verbose = FALSE)
+\method{check}{exercise}(ex.name, stud.code, ps = get.ps(), verbose = FALSE)
 }
 \arguments{
   \item{ex.name}{The name of the exercise}
@@ -12,7 +11,7 @@
   string (or vector of strings)}
 }
 \description{
-  Check the student's solution of an exercise contained in
-  stud.file
+Check the student's solution of an exercise contained in
+stud.file
 }
 

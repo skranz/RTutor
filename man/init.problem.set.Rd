@@ -2,10 +2,9 @@
 \alias{init.problem.set}
 \title{Initialize a problem set for the student}
 \usage{
-  init.problem.set(name, stud.path = NULL,
-    stud.short.file = paste0(name, ".r"),
-    log.file = paste0(name, ".log"),
-    require.stud.file = TRUE, load.rps = TRUE)
+init.problem.set(name, stud.path = NULL, stud.short.file = paste0(name,
+  ".r"), log.file = paste0(name, ".log"), require.stud.file = TRUE,
+  load.struc.file = FALSE)
 }
 \arguments{
   \item{name}{the name of the problem set}
@@ -17,6 +16,6 @@
   stored her files}
 }
 \description{
-  Initialize a problem set for the student
+Initialize a problem set for the student
 }
 

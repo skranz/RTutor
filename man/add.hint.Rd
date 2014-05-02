@@ -2,7 +2,7 @@
 \alias{add.hint}
 \title{Add a hint to an exercise.}
 \usage{
-  add.hint(hint.name, code, cond = NULL, ex = get.ex())
+add.hint(hint.name, code, cond = NULL, ex = get.ex())
 }
 \arguments{
   \item{hint.name}{A name for the hint}
@@ -12,6 +12,6 @@
   messages via cat, but it could also show a plot.}
 }
 \description{
-  Add a hint to an exercise.
+Add a hint to an exercise.
 }
 

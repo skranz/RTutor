@@ -2,12 +2,11 @@
 \alias{test.H0}
 \title{Check whether a certain null hypothesis is not significantly rejected}
 \usage{
-  test.H0(test.expr, p.value, test.name = "",
-    alpha.warning = 0.05, alpha.failure = 0.001,
-    short.message, warning.message, failure.message,
-    success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-    check.warning = TRUE, hint.name = NULL, part = NULL,
-    ex = get.ex(), stud.env = ex$stud.env, ...)
+test.H0(test.expr, p.value, test.name = "", alpha.warning = 0.05,
+  alpha.failure = 0.001, short.message, warning.message, failure.message,
+  success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
+  check.warning = TRUE, hint.name = NULL, part = NULL, ex = get.ex(),
+  stud.env = ex$stud.env, ...)
 }
 \arguments{
   \item{test.expr}{an expression that calls a test which
@@ -34,11 +33,11 @@
   \item{check.warning}{if FALSE don't check for a warning}
 }
 \value{
-  TRUE if H0 cannot be rejected, FALSE if not and "warning"
-  if it can be weakly rejected
+TRUE if H0 cannot be rejected, FALSE if not and "warning"
+if it can be weakly rejected
 }
 \description{
-  Check whether a certain null hypothesis is not
-  significantly rejected
+Check whether a certain null hypothesis is not
+significantly rejected
 }
 

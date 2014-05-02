@@ -1,6 +1,17 @@
+#' Calls a function with a specified random.seed
+#' @export
+with.random.seed <- function (expr, seed = 1234567890) 
+{
+    old.seed = get(".Random.seed", .GlobalEnv)
+    set.seed(seed)
+    ret = eval(expr)
+    assign(".Random.seed", old.seed, .GlobalEnv)
+    runif(1)
+    return(ret)
+}
+
 copy.into.env <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(sys.parent(1)), 
-    names = NULL, exclude = NULL, from.restore.objects = FALSE, 
-    overwrite = TRUE, all.names = TRUE) 
+    names = NULL, exclude = NULL, overwrite = TRUE, all.names = TRUE, set.fun.env.to.dest = FALSE) 
 {
     if (is.null(names)) {
         if (is.environment(source)) {
@@ -15,27 +26,35 @@ copy.into.env <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(s
     }
     names = setdiff(names, exclude)
     if (is.environment(source)) {
-        for (na in names) {
-            if (!from.restore.objects) {
-                assign(na, get(na, envir = source), envir = dest)
-            }
-            else {
-                tryCatch(assign(na, get(na, envir = source), 
-                  envir = dest), error = function(e) {
-                  message(paste("Variable ", na, " was missing."))
-                })
-            }
+      for (na in names) {
+        if (set.fun.env.to.dest) {
+          tryCatch({
+              val <- get(na,envir=source)
+              # Set enclosing environment to dest
+              if (is.function(val))
+                environment(val) <- dest
+              assign(na,val,envir=dest)
+            }, error = function(e) {
+                message(paste("Variable ", na, " was missing."))
+          })                      
+        } else {
+          tryCatch({
+              val <- get(na,envir=source)
+              assign(na,val,envir=dest)
+            }, error = function(e) {
+                message(paste("Variable ", na, " was missing."))
+          })          
         }
-    }
-    else if (is.list(source)) {
+      }
+    } else if (is.list(source)) {
         for (na in names) {
             assign(na, source[[na]], envir = dest)
         }
     }
 }
 
-deparse1 = function(call) {
-  paste0(deparse(call, width=500),collapse="")
+deparse1 = function(call, collapse="") {
+  paste0(deparse(call, width=500),collapse=collapse)
 }
 
 nlist = function (...) 

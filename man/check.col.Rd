@@ -2,21 +2,19 @@
 \alias{check.col}
 \title{Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution}
 \usage{
-  check.col(df, col, expr = NULL,
-    class.df = c("data.frame", "data.table", "matrix"),
-    check.all = FALSE, exists = check.all,
-    length = check.all, class = check.all,
-    values = check.all, tol = .Machine$double.eps^0.5,
-    failure.exists = "{{df}} does not have a column {{col}}.",
-    failure.length = "{{df}} has {{length_stud}} rows but it shall have {{length_sol}} rows.",
-    failure.class = "Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
-    failure.values = "Column {{col}} of {{df}} has wrong values.",
-    failure.message.add = NULL,
-    success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.",
-    hint.name = NULL, part = NULL, ex = get.ex(),
-    stud.env = ex$stud.env, verbose = FALSE,
-    unsubst.expr = NULL, str.expr = NULL,
-    sol.env = ex$sol.env)
+\method{check}{col}(df, col, expr = NULL, class.df = c("data.frame",
+  "data.table", "matrix"), check.all = FALSE, exists = check.all,
+  length = check.all, class = check.all, values = check.all,
+  tol = .Machine$double.eps^0.5,
+  failure.exists = "{{df}} does not have a column {{col}}.",
+  failure.length = "{{df}} has {{length_stud}} rows but it shall have {{length_sol}} rows.",
+  failure.class = "Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
+  failure.values = "Column {{col}} of {{df}} has wrong values.",
+  failure.message.add = NULL,
+  success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.",
+  hint.name = NULL, part = NULL, ex = get.ex(), stud.env = ex$stud.env,
+  verbose = FALSE, unsubst.expr = NULL, str.expr = NULL,
+  sol.env = ex$sol.env)
 }
 \arguments{
   \item{df}{name of the data frame or matrix}
@@ -36,9 +34,9 @@
   all failure messages}
 }
 \description{
-  Test: Compare the column col of the matrix or data.frame
-  df with either the values from the given solutions or
-  with the result of an expression that is evaluated in the
-  students solution
+Test: Compare the column col of the matrix or data.frame df
+with either the values from the given solutions or with the
+result of an expression that is evaluated in the students
+solution
 }
 

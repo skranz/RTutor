@@ -7,9 +7,32 @@ check.package = function(package) {
 }
 
 
+examples.check.function = function() {
+## Here is an example of how you could implement check.function in a solution file.
+  
+#s
+ols = function(y,X) {
+  
+  # enter code to compute beta.hat here ...
+  
+  return(as.numeric(beta.hat))
+}
+#e
+#< test
+check.function({
+  ols = function(y,X) {
+    beta.hat = solve(t(X) %*% X) %*% t(X) %*% y
+    return(as.numeric(beta.hat))
+  }},
+  ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
+)
+#>
+
+}
+
 #' Checks a function written by the student
 #' 
-#' @param code.or.name a string containing the name of the function as specified in the solution
+#' @param code code of the form {fun_name = function(x,y) {#body of function}}. It is important to wrap the code in {} and to assign the function name with = (don't use <-). See example below.
 #' @param ... you can add several test calls to the function. It will be checked whether the users' function returns the same values in those calls than the function in the solution. You can also have a code block wrapped in {} that ends with a call to the function. In this way you can e.g. specify a random seeds before calling the function.
 #' @param check.args if TRUE check the arguments of the user function. If a character vector only check the given arguments.
 #' @param check.defaults TRUE = check the default values of the arguments of the user function. If a character vector only check the default values of the given arguments.
@@ -17,24 +40,22 @@ check.package = function(package) {
 #' @param allow.extra.arg if TRUE the user function can have additional arguments (at the end) that are not in the solution
 #' @param hint.name name of a hint that is associated with this test
 #' @export
-check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL, part = NULL) {
+check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL, part = NULL) {
 
   test.calls = eval(substitute(alist(...)))
 
+  code = substitute(code)
+  
+  
   restore.point("check.function")
   set.current.hint(hint.name)
   set.part(part)
   
   
-  if (is.character(code.or.name)) {
-    fun.name = code.or.name
-    sol.fun = get(fun.name,sol.env)
-  } else {
-    env = new.env(parent=stud.env)
-    eval(code,env)
-    fun.name = ls(env)[1]
-    sol.fun = get(fun.name,env)
-  }
+  env = new.env(parent=stud.env)
+  eval(code,env)
+  fun.name = ls(env)[1]
+  sol.fun = get(fun.name,env)
   
   if (!exists(fun.name,stud.env, inherits=FALSE)) {
     short.failure = paste0(fun.name, " does not exist.")
@@ -102,9 +123,11 @@ check.function = function(code.or.name, ..., check.args = TRUE, check.defaults=F
     
     res = compare.values(stud.res, sol.res)
     if (length(res)>0) {
-      call.str = paste0(deparse1(test.calls[[i]]), collapse=";")
-      failure.message = paste0("Your function ",fun.name, " seems not ok. The call ", call.str, " returns wrong ", paste0(res, collapse=","),".")
+      call.str = deparse1(test.calls[[i]], collapse="\n")
+      failure.message = paste0("Your function ",fun.name, " seems not ok. I test it with the call\n\n", call.str, "\n\n and your returned object differs from my solution, it has wrong ", paste0(res, collapse=","),".\n\n I stored in the variables 'test.sol.res' and 'test.your.res' the return values of the correct function and your function. You can take a look at them.")
       add.failure(ex,failure.message,failure.message,...)
+      assign(paste0("test.sol.res"),sol.res,.GlobalEnv)
+      assign(paste0("test.your.res"),stud.res,.GlobalEnv)
       return(FALSE) 
     }
   }
@@ -127,7 +150,7 @@ show.success.message = function(success.message,..., ex=get.ex()) {
 
 #' Checks whether the user makes a particular function call in his code or call a particular R statement
 #' @export
-check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL,
+check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = FALSE,
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
   hint.name = NULL, part=NULL, ...) {
 
@@ -148,6 +171,31 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
   stud.expr.li = ex$stud.expr.li
   stud.na = sapply(stud.expr.li,  name.of.call)
 
+  # Filter all student calls that have the same name of call 
+  stud.expr.li = stud.expr.li[which(stud.na == check.na)]
+
+  
+  # Check if a student call with the same name has the same return value
+  if (ok.if.same.val) {
+    check.val <- eval(ce, stud.env)
+    ok = FALSE
+    for (se in stud.expr.li) {
+      tryCatch({
+        sval <- eval(se,stud.env)
+        if (is.same(check.val,sval)) {
+          ok <- TRUE
+          break
+        }
+      }, error = function(e){})
+    }
+    if (ok) {
+      success.message = paste0("Great,",part.str," you correctly (I guess) called the command: ",deparse1(se))
+      add.success(ex,success.message)
+      return(TRUE)  
+    }
+  }
+
+  
   ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
@@ -242,7 +290,7 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 #' Checks an assignment to a variable
 #' @export
 check.assign = function(
-  call, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,
+  call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
   hint.name = NULL, part=NULL,  ...) {
 
@@ -305,16 +353,16 @@ check.assign = function(
         }, error = function(e){})
     }
     if (ok) {
-     success.message = paste0("Great,",part.str," you correctly assigned ", var, part.str,"!")
+     success.message = paste0("Great,",part.str," you correctly assigned ", var,"!")
      add.success(ex,success.message)
      return(TRUE)  
     }
   }
   
 
-  ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env)
+  ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env,allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
   if (ret[[1]]==TRUE) {
-     success.message = paste0("Great,",part.str," you correctly assigned ", var, " = ",ret[[2]], part.str,"!")
+     success.message = paste0("Great,",part.str," you correctly assigned ", var, " = ",ret[[2]],"!")
      add.success(ex,success.message)
      return(TRUE)
   } else {

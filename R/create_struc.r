@@ -82,6 +82,8 @@ create.ex.struc = function(name, txt) {
   te$last.e = NULL
   te$code.to.task = FALSE
   te$counter = 0
+  te$code.to.task = FALSE;te$task.notest = FALSE; te$notest.notest=FALSE
+  te$block.is.open = FALSE;
   
   code.stop = c("#<","#>","#$","#'")
   
@@ -90,21 +92,43 @@ create.ex.struc = function(name, txt) {
     row = row+1
     str = txt[row]
     ssub = substring(str,1,2)
-    if (str.trim(str)=="#s") {
+    if (str.trim(str)=="#s" | str.trim(str)=="#< task") {
       add.struc.code(te)
       te$code.to.task = TRUE
-    } else if (str.trim(str)=="#e") {
+      te$task.notest = FALSE
+      te$notest = isTRUE(te$notest.notest)
+    } else if (str.trim(str)=="#< task notest") {
+      add.struc.code(te)
+      te$task.notest = TRUE
+      te$code.to.task = TRUE
+      te$notest = TRUE
+    } else if (str.trim(str)=="#e" | str.trim(str)=="#> task") {
       add.struc.code(te)
       te$code.to.task = FALSE
+      te$task.notest = FALSE
+      te$notest = isTRUE(te$notest.notest)
+    } else if (str.trim(str)=="#< notest") {
+      add.struc.code(te)
+      te$notest = TRUE
+      te$notest.notest = TRUE      
+    } else if (str.trim(str)=="#> notest") {
+      add.struc.code(te)
+      te$notest.notest = FALSE
+      te$notest = isTRUE(te$task.notest)
     } else if (ssub=="#'") {
       add.struc.code(te)
       add.struc.html.comment(te,str)
     } else if (ssub=="#<") {
+      if (te$block.is.open)
+        stop(paste0("In row ", row,"\n",txt[row],"\n You open a block with #<, but you have not closed the block before."))
       add.struc.code(te)
+      
       te$block.head = str
+      te$block.is.open = TRUE
     } else if (ssub=="#>") {
       add.struc.block(te)
-    # Normal code
+      te$block.is.open = FALSE
+      # Normal code
     } else {
       te$code.txt = c(te$code.txt, str)
     }
@@ -143,6 +167,8 @@ add.struc.block = function(te) {
   } else if (type == "test") {
      test.txt = paste0(te$code.txt, collapse="\n")
      te$test.txt[length(te$test.txt)] <- test.txt
+     # Remove default hint for manual tests
+     te$hint.txt[length(te$hint.txt)] <- ""
   } else if (type == "test.arg") {    
      test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse="\n"))  
      te$test.txt[length(te$test.txt)] <- test.txt
@@ -183,38 +209,43 @@ add.struc.html.comment = function(te, str) {
 }
 
 add.struc.code = function(te) {
-  restore.point("add.struc.code", deep.copy=TRUE)
+  restore.point("add.struc.code")
 
   if (te$code.to.task) {
     te$task.txt = c(te$task.txt, te$code.txt)
   }
 
-  code.txt = str.trim(te$code.txt)
-  code.txt = code.txt[nchar(code.txt)>0]
-  
-  if (length(code.txt)>0) {
-    
-    
-    e.li = parse(text = te$code.txt, srcfile=NULL)
-    
-    if (length(e.li)>0) {
-      test.txt = sapply(seq_along(e.li), function(i) test.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
-      hint.txt = sapply(seq_along(e.li), function(i) hint.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
-    
-      te$counter = te$counter+length(e.li)
-      te$test.txt = c(te$test.txt,test.txt)
-      te$hint.txt = c(te$hint.txt,hint.txt)
-      te$last.e = e.li[[length(e.li)]]
-      enter.code.str =  "\n# enter your code here ...\n"
-      if (!te$code.to.task & 
-          !identical(te$task.txt[length(te$task.txt)], enter.code.str)) {
-        te$task.txt = c(te$task.txt, enter.code.str)
-      }
-    }
-  # Empty code.txt
+  if (isTRUE(te$notest)) {
+    #te$last.e = NULL     
   } else {
-    te$last.e = NULL    
-  }
+    code.txt = str.trim(te$code.txt)
+    code.txt = code.txt[nchar(code.txt)>0]
+    
+    if (length(code.txt)>0) {
+      
+      
+      e.li = parse(text = te$code.txt, srcfile=NULL)
+      
+      if (length(e.li)>0) {
+        test.txt = sapply(seq_along(e.li), function(i) test.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
+        hint.txt = sapply(seq_along(e.li), function(i) hint.code.for.e( e.li[[i]], part=te$part, counter=te$counter+i))   
+      
+        te$counter = te$counter+length(e.li)
+        te$test.txt = c(te$test.txt,test.txt)
+        te$hint.txt = c(te$hint.txt,hint.txt)
+        te$last.e = e.li[[length(e.li)]]
+        enter.code.str =  "\n# enter your code here ...\n"
+        if (!te$code.to.task & 
+            !identical(te$task.txt[length(te$task.txt)], enter.code.str)) {
+          te$task.txt = c(te$task.txt, enter.code.str)
+        }
+      }
+    # Empty code.txt
+    } else {
+      te$last.e = NULL    
+    }
+  }  
+  
   te$code.txt = NULL
 } 
 

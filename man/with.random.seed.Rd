@@ -1,0 +1,10 @@
+\name{with.random.seed}
+\alias{with.random.seed}
+\title{Calls a function with a specified random.seed}
+\usage{
+\method{with}{random.seed}(expr, seed = 1234567890)
+}
+\description{
+Calls a function with a specified random.seed
+}
+

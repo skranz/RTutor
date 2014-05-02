@@ -86,12 +86,13 @@ check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.w
         display("### Check exercise ", ex.name ," ######")
       }
 
+      
       ret = tryCatch(check.exercise(ex.name,new.code[ex.name], verbose=verbose),
                      error = function(e) {ex$failure.message <- as.character(e)
                                           return(FALSE)})
-                     
+            
       # Copy variables into global env
-      copy.into.env(source=ex$stud.env,dest=.GlobalEnv)
+      copy.into.env(source=ex$stud.env,dest=.GlobalEnv, set.fun.env.to.dest=TRUE)
       log.exercise(ex)
       save.ups()
       if (ret==FALSE) {
@@ -147,9 +148,18 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
              "Check exercise ",ex.name,"...",
              "\n###########################################\n"))
   
+  
   ex = ps$ex[[ex.name]]
   set.ex(ex)
   ex$solved = FALSE
+
+  initial.code = ps$ex.initial.code[[ex.name]]
+  if (any(initial.code==stud.code)) {
+    ex$code.changed = FALSE
+    ex$failure.message = ex$failure.short = paste0("You have not yet started with exercise ", ex.name)
+    return(FALSE)
+  }
+
   
   #message(capture.output(print(ex)))
   #message(capture.output(print(ps$ex[[ex.name]])))
@@ -159,7 +169,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
   ex$warning.messages = ex$warning.shorts = list()
   
   ex$check.date = Sys.time()
-  ex$code.changed = ex$stud.code != stud.code
+  ex$code.changed = !all(ex$stud.code == stud.code)
   if (ex$code.changed) {
     ex$stud.code = stud.code
     ex$checks = ex$checks +1
@@ -301,18 +311,21 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
 import.stud.env.var = function(import.var.li, dest.env = get.ex()$stud.env, ps = get.ps()) {
   restore.point("import.stud.env.var")
   if (is.null(import.var.li))
-    return()
+    return(NULL)
   for (i in seq_along(import.var.li)) {
     ex.name = names(import.var.li)[i]
-    source.env = ps$ex[[ex.name]]$stud.env
     vars = import.var.li[[i]]
+    source.env = ps$ex[[ex.name]]$stud.env
+    if (is.null(source.env)) {
+      stop(paste0("\nWe first must correctly generate the variables '", paste0(vars, collapse=","), "' in exercise ", ex.name, " before you can solve this exercise.\n To check exercise ", ex.name, " enter somewhere an irrelevant space in the code."))
+    }
     for (var in vars) {
       if (!exists(var,source.env, inherits=FALSE))
         stop(paste0("You first must correctly generate the variable '", var, "' in exercise ", ex.name, " before you can solve this exercise."))
         assign(var, get(var,source.env),dest.env)
     }
   }
-  return()
+  return(NULL)
 }
 
 
@@ -332,7 +345,7 @@ extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),w
 
 extract.r.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.r.exercise.code")
-    restore.point("extract.rmd.exercise.code")
+
   txt = stud.code
   mr = extract.command(txt,paste0("#' ## Exercise "))
   start.ind = which(str.starts.with(mr[,2],ex.name))
@@ -357,7 +370,8 @@ extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps
   restore.point("extract.rmd.exercise.code")
   txt = stud.code
   mr = extract.command(txt,paste0("## Exercise "))
-  start.ind = which(str.starts.with(mr[,2],ex.name))
+  mr[,2] = str_trim(gsub("#","",mr[,2], fixed=TRUE))
+  start.ind = which(mr[,2]==ex.name)
   start.row = mr[start.ind,1]
   if (length(start.row) == 0) {
     if (warn.if.missing)

@@ -97,7 +97,10 @@ stats = function() {
   ups = get.ups()
   
   res = lapply(seq_along(ups$li), function(i) {
+    restore.point("jhfjdnfn")
     d = ups$li[[i]]
+    if (is.null(d))
+      return(NULL)
     num.test = NROW(d)
     percentage.solved=round(sum(d$success)/num.test*100)
     hints = -sum(d$num.hint)

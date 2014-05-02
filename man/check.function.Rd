@@ -2,15 +2,16 @@
 \alias{check.function}
 \title{Checks a function written by the student}
 \usage{
-  check.function(code.or.name, ..., check.args = TRUE,
-    check.defaults = FALSE, check.args.order = TRUE,
-    allow.extra.arg = TRUE, ex = get.ex(),
-    stud.env = ex$stud.env, verbose = FALSE,
-    sol.env = ex$sol.env, hint.name = NULL, part = NULL)
+\method{check}{function}(code, ..., check.args = TRUE,
+  check.defaults = FALSE, check.args.order = TRUE, allow.extra.arg = TRUE,
+  ex = get.ex(), stud.env = ex$stud.env, verbose = FALSE,
+  sol.env = ex$sol.env, hint.name = NULL, part = NULL)
 }
 \arguments{
-  \item{code.or.name}{a string containing the name of the
-  function as specified in the solution}
+  \item{code}{code of the form {fun_name = function(x,y)
+  {#body of function}}. It is important to wrap the code in
+  {} and to assign the function name with = (don't use <-).
+  See example below.}
 
   \item{...}{you can add several test calls to the
   function. It will be checked whether the users' function
@@ -40,6 +41,6 @@
   this test}
 }
 \description{
-  Checks a function written by the student
+Checks a function written by the student
 }
 

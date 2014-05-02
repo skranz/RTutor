@@ -2,15 +2,14 @@
 \alias{test.H0.rejected}
 \title{Test whether a certain H0 can be significantly rejected}
 \usage{
-  test.H0.rejected(test.expr, p.value, test.name = "",
-    alpha.warning = 0.01, alpha.failure = 0.05,
-    short.message = "Fail to reject '{{test_name}}', p.value = {{p_value}}",
-    warning.message = "The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
-    failure.message = "I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
-    success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-    check.warning = TRUE, ex = get.ex(),
-    stud.env = ex$stud.env, hint.name = NULL, part = NULL,
-    ...)
+test.H0.rejected(test.expr, p.value, test.name = "", alpha.warning = 0.01,
+  alpha.failure = 0.05,
+  short.message = "Fail to reject '{{test_name}}', p.value = {{p_value}}",
+  warning.message = "The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
+  failure.message = "I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
+  success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
+  check.warning = TRUE, ex = get.ex(), stud.env = ex$stud.env,
+  hint.name = NULL, part = NULL, ...)
 }
 \arguments{
   \item{test.expr}{an expression that calls a test which
@@ -37,10 +36,10 @@
   \item{check.warning}{if FALSE don't check for a warning}
 }
 \value{
-  TRUE if H0 can be rejected, FALSE if not and "warning" if
-  it can be weakly rejected
+TRUE if H0 can be rejected, FALSE if not and "warning" if
+it can be weakly rejected
 }
 \description{
-  Test whether a certain H0 can be significantly rejected
+Test whether a certain H0 can be significantly rejected
 }
 

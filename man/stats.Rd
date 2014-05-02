@@ -2,9 +2,9 @@
 \alias{stats}
 \title{Shows your progress}
 \usage{
-  stats()
+stats()
 }
 \description{
-  Shows your progress
+Shows your progress
 }
 

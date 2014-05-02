@@ -72,7 +72,7 @@ set.ex = function(ex) {
 }
 
 
-log.exercise = function(ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed, part=ex$part) {
+log.exercise = function(ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = isTRUE(ex$code.changed), part=ex$part) {
   restore.point("log.exercise")
   
   user.name = get.user()$name

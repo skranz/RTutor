@@ -2,11 +2,10 @@
 \alias{sigma.test}
 \title{Test for variance (copied from TeachingDemos)}
 \usage{
-  sigma.test(x, sigma = 1, sigmasq = sigma^2,
-    alternative = c("two.sided", "less", "greater"),
-    conf.level = 0.95, ...)
+sigma.test(x, sigma = 1, sigmasq = sigma^2, alternative = c("two.sided",
+  "less", "greater"), conf.level = 0.95, ...)
 }
 \description{
-  Test for variance (copied from TeachingDemos)
+Test for variance (copied from TeachingDemos)
 }
 
