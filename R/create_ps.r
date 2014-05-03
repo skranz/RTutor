@@ -19,9 +19,22 @@ get.empty.ex.code = function(ex) {
   )      
 } 
 
-#' Generate an problem set for a student in folder dir
+#' Generate a problem set from a solution file
+#' 
+#' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
+#' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.empty.ps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE) {
+create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs="") {
+  setwd(dir)
+  create.struc(sol.file,ps.name)
+  create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs)
+  create.sample.solution(sol.file=sol.file,ps.name=ps.name, user.name=sol.user.name, dir=dir, header=header,footer=footer, libs=libs)
+  
+}
+
+#' Generate an empty problem set for a student in folder dir and the rps file
+#' @export
+create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE) {
   restore.point("create.empty.ps")
   ps = init.problem.set(ps.name,dir, require.stud.file=FALSE, load.struc.file = TRUE)
   create.stud.ps.r(ps,ps.dir=dir, user.name=user.name, header=header,footer=footer)
@@ -52,6 +65,8 @@ create.empty.ps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENT
 
   
 }
+
+
 
 # create.empty.ps()
 
@@ -87,20 +102,12 @@ paste0("
 ")
 }
 
-#' Internal function to generate a problem set skeleton for a student and save it in a file
-#' @export
-create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd"), ps.dir="C:/...", user.name = "ENTER A USER NAME HERE", header=NULL,libs = NULL, footer=NULL ) {
-  restore.point("create.stud.ps.rmd")
-  
-  ex.str = lapply(ps$ex, get.empty.ex.code)
-  
+rmd.ps.header = function(ps.name,ps.dir = "C:/...", ps.file = paste0(ps.name,".Rmd"), header="", libs=NULL, user.name="") {
   if(!is.null(libs))
     libs = paste0("library(",libs,")", collapse=";")
-  
-  file = paste0(str.left.of(file,"."),".Rmd")
-    
+
   str = paste0("
-#' # Problemset ", ps$name,"
+#' # Problemset ", ps.name,"
 
 #+ include=FALSE", header,"
 
@@ -108,23 +115,98 @@ create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd")
 
 # Note: You must use / instead of \\ to separate folders
 ps.dir =  '",ps.dir,"' # the folder in which this file is stored
-ps.file = '", ps$name,".Rmd' # this file
+ps.file = '", ps.file,"' # this file
 user.name = '", user.name,"' # your user name
 
 
 library(RTutor)
-check.problem.set('",ps$name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ", libs, "
 #+ include=TRUE
 
 cat('Name: ', user.name)
 
-",paste0(ex.str,collapse="\n"), footer)
+")  
+  str
+}
+
+#' Internal function to generate a problem set skeleton for a student and save it in a file
+#' @export
+create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd"), ps.dir="C:/...", user.name = "ENTER A USER NAME HERE", header=NULL,libs = NULL, footer=NULL ) {
+  restore.point("create.stud.ps.rmd")
+  
+  ex.str = lapply(ps$ex, get.empty.ex.code)
+  
+  
+  file = paste0(str.left.of(file,"."),".Rmd")
+  head = rmd.ps.header(ps.name=ps$name,ps.dir=ps.dir,header=header, libs=libs, user.name=user.name)
+  str = paste0(head,paste0(ex.str,collapse="\n"), footer)
   
   library(knitr)  
   str = spin(text=str,knit=FALSE,format = "Rmd")  
   writeLines(str,file)
   invisible(str)
+}
+
+
+examples.create.sample.solution = function() {
+  create.sample.solution(sol.file = "ps_1b1_ols_sol.r")
+}
+
+#' Creates a problem set structure file from a solution file
+#' @param sol.file file name of the solution file
+#' @param ps.name name of the problem set
+#' @export
+create.sample.solution = function(sol.file, target.file = NULL, ps.name=NULL, user.name="Jane Doe", dir = getwd(), libs=NULL, header="", footer="") {
+  restore.point("create.sample.solution")  
+  txt = readLines(sol.file)
+  if (is.null(ps.name)) {
+    ps.name = str.trim(extract.command(txt,"#$ problem_set")[1,2])
+  }
+  if (is.null(target.file)) {
+    target.file = paste0(ps.name,"_sample_solution.Rmd")
+  }
+  
+  row = 0
+  empty.txt = "#§§§#"
+  ignore = FALSE
+  while (row<length(txt)) {
+    row = row+1
+    str = txt[row]
+    ssub = substring(str,1,2)
+    if (str.trim(str)=="#s" | str.trim(str)=="#e" |
+        str.starts.with(str,"#< task") |
+        str.starts.with(str,"#< notest") |
+        str.starts.with(str,"#> task") |
+        str.starts.with(str,"#> notest") ) {
+      
+      txt[row] = empty.txt
+    } else if (str.starts.with(str,"#<")) {
+      txt[row] = empty.txt
+      ignore = TRUE
+    } else if (str.starts.with(str,"#>")) {
+      txt[row] = empty.txt
+      ignore = FALSE
+    } else if (str.starts.with(str,"#$ exercise")) {
+      ex.name = str.trim(str.left.of(str.right.of(str,"#$ exercise"),"#"))
+      txt[row] = paste0("#' ## Exercise ", ex.name)
+    } else if (str.starts.with(str,"#$")) {
+      txt[row] = empty.txt
+    } else {
+      if (ignore)
+        txt[row] = empty.txt
+    }
+  }
+  txt = txt[txt != empty.txt]
+  head = rmd.ps.header(ps.name=ps.name,ps.file=target.file,ps.dir=dir,header=header, libs=libs, user.name=user.name)
+  str = paste0(head,'\n', paste0(txt, collapse="\n"))
+
+  
+  library(knitr)  
+  str = spin(text=str,knit=FALSE,format = "Rmd")  
+  writeLines(str,paste0(dir,"/",target.file))
+  invisible(str)
+  
 }
 
 

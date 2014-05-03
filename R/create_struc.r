@@ -1,3 +1,5 @@
+
+
 examples.create.struc = function() {
   setwd("D:/libraries/RTutor/problemsets/EmpIO1a")
   create.struc("dplyr_car_sol.r",ps.name="dplyr_car")
@@ -16,14 +18,7 @@ examples.create.struc = function() {
   create.ps("example_sol.r","example")
 }
 
-#' Creates a problem set structure files and empty .r and .rmd solution files
-#' @param sol.file file name of the solution file
-#' @param ps.name name of the problem set
-#' @export
-create.ps = function(sol.file, ps.name, ...) {
-  create.struc(sol.file,ps.name)
-  create.empty.ps(ps.name, ...)
-}
+
 
 #' Creates a problem set structure file from a solution file
 #' @param sol.file file name of the solution file
@@ -249,7 +244,14 @@ add.struc.code = function(te) {
   te$code.txt = NULL
 } 
 
-
+examples.test.code.for.e = function() {
+  f = function(e) {
+    e = substitute(e)
+    test.code.for.e(e)
+  }
+  
+  f(fun <- function(x) {x*x})
+}
 
 test.code.for.e = function(e, part="", extra.arg="", counter=0) {
   restore.point("test.code.for.e")
@@ -258,15 +260,20 @@ test.code.for.e = function(e, part="", extra.arg="", counter=0) {
   extra.arg = ifelse(extra.arg=="","",paste0(",",extra.arg))
   
   if (is.assignment(e)) {
-    var = deparse1(e[[2]])
-    rhs = deparse1(e[[3]])
+    var = deparse1(e[[2]],collapse="\n")
+    rhs = deparse1(e[[3]],collapse="\n")
     estr = deparse1(e)
+    call.name = name.of.call(e[[3]])
     
-    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
-    code = paste0(
-      #paste0("#check.var('", var,"', ", rhs, ", exists=TRUE,length=TRUE, class = TRUE,values=TRUE, hint.name = '",hint.name,"'",part.str,")"),
-      paste0("\ncheck.assign(", var, "<-",rhs,", hint.name = '",hint.name,"'", part.str,extra.arg,")")
-    )
+    if (call.name == "function") {
+      restore.point("bfndq645by")
+      code=paste0("\ncheck.function(", var, "<-",rhs, part.str,extra.arg,")")    
+    } else {
+      hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
+      code = paste0(
+        paste0("\ncheck.assign(", var, "<- ",rhs,", hint.name = '",hint.name,"'", part.str,extra.arg,")")
+      )
+    }
   } else {
     estr = short = paste0(deparse(e),collapse="")
     if (nchar(estr)>23) 
@@ -311,11 +318,17 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
     var = deparse1(e[[2]])
     rhs = deparse1(e[[3]])
     estr = deparse1(e)
-
-    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
-    code = paste0("add.hint('",hint.name,"',", 
-      "{\n  hint.for.assign(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
-    )
+    call.name = name.of.call(e[[3]])
+    
+    if (call.name == "function") {
+      restore.point("jhjfndfnng")
+      code=""    
+    } else {
+      hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+      code = paste0("add.hint('",hint.name,"',", 
+        "{\n  hint.for.assign(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
+      )
+    }
   } else {
     estr = short = paste0(deparse(e),collapse="")
     if (nchar(estr)>23) 
@@ -327,3 +340,4 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
   }
   code  
 }
+

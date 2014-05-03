@@ -225,7 +225,8 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
   tryCatch( eval(ex$stud.expr, ex$stud.env),
             error = function(e) {
               # Evaluate expressions line by line and generate failure message
-              stepwise.eval.stud.expr(stud.expr=ex$stud.expr,stud.env=new.env(parent=.GlobalEnv))
+              #stepwise.eval.stud.expr(stud.expr=ex$stud.expr,stud.env=new.env(parent=.GlobalEnv))
+              stepwise.eval.stud.expr(stud.expr=ex$stud.expr,stud.env=ex$stud.env)
               has.error <<- TRUE
             }
   )
@@ -322,7 +323,11 @@ import.stud.env.var = function(import.var.li, dest.env = get.ex()$stud.env, ps =
     for (var in vars) {
       if (!exists(var,source.env, inherits=FALSE))
         stop(paste0("You first must correctly generate the variable '", var, "' in exercise ", ex.name, " before you can solve this exercise."))
-        assign(var, get(var,source.env),dest.env)
+        val = get(var,source.env)
+        # Set enclosing environments of functions to dest.env
+        if (is.function(val))
+          environment(val) = dest.env
+        assign(var, val,dest.env)
     }
   }
   return(NULL)

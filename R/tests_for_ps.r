@@ -302,7 +302,7 @@ check.assign = function(
         
   part.str = ifelse(is.null(part),"",paste0(" in part ", part))
 
-  ex$stud.expr
+  #ex$stud.expr
   if (is.null(ex$stud.expr.list))
     ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
 
