@@ -30,7 +30,7 @@ library(RTutor)
 
 ## 2. Create a solution file
 
-The recommend way to create an interactive problem set is to write a solution file. It is an R file that contains as comments a description of the tasks as the student will see it, together with a solution to the problem set. In addition the solution can contain manual hints, tests or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
+The recommended way to create an interactive problem set is to write a solution file. It is an R file that contains as comments a description of the tasks as the student will see it, together with a solution to the problem set. In addition the solution can contain manual hints, tests or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
 
 Here is a small solution file with only one exercise. We will explain its structure in detail in the chapter on solution files.
 
@@ -62,17 +62,15 @@ Assume your solution is in a file "example_ps_sol.r". The following code generat
 
 ```{r eval=FALSE, tidy=FALSE}
   #setwd("C:/ ... folder with your solution file")
-  create.struc("example_ps_sol.r",ps.name="example_ps")
-  create.empty.ps("example_ps")
+  create.ps("example_ps_sol.r",ps.name="example_ps")
 ```
 
-The create.struc command generates the files
+The create.ps command generates the files
   - example_ps.rps: a binary representation of the problem set structure
   - examples_ps_struc.r: a human-readable representation of the problem set structure
-
-The create.empty.ps command then generates the files
-  - example_ps.rmd: empty problem set in R-markdown format
   - example_ps.r: empty problem set in R format
+  - example_ps.rmd: empty problem set in Rmarkdown format
+  - example_ps_sample_solution.rmd: A sample solution of the problem set in Rmarkdown format
 
 ### 4. Solving and checking the problem set as student
 
@@ -95,7 +93,7 @@ Hint: If you use a problem set as .r file, you can check the box "Source on Save
 How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the student's solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type hint() in the R console to get a hint of how to solve the task that is not yet correct.
 
 ### 5. Iterate
-You probably will iterate between writing a solution file, solving the problem set yourself and extending and improving the problem set until you have a nice version that you want to send out to the public.
+You probably will iterate between writing a solution file, solving the problem set yourself (or checking whether the sample solution passes indeed all tests) and extending and improving the problem set until you have a nice version that you want to send out to the public.
 
 Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .r or .rmd file and tell them to install RStudio and RTutor as described above. 
 
@@ -136,11 +134,11 @@ You can already generate an empty problem set from this solution file (see step 
 ### Showing code to students as part of exercise description
 Actually, in our exercise the first code chuck is an example that shall be shown to the student and only the last line of code is a solution that will not be shown. We can make code being shown to students by wrapping it in a block starting with the line
 ```{r }
-#s
+#< task
 ```
 and ending with a line
 ```{r }
-#e
+#> task
 ```
 This means we can modify our code as follows:
 ```{r eval=FALSE, tidy=FALSE}
@@ -148,16 +146,25 @@ This means we can modify our code as follows:
 
 #' a) We often want to compute some summary statistic of a vector.
 #' For example:
-#s
+#< task
 x = 10:20
 # Computing the sum of x
 sum(x)
-#e
+#> task
 #' Now compute the mean of x.
 mean(x)
 ```
 
 Generate again the problem set structure and empty problem set. You see that the first code chunk is now shown in the empty problem set. The interactive problem set can already be used. It automatically tests the solution and if the test fails since mean(x) is not entered correctly, it gives the option to type hint() to get a hint.
+
+By default also tests will be generated for the code that is already given as a task (because future code may rely on this code not being changed.) If you don't want to generate tests for the code given in the task you can do so by adding the flag `notest` in your line that starts the task block: putting it into the following kind of block:
+
+```{r eval=FALSE}
+#< task notest
+  #...
+#> task
+```
+
 
 ### Manual hints
 
@@ -245,7 +252,61 @@ check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
 
 replaces the automatic test with a test that just checks whether a variable u exists, and has the same length and class (numeric or integer) as an example solution c(3,6,7,99).
 
-RTutor has a series of helper functions for such manual tests.
+RTutor has a series of helper functions for such manual tests. Take a look at the package help for a documentation.
+
+## 3. Special blocks
+
+### #< test
+Replace the default test, i.e. `check.call` or `check.assign` with a user specified test.
+#### Example:
+```{r}
+#' Let u be a vector with 4 numbers
+u = 1:4
+#<
+# Just check if u is numeric and has length 4 
+check.var("u",1:4,exists=TRUE, length=TRUE, class=TRUE)
+#>
+
+```
+
+
+### #< test.arg
+Add additional arguments to the default tests `check.call` or `check.assign`. Simply specify the arguments as a comma separated list as illustrated in the example:
+#### Example:
+```{r}
+#' Let u be a vector with 4 numbers
+u = 1:4
+#<
+# Just check if u is numeric and has length 4 
+check.var("u",1:4,exists=TRUE, length=TRUE, class=TRUE)
+#>
+
+```
+
+
+### #<
+Insert an additional test or give an award.
+```{r}
+beta0 = 100
+#< test
+  check.var("beta0",100,exists=TRUE, length=TRUE,class=TRUE)
+#>
+#<
+  holds.true(beta0>0, failure.message="You must set beta0>0.")
+#>
+
+
+#< 
+check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+#>
+#< 
+check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+#>
+
+
+```
+
+
 
 TO DO:
 

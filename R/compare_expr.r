@@ -116,12 +116,39 @@ check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.en
   return(TRUE)
 }
 
-is.same = function(x,y, tol=1e-10) {
+remove.names = function(x) {
+  try({
+    if (!is.null(names(x)))
+      names(x) = NULL
+    if (!is.null(rownames(x)))
+      rownames(x) = NULL
+    if (!is.null(colnames(x)))
+      catnames(x) = NULL
+  }, silent=TRUE)
+  x  
+}
+
+is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE) {
   restore.point("is.same")
+  
   if(identical(x,y))
     return(TRUE)
-  if (length(x) !=length(y))
-    return(FALSE)
+  
+  if (check.all.equal) {
+    if (is.data.frame(x) & is.data.frame(y)) {
+      if ((NROW(x) != NROW(y)) | (NCOL(x) != NCOL(y)))
+        return(FALSE)
+      if (length(x)==0)
+        return(TRUE)
+      eq = sapply(1:NCOL(x), function(i) isTRUE(all.equal(x[[i]],y[[i]],tol=tol, check.names=check.names, check.attributes=check.attributes) ))
+      if (all(eq))
+        return(TRUE)
+    } else {
+      if (isTRUE(all.equal(x,y, tol=tol, check.names=check.names, check.attributes=check.attributes)))
+        return(TRUE)
+      
+    }
+  }
   if (is.numeric(x) & is.numeric(y)) {
     if (max(abs(x-y), na.rm=TRUE)>tol )
       return(FALSE)
@@ -189,10 +216,10 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
 }
 
 
-compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12, details = TRUE) {
+compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12, details = TRUE, check.all.equal=TRUE) {
   wrong = NULL
   
-  if (identical(var.stud,var.sol))
+  if (is.same(var.stud, var.sol))
     return(NULL)
   
   if (class != FALSE) {
