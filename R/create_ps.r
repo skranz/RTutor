@@ -24,7 +24,7 @@ get.empty.ex.code = function(ex) {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs="") {
+create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL) {
   setwd(dir)
   create.struc(sol.file,ps.name)
   create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs)
@@ -140,11 +140,12 @@ create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd")
   
   file = paste0(str.left.of(file,"."),".Rmd")
   head = rmd.ps.header(ps.name=ps$name,ps.dir=ps.dir,header=header, libs=libs, user.name=user.name)
-  str = paste0(head,paste0(ex.str,collapse="\n"), footer)
+  str = paste0(head,paste0(ex.str,collapse="\n\n"), footer)
   
   library(knitr)  
-  str = spin(text=str,knit=FALSE,format = "Rmd")  
-  writeLines(str,file)
+  str = spin(text=str,knit=FALSE,format = "Rmd")
+  name.rmd.chunks(file, txt = str) # also writes file
+  #writeLines(str,file)
   invisible(str)
 }
 
@@ -159,6 +160,11 @@ examples.create.sample.solution = function() {
 #' @export
 create.sample.solution = function(sol.file, target.file = NULL, ps.name=NULL, user.name="Jane Doe", dir = getwd(), libs=NULL, header="", footer="") {
   restore.point("create.sample.solution")  
+   if (str.ends.with(sol.file,".Rmd") | str.ends.with(sol.file,".rmd")) {
+    return(create.sample.solution.from.rmd(sol.file, ps.name=ps.name, target.file=target.file, user.name=user.name, dir=dir, libs=libs, header=header, footer=footer))
+  }
+ 
+  
   txt = readLines(sol.file)
   if (is.null(ps.name)) {
     ps.name = str.trim(extract.command(txt,"#$ problem_set")[1,2])
@@ -204,7 +210,10 @@ create.sample.solution = function(sol.file, target.file = NULL, ps.name=NULL, us
   
   library(knitr)  
   str = spin(text=str,knit=FALSE,format = "Rmd")  
-  writeLines(str,paste0(dir,"/",target.file))
+  #writeLines(str,paste0(dir,"/",target.file))
+  
+  name.rmd.chunks(target.file, txt = str) # also writes file
+  
   invisible(str)
   
 }
@@ -246,4 +255,50 @@ cat('Name: ', user.name)
   #cat(str)
   writeLines(str,file)
   invisible(str)
+}
+
+
+examples.name.rmd.chunks = function() {
+  txt = "
+a) This is exercise a). What now?
+```{r }
+2*2
+```
+  "
+  name.rmd.code.blocks(txt=sep.lines(txt))
+  
+  setwd("D:/lehre/empIOUlm/rtutor")
+  rmd.file = "test_sol.Rmd"
+  name.rmd.chunks(rmd.file)
+}
+
+#' Set default names for the chunks of problem set rmd files 
+name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file)) {
+  restore.point("name.rmd.chunks")
+  ex.name = ""
+  part.name = ""
+  in.code = FALSE
+  i = 2
+  counter = 1
+
+  for (i in 1:length(txt)) {
+    str = txt[i]
+    if (str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
+      counter.str = ifelse(counter==1,"", paste0(" ",counter))
+      txt[i] = paste0('```{r "',ex.name,' ',part.name, counter.str,'"}')
+      counter = counter+1
+    } else if (str.starts.with(str,"## Exercise ")) {
+      ex.name = str.right.of(str,"## Exercise ")
+      ex.name = gsub("#","", ex.name, fixed=TRUE)
+      ex.name = str.left.of(ex.name," --", not.found="all")
+      counter = 1
+      part.name = ""
+    } else if (!is.na(temp.part <- str_extract(str,"^([a-z]|[ivx]*)\\)")[1]  )) {
+      part.name = temp.part
+      counter = 1
+    }
+  }
+  if (!is.null(rmd.file))
+    writeLines(txt, rmd.file)
+  invisible(txt)
 }

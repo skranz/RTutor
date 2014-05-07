@@ -895,7 +895,7 @@ test.H0 = function(test.expr,p.value,test.name="",
                   ex=get.ex(),stud.env = ex$stud.env,...) {
   set.current.hint(hint.name)
   set.part(part)
-  
+  #browser()
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
     if (test.name=="") {
@@ -914,16 +914,17 @@ test.H0 = function(test.expr,p.value,test.name="",
   }
   if (missing(warning.message)) {
     warning.message = paste0("The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.")
-  }  
+  }
+  
   if (p.value < alpha.failure) {
-    add.failure(ex,short.message,failure.message,test.name=test.name,p_value=p.value,...)
+    add.failure(ex,short.message,failure.message,test_name=test.name,p_value=p.value,...)
     return(FALSE)
   }
 
   add.success(ex,success.message,test_name=test.name,p_value=p.value,...)
   
   if (p.value < alpha.warning & check.warning) {
-    add.warning(ex,short.message,warning.message,test.name=test.name,p_value=p.value,...)
+    add.warning(ex,short.message,warning.message,test_name=test.name,p_value=p.value,...)
     return("warning")
   }
   return(TRUE)
@@ -954,6 +955,7 @@ test.variance = function(vec, true.val, test = "t.test",short.message,warning.me
   
   
 } 
+
 
 #' Test: The mean of the distribution from which a vector of random numbers has been drawn
 #' @export

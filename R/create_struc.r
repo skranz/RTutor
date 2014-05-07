@@ -27,6 +27,10 @@ examples.create.struc = function() {
 create.struc = function(sol.file, ps.name=NULL) {
   restore.point("create.struc")  
 
+  if (str.ends.with(sol.file,".Rmd") | str.ends.with(sol.file,".rmd")) {
+    return(create.struc.from.rmd(sol.file, ps.name))
+  }
+  
   txt = readLines(sol.file)
   if (is.null(ps.name)) {
     ps.name = str.trim(extract.command(txt,"#$ problem_set")[1,2])
@@ -324,7 +328,7 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
       restore.point("jhjfndfnng")
       code=""    
     } else {
-      hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+      hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
       code = paste0("add.hint('",hint.name,"',", 
         "{\n  hint.for.assign(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
       )

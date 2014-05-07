@@ -101,15 +101,30 @@ qlist = function (..., .env = parent.frame())
   #structure(as.list(match.call()[-1]), env = .env, class = "quoted")
 }
 
-str.left.of = function(str,pattern,...) {
+examples.str.left.of = function() {
+  str.left.of("Hi","i")
+  str.left.of("Ha","i")
+
+}
+
+str.left.of = function(str,pattern,..., not.found="NA") {
   pos = str.locate.first(str, pattern,...)
-  substring(str,1,pos[,1]-1)
+  res = substring(str,1,pos[,1]-1)
+  if (not.found=="all") {
+    res[is.na(res)] = str[is.na(res)]
+  }
+  res
 }
 
 
-str.right.of = function(str,pattern,...) {
+str.right.of = function(str,pattern,..., not.found="NA") {
   pos = str.locate.first(str, pattern,...)
-  substring(str,pos[,2]+1,)
+  res = substring(str,pos[,2]+1,)
+  if (not.found=="all") {
+    res[is.na(res)] = str[is.na(res)]
+  }
+  res
+
 }
 
 

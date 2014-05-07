@@ -313,8 +313,17 @@ import.stud.env.var = function(import.var.li, dest.env = get.ex()$stud.env, ps =
   restore.point("import.stud.env.var")
   if (is.null(import.var.li))
     return(NULL)
+  i = 1
   for (i in seq_along(import.var.li)) {
     ex.name = names(import.var.li)[i]
+    if (!ex.name %in% names(ps$ex)) {
+      ind = str.starts.with(names(ps$ex),ex.name)
+      if (!any(ind)) {
+        stop(paste0("\nWrong import variable statement in solution file of exercise  ",names(ps$ex)[i], ": exercise ", ex.name, " not found"))
+      } else {
+        ex.name = names(ps$ex)[ind][1]
+      }
+    }
     vars = import.var.li[[i]]
     source.env = ps$ex[[ex.name]]$stud.env
     if (is.null(source.env)) {

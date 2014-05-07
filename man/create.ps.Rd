@@ -1,16 +1,14 @@
 \name{create.ps}
 \alias{create.ps}
-\title{Creates a problem set structure files and empty .r and .rmd solution files}
+\title{Generate a problem set from a solution file}
 \usage{
-create.ps(sol.file, ps.name, ...)
-}
-\arguments{
-  \item{sol.file}{file name of the solution file}
-
-  \item{ps.name}{name of the problem set}
+create.ps(sol.file, ps.name, user.name = "ENTER A USER NAME HERE",
+  sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
+  libs = NULL)
 }
 \description{
-Creates a problem set structure files and empty .r and .rmd
-solution files
+Generates _struc.r file, .rps file, empty problem set .r
+and .rmd files and a sample solution .rmd file (overwrites
+existing files)
 }
 
