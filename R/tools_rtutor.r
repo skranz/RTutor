@@ -10,6 +10,17 @@ with.random.seed <- function (expr, seed = 1234567890)
     return(ret)
 }
 
+
+#' Like paste0 but returns an empty vector if some string is empty
+sc = function(..., sep="", collapse=NULL) {
+  str = list(...)
+  restore.point("str.combine")
+  len = sapply(str,length)
+  if (any(len==0))
+    return(vector("character",0))
+  paste0(...,sep=sep,collapse=collapse)
+}
+
 copy.into.env <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(sys.parent(1)), 
     names = NULL, exclude = NULL, overwrite = TRUE, all.names = TRUE, set.fun.env.to.dest = FALSE) 
 {

@@ -133,7 +133,6 @@ create.ex.struc = function(name, txt) {
     }
   }
   add.struc.code(te)
-
   
   ex.code = paste0('
 #$ exercise ', name,' ############################################
@@ -299,7 +298,7 @@ hint.name.for.e = function(e, counter=0) {
     rhs = deparse1(e[[3]])
     estr = deparse1(e)
 
-    hint.name = paste0(var, "<-", substring(rhs,1,10), "...", counter)
+    hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
   } else {
     estr = short = paste0(deparse(e),collapse="")
     if (nchar(estr)>23) 

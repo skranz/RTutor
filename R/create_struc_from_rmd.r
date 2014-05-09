@@ -24,6 +24,7 @@ create.struc.from.rmd = function(sol.file, ps.name=NULL) {
   rows = c(ex.rows[,1], length(txt)+1)
   ex.txt = lapply(1:(length(rows)-1), function(i) txt[(rows[i]+1):(rows[i+1]-1)])
   
+  i = 1
   ex.struc = sapply(seq_along(ex.txt), function(i) {
     create.ex.struc.from.rmd(ex.names[i], ex.txt[[i]], start.row = rows[i])
   })
@@ -53,6 +54,7 @@ create.ex.struc.from.rmd = function(name, txt, start.row=1) {
   te$counter = 0
   te$code.to.task = FALSE;te$task.notest = FALSE; te$notest.notest=FALSE
   te$block.is.open = FALSE;
+  te$added.code = FALSE
   
   code.stop = c("#<","#>","#$","#'")
   
@@ -65,12 +67,32 @@ create.ex.struc.from.rmd = function(name, txt, start.row=1) {
     tryCatch(
       te <- inner.create.ex.struc.from.rmd(row=row,txt=txt,te=te),
       error = function(e) {
-        str = paste0("in create_struc(...) in solution file:\n row ", row+start.row-1, "\n",txt[row],"\n",  as.character(e))
+        str = paste0("in inner.create.ex.struc.from.rmd(...) in ex. ", name, ", row ", row+start.row-1, ".\n",txt[row],"\n",  as.character(e))
         stop(str)
       }
     )
   }
   #add.struc.code(te)
+  
+  
+  # Adapt task.txt to have good empty lines in code
+  if (length(te$task.txt)>1) {
+    #restore.point("create.ex.struc.rmd.inner")
+
+    s = te$task.txt
+    comment.rows = str.trim(s) == "#'"
+    next.row.no.comment = c(!comment.rows[-1],FALSE)
+    s = s[!(comment.rows & next.row.no.comment)]
+    
+    empty.line.rows = str.trim(s) == "#'"
+    html.rows = str.starts.with(s,"#'")
+    part.rows = grepl("^#'[ ]?([a-z]|[ivx]*)\\)",s)
+    next.part.rows = c(part.rows[-1],FALSE)
+    rows = html.rows & (!empty.line.rows) & next.part.rows
+    s[rows] = sc(s[rows],"\n#'")
+    te$task.txt = s
+  }
+
   
   ex.code = paste0('
 #$ exercise ', name,' ############################################
@@ -98,6 +120,8 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
  str = txt[row]
  ssub = substring(str,1,2)
 
+ #display("\nrow = ", row,"\n", txt[row], "\n te$last.e = ", deparse1(te$last.e))
+ 
  if (!te$in.code) {
     if (str.starts.with(str,"```{r")) {
       te$in.code = TRUE
@@ -141,7 +165,8 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
       
       if (te$block.is.open)
         stop(paste0("In row ", row,"\n",txt[row],"\n You open a block with #<, but you have not closed the block before."))
-      add.struc.code(te)
+      if (te$added.code)
+        add.struc.code(te)
       #display("row: ", row, " ", txt[row])
       te$block.head = str
       te$block.is.open = TRUE
@@ -152,14 +177,19 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
           str = paste0(str, "\n To close a task block, you must type\n\n#> task\n")
         if (te$notest.notest)
           str = paste0(str, "\n To close a notest block, you must type\n\n#> notest\n")
+
         stop(str)
       }
 
       add.struc.block(te)
       te$block.is.open = FALSE
+      te$added.code = FALSE
       # Normal code
     } else {
-      te$code.txt = c(te$code.txt, str)
+      if (str.trim(str)!="" | te$added.code) {
+        te$added.code = TRUE
+        te$code.txt = c(te$code.txt, str)
+      }
     }
   }
   te
@@ -210,10 +240,23 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
     }
   }
   txt = txt[txt != empty.txt]
+  
+  # Remove empty code blocks
+  code.start = str.starts.with(txt,"```{r")
+  code.end = (!code.start) & str.starts.with(txt,"```")
+  code.ends.next = c(code.end[-1],FALSE)
+  rows = which(code.start & code.ends.next)
+  if (length(rows)>0) {
+    txt[rows] = ""
+    txt = txt[-(rows+1)]
+  }
+  
+  
   head = rmd.rmd.ps.header(ps.name=ps.name,ps.file=target.file,ps.dir=dir,header=header, libs=libs, user.name=user.name)
-  str = paste0(head, paste0(txt, collapse="\n"))
+  str = c(head,txt)
+  #str = paste0(head, paste0(txt, collapse="\n"))
 
-  name.rmd.chunks(target.file, txt = sep.lines(str)) # also writes file
+  name.rmd.chunks(target.file, txt = str) # also writes file
   
   invisible(str)
   

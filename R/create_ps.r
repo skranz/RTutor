@@ -13,7 +13,7 @@ get.empty.ex.code = function(ex) {
   
   paste0("#' ## Exercise ", ex$name," ###########################\n",
          "#'\n",
-         ex$task.txt,"\n\n"
+         ex$task.txt,"\n"
          #"#' #### end of exercise ", ex$name, " ##################\n"
          #           'check.exercise("',ex$name,'")'
   )      
@@ -25,6 +25,7 @@ get.empty.ex.code = function(ex) {
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
 create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL) {
+  restore.point("create.ps")
   setwd(dir)
   create.struc(sol.file,ps.name)
   create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs)
@@ -122,10 +123,8 @@ user.name = '", user.name,"' # your user name
 library(RTutor)
 check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ", libs, "
-#+ include=TRUE
 
-cat('Name: ', user.name)
-
+#' Name: `r user.name`
 ")  
   str
 }
@@ -140,7 +139,7 @@ create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd")
   
   file = paste0(str.left.of(file,"."),".Rmd")
   head = rmd.ps.header(ps.name=ps$name,ps.dir=ps.dir,header=header, libs=libs, user.name=user.name)
-  str = paste0(head,paste0(ex.str,collapse="\n\n"), footer)
+  str = paste0(head,paste0(ex.str,collapse="\n"), footer)
   
   library(knitr)  
   str = spin(text=str,knit=FALSE,format = "Rmd")
@@ -273,7 +272,7 @@ a) This is exercise a). What now?
 }
 
 #' Set default names for the chunks of problem set rmd files 
-name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file)) {
+name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=TRUE) {
   restore.point("name.rmd.chunks")
   ex.name = ""
   part.name = ""
@@ -283,9 +282,13 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file)) {
 
   for (i in 1:length(txt)) {
     str = txt[i]
-    if (str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
-      counter.str = ifelse(counter==1,"", paste0(" ",counter))
-      txt[i] = paste0('```{r "',ex.name,' ',part.name, counter.str,'"}')
+    
+    
+    if (str.starts.with(str, "```{r")) {
+      if ((!only.empty.chunks) | str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
+        counter.str = ifelse(counter==1,"", paste0(" ",counter))
+        txt[i] = paste0('```{r "',ex.name,' ',part.name, counter.str,'"}')
+      }
       counter = counter+1
     } else if (str.starts.with(str,"## Exercise ")) {
       ex.name = str.right.of(str,"## Exercise ")
