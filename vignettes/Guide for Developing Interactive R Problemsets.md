@@ -15,7 +15,7 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 
 You first need to install some packages. Simply run in R
 
-```s
+```r
 # Install packages from CRAN
 install.packages("devtools")
 install.packages("whisker")
@@ -46,7 +46,7 @@ Here is a small solution file with only one exercise. We will explain its struct
     a) We often want to compute some summary statistic of a vector.
     For example:
     
-    ```s
+    ```r
     #< task
     x = 10:20
     # Computing the sum of x
@@ -56,7 +56,7 @@ Here is a small solution file with only one exercise. We will explain its struct
 
     Now compute the mean of x.
     
-    ```s
+    ```r
     mean(x)
     #< hint
     display("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
@@ -74,7 +74,7 @@ The problemset folder of the RTutor library contains some example solution files
 Assume your solution is in a file "Example_sol.Rmd". The following code generates the necessary files for students to use the interactive problem set.
 
 
-```s
+```r
   #setwd("C:/ ... folder with your solution file")
   create.ps("Example_sol.Rmd",ps.name="Example")
 ```
@@ -133,7 +133,7 @@ Let us start by just writing an exercise with solution, without yet adding some 
     a) We often want to compute some summary statistic of a vector.
     For example:
     
-    ```s
+    ```r
     x = 10:20
     # Computing the sum of x
     sum(x)
@@ -141,7 +141,7 @@ Let us start by just writing an exercise with solution, without yet adding some 
 
     Now compute the mean of x.
     
-    ```s
+    ```r
     mean(x)
     ```
 
@@ -149,7 +149,7 @@ The description of the exercise is written as standard text, the code of your so
 
 You can already generate an empty problem set from this simple solution file by calling `create.ps` (see step 3 of part I). In the empty problem set file, each chunk of R code will be replaced by a chunk of the form
     
-    ```s
+    ```r
     # enter your code here ...
     ```
 
@@ -158,13 +158,13 @@ which asks the student to enter his solution.
 ### Showing code to students as part of exercise description
 Actually, in our exercise the first code chuck shall be an example that will also be shown to the student. We can make code being shown to students by wrapping it in a block starting with the line
 
-```s
+```r
 #< task
 ```
 
 and ending with a line
 
-```s
+```r
 #> task
 ```
 
@@ -179,7 +179,7 @@ This means we can modify our code as follows:
     a) We often want to compute some summary statistic of a vector.
     For example:
     
-    ```s
+    ```r
     #< task
     x = 10:20
     # Computing the sum of x
@@ -189,7 +189,7 @@ This means we can modify our code as follows:
 
     Now compute the mean of x.
     
-    ```s
+    ```r
     mean(x)
     ```
 
@@ -201,7 +201,7 @@ The interactive problem set can already be used. It automatically tests the solu
 By default also tests will be generated for the code that is already given as a task (because future code may rely on this code not being accidently changed by the user.) If you don't want to generate tests for the code given in the task you can do so by adding the flag `notest` in your line that starts the task block: putting it into the following kind of block:
 
 
-```s
+```r
 #< task notest
   #...
 #> task
@@ -225,7 +225,7 @@ In our example, we want instead a manual hint that tells the student, how the in
     a) We often want to compute some summary statistic of a vector.
     For example:
     
-    ```s
+    ```r
     #< task
     x = 10:20
     # Computing the sum of x
@@ -235,7 +235,7 @@ In our example, we want instead a manual hint that tells the student, how the in
 
     Now compute the mean of x.
     
-    ```s
+    ```r
     mean(x)
     #< hint
       display("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
@@ -245,7 +245,7 @@ In our example, we want instead a manual hint that tells the student, how the in
 
 This means we simply add after the command of the solution that will be tested, a block of the form
 
-```s
+```r
 #< hint
 
 #>
@@ -255,7 +255,7 @@ Inside the block, you enter some code that will be shown if the student types hi
 
 Sometimes you want to show the advice from the automatically generated hint but also want to add some additional advice. You can do this by putting code inside the following block:
 
-```s
+```r
 #< add to hint
 
 #>
@@ -272,7 +272,7 @@ So far there is only a small thing: students can get **awards** if they have sol
 
 
 
-```s
+```r
 #<
 give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
 #>
@@ -288,7 +288,7 @@ There may be more elements from computer games that may motivate some students (
 I tried my best to automatically test whether the student entered a correct solution or not. Yet sometimes we need to manually include specifice variants of tests in the solution file. Here is an example for such a manual test:
 
 
-```s
+```r
 #' b) Save in the variable u a vector of 4 different numbers
 u = c(3,6,7,99)  
 #< test
@@ -305,7 +305,7 @@ The automatic test would check whether one of the following two conditions is me
 Yet in this example, the automatic test is too restrictive. The student shall just generate some arbitrary vector consisting of 4 numbers. The block
 
 
-```s
+```r
 #< test
 check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
 #>
@@ -320,7 +320,7 @@ RTutor has a series of helper functions for such manual tests. Take a look at th
 
 By default test are generated that call either `check.call` (a statement that does not assign a varible), `check.assign` (if a value is assigned to a variable), or `check.function` (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  `#< test.arg` allows you to change the arguments of a default test. Consider the following example:
 
-```s
+```r
 plot(x=p,y=q,main="A plot", xlab="Prices")
 #< test.arg
   ignore.arg = c("main","xlab"), allow.extra.arg=TRUE
@@ -338,7 +338,7 @@ The next section provides more examples for using tests and hints
 Sometimes you may ask to write a function in the problem set. Here is an example, how you could construct a solution file. In the exercise the student is asked to complete a manual function `ols` that shall compute an ols estimate:
 
 
-```s
+```r
 #< task notest
 ols = function(y,X) {
   
@@ -363,7 +363,7 @@ display("Just insert inside the function ols the code to compute beta.hat from y
 First, we have a `#< task notest` block that specifies an unfinished function that will be given to the student. Afterward, we have an example of a correct function `ols`.
 Then the `#< test.arg` block specifies parameters for the automatic test `check.function`. The unnamed parameter 
 
-```s
+```r
 ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
 ```
 
@@ -379,7 +379,7 @@ Here is an example:
     a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distibuted on the interval from min to max.
     
     
-    ```s
+    ```r
     runif.square = function(n,min,max) {
       runif(n,min,max)^2
     }
@@ -400,7 +400,7 @@ Consider the following example:
     a) Specify a number of observations T>=5
     
     
-    ```s
+    ```r
     T = 100
     #< test
       check.var("T",100,exists=TRUE, length=TRUE,class=TRUE)

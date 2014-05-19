@@ -201,29 +201,37 @@ install.packages(&quot;JSONIO&quot;)
 
 # Install packages from github
 library(devtools)
-install_github(repo = &quot;restorepoint&quot;, username = &quot;skranz&quot;)
-install_github(repo = &quot;stringtools&quot;, username = &quot;skranz&quot;)
-install_github(repo = &quot;RTutor&quot;, username = &quot;skranz&quot;)
+install_github(repo=&quot;restorepoint&quot;, username=&quot;skranz&quot;)
+install_github(repo=&quot;stringtools&quot;, username=&quot;skranz&quot;)
+install_github(repo=&quot;RTutor&quot;, username=&quot;skranz&quot;)
 library(restorepoint)
 library(RTutor)
 </code></pre>
 
-<h2>2. Create a solution file</h2>
+<h2>2. Create an R Markdown solution file</h2>
 
-<p>The recommend way to create an interactive problem set is to write a solution file. It is an R file that contains as comments a description of the tasks as the student will see it, together with a solution to the problem set. In addition the solution can contain manual hints, tests or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
+<p>The recommended way to create an interactive problem set is to write a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
 
 <p>Here is a small solution file with only one exercise. We will explain its structure in detail in the chapter on solution files.</p>
 
-<pre><code class="r">#$ exercise 1 Summary statistics #####################################
+<pre><code># Problemset Example 
 
-#&#39; a) We often want to compute some summary statistic of a vector.
-#&#39; For example:
-#s
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+
+```r
+#&lt; task
 x = 10:20
 # Computing the sum of x
 sum(x)
-#e
-#&#39; Now compute the mean of x.
+#&gt; task
+```
+
+Now compute the mean of x.
+
+```r
 mean(x)
 #&lt; hint
 display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
@@ -231,36 +239,34 @@ display(&quot;There already exist R functions for many things. To find them use 
 #&lt;
 give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
 #&gt;
+```
 </code></pre>
 
-<p>The problemset folder of the RTutor library contains several example solution files. </p>
+<p>The problemset folder of the RTutor library contains some example solution files. </p>
 
 <h3>3. Generate a structure file and empty problem set for students</h3>
 
-<p>Assume your solution is in a file &ldquo;example_ps_sol.r&rdquo;. The following code generates the necessary files for students to use the interactive problem set.</p>
+<p>Assume your solution is in a file &ldquo;Example_sol.Rmd&rdquo;. The following code generates the necessary files for students to use the interactive problem set.</p>
 
 <pre><code class="r">  #setwd(&quot;C:/ ... folder with your solution file&quot;)
-  create.struc(&quot;example_ps_sol.r&quot;,ps.name=&quot;example_ps&quot;)
-  create.empty.ps(&quot;example_ps&quot;)
+  create.ps(&quot;Example_sol.Rmd&quot;,ps.name=&quot;Example&quot;)
 </code></pre>
 
-<p>The create.struc command generates the files</p>
+<p>The create.ps command generates the files</p>
 
 <ul>
-<li>example_ps.rps: a binary representation of the problem set structure</li>
-<li>examples_ps_struc.r: a human-readable representation of the problem set structure</li>
-</ul>
-
-<p>The create.empty.ps command then generates the files</p>
-
-<ul>
-<li>example_ps.rmd: empty problem set in R-markdown format</li>
-<li>example_ps.r: empty problem set in R format</li>
+<li>example.rps: a binary representation of the problem set structure</li>
+<li>example_struc.r: a human-readable representation of the problem set structure</li>
+<li>example.rmd: empty problem set in Rmarkdown format</li>
+<li>example.r: empty problem set in R format (will depreciate)</li>
+<li>example_sample_solution.rmd: A sample solution of the problem set in Rmarkdown format</li>
 </ul>
 
 <h3>4. Solving and checking the problem set as student</h3>
 
-<p>A student that wants to use the problem set needs to copy the .rps file (the problem set structure) and an empty problem set either as R-markdown  .rmd file <strong>or</strong> as .r file to the same folder and open the problem set file with RStudio. (The advantage of the .rmd file is that it looks much nicer. I think the main advantage of .r files is that in RStudio one can save and check the problem set with a single short cut, while you need to separately save and check .rmd files)</p>
+<p>A student that wants to interactively solve the problem set needs to copy the .rps file (the problem set structure) and an empty problem set as R-markdown  .rmd file to the same folder and open the problem set file with RStudio.</p>
+
+<p>(It is still possible to solve problem sets in .r format, but I strongly recommend using .rmd files as they look much nicer. Using .r files is only there for historical reasons and will probably depreciate.)</p>
 
 <p>The empty problem set files have some commands in the beginning, which are used to initialize RTutor and tell you, how you can check your solution. You first have to do 2 things:</p>
 
@@ -272,115 +278,147 @@ give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can jus
 <p>You can then start solving the problem set. To check your solution, you just have to</p>
 
 <ol>
-<li>Save your problem set file (Ctrl-S) </li>
-<li>and then
-
-<ul>
-<li>if your have an .r file: source your file (Ctrl-Shift-S) </li>
-<li>if you have an .rmd file: run all chuncks (Ctrl-Alt-R)</li>
-</ul></li>
+<li>Save your .rmd problem set file (Ctrl-S) </li>
+<li>and then run all chuncks of your problem set (Ctrl-Alt-R)</li>
 </ol>
 
-<p>Hint: If you use a problem set as .r file, you can check the box &ldquo;Source on Save&rdquo; in RStudio. Then you only have to press Ctrl-S to automatically save and check your problem set.</p>
+<p>How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the typed solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type hint() in the R console to get a hint of how to solve the task that is not yet correct.</p>
 
-<p>How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the student&#39;s solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type hint() in the R console to get a hint of how to solve the task that is not yet correct.</p>
+<p>A student can type type <code>stats()</code> to get some information of how much of the problem set he has already solved. </p>
 
 <h3>5. Iterate</h3>
 
-<p>You probably will iterate between writing a solution file, solving the problem set yourself and extending and improving the problem set until you have a nice version that you want to send out to the public.</p>
+<p>You probably will iterate between writing a solution file, solving the problem set yourself (or checking whether the sample solution passes indeed all tests) and extending and improving the problem set until you have a nice version that you want to send out to the public.</p>
 
-<p>Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .r or .rmd file and tell them to install RStudio and RTutor as described above. </p>
+<p>Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .rmd file and tell them to install RStudio and all packages as described above. </p>
 
 <h2>II  Writing Solution Files</h2>
 
-<p>Solution files are .r files that use comments for some special syntax in comments. A solution file consists of one or more exercises. An exercise starts with a line</p>
+<p>Let us dig a bit deeper into writing solution files. Solution files are .Rmd files that specify the exercise text a solution as R code. Within the R code they can also use special comments to customize tests or hints. A solution file consists of one or more exercises. Starts with a line like</p>
 
-<pre><code class="r">#$ exercise name_of_exercise #####################
+<pre><code>## Exercise 1 -- Summary statistics
 </code></pre>
 
-<p>You can pick any name of the exercise (it can include spaces), but the line must start with </p>
+<p>You can pick any label for the exercise (it can include spaces), but the line must have the structure start with </p>
 
-<pre><code class="r">#$ exercise
+<pre><code>## Exercise some_exercise_name
 </code></pre>
 
-<p>The trailing ####### are optional. They just help to navigate your solution file but will not be part of the name.</p>
+<p>Recommend format for the exercise name is an exercise number, optionally followed by <code>--</code> and a short description, as in the example above.</p>
 
 <p>Let us start by just writing an exercise with solution, without yet adding some manual hints or tests. For example:</p>
 
-<pre><code class="r">#$ exercise 1 Summary Statistics #####################################
+<pre><code># Problemset Example 
 
-#&#39; a) We often want to compute some summary statistic of a vector. For example:
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+
+```r
 x = 10:20
 # Computing the sum of x
 sum(x)
-#&#39; Now compute the mean of x.
+```
+
+Now compute the mean of x.
+
+```r
 mean(x)
+```
 </code></pre>
 
-<p>Comments starting with #&#39; will be transformed into non-code markdown text (as is default if you use the knitr to generate and .rmd or .html files from an .r file). Your description of the task should be put into such comments.</p>
+<p>The description of the exercise is written as standard text, the code of your solution is put in R code chunks. RTutor recognizes lines in the exercise description that start with a) or ii) etc. as a &ldquo;part&rdquo; of an exercise and will use this information in the automatically generated messages from tests and hints. </p>
 
-<p>Note that lines starting with #&#39; a) or (#&#39; b) etc.) define a &ldquo;part&rdquo; of an exercise. Parts will be used in messages shown from tests and hints to help the student see where a test has failed.</p>
+<p>You can already generate an empty problem set from this simple solution file by calling <code>create.ps</code> (see step 3 of part I). In the empty problem set file, each chunk of R code will be replaced by a chunk of the form</p>
 
-<p>You can already generate an empty problem set from this solution file (see step 3 of part I). Each chunk of code between #&#39; lines will be removed and replaced by a single line prompting the user to enter his solution:</p>
-
-<pre><code class="r"># enter your code here ...
+<pre><code>```r
+# enter your code here ...
+```
 </code></pre>
+
+<p>which asks the student to enter his solution.</p>
 
 <h3>Showing code to students as part of exercise description</h3>
 
-<p>Actually, in our exercise the first code chuck is an example that shall be shown to the student and only the last line of code is a solution that will not be shown. We can make code being shown to students by wrapping it in a block starting with the line</p>
+<p>Actually, in our exercise the first code chuck shall be an example that will also be shown to the student. We can make code being shown to students by wrapping it in a block starting with the line</p>
 
-<pre><code class="r"># s
+<pre><code class="r">#&lt; task
 </code></pre>
 
 <p>and ending with a line</p>
 
-<pre><code class="r"># e
+<pre><code class="r">#&gt; task
 </code></pre>
 
 <p>This means we can modify our code as follows:</p>
 
-<pre><code class="r">#$ exercise 1 Summary Statistics #####################################
+<pre><code># Problemset Example 
 
-#&#39; a) We often want to compute some summary statistic of a vector.
-#&#39; For example:
-#s
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+
+```r
+#&lt; task
 x = 10:20
 # Computing the sum of x
 sum(x)
-#e
-#&#39; Now compute the mean of x.
+#&gt; task
+```
+
+Now compute the mean of x.
+
+```r
 mean(x)
+```
 </code></pre>
 
-<p>Generate again the problem set structure and empty problem set. You see that the first code chunk is now shown in the empty problem set. The interactive problem set can already be used. It automatically tests the solution and if the test fails since mean(x) is not entered correctly, it gives the option to type hint() to get a hint.</p>
+<p>Call again <code>create.ps</code> and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set.</p>
+
+<p>The interactive problem set can already be used. It automatically tests the solution and if the test fails since mean(x) is not entered correctly, it gives the option to type hint() to get a hint.</p>
+
+<p>By default also tests will be generated for the code that is already given as a task (because future code may rely on this code not being accidently changed by the user.) If you don&#39;t want to generate tests for the code given in the task you can do so by adding the flag <code>notest</code> in your line that starts the task block: putting it into the following kind of block:</p>
+
+<pre><code class="r">#&lt; task notest
+  #...
+#&gt; task
+</code></pre>
 
 <h3>Manual hints</h3>
 
-<p>RTutor tries to generate automatic hints that look at the students solution and try to give some advice while not telling too much. In particular, for very simple task the hint may reveal too much. For example, the automatic hint already tells the student the name of the function. (Often it is much harder to find the correct function arguments, though.)</p>
+<p>RTutor tries to generate automatic hints that look at the students solution and try to give some advice while not telling too much. In particular, for very simple tasks the hint may reveal too much. For example, the automatic hint already tells the student the name of the function. (Often it is much harder to find the correct function arguments, though.)</p>
 
 <pre><code>hint()
 
 You must call the function &#39;mean&#39; in part a).
 </code></pre>
 
-<p>In our example, we want instead a manual hint that tells the student, how Google is a very powerful tool to find R commands for specific tasks. We include such a manual hint in our solution file as follows:</p>
+<p>In our example, we want instead a manual hint that tells the student, how the internet is a very powerful source of information to find R commands for specific tasks. We include such a manual hint in our solution file as follows:
+    # Problemset Example </p>
 
-<pre><code class="r">
-#$ exercise 1 Summary statistics #####################################
+<pre><code>## Exercise 1 -- Summary statistics
 
-#&#39; a) We often want to compute some summary statistic of a vector.
-#&#39; For example:
-#s
+a) We often want to compute some summary statistic of a vector.
+For example:
+
+```r
+#&lt; task
 x = 10:20
 # Computing the sum of x
 sum(x)
-#e
-#&#39; Now compute the mean of x.
+#&gt; task
+```
+
+Now compute the mean of x.
+
+```r
 mean(x)
 #&lt; hint
-display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
+  display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
 #&gt;
+```
 </code></pre>
 
 <p>This means we simply add after the command of the solution that will be tested, a block of the form</p>
@@ -390,9 +428,9 @@ display(&quot;There already exist R functions for many things. To find them use 
 #&gt;
 </code></pre>
 
-<p>Inside the block, you enter some code that will be shown if the student types hint() after the test for the command failed. Often this will simply be a message, but you could also do other things, e.g. showing a plot, as hint. Note that the hint code will be evaluated in an environment that contains all variables the student has defined earlier. </p>
+<p>Inside the block, you enter some code that will be shown if the student types hint() after the test for the command failed. Often this will simply be a message, but you could also do other things, e.g. showing a plot as hint. Note that the hint code will be evaluated in an environment that contains all variables the student has defined earlier. </p>
 
-<p>Sometimes you want to show the automatically generated hint but add some additional advice. You can do this by putting code inside the following block:</p>
+<p>Sometimes you want to show the advice from the automatically generated hint but also want to add some additional advice. You can do this by putting code inside the following block:</p>
 
 <pre><code class="r">#&lt; add to hint
 
@@ -401,9 +439,9 @@ display(&quot;There already exist R functions for many things. To find them use 
 
 <h3>Giving awards</h3>
 
-<p>Isn&#39;t it amazing when video game players play for hours and hours, doing sometimes quite repetitive and boring tasks, just in order to earn some virtual points or virtual trophies? Well it seems that many people can be motivated, at least to some degree, by such stuff. Since a main motivation for RTutor is to make learning R, as well as statistical and economic concepts, more interesting and entertaining, it seems natural to borrow some ideas from computer games.</p>
+<p>Isn&#39;t it amazing when video game players play for hours and hours, doing sometimes quite repetitive and boring tasks, just in order to earn some virtual points or virtual trophies? Well it seems that many people can be motivated, at least to some degree, by such stuff. Since a main motivation for RTutor is to make learning R, as well as statistical and economic concepts, more interesting and more entertaining, it seems natural to borrow some ideas from computer games.</p>
 
-<p>So far there is only a small thing: students can get <strong>awards</strong> if they have solved a problem. The received awards can be shown by typing awards() in the R console. Information on the awards is stored in a file with name user_username.ruser in your problem set folder. Here is an example, how you can add an award to your solution file:</p>
+<p>So far there is only a small thing: students can get <strong>awards</strong> if they have solved a problem. The received awards can be shown by typing <code>awards()</code> in the R console. Information on the awards is stored in a file with name user_username.ruser in your problem set folder. Here is an example, how you can add an award to your solution file:</p>
 
 <pre><code class="r">#&lt;
 give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
@@ -441,16 +479,104 @@ check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
 
 <p>replaces the automatic test with a test that just checks whether a variable u exists, and has the same length and class (numeric or integer) as an example solution c(3,6,7,99).</p>
 
-<p>RTutor has a series of helper functions for such manual tests.</p>
+<p>RTutor has a series of helper functions for such manual tests. Take a look at the package help for a documentation.</p>
+
+<h3>Specifying parameters of default tests</h3>
+
+<p>By default test are generated that call either <code>check.call</code> (a statement that does not assign a varible), <code>check.assign</code> (if a value is assigned to a variable), or <code>check.function</code> (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  <code>#&lt; test.arg</code> allows you to change the arguments of a default test. Consider the following example:</p>
+
+<pre><code class="r">plot(x=p,y=q,main=&quot;A plot&quot;, xlab=&quot;Prices&quot;)
+#&lt; test.arg
+  ignore.arg = c(&quot;main&quot;,&quot;xlab&quot;), allow.extra.arg=TRUE
+#&gt;
+</code></pre>
+
+<p>The <code>#&lt; test.arg</code> block customizes the parameters <code>ignore.arg</code> and <code>allow.extra.arg</code> of the check.call function. The parameter <code>ignore.arg = c(&quot;main&quot;,&quot;xlab&quot;)</code> means that the student does not have to add these two arguments to the plot function or can use different values. The parameter <code>allow.extra.arg=TRUE</code> allows the student to specify additional arguments when calling plot, e.g. specifying a <code>ylab</code>. So essentially, it will now only be tested whether the x and y arguments of the plot are currect and any customization of the plot will still be considered a correct solution.</p>
+
+<p>The next section provides more examples for using tests and hints</p>
+
+<h2>4. Examples for tests and hints</h2>
+
+<h3>Testing a function written by the student</h3>
+
+<p>Sometimes you may ask to write a function in the problem set. Here is an example, how you could construct a solution file. In the exercise the student is asked to complete a manual function <code>ols</code> that shall compute an ols estimate:</p>
+
+<pre><code class="r">#&lt; task notest
+ols = function(y,X) {
+
+  # enter code to compute beta.hat here ...
+
+  return(as.numeric(beta.hat))
+}
+#&gt; task
+
+ols &lt;- function(y,X) {
+  beta.hat = solve(t(X) %*% X) %*% t(X) %*% y
+  return(as.numeric(beta.hat))
+}
+#&lt; test.arg
+  ols(c(100,50,20,60),cbind(1,c(20,30,15,20))), hint.name=&quot;ols&quot;
+#&gt;
+#&lt; hint ols
+display(&quot;Just insert inside the function ols the code to compute beta.hat from y and X. You have developed this code in Exercise 1.&quot;)
+#&gt;
+</code></pre>
+
+<p>First, we have a <code>#&lt; task notest</code> block that specifies an unfinished function that will be given to the student. Afterward, we have an example of a correct function <code>ols</code>.
+Then the <code>#&lt; test.arg</code> block specifies parameters for the automatic test <code>check.function</code>. The unnamed parameter </p>
+
+<pre><code class="r">ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
+</code></pre>
+
+<p>Specifies a test call. <code>check.function</code> will run this test call for the official solution and the student&#39;s solution. The test will only pass if both versions return the same value.
+The parameter hint.name specifies a manual name for a hint, since currently no automatic hints are generated for function creation (hopefully that will improve in later versions of RTutor.) Finally, the <code>#&lt; hint ols</code> specifies what the hint <code>ols</code> shows.</p>
+
+<h3>Testing a function that generates random variables</h3>
+
+<p>In the moment there is relatively little support to check user written functions that generate random variables, and I hope this will improve with newer versions of RTutor. What currently can be done to compare the results of the student&#39;s function and the official solution using the same random seed.</p>
+
+<p>Here is an example:</p>
+
+<pre><code>a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distibuted on the interval from min to max.
+
+
+```r
+runif.square = function(n,min,max) {
+  runif(n,min,max)^2
+}
+#&lt; test.arg
+  with.random.seed(runif.square(n=20,min=4,max=9), seed=12345)
+#&gt;
+```
+</code></pre>
+
+<p>Our test call is now embeded in the function with.random.seed that calls the function with a fixed random seed. The test check.function only passes if the students function and official solution return the same value when called with the same random seed.</p>
+
+<p>If a function requires simulation of more than one random number, this testing procedure only works if the student draws the random numbers in the same order than the official solution. This means your task should specify already a lot of structure for the function and tell the student not to draw any additional random variables inside the function.</p>
+
+<h3>Test if variables that satisfy specific conditions are generated</h3>
+
+<p>Consider the following example:</p>
+
+<pre><code>a) Specify a number of observations T&gt;=5
+
+
+```r
+T = 100
+#&lt; test
+  check.var(&quot;T&quot;,100,exists=TRUE, length=TRUE,class=TRUE)
+#&gt;
+#&lt;
+  holds.true(T&gt;=5, failure.message=&quot;You must set T&gt;=5.&quot;)
+#&gt;
+```
+</code></pre>
+
+<p>The default test <code>check.assign</code> would only pass if the student would set <code>T=100</code>, but any T&gt;=5 shall be considered correct. So we first replace the default test by a <code>check.var</code> test that checks whether a numeric variable T of length 1 exists. Then we add another manual test <code>holds.true</code> that checks whether T&gt;=5 holds. Note that using the holds.true test without first checking that a numeric, variable T of length 1 exists can cause the holds.true test to crash.</p>
 
 <p>TO DO:</p>
 
-<ol>
-<li>Document functions for manual tests</li>
-<li>How to add hints for manual test functions (not yet implemented)</li>
-<li>Talk about _struc.r files for a deeper understanding</li>
-<li>Tips &amp; Tricks for developing interactive problem sets </li>
-</ol>
+<p>Add more examples</p>
 
 </body>
 

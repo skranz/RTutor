@@ -1,0 +1,27 @@
+# Problemset Example
+
+Example of an RTutor interactive Problemset
+Author:  Sebastian Kranz
+Date:    09.05.2014
+
+## Exercise 1 -- Summary statistics #####################################
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+```{r}
+#< task
+x = 10:20
+# Computing the sum of x
+sum(x)
+#> task
+```
+Now compute the mean of x.
+```{r}
+mean(x)
+#< hint
+display("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
+#>
+#<
+give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
+#>
+```
