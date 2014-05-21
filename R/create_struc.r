@@ -270,7 +270,8 @@ test.code.for.e = function(e, part="", extra.arg="", counter=0) {
     
     if (call.name == "function") {
       restore.point("bfndq645by")
-      code=paste0("\ncheck.function(", var, "<-",rhs, part.str,extra.arg,")")    
+      hint.name = paste0(var," fun ", counter)
+      code=paste0("\ncheck.function(", var, "<-",rhs,", hint.name = '",hint.name,"'", part.str,extra.arg,")")    
     } else {
       hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
       code = paste0(
@@ -316,7 +317,7 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
   if (!is.null(extra.code)) {
     extra.code = paste0("\n  ",paste0(extra.code,collapse="\n  "))
   }
-  
+
   if (is.assignment(e)) {
     var = deparse1(e[[2]])
     rhs = deparse1(e[[3]])
@@ -324,8 +325,12 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
     call.name = name.of.call(e[[3]])
     
     if (call.name == "function") {
-      restore.point("jhjfndfnng")
-      code=""    
+      hint.name = paste0(var," fun ", counter)
+      rhs = deparse1(e[[3]], collapse="\n")
+
+      code = paste0("add.hint('",hint.name,"',", 
+        "{\n  hint.for.function(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
+      )
     } else {
       hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
       code = paste0("add.hint('",hint.name,"',", 

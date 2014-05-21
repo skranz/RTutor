@@ -57,6 +57,56 @@ warnings=ex$warning.messages)
 
 #' Default hint for a call
 #' @export
+hint.for.function = function(code, ...,  ex=get.ex(), env = get.ex()$stud.env, part=NULL) {
+  code = substitute(code)
+  restore.point("hint.for.function")
+
+  #stop()
+  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+  
+  stud.env = env
+  env = new.env(parent=stud.env)
+  eval(code,env)
+  fun.name = ls(env)[1]
+  sol.fun = get(fun.name,env)
+
+  if (!exists(fun.name, stud.env)) {
+    display("You must assign a function to the variable ", fun.name)
+    return()
+  }
+  stud.fun = get(fun.name, stud.env)
+  if (!is.function(stud.fun)) {
+    display("You must assign a function to the variable ", fun.name)
+    return()
+  }
+  display("\nTake a look at the variables test.your.res and test.sol.res to compare the results of your function with the official solution from the test call that your function has failed.")
+  
+  args.sol = names(formals(sol.fun))
+  args.stud = names(formals(stud.fun))
+  if (!identical(args.sol, args.stud)) {
+    display("\nYour function ", fun.name, " has different arguments than the official solution:")
+    display("   Your fun.     :", paste0(args.stud, collapse=", "))
+    display("   Solution fun. :", paste0(args.sol, collapse=", "))  
+  }
+  has.codetools = suppressWarnings(require(codetools, quietly=TRUE, warn.conflicts=FALSE))
+  if (has.codetools) {
+    #sol.glob = findGlobals(sol.fun, merge=FALSE)$variables
+    stud.glob = findGlobals(stud.fun, merge=FALSE)$variables
+    if (length(stud.glob)>0) {
+      stud.glob =  paste0(stud.glob,collapse=", ")
+      display("\nWarning: Your function uses the global variable(s) \n    ",stud.glob,
+              "\nOften global variables in a function indicate a bug and you just have forgotten to assign values to ", stud.glob, " inside your function. Either correct your function or make sure that you truely want to use these global variables inside your function.")
+    }
+  } else {
+    display("Please install from CRAN the package 'codetools' to get more information about possible errors in your function. After you have installed the package, type hint() again.")
+    return()
+  }
+
+  
+}
+
+#' Default hint for a call
+#' @export
 hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL) {
   if (!is.null(call.obj)) {
     call = call.obj
@@ -234,6 +284,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
   return(invisible())  
 
 }
+
 
 #' Default hint for an assignment
 #' @export
