@@ -64,9 +64,9 @@ and ends with a line
     ```
 ```
 
-Never the change those start and end lines!
+Never change those start and end lines!
 
-Such things can happen by accident, however, e.g. you may accidently remove the footer line of the code chunk.
+Changing these lines can happen by accident, however. E.g. you may accidently remove the footer line of the code chunk and get something like
 
     a) Compute in R 5*5
     ```{r }
@@ -74,5 +74,61 @@ Such things can happen by accident, however, e.g. you may accidently remove the 
     
     b) Now store the value 10 in the variable x ...
 
-You will then get a cryptic error message as above. The best is to search for the code shown in the error message (here `b)`) and check whether you messed up a code chunk above.
-Note that RStudio shows code chunks with a light-grey background color while text has white background color. This should help to identify such problems.
+If you then check your solution, you will get a cryptic error message as above. The best is to search for the code shown in the error message (here `b)`) and check whether you messed up a code chunk above.
+Note that RStudio shows code chunks with a light-grey background while text has white background. This should help you to find messed up code chunks.
+
+## 2. Problems reading csv files (Excel distorts csv files) 
+
+If your problem set uses some data, e.g. in a csv file, always download the file directly from your browser (right click on the file)
+
+Don't open the file in Excel and save afterwards. It is very likely that Excel changes the format of the csv file and that it cannot be correctly used afterwards in your problem set.
+
+## 3. Packages cannot be installed for your brand new R version
+
+If you have installed a brand new R version it can unfortuntaely sometimes happen that some R packages are not yet available for that newest R version. When you try to install them from CRAN you get an error message like:
+
+```
+    "packages ‘magrittr’, ‘Lahman’, ‘highflights’ are not available (for R version 3.1.0)"
+```
+
+I don't know a better solution than installing again a previous release of R instead of the newest version. Here is a website with earlier R releases for Windows:
+
+http://cran.r-project.org/bin/windows/base/old/
+
+## 4. zip.solution() does not work
+
+The function `zip.solution` only works under Windows if you have installed some extra software manually. You can either install the software manually or generate the zip files manually.
+
+#### Installing software to make zip.solution work
+
+If zip.solution() doesn't work and you have made sure that your code is otherwise prepared (Path and Username set correctly, RTutor has checked your file [CTRL+ALT+R]), please try the following (assuming you have a Windows PC):
+
+1. Install http://gnuwin32.sourceforge.net/packages/zip.htm
+
+2. Check whether the WINDOWS-Path includes the directory of the zip.exe file. If it doesn't correct this.
+
+  a) You can do this either directly (see: http://www.computerhope.com/issues/ch000549.htm) or
+
+  b) Use a freeware Tool with a nicer handling (e.g. http://eveditor.com/ -> "Path")
+
+[In theory it should suffice to install Rtools (http://cran.r-project.org/bin/windows/Rtools/), but this didn't do it for me]
+
+If you do not have a Windows PC, but a Mac or a Unix System, you should have a built-in command line zip programm. This means everything should work from the start. If it doesn't, please make an appointment with me and I will have a look into it.
+
+#### Manually generate a zip file with your solution
+
+Make sure that your code is otherwise prepared (Path and Username set correctly) and that RTutor has checked your file [CTRL+ALT+R]). The file name of your zip file shall have the structure:
+
+solution_pssetname_by_username.zip
+
+For example, for the first problem set and username = "Sebastian" it would be
+
+solution_r_intro_by_Sebastian.zip
+
+Please include the following three files in the zip file:
+
+r_intro.rmd
+r_intro.log
+username_r_intro.ups
+
+ 
