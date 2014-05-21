@@ -55,9 +55,15 @@ It could then be that you have destroyed the header or footer line of a code chu
 
 
 A code chunk starts with a line like
+```
     ```{r }      
+```
+
 and ends with a line
+```
     ```
+```
+
 Never the change those start and end lines!
 
 Such things can happen by accident, however, e.g. you may accidently remove the footer line of the code chunk.
