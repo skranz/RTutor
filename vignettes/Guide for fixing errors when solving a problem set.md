@@ -48,19 +48,25 @@ Do you get an error message looking similar to the following:
 It could then be that you have destroyed the header or footer line of a code chunk. Your problem sets have the format of R-Markdown files (.Rmd) which are simple text files that allow to mix formatted text with R code. Here is an example: 
 
     a) Compute in R 5*5
-    
-    ```r
-    5 * 5
+    ```{r }
+    5*5
     ```
-    
-    ```
-    ## [1] 25
-    ```
-
     b) Now store the value 10 in the variable x ...
 
 
 A code chunk starts with a line like
+    ```{r }      
+and ends with a line
+    ```
+Never the change those start and end lines!
 
+Such things can happen by accident, however, e.g. you may accidently remove the footer line of the code chunk.
 
+    a) Compute in R 5*5
+    ```{r }
+    5*5
+    
+    b) Now store the value 10 in the variable x ...
 
+You will then get a cryptic error message as above. The best is to search for the code shown in the error message (here `b)`) and check whether you messed up a code chunk above.
+Note that RStudio shows code chunks with a light-grey background color while text has white background color. This should help to identify such problems.
