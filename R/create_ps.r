@@ -121,8 +121,8 @@ user.name = '", user.name,"' # your user name
 
 
 library(RTutor)
-check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ", libs, "
+check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 
 #' Name: `r user.name`
 ")  

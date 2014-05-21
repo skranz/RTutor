@@ -18,6 +18,10 @@ create.struc.from.rmd = function(sol.file, ps.name=NULL) {
   if (is.null(ps.name)) {
     ps.name = str.trim(extract.command(txt,"# Problemset")[1,2])
   }
+  ignore.row = which(str.starts.with(txt,"## Ignore"))
+  if (length(ignore.row)>0)
+    txt = txt[1:(ignore.row[1]-1)]
+  
   
   ex.rows = extract.command(txt, "## Exercise ")
   ex.names = str.trim(ex.rows[,2])
@@ -210,6 +214,11 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
     target.file = paste0(ps.name,"_sample_solution.Rmd")
   }
   
+  ignore.row = which(str.starts.with(txt,"## Ignore"))
+  if (length(ignore.row)>0)
+    txt = txt[1:(ignore.row[1]-1)]
+
+  
   row = 0
   empty.txt = "#§§§#"
   ignore = FALSE
@@ -281,8 +290,8 @@ user.name = '", user.name,"' # your user name
 
 
 library(RTutor)
-check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ", libs, "
+check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ```
 Name: `r user.name`
 ")  

@@ -178,7 +178,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
     
   }                           
   
-  ex$stud.env = new.env(parent=.GlobalEnv)
+  ex$stud.env = new.env(parent=parent.env(globalenv()))
   ex$stud.seed = as.integer(Sys.time())
   
   # Import variables from other exercises stud.env's
@@ -240,7 +240,7 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
       display("eval solution code...")
     }
 
-    sol.env = new.env(parent=.GlobalEnv)    
+    sol.env = new.env(parent=parent.env(globalenv()))    
     ex$sol.env = sol.env
 
     tryCatch( suppressWarnings(eval(ex$sol, sol.env)),
