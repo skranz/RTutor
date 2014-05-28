@@ -193,7 +193,7 @@ hljs.initHighlightingOnLoad();
 
 <p>You first need to install some packages. Simply run in R</p>
 
-<pre><code class="r"># Install packages from CRAN
+<pre><code class="s"># Install packages from CRAN
 install.packages(&quot;devtools&quot;)
 install.packages(&quot;whisker&quot;)
 install.packages(&quot;stringr&quot;)
@@ -214,32 +214,29 @@ library(RTutor)
 
 <p>Here is a small solution file with only one exercise. We will explain its structure in detail in the chapter on solution files.</p>
 
-<pre><code># Problemset Example 
+<pre><code>    # Problemset Example 
 
-## Exercise 1 -- Summary statistics
+    ## Exercise 1 -- Summary statistics
 
-a) We often want to compute some summary statistic of a vector.
-For example:
-
-```r
-#&lt; task
-x = 10:20
-# Computing the sum of x
-sum(x)
-#&gt; task
-```
-
-Now compute the mean of x.
-
-```r
-mean(x)
-#&lt; hint
-display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
-#&gt;
-#&lt;
-give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
-#&gt;
-```
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}
+    #&lt; task
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #&gt; task
+    ```
+    Now compute the mean of x.
+    ```{r}
+    mean(x)
+    #&lt; hint
+    display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
+    #&gt;
+    #&lt;
+    give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
+    #&gt;
+    ```
 </code></pre>
 
 <p>The problemset folder of the RTutor library contains some example solution files. </p>
@@ -308,33 +305,30 @@ give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can jus
 
 <p>Let us start by just writing an exercise with solution, without yet adding some manual hints or tests. For example:</p>
 
-<pre><code># Problemset Example 
+<pre><code>    # Problemset Example 
 
-## Exercise 1 -- Summary statistics
+    ## Exercise 1 -- Summary statistics
 
-a) We often want to compute some summary statistic of a vector.
-For example:
-
-```r
-x = 10:20
-# Computing the sum of x
-sum(x)
-```
-
-Now compute the mean of x.
-
-```r
-mean(x)
-```
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    ```
+    Now compute the mean of x.
+    ```{r}
+    mean(x)
+    ```
 </code></pre>
 
 <p>The description of the exercise is written as standard text, the code of your solution is put in R code chunks. RTutor recognizes lines in the exercise description that start with a) or ii) etc. as a &ldquo;part&rdquo; of an exercise and will use this information in the automatically generated messages from tests and hints. </p>
 
 <p>You can already generate an empty problem set from this simple solution file by calling <code>create.ps</code> (see step 3 of part I). In the empty problem set file, each chunk of R code will be replaced by a chunk of the form</p>
 
-<pre><code>```r
-# enter your code here ...
-```
+<pre><code>    ```{r }
+    # enter your code here ...
+    ```
 </code></pre>
 
 <p>which asks the student to enter his solution.</p>
@@ -353,26 +347,23 @@ mean(x)
 
 <p>This means we can modify our code as follows:</p>
 
-<pre><code># Problemset Example 
+<pre><code>    # Problemset Example 
 
-## Exercise 1 -- Summary statistics
+    ## Exercise 1 -- Summary statistics
 
-a) We often want to compute some summary statistic of a vector.
-For example:
-
-```r
-#&lt; task
-x = 10:20
-# Computing the sum of x
-sum(x)
-#&gt; task
-```
-
-Now compute the mean of x.
-
-```r
-mean(x)
-```
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}
+    #&lt; task
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #&gt; task
+    ```
+    Now compute the mean of x.
+    ```{r}
+    mean(x)
+    ```
 </code></pre>
 
 <p>Call again <code>create.ps</code> and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set.</p>
@@ -381,7 +372,7 @@ mean(x)
 
 <p>By default also tests will be generated for the code that is already given as a task (because future code may rely on this code not being accidently changed by the user.) If you don&#39;t want to generate tests for the code given in the task you can do so by adding the flag <code>notest</code> in your line that starts the task block: putting it into the following kind of block:</p>
 
-<pre><code class="r">#&lt; task notest
+<pre><code class="r eval=FALSE">#&lt; task notest
   #...
 #&gt; task
 </code></pre>
@@ -395,35 +386,33 @@ mean(x)
 You must call the function &#39;mean&#39; in part a).
 </code></pre>
 
-<p>In our example, we want instead a manual hint that tells the student, how the internet is a very powerful source of information to find R commands for specific tasks. We include such a manual hint in our solution file as follows:
-    # Problemset Example </p>
+<p>In our example, we want instead a manual hint that tells the student, how the internet is a very powerful source of information to find R commands for specific tasks. We include such a manual hint in our solution file as follows:</p>
 
-<pre><code>## Exercise 1 -- Summary statistics
+<pre><code>    # Problemset Example 
 
-a) We often want to compute some summary statistic of a vector.
-For example:
+    ## Exercise 1 -- Summary statistics
 
-```r
-#&lt; task
-x = 10:20
-# Computing the sum of x
-sum(x)
-#&gt; task
-```
-
-Now compute the mean of x.
-
-```r
-mean(x)
-#&lt; hint
-  display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
-#&gt;
-```
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}
+    #&lt; task
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #&gt; task
+    ```
+    Now compute the mean of x.
+    ```{r}
+    mean(x)
+    #&lt; hint
+      display(&quot;There already exist R functions for many things. To find them use Google, e.g. search for &#39;R compute mean&#39;.&quot;)
+    #&gt;
+    ```
 </code></pre>
 
 <p>This means we simply add after the command of the solution that will be tested, a block of the form</p>
 
-<pre><code class="r">#&lt; hint
+<pre><code class="r eval=FALSE, tidy=FALSE">#&lt; hint
 
 #&gt;
 </code></pre>
@@ -432,7 +421,7 @@ mean(x)
 
 <p>Sometimes you want to show the advice from the automatically generated hint but also want to add some additional advice. You can do this by putting code inside the following block:</p>
 
-<pre><code class="r">#&lt; add to hint
+<pre><code class="r eval=FALSE, tidy=FALSE">#&lt; add to hint
 
 #&gt;
 </code></pre>
@@ -443,7 +432,7 @@ mean(x)
 
 <p>So far there is only a small thing: students can get <strong>awards</strong> if they have solved a problem. The received awards can be shown by typing <code>awards()</code> in the R console. Information on the awards is stored in a file with name user_username.ruser in your problem set folder. Here is an example, how you can add an award to your solution file:</p>
 
-<pre><code class="r">#&lt;
+<pre><code class="r eval=FALSE, tidy=FALSE">#&lt;
 give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.&quot;)
 #&gt;
 </code></pre>
@@ -456,7 +445,7 @@ give.award(&quot;mean means mean&quot;,&quot;Well, in some occasions one can jus
 
 <p>I tried my best to automatically test whether the student entered a correct solution or not. Yet sometimes we need to manually include specifice variants of tests in the solution file. Here is an example for such a manual test:</p>
 
-<pre><code class="r">#&#39; b) Save in the variable u a vector of 4 different numbers
+<pre><code class="r eval=FALSE, tidy=FALSE">#&#39; b) Save in the variable u a vector of 4 different numbers
 u = c(3,6,7,99)  
 #&lt; test
 check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
@@ -472,7 +461,7 @@ check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
 
 <p>Yet in this example, the automatic test is too restrictive. The student shall just generate some arbitrary vector consisting of 4 numbers. The block</p>
 
-<pre><code class="r">#&lt; test
+<pre><code class="r eval=FALSE, tidy=FALSE">#&lt; test
 check.var(&quot;u&quot;,c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
 #&gt;
 </code></pre>
@@ -537,17 +526,16 @@ The parameter hint.name specifies a manual name for a hint, since currently no a
 
 <p>Here is an example:</p>
 
-<pre><code>a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distibuted on the interval from min to max.
+<pre><code>    a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distibuted on the interval from min to max.
 
-
-```r
-runif.square = function(n,min,max) {
-  runif(n,min,max)^2
-}
-#&lt; test.arg
-  with.random.seed(runif.square(n=20,min=4,max=9), seed=12345)
-#&gt;
-```
+    ```{r}
+    runif.square = function(n,min,max) {
+      runif(n,min,max)^2
+    }
+    #&lt; test.arg
+      with.random.seed(runif.square(n=20,min=4,max=9), seed=12345)
+    #&gt;
+    ```
 </code></pre>
 
 <p>Our test call is now embeded in the function with.random.seed that calls the function with a fixed random seed. The test check.function only passes if the students function and official solution return the same value when called with the same random seed.</p>
@@ -558,18 +546,17 @@ runif.square = function(n,min,max) {
 
 <p>Consider the following example:</p>
 
-<pre><code>a) Specify a number of observations T&gt;=5
+<pre><code>    a) Specify a number of observations T&gt;=5
 
-
-```r
-T = 100
-#&lt; test
-  check.var(&quot;T&quot;,100,exists=TRUE, length=TRUE,class=TRUE)
-#&gt;
-#&lt;
-  holds.true(T&gt;=5, failure.message=&quot;You must set T&gt;=5.&quot;)
-#&gt;
-```
+    ```{r }
+    T = 100
+    #&lt; test
+      check.var(&quot;T&quot;,100,exists=TRUE, length=TRUE,class=TRUE)
+    #&gt;
+    #&lt;
+      holds.true(T&gt;=5, failure.message=&quot;You must set T&gt;=5.&quot;)
+    #&gt;
+    ```
 </code></pre>
 
 <p>The default test <code>check.assign</code> would only pass if the student would set <code>T=100</code>, but any T&gt;=5 shall be considered correct. So we first replace the default test by a <code>check.var</code> test that checks whether a numeric variable T of length 1 exists. Then we add another manual test <code>holds.true</code> that checks whether T&gt;=5 holds. Note that using the holds.true test without first checking that a numeric, variable T of length 1 exists can cause the holds.true test to crash.</p>

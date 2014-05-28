@@ -1,3 +1,4 @@
+export(name.rmd.chunks)
 export(with.random.seed)
 export(add.failure)
 export(add.success)
