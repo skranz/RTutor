@@ -25,3 +25,19 @@ display("There already exist R functions for many things. To find them use Googl
 give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
 #>
 ```
+
+
+
+## Ignore
+
+Here, after the ## Ignore line, we can add some code that will generate from the solution file the other problem set files. 
+```{r}
+
+library(RTutor);library(restorepoint)
+#setwd("D:/lehre/empIOUlm/rtutor")
+ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+# name.rmd.chunks(sol.file, only.empty.chunks=FALSE)
+create.ps(sol.file=sol.file, ps.name=ps.name,libs=c("AER"))
+
+```
+
