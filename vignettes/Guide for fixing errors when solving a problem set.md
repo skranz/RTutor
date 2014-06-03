@@ -15,9 +15,15 @@ The whole idea of RTutor is to provide some help in automatically checking your 
 
 Sometimes you have the option to type hint() to get a hint of how to solve the exercise.
 
-### 3. Make sure you have installed the newest version of RTutor (from github) and have downloaded the newest version of the .rps file.
+### 3. Make sure you have installed the newest version of RTutor (from github) and have downloaded the newest version of the .rps file. Clear Workspace and restart RStudio.
 
-Sometimes an error is due to a bug in the problem set or in RTutor which may have already been fixed in the newest versions.
+Sometimes an error is due to a bug in the problem set or in RTutor which may have already been fixed in the newest versions. Proceed as follows:
+
+1. Install the newest version of RTutor from github
+2. Download the newest .rps file (from Moodle) in the folder with your problem set
+3. Choose in RStudio the Menu command: Session -> Clear Workspace
+4. Restart RStudio
+5. Try out again checking the problem set
 
 ### 4. Take a look at the list of common errors below in this document.
 

@@ -161,13 +161,14 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     
   part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
-  ce = match.call.object(expr)
+  ce = match.call.object(expr, envir=stud.env)
   dce = describe.call(call.obj=ce)
   check.na = dce$name
   
+  
   if (is.null(ex$stud.expr.list))
-    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
-
+    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object, envir=stud.env)
+  
   stud.expr.li = ex$stud.expr.li
   stud.na = sapply(stud.expr.li,  name.of.call)
 
@@ -195,7 +196,6 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     }
   }
 
-  
   ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
@@ -304,9 +304,9 @@ check.assign = function(
 
   #ex$stud.expr
   if (is.null(ex$stud.expr.list))
-    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object)
+    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object, envir=stud.env)
 
-  check.expr = match.call.object(call)
+  check.expr = match.call.object(call,envir=stud.env)
   check.expr = standardize.assign(check.expr)                              
 
   stud.expr.li = lapply(as.list(ex$stud.expr), standardize.assign)
@@ -326,9 +326,9 @@ check.assign = function(
   }
 
   
-  ce.rhs = match.call.object(check.expr[[3]])
+  ce.rhs = match.call.object(check.expr[[3]], envir=stud.env)
   dce.rhs = describe.call(call.obj=ce.rhs)
-  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]]))
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=stud.env))
 
   # Check if a student rhs has the same return value as ce.rhs
   if (ok.if.same.val) {

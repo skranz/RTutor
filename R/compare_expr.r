@@ -278,16 +278,16 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
 }
 
 
-match.call.object = function(call) {
-  #restore.point("match.call.object")
+match.call.object = function(call, envir=parent.frame()) {
+  restore.point("match.call.object")
+  #browser()
   if (length(call)==1)
     return(call)
   ret = call
-  com <- paste0("match.call(", as.character(call[[1]]), ", call=call)")
-  tryCatch({
-    ret <- eval(parse(text=com,srcfile=NULL))
-  }, error = function(e) {}
-  )
+  env = new.env(parent=envir)
+  env$call = call
+  match.expr = substitute(match.call(fun, call=call), list(fun=call[[1]]))  
+  try(ret <- eval(match.expr, envir=env), silent=TRUE)
   ret
 }
 

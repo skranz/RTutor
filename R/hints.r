@@ -117,7 +117,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
   part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
-  ce = match.call.object(call)
+  ce = match.call.object(call, envir=env)
   cde = describe.call(call.obj=ce)
   check.na = cde$name
     
@@ -306,7 +306,7 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
   stud.var = sapply(stud.expr.li, function(e) deparse1(e[[2]]))
   stud.expr.li = stud.expr.li[stud.var == var]
   
-  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]]))
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=env))
 
   hint.for.call(call.obj=ce.rhs, ex=ex, env=env, stud.expr.li=se.rhs.li,part=part, lhs=var)  
 }
