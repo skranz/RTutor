@@ -24,28 +24,34 @@ get.empty.ex.code = function(ex) {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL) {
+create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=TRUE, name.sol.chunks = FALSE, only.empty.chunks=FALSE, create.r.file=FALSE) {
   restore.point("create.ps")
   setwd(dir)
+  if (name.sol.chunks)
+    name.rmd.chunks(sol.file, only.empty.chunks=only.empty.chunks)
   create.struc(sol.file,ps.name)
-  create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs)
+  create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs, create.r.file=create.r.file)
   create.sample.solution(sol.file=sol.file,ps.name=ps.name, user.name=sol.user.name, dir=dir, header=header,footer=footer, libs=libs)
-  
+  if (stop.when.finished) {
+    stop("Created the problem set files and stopped execution on purpose.", call.=FALSE)
+  }
 }
 
 #' Generate an empty problem set for a student in folder dir and the rps file
 #' @export
-create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE) {
+create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE, create.r.file=FALSE) {
   restore.point("create.empty.ps")
   ps = init.problem.set(ps.name,dir, require.stud.file=FALSE, load.struc.file = TRUE)
-  create.stud.ps.r(ps,ps.dir=dir, user.name=user.name, header=header,footer=footer)
+  if (create.r.file)
+    create.stud.ps.r(ps,ps.dir=dir, user.name=user.name, header=header,footer=footer)
   create.stud.ps.rmd(ps,ps.dir=dir, user.name=user.name, header=header, footer=footer,libs=libs)
-  cat(paste0("I generated the empty problem set files ", ps$stud.file, " (an .r and a .Rmd version). You can open them in RStudio."))
+  #cat(paste0("I generated the empty problem set files ", ps$stud.file, " (an .r and a .Rmd version). You can open them in RStudio."))
   
   if (make.rps) {
     setwd(dir)
     ext = "rmd"
-    rli = lapply(c("rmd","r"), function(ext) {
+    ext.li = ifelse(create.r.file,c("rmd","r"),"rmd")
+    rli = lapply(ext.li, function(ext) {
       ps$is.rmd.stud = ext=="rmd"
       ps$stud.file = paste0(ps.name,".",ext)
       ps$stud.code = readLines(ps$stud.file)
@@ -57,7 +63,8 @@ create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.nam
       li
     })
     ps$ex.initial.code.rmd = rli[[1]]
-    ps$ex.initial.code.r = rli[[2]]
+    if (create.r.file)
+      ps$ex.initial.code.r = rli[[2]]
     ps$is.rmd.stud = ps$stud.file = ps$stud.code = NULL
     # Save as rps
     rps.file = paste0(ps.name,".rps")

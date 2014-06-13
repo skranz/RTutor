@@ -157,7 +157,7 @@ create.ex.struc = function(name, txt) {
 
 add.struc.block = function(te) {
   restore.point("add.struc.block")
-
+  chunk.str = ifelse(is.null(te$chunk.name), "", paste0(" in chunk ", te$chunk.name))
   type = str.trim(str.right.of(te$block.head,"#<"))
   # Add test code
   if (type == "") {
@@ -190,7 +190,17 @@ add.struc.block = function(te) {
   } else if (type == "settings") {
     te$settings.txt = c(te$settings.txt,te$code.txt)    
   } else {
-    display("unknown block.head: ", te$block.head)
+    str = paste0(chunk.str, " there is an unknown block head: ", te$block.head)
+    stop(str, call.=FALSE)
+  }
+  
+  # Check if code in block can be parsed
+  if (type != "test.arg") {
+    expr = tryCatch(parse(text=te$code.txt,srcfile=NULL),
+    error = function(e) {
+      str = paste0(chunk.str, " I could not parse your code in a ",type, " block:\n\n ", str.right.of(paste0(as.character(e), collapse="\n"),":"))
+      stop(str, call.=FALSE)
+    })
   }
   
   te$code.txt = NULL
@@ -311,7 +321,7 @@ hint.name.for.e = function(e, counter=0) {
 
 
 hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
-  
+  restore.point("hint.code.for.e")
   part.str = ifelse(part=="","",paste0(",part='",part,")'"))
 
   if (!is.null(extra.code)) {

@@ -1,7 +1,7 @@
 Tutorial for Developing Interactive R Problem Sets with RTutor
 ===============================================================
 
-**Date: 2014-05-28**
+**Date: 2014-06-12**
 
 **Author: Sebastian Kranz, Ulm University** 
 
@@ -30,12 +30,21 @@ library(RTutor)
 
 ## 2. Create an R Markdown solution file
 
-The recommended way to create an interactive problem set is to write a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
+You create an interactive problem set is to write a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
 
-Here is a small solution file with only one exercise. We will explain its structure in detail in the chapter on solution files.
+Here is the code from the example solution file "Example_sol.Rmd" that you find in the problemsets directory of the RTutor library. We will explain its structure in detail in the chapter on solution files.
 
 ```
-    # Problemset Example 
+    # Problemset Example
+    
+    Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+    ```{r "Create problem set files"}
+    setwd("C:/folder_of_this_solution_file")
+    ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+    libs = NULL # character vector of all packages you load in the problem set
+    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, name.sol.chunks=TRUE)
+    ```
     
     ## Exercise 1 -- Summary statistics
     
@@ -63,25 +72,27 @@ The problemset folder of the RTutor library contains some example solution files
 
 ### 3. Generate a structure file and empty problem set for students
 
-Assume your solution is in a file "Example_sol.Rmd". The following code generates the necessary files for students to use the interactive problem set.
+Copy the solution file in some directory, and set is as working directory by changing in your solution file the line
 
-```{r }
-  #setwd("C:/ ... folder with your solution file")
-  create.ps("Example_sol.Rmd",ps.name="Example")
+```s
+    setwd("C:/folder_of_this_solution_file")
 ```
+Open the solution file in RStudio and press Ctrl-Alt-R to run the first code chunk. 
 
-The create.ps command generates the files
-  - example.rps: a binary representation of the problem set structure
-  - example_struc.r: a human-readable representation of the problem set structure
-  - example.rmd: empty problem set in Rmarkdown format
-  - example.r: empty problem set in R format (will depreciate)
-  - example_sample_solution.rmd: A sample solution of the problem set in Rmarkdown format
+The call to
+```s
+  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, name.sol.chunks=TRUE)
+```
+generates the files
+  - Example.rps: a binary representation of the problem set structure
+  - Example_struc.r: a human-readable representation of the problem set structure
+  - Example.Rmd: empty problem set in Rmarkdown format
+  - Example_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format
 
-### 4. Solving and checking the problem set as student
+### 4. Solving and checking the problem set
 
-A student that wants to interactively solve the problem set needs to copy the .rps file (the problem set structure) and an empty problem set as R-markdown  .rmd file to the same folder and open the problem set file with RStudio.
+A student that wants to interactively solve the problem set must copy the .rps file (the problem set structure) and an empty problem set as R-markdown  .Rmd file to a folder (same folder for both files) and open the .Rmd problem set file with RStudio.
 
-(It is still possible to solve problem sets in .r format, but I strongly recommend using .rmd files as they look much nicer. Using .r files is only there for historical reasons and will probably depreciate.)
 
 The empty problem set files have some commands in the beginning, which are used to initialize RTutor and tell you, how you can check your solution. You first have to do 2 things:
 
@@ -97,14 +108,31 @@ How does it work? The header of the problem set file loads the package RTutor an
 
 A student can type type `stats()` to get some information of how much of the problem set he has already solved. 
 
-### 5. Iterate
-You probably will iterate between writing a solution file, solving the problem set yourself (or checking whether the sample solution passes indeed all tests) and extending and improving the problem set until you have a nice version that you want to send out to the public.
+Before testing the empty problem set, open "Example_sample_solution.Rmd" and check if running all chunks (Ctrl-Alt-R) works correctly.
 
-Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .rmd file and tell them to install RStudio and all packages as described above. 
+### 5. Iterative Development
+
+I guess the most natural way to develop a problem set is to iteratively perform the following 3 steps:
+
+  1. Write and adapt your solution file and generate problem set files with Ctrl-Alt-R
+  2. Test whether the sample solution runs without problems
+  3. Try to solve the empty problem set yourself and check whether you should change tests, hints or exercise tasks in your solution file (Step 1). 
+
+**Advice:** Note that when you change your solution file and create new empty problem sets, all problem set files will be overwritten. When you solve the empty problem set during your iterative development, this can be annoying since you must replicate your solution steps again. Therefore it can sometimes be useful to save your solved problem set file, e.g. "Example.Rmd", under a different file name, like "Example_test.Rmd". You then must also adapt the line
+```s
+ps.file = 'Example.Rmd' # this file
+```
+in the beginning of your problem set file to that new file name. Of course, once you generate new exercises in your solution file you want to use the newly generated problem set file.
+
+### 6. Distributing your problem set
+
+Distributing the problem set is simple: just give your students the structure file as .rps and the empty problem set as .rmd file and tell them to install RStudio and all packages as described above. They can then go on solving the problem set. You can also ask them to upload the solutions and possible the log files that track their solution process.
+
+It is planned to implement more functionality that facilitates grading. The goal is to put all solutions in a directory and quickly generate tables that show the total percentage solved for all students.
 
 ##  II  Writing Solution Files
 
-Let us dig a bit deeper into writing solution files. Solution files are .Rmd files that specify the exercise text a solution as R code. Within the R code they can also use special comments to customize tests or hints. A solution file consists of one or more exercises. Starts with a line like
+Let us dig a bit deeper into writing solution files. Solution files are .Rmd files that specify the exercise text a solution as R code. Within the R code they can also use special comments to customize tests or hints. A solution file consists of one or more exercises. An exercise starts with a line like
 
     ## Exercise 1 -- Summary statistics
 
@@ -114,10 +142,17 @@ You can pick any label for the exercise (it can include spaces), but the line mu
 
 Recommend format for the exercise name is an exercise number, optionally followed by `--` and a short description, as in the example above.
 
-Let us start by just writing an exercise with solution, without yet adding some manual hints or tests. For example:
+Let us start by just writing an exercise with solution, without yet adding some manual hints or tests. Here, we also neglect the code chunk before Exercise 1 that generates the problem set file.
 
 ```
-    # Problemset Example 
+    # Problemset Example
+    
+    ```{r "Create problem set files"}
+    setwd("C:/folder_of_this_solution_file")
+    ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+    libs = NULL # character vector of all packages you load in the problem set
+    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, name.sol.chunks=TRUE)
+    ```
     
     ## Exercise 1 -- Summary statistics
     
@@ -135,7 +170,7 @@ Let us start by just writing an exercise with solution, without yet adding some 
 ```
 The description of the exercise is written as standard text, the code of your solution is put in R code chunks. RTutor recognizes lines in the exercise description that start with a) or ii) etc. as a "part" of an exercise and will use this information in the automatically generated messages from tests and hints. 
 
-You can already generate an empty problem set from this simple solution file by calling `create.ps` (see step 3 of part I). In the empty problem set file, each chunk of R code will be replaced by a chunk of the form
+You can already generate an empty problem set from this simple solution file by running Ctrl-Alt-R (see step 3 of part I). In the empty problem set file, each chunk of R code will be replaced by a chunk of the form
 ```
     ```{r }
     # enter your code here ...
@@ -158,6 +193,8 @@ This means we can modify our code as follows:
 ```
     # Problemset Example 
     
+    ... chunk to generate problem sets is ommited ...
+    
     ## Exercise 1 -- Summary statistics
     
     a) We often want to compute some summary statistic of a vector.
@@ -174,9 +211,9 @@ This means we can modify our code as follows:
     mean(x)
     ```
 ```
-Call again `create.ps` and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set.
+Generate again problem set files and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set.
 
-The interactive problem set can already be used. It automatically tests the solution and if the test fails since mean(x) is not entered correctly, it gives the option to type hint() to get a hint.
+The interactive problem set can already be used. It automatically tests the solution and if the test fails since `mean(x)` is not entered correctly, it gives the option to type `hint()` to get a hint.
 
 By default also tests will be generated for the code that is already given as a task (because future code may rely on this code not being accidently changed by the user.) If you don't want to generate tests for the code given in the task you can do so by adding the flag `notest` in your line that starts the task block: putting it into the following kind of block:
 
@@ -198,10 +235,12 @@ RTutor tries to generate automatic hints that look at the students solution and 
 In our example, we want instead a manual hint that tells the student, how the internet is a very powerful source of information to find R commands for specific tasks. We include such a manual hint in our solution file as follows:
 ```
     # Problemset Example 
-    
+
+    ... chunk to generate problem sets is ommited ...
+
     ## Exercise 1 -- Summary statistics
     
-    a) We often want to compute some summary statistic of a vector.
+    a) We often want to compute some summary statistics of a vector.
     For example:
     ```{r}
     #< task
@@ -233,7 +272,32 @@ Sometimes you want to show the advice from the automatically generated hint but 
 #>
 ```
 
+### Using variables from earlier exercises
 
+By default variables that have been generated by the Student in earlier exercises are not known in the current exercise. Sometimes, we want to use variables from earlier exercises, however. The actual Example_sol.Rmd file contains a second exercise that uses the variable `x` from exercise 1:
+
+```
+    ## Exercise 2 -- Computing with vectors #####################################  
+    ```{r}
+    #< settings
+    import.var = list("1"="x")
+    #>
+    ```
+    a) Let y be a vector that contains the squared elements of x. Show y
+    ```{r}
+    y = x^2
+    y
+    ```
+```
+As you see, in order to use variables from earlier exercises, you must add at the beginning of an exercise a settings block that defines a variable `import.var`, like
+```
+    ```{r}
+    #< settings
+    import.var = list("1"="x")
+    #>
+    ```
+```
+The variable `import.var` is a list whose element names correspond to the short exercise names (part of the name before --) from which you want to import variables. The list elements are character vectors of the variable names you want to import from the corresponding exercise.
 
 ### Giving awards
 

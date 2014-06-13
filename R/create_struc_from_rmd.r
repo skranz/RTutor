@@ -57,6 +57,7 @@ create.ex.struc.from.rmd = function(name, txt, start.row=1) {
   te$code.to.task = FALSE
   te$counter = 0
   te$code.to.task = FALSE;te$task.notest = FALSE; te$notest.notest=FALSE
+  te$notest = FALSE
   te$block.is.open = FALSE;
   te$added.code = FALSE
   
@@ -71,8 +72,8 @@ create.ex.struc.from.rmd = function(name, txt, start.row=1) {
     tryCatch(
       te <- inner.create.ex.struc.from.rmd(row=row,txt=txt,te=te),
       error = function(e) {
-        str = paste0("in inner.create.ex.struc.from.rmd(...) in ex. ", name, ", row ", row+start.row-1, ".\n",txt[row],"\n",  as.character(e))
-        stop(str)
+        str = paste0(" when parsing ex. ", name, ", row ", row+start.row, ".\n",txt[row],"\n",  as.character(e))
+        stop(str, call.=FALSE, domain=NA)
       }
     )
   }
@@ -129,12 +130,20 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
  if (!te$in.code) {
     if (str.starts.with(str,"```{r")) {
       te$in.code = TRUE
+      te$chunk.name = str.left.of(str.right.of(str,"```{r"),"}")
     } else {
       add.struc.html.comment(te,paste0("#' ",str))      
     }
   } else if (te$in.code) {
     if (str.starts.with(str,"```")) {
       te$in.code = FALSE
+      if (te$block.is.open)
+        stop(paste0(" in your chunk ", te$chunk.name, " you forgot to close a block. Please add the following line:\n\n#>"), call.=FALSE)
+      if (te$code.to.task)
+        stop(paste0(" in your chunk ", te$chunk.name, " you forget to close a task block. Please add the following line:\n\n#> task"), call.=FALSE)
+      if (te$notest)
+        stop(paste0(" in your chunk ", te$chunk.name, " you forget to close a notest block. Please add the following line:\n\n#> notest"), call.=FALSE)
+
       add.struc.code(te)
     } else if (str.trim(str)=="#s" | str.trim(str)=="#< task") {
       add.struc.code(te)
@@ -164,11 +173,11 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
       add.struc.html.comment(te,str)
     } else if (ssub=="#<") {
       if (str.starts.with(str,"#< task")) {
-        stop(paste0("In row ", row," you have the unrecognized command:\n", str))
+        stop(paste0("In chunk ", te$chunk.name, " you have the unrecognized command:\n", str), call.=FALSE)
       }
       
       if (te$block.is.open)
-        stop(paste0("In row ", row,"\n",txt[row],"\n You open a block with #<, but you have not closed the block before."))
+        stop(paste0("In chunk ", te$chunk.name, " you open a block with #<, but forgot to close the block before."), call.=FALSE)
       if (te$added.code)
         add.struc.code(te)
       #display("row: ", row, " ", txt[row])
@@ -176,13 +185,13 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
       te$block.is.open = TRUE
     } else if (ssub=="#>") {
       if (!te$block.is.open) {
-        str = paste0("In row ", row,"\n",txt[row],"\n You close a block with #>, but you have no test or hint block open.")
+        str = paste0("In chunk ", te$chunk.name, " you close a block with #>, but you have not have opened a test or hint block before.")
         if (te$code.to.task)
-          str = paste0(str, "\n To close a task block, you must type\n\n#> task\n")
+          str = paste0(str, " To close a task block, you must type\n\n#> task\n")
         if (te$notest.notest)
-          str = paste0(str, "\n To close a notest block, you must type\n\n#> notest\n")
+          str = paste0(str, " To close a notest block, you must type\n\n#> notest\n")
 
-        stop(str)
+        stop(str, call.=FALSE)
       }
 
       add.struc.block(te)
@@ -214,9 +223,18 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
     target.file = paste0(ps.name,"_sample_solution.Rmd")
   }
   
+  
   ignore.row = which(str.starts.with(txt,"## Ignore"))
+  
   if (length(ignore.row)>0)
     txt = txt[1:(ignore.row[1]-1)]
+
+  ps.row = which(str.starts.with(txt,"# Problemset"))
+  first.ex.row = which(str.starts.with(txt,"## Exercise"))[1]
+  if (first.ex.row > ps.row+1) {
+    ignore.rows = (ps.row+1):(first.ex.row-1)
+    txt = txt[-ignore.rows]
+  }
 
   
   row = 0

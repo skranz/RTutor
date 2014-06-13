@@ -7,6 +7,16 @@ Author:  Sebastian Kranz
 Date:    16.04.2014
 License: GPL >= 2.0
 
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+```{r "Create problem set files"}
+library(RTutor)
+setwd("C:/folder_of_this_solution_file")
+ps.name = "r_intro"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = NULL # character vector of all packages you load in the problem set
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, name.sol.chunks=TRUE)
+```
+
 ## Exercise 1 -- R as calculator
 
 a) Compute 123 + 257 by typing it below as R code. To run the code in your R console, go to the line with your text cursor and press Ctrl-Enter.
@@ -537,14 +547,3 @@ give.award("Intro the matrix","Tired of only working with vectors? A matrix open
 #>
 ```
 
-
-## Ignore
-
-```{r "9 e) 3"}
-library(RTutor);library(restorepoint)
-#setwd("D:/lehre/empIOUlm/rtutor")
-ps.name = "r_intro"; sol.file = paste0(ps.name,"_sol.Rmd")
-name.rmd.chunks(sol.file, only.empty.chunks=FALSE)
-create.ps(sol.file=sol.file, ps.name=ps.name,libs=NULL)
-
-```

@@ -2,7 +2,18 @@
 
 Example of an RTutor interactive Problemset
 Author:  Sebastian Kranz
-Date:    09.05.2014
+Date:    12.06.2014
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+```{r "Create problem set files"}
+library(RTutor)
+setwd("C:/folder_of_this_solution_file")
+ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = NULL # character vector of all packages you load in the problem set
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, name.sol.chunks=TRUE)
+```
+ 
 
 ## Exercise 1 -- Summary statistics #####################################
 
@@ -27,17 +38,15 @@ give.award("mean means mean","Well, in some occasions one can just guess the nam
 ```
 
 
+## Exercise 2 -- Computing with vectors #####################################
 
-## Ignore
-
-Here, after the ## Ignore line, we can add some code that will generate from the solution file the other problem set files. 
 ```{r}
-
-library(RTutor);library(restorepoint)
-#setwd("D:/lehre/empIOUlm/rtutor")
-ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
-# name.rmd.chunks(sol.file, only.empty.chunks=FALSE)
-create.ps(sol.file=sol.file, ps.name=ps.name,libs=c("AER"))
-
+#< settings
+import.var = list("1"="x")
+#>
+```
+a) Let y be a vector that contains the squared elements of x. Show y
+```{r}
+y = x^2
 ```
 
