@@ -270,8 +270,10 @@ library(RTutor)
 <li>Example.rps: a binary representation of the problem set structure</li>
 <li>Example_struc.r: a human-readable representation of the problem set structure</li>
 <li>Example.Rmd: empty problem set in Rmarkdown format</li>
-<li>Example_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format</li>
+<li>Example_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format.</li>
 </ul>
+
+<p>Note: If you set the option <code>name.sol.chunks=TRUE</code> as in the example above, the call to create.ps also changes your solution file: it creates default names for your code chunks. By default, current chunk names and chunk options are overwritten! Creating chunk names helps to navigate your solution file and allows you to easier find where some errors in processing your solution file have occured. To see the changes in your solution file in your RStudio editor window, you have to change the editor tab to some other file and then move back to the tab of your solution file. </p>
 
 <h3>4. Solving and checking the problem set</h3>
 

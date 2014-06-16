@@ -87,7 +87,9 @@ generates the files
   - Example.rps: a binary representation of the problem set structure
   - Example_struc.r: a human-readable representation of the problem set structure
   - Example.Rmd: empty problem set in Rmarkdown format
-  - Example_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format
+  - Example_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format.
+  
+Note: If you set the option `name.sol.chunks=TRUE` as in the example above, the call to create.ps also changes your solution file: it creates default names for your code chunks. By default, current chunk names and chunk options are overwritten! Creating chunk names helps to navigate your solution file and allows you to easier find where some errors in processing your solution file have occured. To see the changes in your solution file in your RStudio editor window, you have to change the editor tab to some other file and then move back to the tab of your solution file. 
 
 ### 4. Solving and checking the problem set
 

@@ -230,6 +230,8 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
     txt = txt[1:(ignore.row[1]-1)]
 
   ps.row = which(str.starts.with(txt,"# Problemset"))
+  if (length(ps.row)==0)
+    ps.row = 1
   first.ex.row = which(str.starts.with(txt,"## Exercise"))[1]
   if (first.ex.row > ps.row+1) {
     ignore.rows = (ps.row+1):(first.ex.row-1)
