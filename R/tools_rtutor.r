@@ -214,3 +214,37 @@ get.txt.blocks = function(txt, start=NULL, end=NULL, start.with=NULL, end.with=N
 
   
 }
+
+get.expr.src.lines = function(expr) {
+  sapply(attr(expr,"srcref"), function(e) e[1])
+}
+
+examples.parse.expr.and.comments = function() {
+  code = '
+  # compute y
+  y = 2+1
+  # comment for z
+  # another comment
+  z = "Hi"
+  # last comment
+  '
+  e = parse(text=code)
+  parse.expr.and.comments(code)
+}
+
+parse.expr.and.comments = function(code, comment.start = "#") {
+ code = sep.lines(code,"\n")
+ e = parse(text=code)
+ er = get.expr.src.lines(e)
+ cr = which(str.starts.with(str.trim(code),comment.start))
+ c2e = findInterval(cr,er)+1
+ i = 2
+ comments = lapply(seq_along(er), function(i) {
+   rows = cr[which(c2e==i)]
+   if (length(rows)==0)
+     return(NULL)
+   paste0(str.right.of(code[rows], comment.start), collapse="\n")
+ })
+ list(expr=e, comments=comments)
+}
+

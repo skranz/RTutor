@@ -234,26 +234,26 @@ check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
     return(FALSE)
   
   
-  # Evaluate official solution or recycle previous evaluation  
-  if (is.null(ex$sol.env)) {
-    if (verbose) {
-      display("eval solution code...")
-    }
-
-    sol.env = new.env(parent=parent.env(globalenv()))    
-    ex$sol.env = sol.env
-
-    tryCatch( suppressWarnings(eval(ex$sol, sol.env)),
-      error = function(e) {
-        str = paste0("Uups, an error occured while running the official solution:\n",
-                     as.character(e),
-                     "\nI don't test your solution. You may contact the creator of the problem set.")
-        stop(str)
-      }
-    )
-  } else {
-    sol.env = ex$sol.env
-  }
+#   # Evaluate official solution or recycle previous evaluation  
+#   if (is.null(ex$sol.env)) {
+#     if (verbose) {
+#       display("eval solution code...")
+#     }
+# 
+#     sol.env = new.env(parent=parent.env(globalenv()))    
+#     ex$sol.env = sol.env
+# 
+#     tryCatch( suppressWarnings(eval(ex$sol, sol.env)),
+#       error = function(e) {
+#         str = paste0("Uups, an error occured while running the official solution:\n",
+#                      as.character(e),
+#                      "\nI don't test your solution. You may contact the creator of the problem set.")
+#         stop(str)
+#       }
+#     )
+#   } else {
+#     sol.env = ex$sol.env
+#   }
   
   had.warning = FALSE
   if (verbose) {

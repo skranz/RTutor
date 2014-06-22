@@ -170,6 +170,15 @@ add.struc.block = function(te) {
   } else if (type == "test.arg") {    
      test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse="\n"))  
      te$test.txt[length(te$test.txt)] <- test.txt
+  } else if (type == "test.calls") {
+     test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse=", "))  
+     te$test.txt[length(te$test.txt)] <- test.txt
+  } else if (str.starts.with(type,"compute")) {
+    var = str.trim(str.right.of(type, "compute "))    
+    hint.txt = hint.code.for.compute(te$code.txt,var=var,part=te$part, counter=te$counter)
+    te$hint.txt[length(te$hint.txt)] <- hint.txt
+    test.txt = test.code.for.compute(te$code.txt,var=var,part=te$part, counter=te$counter)
+    te$test.txt[length(te$test.txt)] <- test.txt
   } else if (type == "hint") {
      hint.name = hint.name.for.e(te$last.e, counter=te$counter)  
      hint.txt = paste0("add.hint('",hint.name,"',", 
@@ -303,6 +312,7 @@ test.code.for.e = function(e, part="", extra.arg="", counter=0) {
 }
 
 
+
 hint.name.for.e = function(e, counter=0) {
   if (is.assignment(e)) {
     var = deparse1(e[[2]])
@@ -357,5 +367,32 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
     )
   }
   code  
+}
+
+test.code.for.compute = function(code, var, part="", counter=0, extra.arg="") {
+  restore.point("test.code.for.compute")
+  part.str = ifelse(part=="","",paste0(",part='",part,")'"))
+  hint.name = paste0("compute ",var," ", counter)
+
+  code.txt = paste0("{\n", paste0(code, collapse="\n"),"\n",var,"\n}")
+  test.txt = paste0("check.variable('", var,"',",code.txt,", hint.name = '", hint.name,"'",part.str,extra.arg,")")
+  test.txt
+}
+
+hint.code.for.compute = function(code, var, sol.env, part="", counter=0, extra.code = NULL) {
+  restore.point("hint.code.for.compute")
+  part.str = ifelse(part=="","",paste0(",part='",part,")'"))
+
+  hint.name = paste0("compute ",var," ", counter)
+  ec = parse.expr.and.comments(code, comment.start="## ")
+  
+  comments = lapply(ec$comments, function(str) gsub('"',"'",str, fixed=TRUE))
+  comment.code = paste0("list(",paste0('"',comments,'"', collapse=", "),")")
+  
+  code = paste0(code, collapse="\n")
+  com = paste0("add.hint('",hint.name,"',", 
+    "{\n  hint.for.compute({\n",code,"\n},",comment.code,", var= '",var,"'", part.str,")", extra.code,"\n})"
+  )
+  com  
 }
 

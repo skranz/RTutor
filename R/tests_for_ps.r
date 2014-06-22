@@ -50,6 +50,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   restore.point("check.function")
   set.current.hint(hint.name)
   set.part(part)
+  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
   
   env = new.env(parent=stud.env)
@@ -59,7 +60,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   
   if (!exists(fun.name,stud.env, inherits=FALSE)) {
     short.failure = paste0(fun.name, " does not exist.")
-    failure.message = paste0("You have not yet created the function ",fun.name, ".")
+    failure.message = paste0("You have not yet created the function ",fun.name, part.str, ".")
     add.failure(ex,short.failure,failure.message, var = var)
     return(FALSE)
   }
@@ -76,14 +77,14 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   if (is.character(check.args)) {
     missing.args = setdiff(check.args, names(stud.args))
     if (length(missing.args)>0) {
-      failure.message = paste0("Your function ", fun.name, " misses the argument(s) ", paste0(missing.args, collapse=", "),".")
+      failure.message = paste0("Your function ", fun.name, part.str, " misses the argument(s) ", paste0(missing.args, collapse=", "),".")
       add.failure(ex,failure.message,failure.message)
       return(FALSE) 
     }
     arg.ind = seq_along(check.args)
     if (check.args.order) {
       if (!identical(names(stud.args)[arg.ind], check.args)) {
-        failure.message = paste0("Your function ", fun.name, " has the wrong order of arguments. Please arrange them as follows: ", paste0(check.args, collapse=", "),".")
+        failure.message = paste0("Your function ", fun.name, part.str, " has the wrong order of arguments. Please arrange them as follows: ", paste0(check.args, collapse=", "),".")
         add.failure(ex,failure.message,failure.message)
         return(FALSE) 
       }
@@ -292,9 +293,13 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 check.assign = function(
   call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,
   ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
-  hint.name = NULL, part=NULL,  ...) {
+  hint.name = NULL, part=NULL, call.object=NULL,  ...) {
 
-  call = substitute(call)
+  if (!is.null(call.object)) {
+    call = call.object
+  } else {
+    call = substitute(call)
+  }
 
   restore.point("check.assign")
   set.current.hint(hint.name)
@@ -635,6 +640,95 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
 }
 
 
+#' Test: Check whether a variable is equal to a specified expression 
+#' @param var a the variable name as string
+#' @param expr an expression that will be evaluated in the student environment and returns the variable
+#' @param length shall length be checked (similar dim, class, values)
+#' @param failure.length a message that is shown if the variable does not exists (similar the other failure.??? variables)
+#' @param failure.message.add a text that will be added to all failure messages
+#' @export 
+check.variable = function(var, expr, length=TRUE,dim=TRUE, class=TRUE, values=TRUE, ..., tol = .Machine$double.eps ^ 0.5,
+  failure.exists="You have not yet generated the variable {{var}}.",
+  failure.length="Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
+  failure.dim="Your variable {{var}} has the wrong dimensions (rows x columns).",
+  failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
+  failure.values = "Your variable {{var}} has wrong values.",
+  success.message = "Great, {{var}} has correct {{tests}}.", hint.name = NULL,
+  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE, part=NULL) {
+    
+  expr = substitute(expr)
+  restore.point("check.variable")
+  
+  set.current.hint(hint.name)
+  set.part(part)
+    
+  if (!exists(var,stud.env, inherits=FALSE)) {
+      short.message = paste0("{{var}} does not exist")
+      add.failure(ex,short.message,failure.exists, var = var)
+      return(FALSE)
+  }
+
+  sol.env = new.env(parent = stud.env)
+  
+  var.sol = suppressWarnings(eval(expr,sol.env))  
+  var.stud = get(var,stud.env)
+  if (length != FALSE) {
+    short.message = paste0("wrong length {{var}}: is {{length_stud}} must {{length_sol}}")
+    if (!length(var.stud)==length(var.sol)) {
+      add.failure(ex,short.message, failure.length, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
+      return(FALSE)
+    }
+  }  
+  if (class != FALSE) {
+    short.message = "wrong class {{var}}: is {{class_stud}} must {{class_sol}}"
+    class.stud = class(var.stud)[1]
+    class.sol = class(var.sol)[1]
+    if (class.stud == "integer") class.stud = "numeric"
+    if (class.sol == "integer") class.sol = "numeric"
+      
+    if (class.stud!=class.sol) {
+      add.failure(ex,short.message, failure.class, var=var, class_stud=class.stud, class_sol = class.sol)
+      return(FALSE)
+    }
+  }
+  if (dim != FALSE) {
+    if (!identical(dim(var.stud), dim(var.sol))) {
+      add.failure(ex,failure.dim, failure.dim, var=var)
+      return(FALSE)
+    }
+  }  
+
+  
+  if (values != FALSE) {
+    if (is.list(var.sol) | is.environment(var.sol)) {
+      if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
+        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        return(FALSE)
+      }
+    } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
+      if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
+        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        return(FALSE)
+      }
+      if (!identical(is.na(var.stud),is.na(var.sol))) {
+        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        return(FALSE)        
+      }
+      
+    } else {
+      if (! all(var.stud==var.sol)) {
+        add.failure(ex,"wrong values of {{var}}", failure.values, var=var)
+        return(FALSE)
+      }
+    }
+  }
+  
+  tests.str = flags.to.string(length=length,dim=dim,class=class,values=values)
+  add.success(ex,success.message, var=var, tests=tests.str)
+  return(TRUE)
+}
+
+
 
 #' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
 #' @param vars a variable name or vector of variable names
@@ -643,9 +737,10 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
 #' @param failure.message.add a text that will be added to all failure messages
 #' @param expr
 #' @export 
-check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=check.all, class=check.all, values=check.all,tol = .Machine$double.eps ^ 0.5,
+check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=check.all, class=check.all, values=check.all,dim=check.all, tol = .Machine$double.eps ^ 0.5,
   failure.exists="You have not yet generated the variable {{var}}.",
   failure.length="Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
+  failure.dim="Your variable {{var}} has the wrong dimensions (rows x columns).",
   failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
   failure.values = "Your variable {{var}} has wrong values.",
   failure.message.add = NULL,
@@ -721,7 +816,19 @@ check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=
         return(FALSE)
       }
     }
+  }
+  if (dim != FALSE) {
+    for (var in vars) {
+      var.stud = get(var,stud.env)
+      var.sol = vars.sol[[var]]
+      if (!identical(dim(var.stud), dim(var.sol))) {
+        add.failure(ex,failure.dim, failure.dim, var=var)
+        return(FALSE)
+      }
+    }
   }  
+
+  
   if (values != FALSE) {
     for (var in vars) {
       var.stud = get(var,stud.env)
@@ -751,7 +858,7 @@ check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=
     }
   }
   
-  tests.str = flags.to.string(length=length,class=class,values=values)
+  tests.str = flags.to.string(length=length,dim=dim,class=class,values=values)
   add.success(ex,success.message, vars=paste0(vars,collapse=","), tests=tests.str)
   return(TRUE)
 }

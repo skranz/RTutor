@@ -30,9 +30,9 @@ library(RTutor)
 
 ## 2. Create an R Markdown solution file
 
-You create an interactive problem set is to write a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
+You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
 
-Here is the code from the example solution file "Example_sol.Rmd" that you find in the problemsets directory of the RTutor library. We will explain its structure in detail in the chapter on solution files.
+Here is the code from the example solution file "Example_sol.Rmd" that you find in the problem sets directory of the RTutor library. We will explain its structure in detail in the chapter on solution files.
 
 ```
     # Problemset Example
@@ -68,7 +68,7 @@ Here is the code from the example solution file "Example_sol.Rmd" that you find 
     #>
     ```
 ```
-The problemset folder of the RTutor library contains some example solution files. 
+The problem set folder of the RTutor library contains some example solution files. 
 
 ### 3. Generate a structure file and empty problem set for students
 
@@ -108,7 +108,7 @@ You can then start solving the problem set. To check your solution, you just hav
 
 How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the typed solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type hint() in the R console to get a hint of how to solve the task that is not yet correct.
 
-A student can type type `stats()` to get some information of how much of the problem set he has already solved. 
+A student can type `stats()` to get some information of how much of the problem set he has already solved. 
 
 Before testing the empty problem set, open "Example_sample_solution.Rmd" and check if running all chunks (Ctrl-Alt-R) works correctly.
 
@@ -134,7 +134,7 @@ It is planned to implement more functionality that facilitates grading. The goal
 
 ##  II  Writing Solution Files
 
-Let us dig a bit deeper into writing solution files. Solution files are .Rmd files that specify the exercise text a solution as R code. Within the R code they can also use special comments to customize tests or hints. A solution file consists of one or more exercises. An exercise starts with a line like
+Let us dig a bit deeper into writing solution files. Solution files are .Rmd files that basically specify the task with sample solution. Code chunks can contain special comments to customize tests or hints. A solution file consists of one or more exercises. An exercise starts with a line like
 
     ## Exercise 1 -- Summary statistics
 
@@ -181,7 +181,7 @@ You can already generate an empty problem set from this simple solution file by 
 which asks the student to enter his solution.
 
 ### Showing code to students as part of exercise description
-Actually, in our exercise the first code chuck shall be an example that will also be shown to the student. We can make code being shown to students by wrapping it in a block starting with the line
+Actually, in our exercise the first code chunk shall be an example that will also be shown to the student. We can make code being shown to students by wrapping it in a block starting with the line
 ```{r }
 #< task
 ```
@@ -260,18 +260,19 @@ In our example, we want instead a manual hint that tells the student, how the in
     ```
 ```
 This means we simply add after the command of the solution that will be tested, a block of the form
-```{r eval=FALSE, tidy=FALSE}
-#< hint
 
-#>
+```
+    #< hint
+    
+    #>
 ```
 Inside the block, you enter some code that will be shown if the student types hint() after the test for the command failed. Often this will simply be a message, but you could also do other things, e.g. showing a plot as hint. Note that the hint code will be evaluated in an environment that contains all variables the student has defined earlier. 
 
 Sometimes you want to show the advice from the automatically generated hint but also want to add some additional advice. You can do this by putting code inside the following block:
-```{r eval=FALSE, tidy=FALSE}
-#< add to hint
-
-#>
+```
+    #< add to hint
+    
+    #>
 ```
 
 ### Using variables from earlier exercises
@@ -308,10 +309,10 @@ Isn't it amazing when video game players play for hours and hours, doing sometim
 So far there is only a small thing: students can get **awards** if they have solved a problem. The received awards can be shown by typing `awards()` in the R console. Information on the awards is stored in a file with name user_username.ruser in your problem set folder. Here is an example, how you can add an award to your solution file:
 
 
-```{r eval=FALSE, tidy=FALSE}
-#<
-give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
-#>
+```
+    #<
+    give.award("mean means mean","Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.")
+    #>
 ```
 Inside a #< #> block, you need to call give.award and have to specify a name of the award and can add some description text that may also be a bit informative. The award is granted once all tests for the solution above the award are passed.
 
@@ -322,12 +323,12 @@ There may be more elements from computer games that may motivate some students (
 
 I tried my best to automatically test whether the student entered a correct solution or not. Yet sometimes we need to manually include specifice variants of tests in the solution file. Here is an example for such a manual test:
 
-```{r eval=FALSE, tidy=FALSE}
-#' b) Save in the variable u a vector of 4 different numbers
-u = c(3,6,7,99)  
-#< test
-check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
-#>
+```
+    #' b) Save in the variable u a vector of 4 different numbers
+    u = c(3,6,7,99)  
+    #< test
+    check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+    #>
 ```
 
 The automatic test would check whether one of the following two conditions is meet:
@@ -337,10 +338,10 @@ The automatic test would check whether one of the following two conditions is me
   
 Yet in this example, the automatic test is too restrictive. The student shall just generate some arbitrary vector consisting of 4 numbers. The block
 
-```{r eval=FALSE, tidy=FALSE}
-#< test
-check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
-#>
+```
+    #< test
+    check.var("u",c(3,6,7,99),exists=TRUE, length=TRUE, class=TRUE)
+    #>
 ```
 
 replaces the automatic test with a test that just checks whether a variable u exists, and has the same length and class (numeric or integer) as an example solution c(3,6,7,99).
@@ -349,14 +350,15 @@ RTutor has a series of helper functions for such manual tests. Take a look at th
 
 ### Specifying parameters of default tests
 
-By default test are generated that call either `check.call` (a statement that does not assign a varible), `check.assign` (if a value is assigned to a variable), or `check.function` (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  `#< test.arg` allows you to change the arguments of a default test. Consider the following example:
-```{r}
-plot(x=p,y=q,main="A plot", xlab="Prices")
-#< test.arg
-  ignore.arg = c("main","xlab"), allow.extra.arg=TRUE
-#>
+By default, tests are generated that call either `check.call` (a statement that does not assign a varible), `check.assign` (if a value is assigned to a variable), or `check.function` (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  `#< test.arg` allows you to change the arguments of a default test. Consider the following example:
+
 ```
-The `#< test.arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the check.call function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are currect and any customization of the plot will still be considered a correct solution.
+    plot(x=p,y=q,main="A plot", xlab="Prices")
+    #< test.arg
+      ignore.arg = c("main","xlab"), allow.extra.arg=TRUE
+    #>
+```
+The `#< test.arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the check.call function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution.
 
 The next section provides more examples for using tests and hints
 
@@ -366,31 +368,32 @@ The next section provides more examples for using tests and hints
 
 Sometimes you may ask to write a function in the problem set. Here is an example, how you could construct a solution file. In the exercise the student is asked to complete a manual function `ols` that shall compute an ols estimate:
 
-```{r }
-#< task notest
-ols = function(y,X) {
-  
-  # enter code to compute beta.hat here ...
-  
-  return(as.numeric(beta.hat))
-}
-#> task
-
-ols <- function(y,X) {
-  beta.hat = solve(t(X) %*% X) %*% t(X) %*% y
-  return(as.numeric(beta.hat))
-}
-#< test.arg
-  ols(c(100,50,20,60),cbind(1,c(20,30,15,20))), hint.name="ols"
-#>
-#< hint ols
-display("Just insert inside the function ols the code to compute beta.hat from y and X. You have developed this code in Exercise 1.")
-#>
+```
+    #< task notest
+    ols = function(y,X) {
+      
+      # enter code to compute beta.hat here ...
+      
+      return(as.numeric(beta.hat))
+    }
+    #> task
+    
+    ols <- function(y,X) {
+      beta.hat = solve(t(X) %*% X) %*% t(X) %*% y
+      return(as.numeric(beta.hat))
+    }
+    #< test.arg
+      ols(c(100,50,20,60),cbind(1,c(20,30,15,20))), hint.name="ols"
+    #>
+    #< hint ols
+    display("Just insert inside the function ols the code to compute beta.hat from y and X. You have developed this code in Exercise 1.")
+    #>
 ```
 First, we have a `#< task notest` block that specifies an unfinished function that will be given to the student. Afterward, we have an example of a correct function `ols`.
 Then the `#< test.arg` block specifies parameters for the automatic test `check.function`. The unnamed parameter 
-```{r}
-ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
+
+```
+    ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
 ```
 Specifies a test call. `check.function` will run this test call for the official solution and the student's solution. The test will only pass if both versions return the same value.
 The parameter hint.name specifies a manual name for a hint, since currently no automatic hints are generated for function creation (hopefully that will improve in later versions of RTutor.) Finally, the `#< hint ols` specifies what the hint `ols` shows.
@@ -401,7 +404,7 @@ In the moment there is relatively little support to check user written functions
 
 Here is an example:
 ```
-    a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distibuted on the interval from min to max.
+    a) Write a function `runif.square` with parameters n, min and max that generates n random variables that are the square of variables that are uniform distributed on the interval from min to max.
     
     ```{r}
     runif.square = function(n,min,max) {
@@ -412,13 +415,14 @@ Here is an example:
     #>
     ```
 ```
-Our test call is now embeded in the function with.random.seed that calls the function with a fixed random seed. The test check.function only passes if the students function and official solution return the same value when called with the same random seed.
+Our test call is now embedded in the function with.random.seed that calls the function with a fixed random seed. The test check.function only passes if the students function and official solution return the same value when called with the same random seed.
 
 If a function requires simulation of more than one random number, this testing procedure only works if the student draws the random numbers in the same order than the official solution. This means your task should specify already a lot of structure for the function and tell the student not to draw any additional random variables inside the function.
 
 ### Test if variables that satisfy specific conditions are generated
 
 Consider the following example:
+
 ```
     a) Specify a number of observations T>=5
     

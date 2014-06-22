@@ -238,6 +238,11 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
     txt = txt[-ignore.rows]
   }
 
+  title.txt = NULL
+  if (ps.row>1) {
+    title.txt = paste0(txt[1:(ps.row-1)], collapse="\n")
+    txt = txt[-(1:(ps.row-1))]
+  }
   
   row = 0
   empty.txt = "#§§§#"
@@ -250,7 +255,8 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
         str.starts.with(str,"#< task") |
         str.starts.with(str,"#< notest") |
         str.starts.with(str,"#> task") |
-        str.starts.with(str,"#> notest") ) {
+        str.starts.with(str,"#> notest") |
+        str.starts.with(str,"#< compute")  ) {
       
       txt[row] = empty.txt
     } else if (str.starts.with(str,"#<")) {
@@ -282,7 +288,7 @@ create.sample.solution.from.rmd = function(sol.file, target.file = NULL, ps.name
   
   
   head = rmd.rmd.ps.header(ps.name=ps.name,ps.file=target.file,ps.dir=dir,header=header, libs=libs, user.name=user.name)
-  str = c(head,txt)
+  str = c(title.txt,head,txt)
   #str = paste0(head, paste0(txt, collapse="\n"))
 
   name.rmd.chunks(target.file, txt = str) # also writes file

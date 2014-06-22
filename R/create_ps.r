@@ -11,11 +11,9 @@ add.exercise = function(ex,ps=get.ps()) {
 get.empty.ex.code = function(ex) {
   restore.point("get.empty.ex.code")
   
-  paste0("#' ## Exercise ", ex$name," ###########################\n",
+  paste0("#' ## Exercise ", ex$name,"\n",
          "#'\n",
          ex$task.txt,"\n"
-         #"#' #### end of exercise ", ex$name, " ##################\n"
-         #           'check.exercise("',ex$name,'")'
   )      
 } 
 
@@ -24,13 +22,13 @@ get.empty.ex.code = function(ex) {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=TRUE, name.sol.chunks = FALSE, only.empty.chunks=FALSE, create.r.file=FALSE) {
+create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=TRUE, name.sol.chunks = FALSE, only.empty.chunks=FALSE, create.r.file=FALSE,yaml=NULL) {
   restore.point("create.ps")
   setwd(dir)
   if (name.sol.chunks)
     name.rmd.chunks(sol.file, only.empty.chunks=only.empty.chunks)
   create.struc(sol.file,ps.name)
-  create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs, create.r.file=create.r.file)
+  create.empty.ps.and.rps(ps.name=ps.name, user.name=user.name, dir=dir, header=header,footer=footer, libs=libs, create.r.file=create.r.file,yaml=yaml)
   create.sample.solution(sol.file=sol.file,ps.name=ps.name, user.name=sol.user.name, dir=dir, header=header,footer=footer, libs=libs)
   if (stop.when.finished) {
     stop("Created the problem set files and stopped execution on purpose.", call.=FALSE)
@@ -39,12 +37,12 @@ create.ps = function(sol.file, ps.name, user.name= "ENTER A USER NAME HERE", sol
 
 #' Generate an empty problem set for a student in folder dir and the rps file
 #' @export
-create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE, create.r.file=FALSE) {
+create.empty.ps.and.rps = function(ps.name=get.ps()$name, dir = getwd(),user.name = "ENTER A USER NAME HERE", header="", footer="", libs=NULL, make.rps = TRUE, create.r.file=FALSE,yaml=NULL) {
   restore.point("create.empty.ps")
   ps = init.problem.set(ps.name,dir, require.stud.file=FALSE, load.struc.file = TRUE)
   if (create.r.file)
     create.stud.ps.r(ps,ps.dir=dir, user.name=user.name, header=header,footer=footer)
-  create.stud.ps.rmd(ps,ps.dir=dir, user.name=user.name, header=header, footer=footer,libs=libs)
+  create.stud.ps.rmd(ps,ps.dir=dir, user.name=user.name, header=header, footer=footer,libs=libs,yaml=yaml)
   #cat(paste0("I generated the empty problem set files ", ps$stud.file, " (an .r and a .Rmd version). You can open them in RStudio."))
   
   if (make.rps) {
@@ -138,7 +136,7 @@ check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FAL
 
 #' Internal function to generate a problem set skeleton for a student and save it in a file
 #' @export
-create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd"), ps.dir="C:/...", user.name = "ENTER A USER NAME HERE", header=NULL,libs = NULL, footer=NULL ) {
+create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd"), ps.dir="C:/...", user.name = "ENTER A USER NAME HERE", header=NULL,libs = NULL, footer=NULL,yaml=NULL) {
   restore.point("create.stud.ps.rmd")
   
   ex.str = lapply(ps$ex, get.empty.ex.code)
@@ -150,6 +148,7 @@ create.stud.ps.rmd = function(ps, file = paste0(ps$stud.path,"/",ps$name,".rmd")
   
   library(knitr)  
   str = spin(text=str,knit=FALSE,format = "Rmd")
+  str = c(yaml,str)
   name.rmd.chunks(file, txt = str) # also writes file
   #writeLines(str,file)
   invisible(str)

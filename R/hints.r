@@ -100,9 +100,7 @@ hint.for.function = function(code, ...,  ex=get.ex(), env = get.ex()$stud.env, p
   } else {
     display("Please install from CRAN the package 'codetools' to get more information about possible errors in your function. After you have installed the package, type hint() again.")
     return()
-  }
-
-  
+  }  
 }
 
 #' Default hint for a call
@@ -288,8 +286,12 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
 #' Default hint for an assignment
 #' @export
-hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL) {
-  expr = substitute(expr)
+hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, expr.object=NULL) {
+  if (!is.null(expr.object)) {
+    expr = expr.object
+  } else {
+    expr = substitute(expr)
+  }
   restore.point("hint.for.assign")
 
   ce = match.call.object(expr)
@@ -310,6 +312,47 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
 
   hint.for.call(call.obj=ce.rhs, ex=ex, env=env, stud.expr.li=se.rhs.li,part=part, lhs=var)  
 }
+
+
+#' Default hint for an assignment
+#' @export
+hint.for.compute = function(expr, hints.txt=NULL,var="", ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL) {
+  expr = substitute(expr)
+  hint.name = ex$hint.name
+
+  restore.point("hint.for.compute")
+  
+  expr.li = as.list(expr[-1])
+  i = 1
+  if (length(expr.li)>1) {
+    display("One can compute ", var, " in different ways: hint() will guide you through the ", length(expr.li), " steps used in the sample solution.")
+  }
+  
+  for (i in seq_along(expr.li)) {
+    e = expr.li[[i]]
+    ret = FALSE
+    if (!is.null(hints.txt[[i]])) {
+      display(i,". ",hints.txt[[i]])
+    }
+    tryCatch(ret <-  check.assign(call.object = e),
+      error = function(e) {ex$failure.message <- as.character(e)}
+    )
+    if (!ret) {
+      message = ex$failure.message
+      display(ex$failure.message)
+      hint.for.assign(expr.object=e)
+      break
+    } else {
+      message = ex$success.message
+      display(message)      
+    }
+  }
+  if (ret==FALSE & i < length(expr.li)) {
+    display("Note: If you have finished this step and want a hint for the next step. Check your problem set with Ctrl-Alt-R before you type hint() again.")
+  }
+  set.current.hint(hint.name)
+}
+
 
 is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
