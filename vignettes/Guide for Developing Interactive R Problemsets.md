@@ -187,8 +187,13 @@ Actually, in our exercise the first code chunk shall be an example that will als
 ```
 and ending with a line
 ```{r }
+#>
+```
+Note: For historical reasons, you can alternatively end a task block with the line
+```{r }
 #> task
 ```
+
 
 
 This means we can modify our code as follows:
@@ -222,7 +227,7 @@ By default also tests will be generated for the code that is already given as a 
 ```{r eval=FALSE}
 #< task notest
   #...
-#> task
+#>
 ```
 
 
@@ -361,6 +366,47 @@ By default, tests are generated that call either `check.call` (a statement that 
 The `#< test.arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the check.call function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution.
 
 The next section provides more examples for using tests and hints
+
+### Providing Background information
+
+A block like the following form:
+```
+  #< info "Sign of cost coefficients"
+    ## Of course, we would assume that higher costs decrease the total utility from choosing that heating system. If we would have found positive coefficients, it would be a strong indicator of an ommited variable problem: there could be unobserved features that make heating systems with higher costs more desirable for the home owner. 
+  #>
+```
+
+It is not yet fully decide when and how the background information will be shown. 
+
+
+
+### Computations in several steps
+
+Sometimes you want to ask students to perform computations that will usually require several steps. Two somewhat opposite ways of implementing such multistep computations in a problem set would be the following:
+
+  i) Only check the final result and let the student figure out the intermediate steps herself.
+  ii) Include all intermediate steps as part of the problem set
+
+A `#< compute ... #>` block allows an intermediate approach. Here is an example from a problem set of mine that asks a student to compute a matrix of choice probabilities from a conditional logit model.
+
+```
+    #< compute P
+    
+    ## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.
+    
+    ## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)
+    exp.V = exp(V/scale)
+    
+    ## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. 
+    sum.exp.V = rowSums(exp.V)
+    
+    ## Compute P as ratio of the numerator and the denominator
+    P = exp.V / sum.exp.V
+    #>
+```
+The solution will pass as correct if the final values of `P` are correct. The student is not obliged to perform the particular intermediate computations like `exp.V`. Yet, if the student has not yet correctly computed `P` and types `hint()`, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with `##` will be transformed into text that will be shown in the hint.
+  
+
 
 ## 4. Examples for tests and hints
 

@@ -185,18 +185,22 @@ inner.create.ex.struc.from.rmd = function(row,txt, te) {
       te$block.is.open = TRUE
     } else if (ssub=="#>") {
       if (!te$block.is.open) {
-        str = paste0("In chunk ", te$chunk.name, " you close a block with #>, but you have not have opened a test or hint block before.")
-        if (te$code.to.task)
-          str = paste0(str, " To close a task block, you must type\n\n#> task\n")
-        if (te$notest.notest)
-          str = paste0(str, " To close a notest block, you must type\n\n#> notest\n")
-
-        stop(str, call.=FALSE)
+        # If only a task or notest block is open, close them by default
+        if (te$code.to.task | te$notest.notest) {
+          add.struc.code(te)
+          te$code.to.task = FALSE
+          te$task.notest = FALSE
+          te$notest.notest = FALSE
+          te$notest = isTRUE(te$notest.notest)
+        } else {
+          str = paste0("In chunk ", te$chunk.name, " you close a block with #>, but you have not have opened a test or hint block before.")        
+          stop(str, call.=FALSE)        
+        }
+      } else {
+        add.struc.block(te)
+        te$block.is.open = FALSE
+        te$added.code = FALSE
       }
-
-      add.struc.block(te)
-      te$block.is.open = FALSE
-      te$added.code = FALSE
       # Normal code
     } else {
       if (str.trim(str)!="" | te$added.code) {

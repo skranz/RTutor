@@ -357,3 +357,4 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ex=get.ex(), env = get.
 is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
+

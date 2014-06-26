@@ -564,9 +564,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
   set.part(part)
   set.current.hint(hint.name)
   
-  ret = check.var(df,exists =TRUE, hint.name=hint.name)
-  if (!ret) return(FALSE)
-  ret = check.class(str.expr = df,classes=class.df, stud.env=stud.env, ex=ex, hint.name=hint.name)
+  ret = check.variable(df,exists =TRUE, hint.name=hint.name)
   if (!ret) return(FALSE)
   
   dat =  get(df,stud.env)

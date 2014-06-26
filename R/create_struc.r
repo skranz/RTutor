@@ -179,6 +179,12 @@ add.struc.block = function(te) {
     te$hint.txt[length(te$hint.txt)] <- hint.txt
     test.txt = test.code.for.compute(te$code.txt,var=var,part=te$part, counter=te$counter)
     te$test.txt[length(te$test.txt)] <- test.txt
+ } else if (str.starts.with(type,"info")) {
+    txt = te$code.txt
+    txt = gsub('"',"'", txt, fixed=TRUE)
+    txt = gsub("## ","", txt, fixed=TRUE)
+    code = paste0('give.info("","',paste0(txt, collapse="\n"),'")')
+    te$test.txt = c(te$test.txt,code)    
   } else if (type == "hint") {
      hint.name = hint.name.for.e(te$last.e, counter=te$counter)  
      hint.txt = paste0("add.hint('",hint.name,"',", 
@@ -384,8 +390,7 @@ hint.code.for.compute = function(code, var, sol.env, part="", counter=0, extra.c
   part.str = ifelse(part=="","",paste0(",part='",part,")'"))
 
   hint.name = paste0("compute ",var," ", counter)
-  ec = parse.expr.and.comments(code, comment.start="## ")
-  
+  ec = parse.expr.and.comments(code, comment.start="## ") 
   comments = lapply(ec$comments, function(str) gsub('"',"'",str, fixed=TRUE))
   comment.code = paste0("list(",paste0('"',comments,'"', collapse=", "),")")
   

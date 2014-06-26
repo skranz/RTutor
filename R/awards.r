@@ -1,4 +1,9 @@
-
+give.info = function(info.name, text) {
+  display("Background information:")
+  display(text)
+  display("")
+  return(TRUE)
+}
 
 tell.story = function(text) {
   
