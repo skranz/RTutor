@@ -105,7 +105,7 @@ hint.for.function = function(code, ...,  ex=get.ex(), env = get.ex()$stud.env, p
 
 #' Default hint for a call
 #' @export
-hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL) {
+hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL,...) {
   if (!is.null(call.obj)) {
     call = call.obj
   } else {
@@ -115,7 +115,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
   part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
-  ce = match.call.object(call, envir=env)
+  ce = match.call.object(call, envir=env,...)
   cde = describe.call(call.obj=ce)
   check.na = cde$name
     
@@ -153,7 +153,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     }
     
     analyse.str = lapply(stud.expr.li, function(se) {
-      ret = compare.call.args(stud.call=se, check.call=ce, val.env = val.env)
+      ret = compare.call.args(stud.call=se, check.call=ce, val.env = val.env, ...)
       s = NULL
       if (length(ret$differ.arg)>0) {
         s = c(s,paste0("Your argument ", ret$differ.arg, " = ", ret$stud.arg[ret$differ.arg], " differs in its ", ret$differ.detail, " from my solution."))
@@ -286,7 +286,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
 #' Default hint for an assignment
 #' @export
-hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, expr.object=NULL) {
+hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, expr.object=NULL,...) {
   if (!is.null(expr.object)) {
     expr = expr.object
   } else {
@@ -294,10 +294,10 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
   }
   restore.point("hint.for.assign")
 
-  ce = match.call.object(expr)
+  ce = match.call.object(expr,...)
   ce = standardize.assign(ce)                              
 
-  ce.rhs = match.call.object(ce[[3]])
+  ce.rhs = match.call.object(ce[[3]],...)
   dce.rhs = describe.call(call.obj=ce.rhs)
 
   stud.expr.li = lapply(stud.expr.li, standardize.assign)
@@ -308,15 +308,15 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
   stud.var = sapply(stud.expr.li, function(e) deparse1(e[[2]]))
   stud.expr.li = stud.expr.li[stud.var == var]
   
-  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=env))
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=env,...))
 
-  hint.for.call(call.obj=ce.rhs, ex=ex, env=env, stud.expr.li=se.rhs.li,part=part, lhs=var)  
+  hint.for.call(call.obj=ce.rhs, ex=ex, env=env, stud.expr.li=se.rhs.li,part=part, lhs=var,...)  
 }
 
 
 #' Default hint for an assignment
 #' @export
-hint.for.compute = function(expr, hints.txt=NULL,var="", ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL) {
+hint.for.compute = function(expr, hints.txt=NULL,var="", ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL,...) {
   expr = substitute(expr)
   hint.name = ex$hint.name
 

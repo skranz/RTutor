@@ -159,11 +159,11 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
   return(FALSE)
 }
 
-compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL) {
+compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
   restore.point("compare.call.args")
   
-  stud.call = match.call.object(stud.call)
-  check.call = match.call.object(check.call)
+  stud.call = match.call.object(stud.call, ...)
+  check.call = match.call.object(check.call, ...)
   
   sarg = args.of.call(stud.call, name.empty.arg=TRUE)
   carg = args.of.call(check.call, name.empty.arg=TRUE)
@@ -278,7 +278,18 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
 }
 
 
-match.call.object = function(call, envir=parent.frame()) {
+examples.match.call.object = function() {
+  match.call.object(quote(t.test(extra ~ group, data=sleep)),s3.method=stats:::t.test.formula)
+  match.call.object(quote(t.test(extra ~ group, data=sleep)))
+
+  match.call.object(quote(stats:::t.test.formula(extra ~ group, data=sleep)))
+
+  match.call.object(quote(t.test(formula=extra ~ group, data=sleep)))
+
+  f()
+}
+
+match.call.object = function(call, envir=parent.frame(), s3.method=NULL,...) {
   restore.point("match.call.object")
   #browser()
   if (length(call)==1)
@@ -286,7 +297,14 @@ match.call.object = function(call, envir=parent.frame()) {
   ret = call
   env = new.env(parent=envir)
   env$call = call
-  match.expr = substitute(match.call(fun, call=call), list(fun=call[[1]]))  
+  
+  if (!is.null(s3.method)) {
+      s3.method = substitute(s3.method)
+      #restore.point("match.call.object2")
+      match.expr = substitute(match.call(fun, call=call), list(fun=s3.method))    
+  } else {
+    match.expr = substitute(match.call(fun, call=call), list(fun=call[[1]]))
+  }
   try(ret <- eval(match.expr, envir=env), silent=TRUE)
   ret
 }
@@ -310,6 +328,11 @@ recursive.args.of.call = function(call,expand.names=NULL) {
   do.call("c",li)
 }
 
+examples.args.of.call = function() {
+  args.of.call(quote(t.test(extra ~ group, data=sleep)))
+  match.call.object(quote(t.test(extra ~ group, data=sleep)))
+  
+}
 
 args.of.call = function(call, name.empty.arg = FALSE, prefix="") {
   #restore.point("args.of.call")

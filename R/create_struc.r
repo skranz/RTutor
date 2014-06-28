@@ -170,6 +170,14 @@ add.struc.block = function(te) {
   } else if (type == "test.arg") {    
      test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse="\n"))  
      te$test.txt[length(te$test.txt)] <- test.txt
+  } else if (type == "test.hint.arg") {
+     extra.arg = paste0(te$code.txt,collapse=",")
+     test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = extra.arg)  
+     te$test.txt[length(te$test.txt)] <- test.txt
+     
+     hint.txt = hint.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = extra.arg)  
+     te$hint.txt[length(te$hint.txt)] <- hint.txt
+
   } else if (type == "test.calls") {
      test.txt = test.code.for.e(te$last.e, part=te$part, counter=te$counter, extra.arg = paste0(te$code.txt,collapse=", "))  
      te$test.txt[length(te$test.txt)] <- test.txt
@@ -336,10 +344,12 @@ hint.name.for.e = function(e, counter=0) {
 }
 
 
-hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
+hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL, extra.arg = NULL) {
   restore.point("hint.code.for.e")
   part.str = ifelse(part=="","",paste0(",part='",part,")'"))
-
+  if (!is.null(extra.arg))
+    extra.arg =  paste0(",", extra.arg)
+  
   if (!is.null(extra.code)) {
     extra.code = paste0("\n  ",paste0(extra.code,collapse="\n  "))
   }
@@ -355,12 +365,12 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
       rhs = deparse1(e[[3]], collapse="\n")
 
       code = paste0("add.hint('",hint.name,"',", 
-        "{\n  hint.for.function(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
+        "{\n  hint.for.function(",var ,"<-",rhs,part.str, extra.arg,")", extra.code,"\n})"
       )
     } else {
       hint.name = paste0(var, "<- ", substring(rhs,1,10), "...", counter)
       code = paste0("add.hint('",hint.name,"',", 
-        "{\n  hint.for.assign(",var ,"<-",rhs,part.str,")", extra.code,"\n})"
+        "{\n  hint.for.assign(",var ,"<-",rhs,part.str,extra.arg,")", extra.code,"\n})"
       )
     }
   } else {
@@ -369,7 +379,7 @@ hint.code.for.e = function(e, sol.env, part="", counter=0, extra.code = NULL) {
       short = paste0(substring(estr,1,23),"...", counter)
     hint.name = paste0("call ",short)
     code = paste0("add.hint('",hint.name,"',",
-      "{\n  hint.for.call(",estr,part.str,")", extra.code,"\n})"
+      "{\n  hint.for.call(",estr,part.str,extra.arg,")", extra.code,"\n})"
     )
   }
   code  
