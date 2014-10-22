@@ -1,46 +1,34 @@
-give.info = function(info.name, text) {
-  display("Background information:")
-  display(text)
-  display("")
-  return(TRUE)
-}
-
-tell.story = function(text) {
-  
-}
-
-give.prize = function(prize.text=NULL, prize.code=NULL,...) {
-  
-}
 
 #' Used in a solution file. Give an award to a student who made it so far
 #' @export
-give.award = function(award, text="", level=NULL,prize.text = NULL, prize.code = NULL, user = get.user()) {
+give.award = function(award.name, award = ps$rps$awards[[award.name]] , user = get.user(), ps=get.ps()) {
   restore.point("give.award")
 
-  if (has.award(award, user))
+  if (has.award(award.name, user))
     return(TRUE)
+  
   message(paste0('
 **********************************************************
-* Congrats, you earned the award "', award, '"
+* Congrats, you earned the award "', award.name, '"
 **********************************************************
 
 PS: awards() shows all your awards
 '))
-  award.name = award
-  award = list(name=award.name,text = text, level=level,
-               granted.in = paste0("",get.ps()$name))
+  award$granted.in = ps$ps.name
   user$awards[[award.name]] = award 
   update.user()
-  
-  ex = get.ex()
-  ups = get.ups()
-  ups$li[[ex$name]]$num.awards[ex$test.ind] = ups$li[[ex$name]]$num.awards[ex$test.ind]+1
-  set.ups(ups)
-  save.ups()
-
-  
+  show.award(award)
   return(TRUE)
+}
+
+show.award = function(award, award.name = award$award.name, html=award$html, txt=award$txt) {
+  if (!is.null(html)) {
+    htmlFile <- tempfile(fileext=".html")
+    writeLines(html,htmlFile )
+    rstudio::viewer(htmlFile)
+  } else {
+    cat(paste0("\n*** ",award.name, " ***\n", txt," (awarded in ", award$granted.in, ")\n"))
+  }
 }
 
 #' Show all your awards
@@ -51,7 +39,7 @@ awards = function(user = get.user(), details=TRUE) {
     print(names(user$awards))
   } else {
     for (ad in user$awards) {
-      cat(paste0("\n*** ",ad$name, " ***\n", ad$text," (awarded in ", ad$granted.in, ")\n"))
+      cat(paste0("\n*** ",ad$award.name, " ***\n", ad$txt," (awarded in ", ad$granted.in, ")\n"))
     }
   }
 }

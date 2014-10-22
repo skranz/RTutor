@@ -3,381 +3,400 @@
 
 #' Checks a student problem set
 #' 
-#' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong an error is thrown and no more commands will be sourced.
+#' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE) {  
+check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE) {
+  
   restore.point("check.problem.set", deep.copy=FALSE)
+  
+  # If called from knitr, I don't want to check by default
   if (!do.check) return("not checked")
+  
   if (set.warning.1) {
     if (options()$warn<1)
       options(warn=1)
+  }
+  if (!isTRUE(try(file.exists(stud.path),silent = TRUE))) {
+    str= paste0("I could not find your problem set directory '", stud.path,"'.  Please set in the first code chunk of the your problem set the variable 'ps.dir' to the directory in which you have saved your problem set.
+                 
+Note: use / instead of \\ to separate folders in 'ps.dir'")
+    stop(str)
+  }
+  if (!file.exists(paste0(stud.path,"/", stud.short.file))) {
+    str= paste0("I could not find your file '", stud.short.file,"' in your problem set folder '",stud.path,"'. Please set the variables ps.dir and ps.file to the right values in the first chunk of your problem set. The variable 'ps.file' must have the same file name than your problem set file.")
+    stop(str)    
   }
   
   setwd(stud.path)
   
   if (user.name=="ENTER A USER NAME HERE") {
-    stop('You have not picked a user name. Change the variable user.name in your problem set file from ""ENTER A USER NAME HERE" to some user.name that you can freely pick.')
+    stop('You have not picked a user name. Change the variable "user.name" in your problem set file from "ENTER A USER NAME HERE" to some user.name that you can freely pick.')
   }
-  
-  
-  #browser()
   
   if (verbose)
-    display("get.or.init.problem.set...")
-  ps = get.or.init.problem.set(name,stud.path, stud.short.file, reset)
+    display("get.or.init.ps...")
+  
+  ps = get.or.init.ps(ps.name,stud.path, stud.short.file, reset)
+  ps$catch.errors = catch.errors
+  
   set.ps(ps)
+  ps$warning.messages = list()
   
   user = get.user(user.name)  
+  cdt = ps$cdt
+  edt = ps$edt
   
-  
-  
-  old.code = sapply(ps$ex, function(ex) ex$stud.code[[1]])  
   ps$stud.code = readLines(ps$stud.file)
-  
-  ex.names = names(ps$ex)
-  new.code = sapply(ex.names, extract.exercise.code, ps=ps)
-  has.code = !is.na(new.code)
-  names(has.code) = ex.names
-  
-  new.code = new.code[has.code]
-  ex.names = ex.names[has.code]
-  
-  
-  i = 1
-  code.changed = sapply(seq_along(ex.names), function(i) {
-    old.code[i]!=new.code[[i]]
-  })
-  names(code.changed) = names(new.code)  = ex.names
-  
-  code.check = code.changed
+  cdt$stud.code = get.stud.chunk.code(ps=ps)
+  cdt$code.is.task = cdt$stud.code == cdt$task.txt
+  cdt$chunk.changed = cdt$stud.code != cdt$old.stud.code
 
-  if (verbose) {
-    display("code.changed:")
-    print(code.changed)
-  }
+  ex.changed = summarise(group_by(as.data.frame(cdt),ex.ind), ex.changed = any(chunk.changed))$ex.changed
+
+  ex.check.order = unique(c(which(ex.changed),ps$ex.last.mod, which(!edt$ex.solved)))
   
-  code.change.message = ""
-  # If no code changed, check the last modified exercise
-  if (!any(code.changed)) {
-    if (!has.code[ps$ex.last.mod]) {
-      ps$ex.last.mod=1
-    }
-    code.check[ps$ex.last.mod] = TRUE
+  if (! any(cdt$chunk.changed)) {
     code.change.message = "\nBTW: I see no changes in your code... did you forget to save your file?"
-   
   } else {
-    ps$ex.last.mod = which(code.changed)[1]
+    code.change.message = NULL
   }
   
+  ps$cdt = cdt
   # Check exercises
-  sum.correct = 0
-  sum.warning = 0
   i = 1
-  any.false = FALSE
-  was.checked = rep(FALSE,length(code.check))
-  while(!all(was.checked)) {
-    for (i in which(code.check)) {
-      is.correct = FALSE
-      ex.name = ex.names[i]
-      ex = ps$ex[[ex.name]]
-      ret <- FALSE
-      
-      if (verbose) {
-        display("### Check exercise ", ex.name ," ######")
-      }
-
-      
-      ret = tryCatch(check.exercise(ex.name,new.code[ex.name], verbose=verbose),
-                     error = function(e) {ex$failure.message <- as.character(e)
-                                          return(FALSE)})
-            
-      # Copy variables into global env
-      copy.into.env(source=ex$stud.env,dest=.GlobalEnv, set.fun.env.to.dest=TRUE)
-      log.exercise(ex)
-      save.ups()
-      if (ret==FALSE) {
-        message = ex$failure.message
-        if (!is.null(ex$hint.name))
-          message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
-        message = paste(message,code.change.message)
-        any.false=TRUE
-        stop(message, call.=FALSE, domain=NA)
-      } else if (ret=="warning") {
-        message = paste0(ex$warning.messages,collapse="\n\n")
-        message(paste0("Warning: ", message))
-        sum.warning = sum.warning+1
-      }
-      is.correct = TRUE
-      if (is.correct)
-        sum.correct = sum.correct+1
-      #.Internal(stop(FALSE,""))
+  for (i in ex.check.order) {
+    ps$ex.last.mod = i
+    ex.name = edt$ex.name[i]
+    ret <- FALSE
+    if (verbose) {
+      display("### Check exercise ", ex.name ," ######")
     }
-    was.checked[code.check]=TRUE
-    # get.next exercise to check
-    last.check = i
-    old.code.check = code.check
-    code.check  = !old.code.check & seq_along(code.check) > i
-    if (!any(code.check))
-      code.check = !old.code.check 
     
+    if (!is.false(ps$catch.errors)) {
+      ret = tryCatch(check.exercise(ex.ind=i, verbose=verbose),
+                   error = function(e) {ps$failure.message <- as.character(e)
+                                        return(FALSE)})
+    } else {
+      ret = check.exercise(ex.ind=i, verbose=verbose)
+    }
+    # Copy variables into global env
+    copy.into.envir(source=ps$stud.env,dest=.GlobalEnv, set.fun.env.to.dest=TRUE)
+    save.ups()
+    if (ret==FALSE) {
+      edt$ex.solved[i] = FALSE
+      message = ps$failure.message
+      message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
+      message = paste(message,code.change.message)
+      stop(message, call.=FALSE, domain=NA)
+    } else if (ret=="warning") {
+      message = paste0(ps$warning.messages,collapse="\n\n")
+      message(paste0("Warning: ", message))
+    }
+    edt$ex.solved[i] = TRUE
   }
-  if (!any.false) {
-    display("\n****************************************************",
-            "\nYou solved the problem set, congrats!")
-    stats()
-    display("
-To generate a zip file of your solution for submission, call
 
-  zip.solution()
-")
-    
-    msg = " I could not find any error in your problem set. Congrats!"
-    stop(msg, call.=FALSE, domain="")
+  if (all(edt$ex.solved)) {
+    display("\n****************************************************")
+    stats()
+    msg = "You solved the problem set. Congrats!"
+    stop.without.error(msg)
   }
   stop("There were still errors in your solution.")
 }
+
+check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE) {
+  restore.point("check.exercise")
+  
+  ck.rows = ps$cdt$ex.ind == ex.ind
+  cdt = ps$cdt
+  ex.name = ps$edt$ex.name[ex.ind]
+  
+  if (check.all) {
+    min.chunk = min(ck.rows) 
+  } else {
+    rows = which(ck.rows & ((!cdt$is.solved) | cdt$chunk.changed)) 
+    # All chunks solved and no chunk changed
+    if (length(rows)==0) {
+      cat(paste0("\nAll chunks were correct and no change in exercise ",ex.name,"\n"))
+      return(TRUE)
+    }
+    min.chunk = min(rows)
+  }
+  chunks = min.chunk:max(which(ck.rows))
+  chunk.ind = chunks[1]
+  for (chunk.ind in chunks) {
+    ret = check.chunk(chunk.ind,ps=ps, verbose=verbose)
+    if (ret==FALSE) {
+      return(FALSE)
+    }
+  }
+  ps$edt$ex.final.env[[ex.ind]] = copy(ps$stud.env)
+  return(TRUE)
+}
+
 
 #' Check the student's solution of an exercise contained in stud.file
 #' @param ex.name The name of the exercise
 #' @param stud.code The code of the student's solution as a string (or vector of strings)
 #' @export 
-check.exercise = function(ex.name,stud.code,ps=get.ps(), verbose=FALSE) {
-  restore.point("check.exercise")
+check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE) {
+  restore.point("check.chunk")
   
-  cat(paste0("\n\n###########################################\n",
-             "Check exercise ",ex.name,"...",
-             "\n###########################################\n"))
+  ck = ps$cdt[chunk.ind,]
+  chunk.name = ck$chunk.name
   
-  
-  ex = ps$ex[[ex.name]]
-  set.ex(ex)
-  ex$solved = FALSE
+  ps$cdt$old.stud.code[chunk.ind] = stud.code
+  ps$cdt$is.solved[chunk.ind] = FALSE
 
-  initial.code = ps$ex.initial.code[[ex.name]]
-  if (any(initial.code==stud.code)) {
-    ex$code.changed = FALSE
-    ex$failure.message = ex$failure.short = paste0("You have not yet started with exercise ", ex.name)
-    return(FALSE)
+  
+  ps$ex.ind = ck$ex.ind
+  ps$chunk.ind = chunk.ind
+  ps$chunk.name = chunk.name
+  
+  #stop("analyse below")
+  test.li = ck$test.expr[[1]]  
+  
+  if (expect.change)  {
+    if (stud.code == ck$task.txt) {
+      ck$chunk.changed = FALSE
+      ps$failure.message = paste0("You have not yet changed chunk ", chunk.name)
+      return(FALSE)
+    }
   }
-
+  display("Check chunk ", chunk.name," ...")
   
-  #message(capture.output(print(ex)))
-  #message(capture.output(print(ps$ex[[ex.name]])))
-  #message(capture.output(print(get.ex())))
+  ps$failure.message  = "No failure message recorded"
+  ps$warning.messages = list()
+  ps$check.date = Sys.time()
   
-  ex$failure.message = ex$failure.short = "No failure message recorded"
-  ex$warning.messages = ex$warning.shorts = list()
-  
-  ex$check.date = Sys.time()
-  ex$code.changed = !all(ex$stud.code == stud.code)
-  if (ex$code.changed) {
-    ex$stud.code = stud.code
-    ex$checks = ex$checks +1
-    if (!ex$was.solved)
-      ex$attempts = ex$attempts+1
-    
-  }                           
-  
-  ex$stud.env = new.env(parent=parent.env(globalenv()))
-  ex$stud.seed = as.integer(Sys.time())
-  
-  # Import variables from other exercises stud.env's
   has.error = FALSE
-
-  if (verbose) {
-    display("import.stud.env.var...")
-  }
-
-  tryCatch(
-    import.stud.env.var(ex$settings$import.var, dest.env = ex$stud.env, ps = ps),
-     error = function(e) {
-      ex$failure.message=ex$failure.short=paste0("Error in check.exercise import.stud.env.var ",geterrmessage())
-      has.error <<- TRUE
-    })
-    
-  if (has.error)
-    return(FALSE)
-
-  has.error = FALSE
-  ex$stud.expr.li = NULL
+  ps$stud.expr.li = NULL
   if (verbose) {
     display("parse stud.code...")
   }
-
-  tryCatch( ex$stud.expr <- parse(text=ex$stud.code, srcfile=NULL),
-            error = function(e) {
-              ex$failure.message=ex$failure.short=paste0("parser error: ",geterrmessage())
-              has.error <<- TRUE
-            })
-  
+  if (!is.false(ps$catch.errors)) {  
+    tryCatch( ps$stud.expr.li <- parse(text=stud.code, srcfile=NULL),
+              error = function(e) {
+                ps$failure.message=paste0("parser error: ",geterrmessage())
+                has.error <<- TRUE
+              })
+  } else {
+    ps$stud.expr.li <- parse(text=stud.code, srcfile=NULL)    
+  }
   if (has.error)
     return(FALSE)
-  
-  
+
+
+  if (verbose) {
+    display("make.chunk.stud.env...")
+  }
   has.error = FALSE
+  ps$stud.env = stud.env
+  ps$cdt$stud.env[[chunk.ind]] = stud.env
+
   
-  set.seed(ex$stud.seed)
+  has.error = FALSE    
+  ps$stud.seed = as.integer(Sys.time())
+  set.seed(ps$stud.seed)
+  
   if (verbose) {
     display("eval stud.code...")
   }
 
-  #eval(ex$stud.expr, ex$stud.env)
-  tryCatch( eval(ex$stud.expr, ex$stud.env),
-            error = function(e) {
-              # Evaluate expressions line by line and generate failure message
-              #stepwise.eval.stud.expr(stud.expr=ex$stud.expr,stud.env=new.env(parent=.GlobalEnv))
-              stepwise.eval.stud.expr(stud.expr=ex$stud.expr,stud.env=ex$stud.env)
-              has.error <<- TRUE
-            }
-  )
+  #eval(ps$stud.expr.li, ps$stud.env)
+  ps$e.ind = 0   
+
+  
+  has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env)
+#   tryCatch( eval(ps$stud.expr.li, stud.env),
+#     error = function(e) {
+#       # Evaluate expressions line by line and generate failure message
+#       stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env)
+#       has.error <<- TRUE
+#     }
+#   )
   if (has.error)
     return(FALSE)
   
-  
-#   # Evaluate official solution or recycle previous evaluation  
-#   if (is.null(ex$sol.env)) {
-#     if (verbose) {
-#       display("eval solution code...")
-#     }
-# 
-#     sol.env = new.env(parent=parent.env(globalenv()))    
-#     ex$sol.env = sol.env
-# 
-#     tryCatch( suppressWarnings(eval(ex$sol, sol.env)),
-#       error = function(e) {
-#         str = paste0("Uups, an error occured while running the official solution:\n",
-#                      as.character(e),
-#                      "\nI don't test your solution. You may contact the creator of the problem set.")
-#         stop(str)
-#       }
-#     )
-#   } else {
-#     sol.env = ex$sol.env
-#   }
   
   had.warning = FALSE
   if (verbose) {
     display("run tests...")
   }
-
   ups = get.ups()
-  for (test.ind in seq_along(ex$tests)){
-    test = ex$tests[[test.ind]]
-    passed.before = ex$tests.stats[[test.ind]]$passed
-    ex$success.message = NULL
-    ex$test.ind = test.ind
-    if (verbose) {
-      display("  Test #", test.ind, ": ",deparse1(test))
-    }
+  ps$success.log = ps$test.log = NULL
+  e.ind = 1
 
-    ret = eval(test,ex$stud.env)
-    
-    if (is.na(ups$li[[ex$name]]$first.call.date[test.ind]))
-      ups$li[[ex$name]]$first.call.date[test.ind] = Sys.time()
-    
-    if (ret==FALSE) {
-      if (!ups$li[[ex$name]]$success[test.ind])
-        ups$li[[ex$name]]$num.failed[test.ind] = ups$li[[ex$name]]$num.failed[test.ind]+1
-      set.ups(ups)
-      return(FALSE)
-    } else if (ret=="warning") {
-      had.warning = TRUE
-    } else {
-      if (!is.null(ex$success.message) & !passed.before) {
-      #if (!is.null(ex$success.message)) {
-        cat(paste0(ex$success.message,"\n"))
+  tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1 
+  for (e.ind in seq_along(ck$e.li[[1]])) {
+    ps$e.ind = e.ind  
+    tests = ck$test.expr[[1]][[e.ind]]
+    test.ind = 1
+    for (test.ind in seq_along(tests)){
+      tdt.ind = tdt.ind +1
+      ps$tdt.ind = tdt.ind
+      test = tests[[test.ind]]
+      ps$success.message = NULL    
+      passed.before = ps$tdt$test.passed[tdt.ind]
+      if (verbose) {
+        display("  Test #", test.ind, ": ",deparse1(test))
+      }
+      ret = eval(test,ps$stud.env)
+      ps$tdt$test.passed[tdt.ind] = ret    
+      update.ups.test.result(passed=ret,ps=ps)
+      #update.log.test.result(ret,ups, ck, ps)
+      
+      if (ret==FALSE) {
+        set.ups(ups)
+        ps$test.log = c(ps$test.log, ps$failure.message)
+        return(FALSE)        
+      } else if (ret=="warning") {
+        had.warning = TRUE
+        ps$test.log = c(ps$test.log, ps$warning.message)
+      } else {
+        ps$test.log = c(ps$test.log, ps$success.message)
+        if (!is.null(ps$success.message) & !passed.before) {
+          ps$success.log = c(ps$success.log,ps$success.message)
+          cat(paste0(ps$success.message,"\n"))
+        }
       }
     }
-    if (is.na(ups$li[[ex$name]]$success.date[test.ind])) {
-      ups$li[[ex$name]]$success[test.ind] <- TRUE
-      ups$li[[ex$name]]$success.date[test.ind] <- Sys.time()
-    }
-
   }
+  
+  ps$cdt$is.solved[[chunk.ind]] = TRUE
+  
+  if (!is.na(ck$award.name)) {
+    give.award(ck$award.name, ps=ps)
+  }
+  
   set.ups(ups)
   if (had.warning) {
-    message("\nHmm... overall, I am not sure if your solution is right or not, look at the warnings.")
-    return(invisible("warning"))
+    return("warning")
   } else {
-    cat(paste0("\nCongrats, I could not find an error in exercise ", ex$name,"!"))
-    
-    ex$solved = TRUE
-    ex$was.solved = TRUE
-    
-    return(invisible(TRUE))
+    return(TRUE)
   }
+}
+
+
+update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps=get.ps()) {
+  passed.before = ps$tdt$test.passed[tdt.ind] 
+  if (is.na(ups$tdt$first.call.date[tdt.ind]))
+    ups$tdt$first.call.date[tdt.ind] = Sys.time()
+  if (passed==FALSE) {
+    if (!ups$tdt$success[tdt.ind])
+      ups$tdt$num.failed[tdt.ind] = ups$tdt$num.failed[tdt.ind]+1
+    set.ups(ups)
+    return()
+  }
+  if (is.na(ups$tdt$success.date[tdt.ind])) {
+    ups$tdt$success[tdt.ind] <- TRUE
+    ups$tdt$success.date[tdt.ind] <- Sys.time()
+  }
+}
+
+update.log.test.result = function(...) {
+  return()
+}
+
+make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
+  restore.point("make.chunk.stud.env")
+  ck = ps$cdt[chunk.ind,]
+  if (ck$chunk.ex.ind == 1) {
+    # First chunk in exercise: generate new stud.env
+    stud.env = new.stud.env(chunk.ind)
+    import.var.into.stud.env(ps$edt$import.var[[ck$ex.ind]], stud.env,ps)
+
+  } else {
+    # Later chunk in an exercise: simply copy previous stud.env
+    stud.env = copy.stud.env(ps$cdt$stud.env[[chunk.ind-1]], chunk.ind)
+  }
+  stud.env
 }
 
 # Import variables from other exercises stud.env's
-import.stud.env.var = function(import.var.li, dest.env = get.ex()$stud.env, ps = get.ps()) {
-  restore.point("import.stud.env.var")
-  if (is.null(import.var.li))
+import.var.into.stud.env = function(import.var, dest.env, ps = get.ps()) {
+  restore.point("import.var.into.stud.env")
+  if (is.null(import.var))
     return(NULL)
+  restore.point("import.var.into.stud.env2")
+  
+  #stop("jbhgbhbdgh")
   i = 1
-  for (i in seq_along(import.var.li)) {
-    ex.name = names(import.var.li)[i]
-    if (!ex.name %in% names(ps$ex)) {
-      ind = str.starts.with(names(ps$ex),ex.name)
+  edt = ps$edt
+  ex.names = edt$ex.name
+  
+  for (i in seq_along(import.var)) {
+    ex.name = names(import.var)[i]
+    if (!ex.name %in% ex.names) {
+      ind = str.starts.with(ex.names,ex.name)
       if (!any(ind)) {
-        stop(paste0("\nWrong import variable statement in solution file of exercise  ",names(ps$ex)[i], ": exercise ", ex.name, " not found"))
+        stop(paste0("\nWrong import variable statement in solution file of exercise  ",ex.names[i], ": exercise ", ex.name, " not found"))
       } else {
-        ex.name = names(ps$ex)[ind][1]
+        ex.name = ex.names[ind][1]
       }
     }
-    vars = import.var.li[[i]]
-    source.env = ps$ex[[ex.name]]$stud.env
+    
+    vars = import.var[[i]]
+    ex.ind = which(edt$ex.name==ex.name)
+    source.env = edt$ex.final.env[[ex.ind]]
     if (is.null(source.env)) {
-      stop(paste0("\nWe first must correctly generate the variables '", paste0(vars, collapse=","), "' in exercise ", ex.name, " before you can solve this exercise.\n To check exercise ", ex.name, " enter somewhere an irrelevant space in the code."))
+      #str = paste0("\nYou must first solve and check exercise '", ex.name, " before you can solve this exercise.\n To check exercise ", ex.name, " enter somewhere an irrelevant space in it's code chunks.")
+      ps$failure.message = str
+      stop(str)
+      return(FALSE)
     }
     for (var in vars) {
-      if (!exists(var,source.env, inherits=FALSE))
-        stop(paste0("You first must correctly generate the variable '", var, "' in exercise ", ex.name, " before you can solve this exercise."))
-        val = get(var,source.env)
-        # Set enclosing environments of functions to dest.env
-        if (is.function(val))
-          environment(val) = dest.env
-        assign(var, val,dest.env)
+      if (!exists(var,source.env, inherits=FALSE)) {
+        str = paste0("You first must correctly generate the variable '", var, "' in exercise ", ex.name, " before you can solve this exercise.")
+        ps$failure.message = str
+        stop(str)
+      }
+      val = get(var,source.env)
+      # Set enclosing environments of functions to dest.env
+      if (is.function(val))
+        environment(val) = dest.env
+      assign(var, val,dest.env)
     }
   }
-  return(NULL)
+  return(TRUE)
 }
 
+can.chunk.be.edited = function(chunk.ind, ps = get.ps()) {
+  restore.point("can.chunk.be.edited")
+  
+  ck = ps$cdt[chunk.ind,]
+  ex.ind = ck$ex.ind
+  if (ck$chunk.ex.ind == 1) {
+    if (ex.ind==1)
+      return(TRUE)
+    ex.names = names(ps$edt$import.var[[ck$ex.ind]])
+    if (is.null(ex.names))
+      return(TRUE)
+    edt = ps$edt
+    ex.inds = edt$ex.ind[match(ex.names,edt$ex.name)]
+    
+    chunks = which(ps$cdt$ex.ind %in% ex.inds)
+    solved = all(ps$cdt$is.solved[chunks])
+    if (all(solved))
+      return(TRUE)
+    ps$failure.message = paste0("You must first solve and check all chunks in exercise(s) ", paste0(ex.names[ex.inds],collapse=", "), " before you can start this exercise.")
+    return(FALSE)
+  } else {
+    if (ps$cdt$is.solved[chunk.ind-1]) {
+      return(TRUE)
+    }
+    ps$failure.message = paste0("You must first solve and check the previous chunk before you can edit and solve this chunk.")
+    return(FALSE) 
+  }
+  
+}
 
 #' Extracts the stud's code of a given exercise
 #' @export
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.r.exercise.code")
   
-  if (ps$is.rmd.stud) {
-    return(extract.rmd.exercise.code(ex.name,stud.code, ps,warn.if.missing))
-  } else {
-    return(extract.r.exercise.code(ex.name,stud.code, ps,warn.if.missing))    
-  }
-
-}
-
-
-extract.r.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
-  restore.point("extract.r.exercise.code")
-
-  txt = stud.code
-  mr = extract.command(txt,paste0("#' ## Exercise "))
-  start.ind = which(str.starts.with(mr[,2],ex.name))
-  start.row = mr[start.ind,1]
-  if (length(start.row) == 0) {
-    if (warn.if.missing)
-      message(paste0("Warning: Exercise ", ex.name, " not found. Your code must have the line:\n",
-                     paste0("#' ## Exercise ",ex.name)))
-    return(NA)
-  }
-  if (length(start.row)>1) {
-    message("Warning: Your solution has ", length(start.row), " times exercise ", ex.name, " I just take the first.")
-    start.row = start.row[1]
-    start.ind = start.ind[1]
-  }
-  end.row = c(mr[,1],length(txt)+1)[start.ind+1]-1
-  str = txt[(start.row+1):(end.row)]
-  paste0(str, collapse="\n")
+  return(extract.rmd.exercise.code(ex.name,stud.code, ps,warn.if.missing)) 
 }
 
 extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
@@ -410,20 +429,28 @@ extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps
 
 
 
-stepwise.eval.stud.expr = function(stud.expr, ex=get.ex(), stud.env = ex$stud.env()) {
+stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.env, seed=NULL) {
   restore.point("stepwise.eval.stud.expr")
-  set.seed(ex$stud.seed)
+  if (!is.null(seed))
+    set.seed(seed)
   has.error = FALSE
+  
+  i = 1
   for (i in seq_along(stud.expr)) {
     part.expr = stud.expr[[i]]
     tryCatch( eval(part.expr, stud.env),
               error = function(e) {        
-                ex$failure.message = ex$failure.short= paste0("evaluation error in \n  ",deparse1(part.expr),"\n  ",geterrmessage())
+                ps$failure.message = paste0("evaluation error in \n  ",deparse1(part.expr),"\n  ",adapt.console.err.message(as.character(e)))
                 has.error <<- TRUE
               }
     )
-    if (has.error)
+    
+    if (has.error) {
+      if (is.false(ps$catch.errors))
+        stop(ps$failure.message)
+
       return(FALSE)
+    }
   }
   return(!has.error)
 }
@@ -432,60 +459,74 @@ stepwise.eval.stud.expr = function(stud.expr, ex=get.ex(), stud.env = ex$stud.en
 
 #' Used inside tests: adds a failure to an exercise
 #' 
-#' @param ex the exercise (environment) that is currently tested (typically ex=get.ex())
-#' @param short a short id of the error that will be stored in the log file
 #' @param message a longer description shown to the user
 #' @param ... variables that will be rendered into messages that have whiskers
 #' @export
-add.failure = function(ex,short,message,...) {
-  short=replace.whisker(short,...)
+add.failure = function(message,..., ps= get.ps()) {
   message=replace.whisker(message,...)
   args = list(...)
   restore.point("add.failure")
-  ex$failure.message = message
-  ex$failure.short = short
-  
-  ex$last.failed.test = ex$test.ind
-  ts = ex$tests.stats[[ex$test.ind]]
-  ts$times.failed.before.passed = ts$times.failed.before.passed + (!ts$ever.passed)
-  ts$times.failed = ts$times.failed + 1
-  ts$passed = FALSE
-  ex$tests.stats[[ex$test.ind]] = ts
+  ps$failure.message = message
 }
 
-#' Used inside tests: adds a failure to an exercise
+#' Used inside tests: adds a sucess message
 #' 
-#' @param ex the exercise (environment) that is currently tested (typically ex=get.ex())
-#' @param short a short id of the error that will be stored in the log file
 #' @param message a longer description shown to the user
 #' @param ... variables that will be rendered into messages that have whiskers
 #' @export
-add.success = function(ex,message,...) {
+add.success = function(message,...,ps= get.ps()) {
   message=replace.whisker(message,...)
-  ex$success.message = message
-  ex$last.passed.test = ex$test.ind
-  
-  ts = ex$tests.stats[[ex$test.ind]]
-  ts$times.failed =0
-  ts$passed = TRUE
-  ex$tests.stats[[ex$test.ind]] = ts  
-  
+  ps$success.message = message  
 }
 
 
-#' Used inside tests: adds a warning to an exercise
+#' Used inside tests: adds a warning
 #' 
-#' @param ex the exercise (environment) that is currently tested (typically ex=get.ex())
-#' @param short a short id of the warning that will be stored in the log file
 #' @param message a longer description shown to the user
 #' @param ... variables that will be rendered into messages that have whiskers
 #' @export
-add.warning = function(ex,short,message,...) {
-  short=replace.whisker(short,...)
+add.warning = function(message,...,ps= get.ps()) {
   message=replace.whisker(message,...)
   args = list(...)
   #restore.point("add.warning")
-  ind = length(ex$warning.messages)+1
-  ex$warning.messages[[ind]] = message
-  ex$warning.shorts[[ind]] = short
+  ind = length(ps$warning.messages)+1
+  ps$warning.messages[[ind]] = message
+}
+
+
+get.stud.chunk.code = function(txt = ps$stud.code,chunks = ps$cdt$chunk.name, ps = get.ps()) {
+  restore.point("get.stud.chunk.code")
+  chunk.start = which(str.starts.with(txt,"```{"))
+  chunk.end   = setdiff(which(str.starts.with(txt,"```")), chunk.start)
+  chunk.end = remove.verbatim.end.chunks(chunk.start,chunk.end)
+
+  # remove all chunks that have no name (initial include chunk)
+  chunk.name = str.between(txt[chunk.start],'"','"', not.found=NA)
+
+  na.chunks  = is.na(chunk.name)
+  chunk.start= chunk.start[!na.chunks]
+  chunk.end  = chunk.end[!na.chunks]
+  chunk.name = chunk.name[!na.chunks]
+  
+  chunk.txt = sapply(seq_along(chunk.start), function (i) {
+      code = txt[(chunk.start[i]+1):(chunk.end[i]-1)]
+      paste0(code, collapse="\n")
+  })
+  
+  names(chunk.txt) = chunk.name
+  chunk.txt = chunk.txt[chunk.name %in% chunks]
+  
+  if (!identical(names(chunk.txt), chunks)) {
+    missing.chunks = paste0(setdiff(chunks, chunk.name),collapse=", ")
+    stop("I miss chunks in your solution: ",missing.chunks,". You probably removed them or changed the title line or order of your chunks by accident. Please correct this!", call.=FALSE)
+  }
+  chunk.txt
+}
+
+
+adapt.console.err.message = function(str) {
+  if (str.starts.with(str,"Error in eval(")) {
+    str = paste0("Error: ",str.right.of(str,":"))
+  }
+  str
 }

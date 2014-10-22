@@ -53,13 +53,12 @@ import.logs = function(dir, check.sub.dir = TRUE) {
   )
   
   
-  head(select(dt,-stud.code))
   df = as.data.frame(dt)
   
   # Show list of all errors
   all.df = df %.%
     filter(error==TRUE) %.%
-    select(-stud.code)
+    dplyr::select(-stud.code)
   
   # Summarize errors by exercise and users
   exus.df = df %.%
@@ -75,7 +74,7 @@ import.logs = function(dir, check.sub.dir = TRUE) {
     summarise(times.failure=length(failure.short), num.users=length(unique(user.name))) %.%
     arrange(desc(num.users),desc(times.failure), ex.name) %.%
     mutate(failure.short = str.left(failure.short,50)) %.%
-    select(num.users,times.failure, ex.name, failure.short, ps.name)
+    dplyr::select(num.users,times.failure, ex.name, failure.short, ps.name)
  
   fail.df = as.data.frame(fail.df)
   fail.df

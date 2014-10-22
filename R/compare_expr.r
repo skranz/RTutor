@@ -134,6 +134,9 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
   if(identical(x,y))
     return(TRUE)
   
+  if (length(x)!=length(y))
+    return(FALSE)
+  
   if (check.all.equal) {
     if (is.data.frame(x) & is.data.frame(y)) {
       if ((NROW(x) != NROW(y)) | (NCOL(x) != NCOL(y)))
@@ -289,7 +292,7 @@ examples.match.call.object = function() {
   f()
 }
 
-match.call.object = function(call, envir=parent.frame(), s3.method=NULL,...) {
+match.call.object = function(call, envir=parent.frame(), s3.method=NULL) {
   restore.point("match.call.object")
   #browser()
   if (length(call)==1)

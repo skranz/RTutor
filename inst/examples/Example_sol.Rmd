@@ -1,0 +1,92 @@
+# Problemset Example
+
+Example of an RTutor interactive Problemset
+Author:  Sebastian Kranz
+Date:    12.06.2014
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+#< ignore
+```{r "create_ps",include=FALSE, eval=FALSE}
+library(restorepoint)
+# facilitates error detection
+set.restore.point.options(display.restore.point=TRUE)
+
+library(RTutor)
+#library(restorepoint)
+setwd("D:/libraries/RTutor/examples")
+ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c("ggplot2") # character vector of all packages you load in the problem set
+#name.rmd.chunks(sol.file) # set auto chunk names in this file
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
+show.shiny.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, is.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
+stop.without.error()
+```
+#>
+
+## Exercise 1 -- Summary statistics
+
+a) First part
+
+Some Math:
+
+$$x = \beta^2$$
+
+#< info "Some math in an info block"
+$$y = \alpha^2$$
+#>
+
+
+We often want to compute some summary statistic of a vector.
+For example:
+
+
+```{r "1 a)",fig.height=3}
+#< task
+x = 10:20
+# Computing the sum of x
+sum(x)
+# Generating a data frame
+df = data.frame(a=c(1,1,2,2,2,3,3,4), b = runif(8), c="Hi")
+#>
+#< task_notest
+df
+#>
+```
+
+Now compute the mean of x.
+```{r "1 a) 2"}
+mean(x)
+#< hint
+cat("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
+#>
+```
+
+
+#< info "useful functions for numeric vectors"
+Here are examples for useful R functions
+```{r "1 "}
+max(c(1,5,2)) # returns maximum
+min(c(1,5,2)) # returns minimum
+
+sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA
+cumsum(c(1,5,2)) # returns cummulated sum
+diff(c(1,5,2)) # returns the vector of differences
+```
+#>
+
+
+#< award "mean means mean"
+Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.
+#>
+
+## Exercise 2 -- Computing with vectors
+```{r "2 "}
+#< settings
+import.var = c("x")
+#>
+```
+a) Let y be a vector that contains the squared elements of x. Show y
+```{r "2 a)"}
+y = x^2
+y
+```

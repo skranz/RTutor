@@ -1,3 +1,108 @@
+quick.df = function (...) 
+{
+  df = list(...)
+  attr(df, "row.names") <- 1:length(df[[1]])
+  attr(df, "class") <- "data.frame"
+  df
+}
+
+
+is.true = function(val) {
+  if (length(val)==0)
+    return(FALSE)
+  val[is.na(val)] = FALSE
+  return(val)
+}
+is.false = function(val) {
+  if (length(val)==0)
+    return(FALSE)
+  val[is.na(val)] = TRUE  
+  return(!val)
+}
+new.stud.env = function(chunk.ind, ps = get.ps()) {
+  restore.point("new.stud.env")
+  
+  stud.env = new.env(parent=ps$ps.baseenv)
+  #stud.env = 
+  stud.env$..chunk.ind <- chunk.ind
+  class(stud.env) = c("StudEnv",class(stud.env))
+  #cat("\nnew.")
+  #print(stud.env)
+  stud.env
+}
+
+print.StudEnv = function(stud.env,...) {
+  cat("stud.env chunk", stud.env$..chunk.ind,":")
+  env = stud.env
+  class(env) = "environment"
+  print(env)
+  obj = ls(stud.env)
+  if (length(obj)>0) {
+    cat("  objects: ", paste0(obj, collapse=", "))
+  }
+}
+
+copy.stud.env = function(env, new.chunk.ind=env$..chunk.ind, ps = get.ps()) {
+  restore.point("copy.stud.env")
+  stud.env = as.environment(as.list(env, all.names=TRUE))
+  parent.env(stud.env) <- ps$ps.baseenv
+
+  #all.parent.env(ps$ps.baseenv)
+  #all.parent.env(globalenv())
+  #parent.env(stud.env) <- parent.env(globalenv())
+  stud.env$..chunk.ind = new.chunk.ind
+  class(stud.env) = c("StudEnv",class(stud.env))
+  #cat(" copy.stud.env: ")
+  #print(stud.env)
+  stud.env
+}
+
+as.named.env = function(env, name) {
+  env$..name <- name
+  class(env) = c("named.env", class(env))
+  env
+}
+
+print.named.env = function(env,...) {
+  cat("\n<named environment:", env$..name, ">")
+  print(ls(env))
+}
+
+copy.named.env = function(env, name = env$..name) {
+  as.named.env(as.environment(as.list(ps$stud.env, all.names=TRUE)), name)
+}
+
+
+all.parent.env = function(env=globalenv()) {
+  if (identical(env,emptyenv()))
+    return(NULL)
+  penv = parent.env(env)
+  c(list(penv), all.parent.env(penv))
+}
+
+stop.without.error <- function(...){ 
+  opt <- options(show.error.messages=FALSE) 
+  on.exit(options(opt))
+  display(...)
+  stop() 
+} 
+
+view.in.pane = function(html=NULL, markdown=NULL) {
+  library(knitr)
+  library(markdown)
+  #f <- system.file("examples", "knitr-minimal.Rmd", package = "knitr")
+  #knit(f)
+  htmlFile <- tempfile(fileext=".html")
+  if (!is.null(markdown)) {
+    markdownToHTML(text=txt,output=htmlFile)
+  } else if (!is.null(html)) {
+    writeLines(html,htmlFile)
+  }
+  rstudio::viewer(htmlFile)
+}
+
+
+
 #' Overwrite the base function data, copy data by default into the calling environment instead of the global environment
 data = function(..., envir = parent.frame()) {
   utils:::data(..., envir=envir)
@@ -26,7 +131,7 @@ sc = function(..., sep="", collapse=NULL) {
   paste0(...,sep=sep,collapse=collapse)
 }
 
-copy.into.env <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(sys.parent(1)), 
+copy.into.envir <- function (source = sys.frame(sys.parent(1)), dest = sys.frame(sys.parent(1)), 
     names = NULL, exclude = NULL, overwrite = TRUE, all.names = TRUE, set.fun.env.to.dest = FALSE) 
 {
     if (is.null(names)) {
@@ -90,10 +195,9 @@ nlist = function (...)
 
 #' Displays the given text
 #' @export
-display = function (..., collapse = "\n", sep = "") 
+display = function (..., collapse = "\n", sep = "", start.char="\n",end.char="\n") 
 {
-    str = paste("\n", paste(..., collapse = collapse, sep = sep), 
-        "\n", sep = "")
+    str = paste(start.char, paste(..., collapse = collapse, sep = sep), end.char, sep = "")
     invisible(cat(str))
 }
 
@@ -161,7 +265,7 @@ signif.or.round = function(val, digits=3) {
 
 
 replace.whisker = function(txt,...,signif.digits=3) {
-  require(whisker)
+  library(whisker)
   args = list(...)
   restore.point("replace.whisker")
   for (i in seq_along(args)) {
@@ -224,6 +328,26 @@ get.expr.src.lines = function(expr) {
   sapply(attr(expr,"srcref"), function(e) e[1])
 }
 
+parse.text.with.source = function(text) {
+  restore.point("parse.text.with.source")
+  if (is.null(text))
+    return(NULL)
+  e = parse(text=text,srcfile)
+  if (length(e)==0)
+    return(NULL)
+  str = sapply(attr(e,"srcref"), function(e) paste0(as.character(e), collapse="\n"))
+  
+  list(expr = e, source = str) 
+}
+
+
+parse.text = function(text) {
+  if (is.null(text))
+    return(NULL)
+  parse(text=text,srcfile=NULL)
+}
+
+
 examples.parse.expr.and.comments = function() {
   code = '
   # compute y
@@ -237,19 +361,150 @@ examples.parse.expr.and.comments = function() {
   parse.expr.and.comments(code)
 }
 
+
+
 parse.expr.and.comments = function(code, comment.start = "#") {
- code = sep.lines(code,"\n")
- e = parse(text=code)
- er = get.expr.src.lines(e)
- cr = which(str.starts.with(str.trim(code),comment.start))
- c2e = findInterval(cr,er)+1
- i = 2
- comments = lapply(seq_along(er), function(i) {
-   rows = cr[which(c2e==i)]
-   if (length(rows)==0)
-     return(NULL)
-   paste0(str.right.of(code[rows], comment.start), collapse="\n")
- })
- list(expr=e, comments=comments)
+ if (is.null(code))
+   return(list(expr=NULL, comments=NULL))
+  code = sep.lines(code,"\n")
+  e = parse(text=code)
+  er = get.expr.src.lines(e)
+  cr = which(str.starts.with(str.trim(code),comment.start))
+  c2e = findInterval(cr,er)+1
+  i = 2
+  comments = lapply(seq_along(er), function(i) {
+    rows = cr[which(c2e==i)]
+    if (length(rows)==0)
+      return(NULL)
+    paste0(str.right.of(code[rows], comment.start), collapse="\n")
+  })
+  list(expr=e, comments=comments)
 }
 
+# Find words in the sense of valid function names at the current cursor position
+word.at.pos = function(txt, pos) {
+  mat.li = str_locate_all(txt,"[A-Za-z0-9._]*")
+  i = 1
+  li = lapply(seq_along(mat.li), function(i) {
+    mat = mat.li[[i]]
+    row = which(mat[,1]<=pos[i] & mat[,2]>=pos[i])
+    if (length(row)==0)
+      return(c(nchar(txt)+1,0))
+    mat[row,]
+  })
+  m = do.call(rbind,li)  
+
+  substring(txt, m[,1],m[,2])
+}
+
+examples.my.help = function() {
+  my.help(topic="mean")
+}
+
+my.help = function (topic, package = NULL, lib.loc = NULL, verbose = getOption("verbose"), help_type = "html",...) 
+{
+  restore.point("my.help")
+  paths <- utils:::index.search(topic, find.package(loadedNamespaces()))  
+  paths <- unique(paths)
+  rd = utils:::.getHelpFile(paths)
+#   library(staticdocs)
+#   srd = structure(staticdocs:::set_classes(rd), class = cd("Rd_doc", "Rd"))
+#   html = to_html(srd)
+  file = tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".html")
+  html = tools::Rd2HTML(rd, out=file)
+  #writeLines(html, file)
+  browseURL(file)
+}
+
+my.help.online = function (topic, package = NULL, lib.loc = NULL, verbose = getOption("verbose"), help_type = "html",...) 
+{
+  url = paste0("http://rdocs-staging.herokuapp.com/#", topic)
+  browseURL(url)
+}
+
+describe.data = function(dt) {
+  li = lapply(dt,describe.var)
+  li
+  rbindlist(li)
+  stat = as.data.frame(do.call("rbind",li))
+}
+
+describe.var = function(...) {
+  UseMethod("describe.var")
+}
+
+
+describe.var.default= function(v, name=NULL, funs = c("valid.obs","unique.obs")) {
+  describe.var.internal(v,name,funs)
+}
+describe.var.integer = function(v, name=NULL, funs = c("valid.obs","unique.obs", "mean","min","max","sd")) {
+  describe.var.internal(v,name,funs)
+}
+describe.var.numeric = function(v, name=NULL, funs = c("valid.obs","unique.obs", "mean","min","max","sd")) {
+  describe.var.internal(v,name,funs)
+}
+describe.var.date= function(v, name=NULL, funs = c("valid.obs","unique.obs", "min","max")) {
+  describe.var.internal(v,name,funs)
+}
+describe.var.logical= function(v, name=NULL, funs = c("valid.obs","unique.obs","mean")) {
+  describe.var.internal(v,name,funs)
+}
+
+
+describe.var.internal = function(v, name=NULL, funs = c("valid.obs","unique.obs", "mean","min","max","sd")) {
+  restore.point("describe.var")
+  vec = lapply(seq_along(funs), function(i) {
+    res = tryCatch(
+      suppressWarnings(do.call(funs[[i]],list(v, na.rm=TRUE))),
+      error = function(e) NA
+    )
+    res
+  })
+  names(vec) = funs
+  if (!is.null(name)) {
+    c(list(name=name,class=class(vec)[1]),vec)
+  } else {
+    c(list(class=class(v)[1]),vec)
+  }
+}
+
+
+
+
+get.top.x.obs = function(v, top.x=5, digits=4) {
+  restore.point("get.top.x.obs")
+  uv = unique(v)
+  shares = (table(v, useNA="ifany") / length(v))
+  shares = sort(shares, decreasing = TRUE)
+  names = as.character(names(shares))
+  if (is.numeric(v)) {
+    names = as.character(signif(as.numeric(names),digits))
+  }
+  names[is.na(names)] = "<NA>"
+  top.x = min(top.x, length(shares))
+  
+  dt = data.frame(var=names[1:top.x], share=as.numeric(shares[1:top.x]))
+  dt
+}
+
+int.seq = function(from, to) {
+  if (from > to)
+    return(NULL)
+  from:to
+}
+
+valid.obs = function (x, na.rm = TRUE) 
+{
+    return(ifelse(na.rm, sum(!is.na(x)), length(x)))
+}
+
+unique.obs = function (x, na.rm = TRUE) 
+{
+  length(unique(x))
+}
+
+move.library = function(name, pos=2) {
+  ns = paste0("package:",name)
+  suppressWarnings(detach(ns,character.only=TRUE, force=TRUE))
+  attachNamespace(name,pos=pos)
+}

@@ -1,38 +1,52 @@
+info = function(info.name, ps = get.ps()) {
+  restore.point("info")
+  if (is.null(ps)) {
+    display("Please check your problem set once with Ctrl-Alt-R. Then you can see infos.")
+    return()
+  }
+  infos = ps$rps$infos
+  if (! info.name %in% names(infos)) {
+    display("You problem set has not the info '", info.name, "'. Only the following infos are stored: ", paste0("'", names(infos),"'", collapse=", ")) 
+    return()
+  }
+  htmlFile <- tempfile(fileext=".html")
+  writeLines(infos[[info.name]]$html,htmlFile )
+  rstudio::viewer(htmlFile)
+
+}
+
 
 #' Shows a hint for the current problem.
 #' @export
-hint = function(hint.name = ex$hint.name,  ex=get.ex(), ps=get.ps()) {
+hint = function(..., ps=get.ps()) {
   restore.point("hint")
-  if (is.null(hint.name)) {
-    message("Sorry, but there is no hint for your current problem.")
+    
+  if (is.null(ps$chunk.ind)) {
+    cat("Please test the chunk before you ask for a hint.")
+    return(invisible())
+  }
+  if (ps$e.ind == 0) {
+    cat("There is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
+    return(invisible())
+  }
+  
+  #ps$chunk.ind
+  #ps$e.ind  
+  hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
+  if (length(hint.expr)==0) {
+    cat("Sorry, but there is no hint for your current problem.")
     return()
   }
-  hint = ex$hints[[hint.name]]
-  #cat(paste0("\nHint ", hint$name,":"))
-  eval(hint$code,ex$user.env)
-  log.hint(hint=hint, ex = ex, ps = ps)
+  eval(hint.expr,ps$stud.env)
+  #log.hint(hint=hint, ex = ex, ps = ps)
   
   # Update ups statistics
   ups = get.ups()
-  if (!ups$li[[ex$name]]$success[ex$test.ind]) {
-    ups$li[[ex$name]]$num.hint[ex$test.ind] = ups$li[[ex$name]]$num.hint[ex$test.ind]+1
-    save.ups()
-  }
+  if (!ups$tdt$success[ps$tdt.ind]) {
+     ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
+     save.ups()
+   }
 }
-
-#' Called by a test, sets the current hint
-#' @export
-set.current.hint = function(hint.name=NULL, ex=get.ex()) {
-  ex$hint.name = hint.name
-}
-
-
-#' Called by a test, sets the current part
-#' @export
-set.part = function(part=NULL, ex=get.ex()) {
-  ex$part = part
-}
-
 
 log.hint = function(hint, ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed, part=ex$part ) {
   restore.point("log.int")
@@ -105,7 +119,7 @@ hint.for.function = function(code, ...,  ex=get.ex(), env = get.ex()$stud.env, p
 
 #' Default hint for a call
 #' @export
-hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL,...) {
+hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part=ps$part, from.assign=!is.null(lhs), lhs = NULL, call.obj = NULL,s3.method=NULL, start.char="\n", end.char="\n") {
   if (!is.null(call.obj)) {
     call = call.obj
   } else {
@@ -115,7 +129,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
 
   part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   
-  ce = match.call.object(call, envir=env,...)
+  ce = match.call.object(call, envir=env,s3.method=s3.method)
   cde = describe.call(call.obj=ce)
   check.na = cde$name
     
@@ -139,9 +153,9 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     
     if (length(stud.expr.li)==0) {
       if (!from.assign)
-        display("You must correctly call the function '", check.na,"'", part.str,".")
+        display("You must correctly call the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       if (from.assign)
-        display("You must assign to ", lhs, " a correct call to the function '", check.na,"'", part.str,".")
+        display("You must assign to ", lhs, " a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       return(invisible())
     }
     
@@ -153,7 +167,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     }
     
     analyse.str = lapply(stud.expr.li, function(se) {
-      ret = compare.call.args(stud.call=se, check.call=ce, val.env = val.env, ...)
+      ret = compare.call.args(stud.call=se, check.call=ce, val.env = val.env, s3.method=s3.method)
       s = NULL
       if (length(ret$differ.arg)>0) {
         s = c(s,paste0("Your argument ", ret$differ.arg, " = ", ret$stud.arg[ret$differ.arg], " differs in its ", ret$differ.detail, " from my solution."))
@@ -178,9 +192,9 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     analyse.str = paste0(analyse.str, collapse = "\n")
     
     if (!from.assign)
-      display("I don't see a correct call to the function '", check.na, "'",part.str,".\nLet me compare your call(s) with my solution:\n", analyse.str)
+      display("I don't see a correct call to the function '", check.na, "'",part.str,".\nLet me compare your call(s) with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
     if (from.assign)
-      display("I don't see a correct assignment to ", lhs, ", which should call the function '", check.na, "'",part.str,".\nLet me compare your assignments with my solution:\n", analyse.str)
+      display("I don't see a correct assignment to ", lhs, ", which should call the function '", check.na, "'",part.str,".\nLet me compare your assignments with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
     
   } else if (cde$type == "chain") {
     restore.point("hint.for.call.chain")
@@ -196,7 +210,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     correct.calls = which(scomb.chain.na == comb.chain.na)
     chain.str = paste0(chain.na, "...", collapse = paste0(" ",op,"\n  "))
     chain.str = paste0(assign.str, chain.str)
-    display("My solution consists of a chain of the form:\n\n", chain.str,"\n\nThe ... may stand for some function arguments wrapped in () that you must figure out.")
+    display("My solution consists of a chain of the form:\n\n", chain.str,"\n\nThe ... may stand for some function arguments wrapped in () that you must figure out.", start.char=start.char, end.char=end.char)
     if (length(correct.calls)==0) {
       return(invisible())
     }
@@ -248,7 +262,7 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
     } else if (fail > 1) {
       wrong.call.na = name.of.call(cde$arg[[fail]])
       if (fail == 2) {
-        display("Your following commands havs the first element of the chain correct, but seem wrong already in the second element '", wrong.call.na,"':")
+        display("Your following commands have the first element of the chain correct, but seem wrong already in the second element '", wrong.call.na,"':")
       } else {
         display("Your following commands have the first ", fail-1," elements of the chain correct, but seem wrong already in element ", fail,", the call to '", wrong.call.na,"':")
       }
@@ -271,22 +285,34 @@ hint.for.call = function(call, ex=get.ex(), env = get.ex()$stud.env, stud.expr.l
         display("Hmm, it actually looks like you have a correct command. It is strange that the test did not pass...")
     }
   }  else if (cde$type == "math") {
-    display("You have to enter the correct mathematical formula... Ok, I agree that this automatically generated hint may not be super useful.")
+    restore.point("math.fail")
+    hint.str = scramble.text(deparse(call),"?",0.5, keep.char=" ")
+    display("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
   }  else if (cde$type == "var") {
     if (!from.assign)
-      display("You shall simply show the variable ",cde$na, " by typing the variable name in your code.")
+      display("You shall simply show the variable ",cde$na, " by typing the variable name in your code.", start.char=start.char, end.char=end.char)
   } else {
-    display("Sorry... I actually do not have a hint for you.")    
+    display("Sorry... I actually do not have a hint for you.", start.char=start.char, end.char=end.char)    
   }
   
   return(invisible())  
 
 }
 
+scramble.text = function(txt, scramble.char="?", share=0.5, keep.char=" ") {
+  vec = strsplit(txt, "")[[1]]
+  
+  keep = which(!(vec %in% keep.char))
+  
+  n = length(keep)
+  ind = sample.int(n,round(n*share), replace=FALSE)
+  vec[keep[ind]] = scramble.char
+  paste0(vec, collapse="")  
+}
 
 #' Default hint for an assignment
 #' @export
-hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL, expr.object=NULL,...) {
+hint.for.assign = function(expr, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part=ps$part, s3.method=NULL, expr.object=NULL,start.char="\n", end.char="\n",...) {
   if (!is.null(expr.object)) {
     expr = expr.object
   } else {
@@ -294,10 +320,10 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
   }
   restore.point("hint.for.assign")
 
-  ce = match.call.object(expr,...)
+  ce = match.call.object(expr,s3.method=s3.method)
   ce = standardize.assign(ce)                              
 
-  ce.rhs = match.call.object(ce[[3]],...)
+  ce.rhs = match.call.object(ce[[3]],s3.method=s3.method)
   dce.rhs = describe.call(call.obj=ce.rhs)
 
   stud.expr.li = lapply(stud.expr.li, standardize.assign)
@@ -308,49 +334,57 @@ hint.for.assign = function(expr, ex=get.ex(), env = get.ex()$stud.env, stud.expr
   stud.var = sapply(stud.expr.li, function(e) deparse1(e[[2]]))
   stud.expr.li = stud.expr.li[stud.var == var]
   
-  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=env,...))
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=env,s3.method=s3.method))
 
-  hint.for.call(call.obj=ce.rhs, ex=ex, env=env, stud.expr.li=se.rhs.li,part=part, lhs=var,...)  
+  hint.for.call(call.obj=ce.rhs, ps=ps,env=env, stud.expr.li=se.rhs.li,part=part, lhs=var,s3.method=s3.method, start.char=start.char, end.char=end.char)  
 }
 
 
-#' Default hint for an assignment
+#' Default hint for a compute block
 #' @export
-hint.for.compute = function(expr, hints.txt=NULL,var="", ex=get.ex(), env = get.ex()$stud.env, stud.expr.li = ex$stud.expr.li, part=NULL,...) {
+hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part=ps$part,...) {
   expr = substitute(expr)
-  hint.name = ex$hint.name
-
   restore.point("hint.for.compute")
   
   expr.li = as.list(expr[-1])
   i = 1
   if (length(expr.li)>1) {
-    display("One can compute ", var, " in different ways: hint() will guide you through the ", length(expr.li), " steps used in the sample solution.")
+    cat("You can compute ", var, " in different ways: hint() will guide you through the ", length(expr.li), " steps used in the sample solution.\n",sep="")
   }
-  
+  i=1
   for (i in seq_along(expr.li)) {
     e = expr.li[[i]]
     ret = FALSE
     if (!is.null(hints.txt[[i]])) {
-      display(i,". ",hints.txt[[i]])
+      display("Step ", i,". ",hints.txt[[i]],"...", end.char="")
+    }
+    
+    var = deparse1(e[[2]],collapse="\n")
+    exists = check.var.exists(var)
+    if (!exists) {
+      break
     }
     tryCatch(ret <-  check.assign(call.object = e),
       error = function(e) {ex$failure.message <- as.character(e)}
     )
     if (!ret) {
-      message = ex$failure.message
-      display(ex$failure.message)
-      hint.for.assign(expr.object=e)
+      #message = ps$failure.message
+      cat("\n\nYou have not yet correctly created '",var,"'. ",sep="")
+      #display(ps$failure.message)
+      hint.for.assign(expr.object=e, start.char="")
       break
     } else {
-      message = ex$success.message
-      display(message)      
+      cat(" looks good!\n")
+      #message = ps$success.message
+      #display(message)      
     }
   }
-  if (ret==FALSE & i < length(expr.li)) {
+  if (ret==FALSE & i < length(expr.li) & !isTRUE(ps$is.shiny)) {
     display("Note: If you have finished this step and want a hint for the next step. Check your problem set with Ctrl-Alt-R before you type hint() again.")
   }
-  set.current.hint(hint.name)
+  if (ret==TRUE) {
+    display("Great, all steps seem correct. Check your solution to proceed.")
+  }
 }
 
 

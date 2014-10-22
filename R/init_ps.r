@@ -5,7 +5,7 @@
 list.ps = function() {
   structure.path = paste0(find.package("RTutor"),"/problemsets")
   files = list.files(structure.path)
-  pattern = "_struc.r"
+  pattern = ".rps"
   files = files[substring(files,nchar(files)-nchar(pattern)+1,)==pattern]
   names = substring(files,1,nchar(files)-nchar(pattern))
   return(names)
@@ -14,204 +14,94 @@ examples.list.ps = function() {
   list.ps()
 }
 
+examples.init.ps = function() {
+  setwd("D:/libraries/RTutor/RTutor/vignettes/problemsets")
+  ps = init.ps("Example2")
+  ps$cdt
+}
 
 #' Initialize a problem set for the student
-#' @param name the name of the problem set
-#' @param stud.path the path in which the stud has stored his file
-#' @param stud.file the file name in which the stud has stored her files 
+#' @param ps.name the name of the problem set
+#' @param dir the path in which the stud has stored his file
+#' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.problem.set = function(name,stud.path=NULL, stud.short.file=paste0(name,".r"),
-                            log.file = paste0(name,".log"),
-                            require.stud.file = TRUE, load.struc.file=FALSE) {
-  restore.point("init.problem.set")
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log")) {
+  restore.point("init.ps")
+ 
+  rps = load.rps(file=rps.file)
+  ps = new.env()
+  set.ps(ps)
+  ps$name = ps.name
+  ps$rps = rps
+  load.ps.libs(rps$libs)
   
-  #setwd(stud.path)
-  
-  # Search for a binary or text version of the structure file 
-  structure.path= stud.path      
-  if (load.struc.file) {
-    # 2. r file in stud.path
-    structure.file = paste0(structure.path,"/",name,"_struc.r")
-    if (!file.exists(structure.file))
-      stop(paste0("Structure file ", structure.file, " does not exist."))
-    use.rps = FALSE
-  } else {
-    use.rps = TRUE
-    structure.file = paste0(structure.path,"/",name,".rps")
-    if (!file.exists(structure.file)) {
-      structure.path = paste0(find.package("RTutor"),"/problemsets")
-      structure.file = paste0(structure.path,"/",name,".rps")
-      if (!file.exists(structure.file)) {
-        str = paste0("I could not find the problem set .rps file '", paste0(name,".rps"),
-                "', neither in your problem set folder ", stud.path, " nor in the RTutor library. Make sure you entered the correct name for the problem set. You need to call the functions create.struc and create.empty.ps to generate the .rps file from a solution file.")
-        stop(str) 
-      }
-    }
-  }
-
-  if (use.rps) {
-    ps = load.binary.ps(file=structure.file)
-  } else {
-    ps = new.env()
-    class(ps) = c("Problemset","environment")
-    ps$structure.path = structure.path
-    ps$structure.file = structure.file
-
-    set.ps(ps)
-    
-    ps$name = name
-    ps$ex.last.mod = 1  
-    parse.ps.structure(ps=ps)
-    
-    # Save as rps
-    #structure.file = paste0(structure.path,"/",name,".rps")
-    #save.binary.ps(ps,structure.file)
-  }
-  ps$structure.path = structure.path
-  ps$structure.file = structure.file
-  ps$stud.path = stud.path
-
-  ps$has.stud.file = FALSE
-  if (require.stud.file) {
-    set.ps.stud.file(ps,stud.path,stud.short.file, log.file = log.file)
+  ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
+  if (!is.null(rps$extra.code.env)) {
+    copy.into.env(source=rps$extra.code.env, dest = ps$ps.baseenv) 
   }
   
-  return(invisible(ps))
-}
-
-# Assigns a student file to ps and does all corresponding intializations
-set.ps.stud.file = function(ps, stud.path,stud.short.file, log.file = paste0(ps$name,".log") ) {
-  stud.file = paste0(stud.path,"/",stud.short.file)
-  if (!file.exists(stud.file)){
-    stop(paste0("I could not find the problem set file ", stud.file, ". Please check the file name and folder and make sure this problem set file does indeed exist!"))    
-  }
-  ps$has.stud.file = TRUE
   
-  ps$stud.path = stud.path
+  cdt = rps$cdt
+  
+  cdt$is.solved = FALSE
+  cdt$chunk.changed = FALSE
+  cdt$stud.env = lapply(1:NROW(cdt), function(chunk.ind) {
+    new.stud.env(chunk.ind)
+  })
+  cdt$old.stud.code = cdt$task.txt
+  #cdt$stud.code = cdt$task.txt
+  
+  ps$cdt = cdt  
+  ps$tdt = rps$tdt
+  
+  edt = rps$edt
+  edt$ex.solved = FALSE
+  #env.li  = replicate(NROW(edt),new.env(parent=ps$ps.baseenv), simplify=FALSE)
+  env.li  = replicate(NROW(edt),new.stud.env(chunk.ind=0), simplify=FALSE)
+  edt$ex.final.env = env.li
+  ps$edt = edt
+
+  
+  ps$num.ex = NROW(ps$edt)
+  ps$num.chunks = NROW(cdt)
+  ps$warning.messages = list()
+  
+  set.ps(ps)
+  ps$stud.path = dir
+  stud.file=paste0(dir,"/",stud.short.file)
+  ps$stud.file = stud.file
   ps$stud.short.file = stud.short.file
-  ps$stud.file = paste0(stud.path,"/",stud.short.file)
-  ps$log.file = paste0(stud.path,"/",log.file)
-  ps$is.rmd.stud = str.ends.with(tolower(stud.short.file),".rmd")
-
-  if (ps$is.rmd.stud) {
-    ps$ex.initial.code = ps$ex.initial.code.rmd
-  } else {
-    ps$ex.initial.code = ps$ex.initial.code.r    
-  }
-  
-  # Initialize stud.code once more
-  ps$stud.code = readLines(ps$stud.file)
-  ex.names = names(ps$ex)
-  i = 1
-  for (i in seq_along(ps$ex)) {
-    ps$ex[[i]]$stud.code[[1]] = extract.exercise.code(ex.names[i],ps=ps)
-  }
-}
-
-save.binary.ps = function(ps, file = paste0(ps$name,".rps")) {
-  save(ps, file=file)
-}
-
-
-load.binary.ps = function(ps.name, file = paste0(ps.name,".rps")) {
-  load(file)
+  ps$log.file = log.file  
+  class(ps) = c("Problemset","environment")
   return(ps)
 }
 
-
-
-#' Parse the structure of a problem set from a file
-parse.ps.structure =  function(ps=get.ps(),file=ps$structure.file) {
-  restore.point("parse.ps.structure")
-  txt = readLines(file)
-  library(stringr)
-  
-  ps.name= extract.command(txt, "#$ problem_set")[,2]
-  ex_start = extract.command(txt, "#$ exercise")
-  # Exercise names: remove # and trailing " "
-  ex_start$val = str.trim(gsub("#"," ", ex_start$val,fixed=TRUE))
-
-  ex_end = extract.command(txt,"#$ end_exercise")
-  
-  ex.df = data.frame(start=ex_start$line, end=ex_end$line, name=ex_start$val)
-  
-  ex.li =vector("list",NROW(ex.df))
-  names(ex.li) = ex.df$name
-  
-  i = 1
-  for (i in 1:NROW(ex.df)) {
-    ex.name = names(ex.li)[i]
-    
-    ex.txt = txt[(ex.df[i,"start"]+1):(ex.df[i,"end"]-1)]
-
-    ex = parse.exercise(ex.name,ex.txt)
-    ex$ind =i
-    if (i == NROW(ex.df)) {
-      ex$next.ex = NULL  
-    } else {
-      ex$next.ex = i+1        
+load.ps.libs = function(libs) {
+  if (length(libs)==0)
+    return()
+  for (i in seq_along(libs)) {
+    lib = libs[i]
+    display("load package ", lib, "...")
+    ret = suppressWarnings(require(lib, quietly=TRUE, warn.conflicts =FALSE,character.only=TRUE))
+    if (!ret) {
+      stop(paste0("Please install the package '", lib,
+                  "', which is required to solve this problem set."))
     }
-    ex.li[[i]] = ex
+    display("... all required packages loaded.") 
   }
-  #ps$name = ps.name
-  ps$ex = ex.li
-  return(invisible(ps))
 }
 
-parse.exercise = function(ex.name, ex.txt) {
-  restore.point("parse.exercise")
-  ex = new.env(parent=.GlobalEnv)
-  ex$name = ex.name
-  set.ex(ex)
-  
-  com = extract.command(ex.txt,"#$")
-  str = gsub("#","",com$val,fixed=TRUE)
-  str = gsub("-","",str,fixed=TRUE)
-  com$name = str.trim(str)
 
-  com$end.line = c(com$line[-1]-1,length(ex.txt))
-  for (i in seq_along(com$name)) {
-    com.name.txt = paste0(com$name[i],".txt")
-    ex[[com.name.txt]] = paste0(ex.txt[(com$line[i]+1):com$end.line[i]],collapse="\n")
+get.or.init.ps = function(ps.name,dir, stud.short.file = paste0(ps.name,".Rmd"), reset=FALSE, ps=get.ps()) {
+  restore.point("get.or.init.ps")
+  
+  # Just take current problem set information
+  if (!is.null(ps) & !reset) {
+    if (isTRUE(ps$name == ps.name & ps$stud.path==dir & ps$stud.short.file == stud.short.file)) {
+      return(ps)
+    }
   }
-
-  ex$settings = new.env(parent=.GlobalEnv)
-  if (!is.null(ex$settings.txt))
-    eval(parse(text=ex$settings.txt,srcfile=NULL),ex$settings)
   
-  # Replace whiskers
-  ex$task.txt = whisker.render(ex$task.txt,list(ex_name=ex$name))    
-  
-  if (length(ex$solution.txt)>0)
-    ex$sol = parse(text=ex$solution.txt,srcfile=NULL)
-
-  if (length(ex$tests.txt)>0)
-    ex$tests = as.list(parse(text=ex$tests.txt,srcfile=NULL))     
-  
-  ex$tests.stats = lapply(seq_along(ex$tests), function (i) {
-    list(
-      times.failed.before.ever.passed = 0,
-      times.failed = 0, # Times failed before last passed
-      ever.passed = FALSE,
-      passed = FALSE
-    )
-  })
-  # Run the code that generates hints
-  ex$prev.hint = 0
-  ex$hints = list()
-  if (length(ex$hints.txt)>0)
-    eval(parse(text=ex$hints.txt,srcfile=NULL))
-  
-  ex$sol.env = NULL
-  ex$stud.env = NULL
-  
-  
-  
-  ex$stud.code = paste0("###########################################\n\n",ex$task.txt,"\n")
-  ex$checks = 0
-  ex$attempts=0
-  ex$solved = FALSE
-  ex$was.solved = FALSE
-  
-  return(ex)
+  # Initialize problem set newly
+  return(init.ps(ps.name,dir,stud.short.file))
 }

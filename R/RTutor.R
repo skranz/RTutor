@@ -3,7 +3,7 @@
 
 .onLoad = function(...)  {
   # If loaded as library overwrite restore.point to an empty function
-  assign("restore.point", function(...){}, envir=parent.env(environment()))
+  #assign("restore.point", function(...){}, envir=parent.env(environment()))
 }
 
 
@@ -23,28 +23,8 @@ print.Problemset = function(ps) {
 }
 
 reset.ps = function(ps=get.ps()) {
-  init.problem.set(ps$name,ps$stud.path,ps$stud.short.file)
+  init.ps(ps$name,ps$stud.path,ps$stud.short.file)
 }
-
-get.or.init.problem.set = function(name,stud.path, stud.short.file, reset=FALSE, ps=get.ps()) {
-  restore.point("get.or.init.problem.set")
-  
-  # Init problem set new
-  if (reset) {
-    return(init.problem.set(name,stud.path,stud.short.file))
-  }
-  
-  # Just take current problem set information
-  if (!is.null(ps)) {
-    if (isTRUE(ps$name == name & ps$stud.path==stud.path & ps$stud.short.file == stud.short.file)) {
-      return(ps)
-    }
-  }
-  
-  # Initialize problem set newly
-  return(init.problem.set(name,stud.path,stud.short.file))
-}
-
 
 
 #' @export

@@ -12,25 +12,9 @@
 init.ups = function() {
   ps = get.ps()
   user=get.user()
-  i = 1
-  li = lapply(seq_along(ps$ex), function(i) {
-    ex = ps$ex[[i]]
-    n = length(ex$tests)
-    if (n ==0) {
-      return(NULL)
-    }
-    #test.name = sapply(ex$tests,name.of.call)
-    #test.arg1 = sapply(ex$tests, function(e) {
-    #  args = args.of.call(e)
-    #  if (length(args)>0)
-    #    return(deparse1(args[[1]]))
-    #  return("")
-    #})
-    data.frame(ex.ind = i, test.ind=1:n,  first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, num.awards=0, success=FALSE, success.date=as.POSIXct(NA))
-  })
-  names(li) = names(ps$ex)
-  ups = as.environment(list(ps.name=ps$name, user.name=user$name, li=li))
-  assign(".__rtutor_ups",ups,.GlobalEnv)
+  tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
+  ups = as.environment(list(ps.name=ps$name, user.name=user$name, tdt=tdt))
+  set.ups(ups)
   save.ups()
   ups
 }
@@ -79,7 +63,7 @@ save.ups = function() {
   dir = get.ps()$stud.path
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")
   ups = get.ups()
-  save(ups,file=file)
+  suppressWarnings(save(ups,file=file))
   assign(".__rtutor_ups",ups,.GlobalEnv)  
   return(invisible(ups))
 }
@@ -96,25 +80,31 @@ stats = function() {
   user = get.user()
   ups = get.ups()
   
-  res = lapply(seq_along(ups$li), function(i) {
-    restore.point("jhfjdnfn")
-    d = ups$li[[i]]
-    if (is.null(d))
-      return(NULL)
-    num.test = NROW(d)
-    percentage.solved=round(sum(d$success)/num.test*100)
-    hints = -sum(d$num.hint)
-    awards = sum(d$num.awards)
-    start.time = end.time = NA
-    completed = ""
-    if (all(!is.na(d$success.date))) {
-      end.time = max(d$success.date)
-      completed = strftime(end.time, format="%H:%M %d.%m.")
-    }
-    
-    data.frame(exercise = names(ps$ex)[i], solved=paste0(percentage.solved," %"), hints=hints, awards=awards, completed = completed)
-  })
-  d = do.call("rbind",res)
-  display(user$name, "'s stats for problem set ",ps$name,":\n\n")
-  print(as.data.frame(d))  
+  res = summarise(group_by(as.data.frame(ups$tdt),ex.ind),
+    num.test = length(test.e.ind),
+    percentage.solved=round(sum(success)/num.test*100),
+    hints = -sum(num.hint),
+    end.time = max(success.date)
+  )
+  res$completed = ifelse(is.na(res$end.time), "",strftime(res$end.time, format="%H:%M %d.%m."))
+  res$ex.name = ps$edt$ex.name
+  sr = dplyr::select(res,ex.name,percentage.solved,hints, completed)
+  colnames(sr) = c("Ex","solved (%)","hints","completed")
+  rownames(sr) = NULL
+  display(user$name, "'s stats for problem set ",ps$name,":\n")
+  print(as.data.frame(sr))  
 }
+
+
+# remove old ups files when new problem set structure is generated 
+remove.ups = function(ps.name = get.ps()$name) {
+  set.ups(NULL)
+
+  files = list.files()
+  files = files[str.ends.with(files,paste0("_",ps.name,".ups"))]
+  if (length(files)>0) {
+    file.remove(files)
+  }
+  set.ups(NULL)
+}
+

@@ -10,14 +10,14 @@ check.package = function(package) {
 examples.check.function = function() {
 ## Here is an example of how you could implement check.function in a solution file.
   
-#s
+#< task
 ols = function(y,X) {
   
   # enter code to compute beta.hat here ...
   
   return(as.numeric(beta.hat))
 }
-#e
+#>
 #< test
 check.function({
   ols = function(y,X) {
@@ -38,9 +38,8 @@ check.function({
 #' @param check.defaults TRUE = check the default values of the arguments of the user function. If a character vector only check the default values of the given arguments.
 #' @param check.args.order if TRUE make sure that the checked arguments appear in the same order in the user function than in the solution
 #' @param allow.extra.arg if TRUE the user function can have additional arguments (at the end) that are not in the solution
-#' @param hint.name name of a hint that is associated with this test
 #' @export
-check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, hint.name = NULL, part = NULL) {
+check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE, part = NULL) {
 
   test.calls = eval(substitute(alist(...)))
 
@@ -48,10 +47,10 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   
   
   restore.point("check.function")
-  set.current.hint(hint.name)
-  set.part(part)
-  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
-  
+
+  #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+  part.str = paste0(" in chunk ",  ps$chunk.name)
+
   
   env = new.env(parent=stud.env)
   eval(code,env)
@@ -61,7 +60,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   if (!exists(fun.name,stud.env, inherits=FALSE)) {
     short.failure = paste0(fun.name, " does not exist.")
     failure.message = paste0("You have not yet created the function ",fun.name, part.str, ".")
-    add.failure(ex,short.failure,failure.message, var = var)
+    add.failure(short.failure,failure.message, var = var)
     return(FALSE)
   }
   
@@ -78,26 +77,26 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
     missing.args = setdiff(check.args, names(stud.args))
     if (length(missing.args)>0) {
       failure.message = paste0("Your function ", fun.name, part.str, " misses the argument(s) ", paste0(missing.args, collapse=", "),".")
-      add.failure(ex,failure.message,failure.message)
+      add.failure(failure.message)
       return(FALSE) 
     }
     arg.ind = seq_along(check.args)
     if (check.args.order) {
       if (!identical(names(stud.args)[arg.ind], check.args)) {
         failure.message = paste0("Your function ", fun.name, part.str, " has the wrong order of arguments. Please arrange them as follows: ", paste0(check.args, collapse=", "),".")
-        add.failure(ex,failure.message,failure.message)
+        add.failure(failure.message)
         return(FALSE) 
       }
     }
     if (!identical(stud.args[check.defaults], sol.args[check.defaults])) {
       failure.message = paste0("Not all arguments of your function ", fun.name, " have the correct default value.")
-      add.failure(ex,failure.message,failure.message)
+      add.failure(failure.message)
       return(FALSE) 
     }
     if (!allow.extra.arg) {
       extra.args = set.diff(names(stud.args),names(sol.args))
       failure.message =  paste0("Your function ", fun.name, " is not allowed to have the additional arguments ", paste0(extra.args, collapse=", "),".")
-      add.failure(ex,failure.message,failure.message)
+      add.failure(failure.message)
       return(FALSE) 
     }
   }
@@ -118,7 +117,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
                           ok <<- FALSE
                         })
     if (!ok) {
-      add.failure(ex,failure.message,failure.message,...)
+      add.failure(failure.message,...)
       return(FALSE) 
     }                    
     
@@ -126,7 +125,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
     if (length(res)>0) {
       call.str = deparse1(test.calls[[i]], collapse="\n")
       failure.message = paste0("Your function ",fun.name, " seems not ok. I test it with the call\n\n", call.str, "\n\n and your returned object differs from my solution, it has wrong ", paste0(res, collapse=","),".\n\n I stored in the variables 'test.sol.res' and 'test.your.res' the return values of the correct function and your function. You can take a look at them.")
-      add.failure(ex,failure.message,failure.message,...)
+      add.failure(failure.message,...)
       assign(paste0("test.sol.res"),sol.res,.GlobalEnv)
       assign(paste0("test.your.res"),stud.res,.GlobalEnv)
       return(FALSE) 
@@ -134,7 +133,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   }
   
   success.message = paste0("Great, I good not find an error in your function ", fun.name, "!")
-  add.success(ex,success.message,...)
+  add.success(success.message,...)
   return(TRUE)    
 }
 
@@ -143,36 +142,29 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
 
 #' Simply shows a success message when this test is reached for the first time!
 #' @export 
-show.success.message = function(success.message,..., ex=get.ex()) {
-  add.success(ex,success.message,...)
+show.success.message = function(success.message,...) {
+  add.success(success.message,...)
   return(TRUE)
 }
 
 
 #' Checks whether the user makes a particular function call in his code or call a particular R statement
 #' @export
-check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = FALSE,
-  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
-  hint.name = NULL, part=NULL, ...) {
+check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = FALSE,s3.method=NULL,
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE,  ... 
+) {
 
   expr = substitute(call)
-  restore.point("check.call")
-  set.current.hint(hint.name)
-  set.part(part)
+  #restore.point("check.call")
     
-  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+  #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+  part.str = paste0(" in chunk ",  ps$chunk.name)
   
-  ce = match.call.object(expr, envir=stud.env, ...)
+  ce = match.call.object(expr, envir=stud.env, s3.method=s3.method)
   dce = describe.call(call.obj=ce)
   check.na = dce$name
   
-  
-  if (is.null(ex$stud.expr.list))
-    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object, envir=stud.env, ...)
-  
-  stud.expr.li = ex$stud.expr.li
   stud.na = sapply(stud.expr.li,  name.of.call)
-
   # Filter all student calls that have the same name of call 
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
 
@@ -192,21 +184,24 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     }
     if (ok) {
       success.message = paste0("Great,",part.str," you correctly (I guess) called the command: ",deparse1(se))
-      add.success(ex,success.message)
+      add.success(success.message)
       return(TRUE)  
     }
   }
 
+  stud.expr.li = lapply(stud.expr.li, function(e) match.call.object(e, envir=stud.env, s3.method=s3.method))
+
+  
   ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
-     add.success(ex,success.message)
+     add.success(success.message)
      return(TRUE)
   } else {
 
     if (is.null(failure.message))
       failure.message = paste0("You have not yet entered all correct commands", part.str,".")   
-    add.failure(ex,failure.message,failure.message,...)
+    add.failure(failure.message,...)
     return(FALSE)    
   }
 }
@@ -291,30 +286,24 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 #' Checks an assignment to a variable
 #' @export
 check.assign = function(
-  call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,
-  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env,
-  hint.name = NULL, part=NULL, call.object=NULL,  ...) {
+  call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,call.object=NULL,  s3.method=NULL,
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE,  ...) {
 
   if (!is.null(call.object)) {
     call = call.object
   } else {
     call = substitute(call)
   }
+  #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
+  part.str = paste0(" in chunk ",  ps$chunk.name)
+
+  check.expr = match.call.object(call,envir=stud.env, s3.method=s3.method)
 
   restore.point("check.assign")
-  set.current.hint(hint.name)
-  set.part(part)
-        
-  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
-
-  #ex$stud.expr
-  if (is.null(ex$stud.expr.list))
-    ex$stud.expr.li = lapply(as.list(ex$stud.expr), match.call.object, envir=stud.env,  ...)
-
-  check.expr = match.call.object(call,envir=stud.env, ...)
-  check.expr = standardize.assign(check.expr)                              
-
-  stud.expr.li = lapply(as.list(ex$stud.expr), standardize.assign)
+  
+  check.expr = standardize.assign(check.expr)
+  
+  stud.expr.li = lapply(as.list(stud.expr.li), standardize.assign)
   stud.expr.li = stud.expr.li[(!sapply(stud.expr.li,is.null))]
   
   # Check names
@@ -326,14 +315,14 @@ check.assign = function(
   if (length(stud.expr.li) == 0) {
     if (is.null(failure.message))
       failure.message = paste0("You have not yet made an assignment to ", var, part.str,".")
-    add.failure(ex,failure.message,failure.message,...)
+    add.failure(failure.message,...)
     return(FALSE) 
   }
 
   
-  ce.rhs = match.call.object(check.expr[[3]], envir=stud.env,...)
+  ce.rhs = match.call.object(check.expr[[3]], envir=stud.env,s3.method=s3.method)
   dce.rhs = describe.call(call.obj=ce.rhs)
-  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=stud.env, ...))
+  se.rhs.li = lapply(stud.expr.li, function(e) match.call.object(e[[3]], envir=stud.env, s3.method=s3.method))
 
   # Check if a student rhs has the same return value as ce.rhs
   if (ok.if.same.val) {
@@ -359,25 +348,23 @@ check.assign = function(
     }
     if (ok) {
      success.message = paste0("Great,",part.str," you correctly assigned ", var,"!")
-     add.success(ex,success.message)
+     add.success(success.message)
      return(TRUE)  
     }
   }
   
-
   ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env,allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly assigned ", var, " = ",ret[[2]],"!")
-     add.success(ex,success.message)
+     add.success(success.message)
      return(TRUE)
   } else {
     if (is.null(failure.message))
       failure.message = paste0("You have not made a correct assignment to ", var, part.str,".")   
-    add.failure(ex,failure.message,failure.message)
+    add.failure(failure.message)
     return(FALSE)    
   }
 }
-
 
 
 #' Check whether a given file exists
@@ -385,30 +372,25 @@ check.assign = function(
 check.file.exists = function(
   file,
   failure.message=paste0('Sorry, but I cannot find the file "', file,'" in your current working directory.'),
-  success.message=paste0('Great, I have found the file "', file,'"!'), ex = get.ex(), hint.name = NULL, part=NULL,
+  success.message=paste0('Great, I have found the file "', file,'"!'), ps = get.ps(), part=NULL,
 ...) {
 # Check given variables
-  set.current.hint(hint.name)
-  set.part(part)
 
   restore.point("check.file.exists")
   if (file.exists(file)) {
-    add.success(ex,success.message,...)
+    add.success(success.message,...)
     return(TRUE)    
   }
-  add.failure(ex,failure.message,failure.message,...)
+  add.failure(failure.message,...)
   return(FALSE)
 }  
 
 #' Check whether an object from a call to lm, glm or some other regression function is correct
 #' @export 
-check.regression = function(var, str.expr,  hint.name = NULL,part=NULL, ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,   sol.env = ex$sol.env, failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct."), tol = 1e-10) {
+check.regression = function(var, str.expr, part=NULL, ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE,  failure.message = paste0("Hmm... your regression ", var," seems incorrect."), success.message = paste0("Great, your regression ", var," looks correct."), tol = 1e-10) {
   restore.point("check.regression")
-  
-  set.current.hint(hint.name)
-  set.part(part)
 
-  ret = check.var(var,str.expr=str.expr,exists=TRUE, class=TRUE, hint.name = hint.name)
+  ret = check.variable(var,str.expr=str.expr,check.all=FALSE,exists=TRUE, class=TRUE)
   if (!ret) return(FALSE)
   
   cond.str = paste0('
@@ -421,7 +403,7 @@ check.regression = function(var, str.expr,  hint.name = NULL,part=NULL, ex=get.e
   }
   ')
   ret = holds.true(cond.str = cond.str, success.message = success.message,
-             failure.message = failure.message, hint.name = hint.name)
+             failure.message = failure.message)
   
   if (!ret) return(FALSE)
   return(TRUE)
@@ -429,7 +411,7 @@ check.regression = function(var, str.expr,  hint.name = NULL,part=NULL, ex=get.e
 
 
 
-#' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution
+#' Test: Compare the expression check.expr evaluated in the student's environment with the solution correct.expr
 #' 
 #' @param vars a variable name or vector of variable names
 #' @param exists shall existence be checked (similar length, class, values)
@@ -437,13 +419,14 @@ check.regression = function(var, str.expr,  hint.name = NULL,part=NULL, ex=get.e
 #' @param failure.message.add a text that will be added to all failure messages
 #' @param expr
 #' @export 
-check.expr = function(check.expr, correct.expr,failure.message = "{{check_expr}} has the wrong values!",
-                     success.message = "Great, {{check_expr}} seems correct.", hint.name = NULL,part =NULL,
-                     ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.check.expr = NULL, unsubst.correct.expr=NULL,str.check.expr=NULL,str.correct.expr=NULL,   sol.env = ex$sol.env, tol = .Machine$double.eps ^ 0.5) {
-  
-  set.current.hint(hint.name)
-  set.part(part)
-  
+check.expr = function(check.expr, correct.expr,
+    failure.message = "{{check_expr}} has the wrong values!",
+    success.message = "Great, {{check_expr}} seems correct.",
+    part =NULL, ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE,
+    unsubst.check.expr = NULL, unsubst.correct.expr=NULL,
+    str.check.expr=NULL,str.correct.expr=NULL,
+    tol = .Machine$double.eps ^ 0.5) {
+
   if (!is.null(unsubst.check.expr)) {
     check.expr = unsubst.check.expr
   } else if (!is.null(str.check.expr)) {
@@ -466,26 +449,26 @@ check.expr = function(check.expr, correct.expr,failure.message = "{{check_expr}}
   check.expr.str = deparse1(check.expr)
   
   if (!identical(class(val.check),class(val.sol))) {
-    add.failure(ex,failure.message, check_expr=check.expr.str)
+    add.failure(failure.message, check_expr=check.expr.str)
     return(FALSE)
   }
   if (!identical(length(val.check),length(val.sol))) {
-    add.failure(ex,failure.message,failure.message, check_expr=check.expr.str)
+    add.failure(failure.message, check_expr=check.expr.str)
     return(FALSE)
   }
               
   if (is.list(val.check) | is.environment(val.sol)) {
     if (!identical(val.sol, val.stud, ignore.environment=TRUE)) {
-      add.failure(ex,failure.message,failure.message, check_expr=check.expr.str)
+      add.failure(failure.message, check_expr=check.expr.str)
       return(FALSE)
     }
   } else {
     if (! all(val.check==val.sol)) {
-      add.failure(ex,failure.message,failure.message, check_expr=check.expr.str)
+      add.failure(failure.message, check_expr=check.expr.str)
       return(FALSE)
     }
   }
-  add.success(ex,success.message)
+  add.success(success.message)
   return(TRUE)
 }
 
@@ -493,18 +476,18 @@ check.quiz = function(vars, empty="",
     failure.message= "You have not yet assigned the correct answer to {{var}}.",
     sucess.message = "Great, your answer for {{var}} is correct!",
     empty.message = "You have not yet assigned an answer to {{var}}."
-  , hint.name = NULL,part=NULL, ex=get.ex(),stud.env = ex$stud.env, sol.env = ex$sol.env  ){
+  , part=NULL, ps=get.ps(),stud.env = ps$stud.env){
 
   restore.point("check.quiz")
   for (var in vars) {
-    ret = check.var(vars=var,check.all=TRUE,failure.exists = empty.message,failure.length=failure.message, failure.class=failure.message, failure.values = failure.message, success.message=sucess.message, hint.name = hint.name, ex=ex,stud.env = stud.env, verbose=FALSE,   sol.env = sol.env, part=part )
+    ret = check.variable(vars=var,check.all=TRUE,failure.exists = empty.message,failure.length=failure.message, failure.class=failure.message, failure.values = failure.message, success.message=sucess.message, ps=ps,stud.env = stud.env, verbose=FALSE, part=part )
     if (!ret)
       return(FALSE)
   }
   return(TRUE)
 }
 
-check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ex=get.ex(),stud.env = ex$stud.env, hint.name=NULL, part=NULL) {
+check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ps=get.ps(),stud.env = ps$stud.env, part=NULL) {
   
   if (!is.null(unsubst.expr)) {
     expr = unsubst.expr
@@ -513,8 +496,6 @@ check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ex=get.ex
   } else {
     expr = substitute(expr)
   }
-  set.current.hint(hint.name)
-  set.part(part)
 
   class = class(eval(expr,envir=stud.env))
   if (any(class %in% classes))
@@ -528,7 +509,7 @@ check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ex=get.ex
   } else {
     failure.message=paste0(str.expr, " has wrong class. It should be ", paste0(classes, collapse=", "),".")    
   }
-  add.failure(ex,failure.message,failure.message)
+  add.failure(failure.message)
   return(FALSE)
   
 }
@@ -548,8 +529,8 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
     failure.class = "Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
     failure.values = "Column {{col}} of {{df}} has wrong values.",
     failure.message.add = NULL,
-    success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.", hint.name = NULL,part=NULL,
-    ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,sol.env = ex$sol.env) {
+    success.message = "Great, column {{col}} of {{df}} has correct {{tests}}.",part=NULL,
+    ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL) {
     
   
   if (!is.null(unsubst.expr)) {
@@ -561,10 +542,9 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
   }
 
   restore.point("check.col")
-  set.part(part)
-  set.current.hint(hint.name)
+
   
-  ret = check.variable(df,exists =TRUE, hint.name=hint.name)
+  ret = check.variable(df,check.all=FALSE,exists =TRUE)
   if (!ret) return(FALSE)
   
   dat =  get(df,stud.env)
@@ -576,11 +556,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
     failure.values = paste0(failure.values,"\n", failure.message.add)
   }
   
-  if (!is.null(expr)) {
-    var.sol = list(eval(expr,stud.env))
-  } else {
-    var.sol = get(df,sol.env)[[col]] 
-  }
+  var.sol = list(eval(expr,stud.env))
   
   if (exists != FALSE) {
     if (is.character(col)) {
@@ -589,7 +565,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
       does.exist = NCOL(dat)>=col
     }
     if (!does.exist) {
-      add.failure(ex,failure.exists,failure.exists, col = col,df=df)
+      add.failure(failure.exists,failure.exists, col = col,df=df)
       return(FALSE)
     }
   }
@@ -598,7 +574,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
   
   if (length != FALSE) {
     if (!length(var.stud)==length(var.sol)) {
-      add.failure(ex,failure.length, failure.length, col=col,df=df, length_stud = length(var.stud), length_sol=length(var.sol))
+      add.failure(failure.length, failure.length, col=col,df=df, length_stud = length(var.stud), length_sol=length(var.sol))
       return(FALSE)
     }
   }  
@@ -609,34 +585,43 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
     if (class.sol == "integer") class.sol = "numeric"
     
     if (class.stud!=class.sol) {
-      add.failure(ex,failure.class, failure.class, col=col,df=df, class_stud=class.stud, class_sol = class.sol)
+      add.failure(failure.class, failure.class, col=col,df=df, class_stud=class.stud, class_sol = class.sol)
       return(FALSE)
     }
   }  
   if (values != FALSE) {
     if (is.numeric(var.stud) & is.numeric(var.sol)) {
       if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
-        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        add.failure(failure.values, failure.values, col=col,df=df)
         return(FALSE)
       }
       if (!identical(is.na(var.stud),is.na(var.sol))) {
-        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        add.failure(failure.values, failure.values, col=col,df=df)
         return(FALSE)        
       }
       
     } else {
       if (! all(var.stud==var.sol)) {
-        add.failure(ex,failure.values, failure.values, col=col,df=df)
+        add.failure(failure.values, failure.values, col=col,df=df)
         return(FALSE)
       }
     }
   }
   
   tests.str = flags.to.string(length=length,class=class,values=values)
-  add.success(ex,success.message, col=col, df=df, tests=tests.str)
+  add.success(success.message, col=col, df=df, tests=tests.str)
   return(TRUE)
 }
 
+
+check.var.exists = function(var, ps=get.ps(),stud.env = ps$stud.env) {
+  if (!exists(var,stud.env, inherits=FALSE)) {
+      msg = paste0("You have not yet generated the variable '", var,"'.")
+      add.failure(msg, var = var)
+      return(FALSE)
+  }
+  return(TRUE)  
+}
 
 #' Test: Check whether a variable is equal to a specified expression 
 #' @param var a the variable name as string
@@ -645,24 +630,22 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
 #' @param failure.length a message that is shown if the variable does not exists (similar the other failure.??? variables)
 #' @param failure.message.add a text that will be added to all failure messages
 #' @export 
-check.variable = function(var, expr, length=TRUE,dim=TRUE, class=TRUE, values=TRUE, ..., tol = .Machine$double.eps ^ 0.5,
+check.variable = function(var, expr, length=check.all,dim=check.all, class=check.all, values=check.all, check.all=TRUE, ..., tol = .Machine$double.eps ^ 0.5,
   failure.exists="You have not yet generated the variable {{var}}.",
   failure.length="Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
   failure.dim="Your variable {{var}} has the wrong dimensions (rows x columns).",
   failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
   failure.values = "Your variable {{var}} has wrong values.",
-  success.message = "Great, {{var}} has correct {{tests}}.", hint.name = NULL,
-  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE, part=NULL) {
+  success.message = "Great, {{var}} has correct {{tests}}.",
+  ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE, part=NULL) {
     
   expr = substitute(expr)
   restore.point("check.variable")
   
-  set.current.hint(hint.name)
-  set.part(part)
     
   if (!exists(var,stud.env, inherits=FALSE)) {
       short.message = paste0("{{var}} does not exist")
-      add.failure(ex,short.message,failure.exists, var = var)
+      add.failure(failure.exists, var = var)
       return(FALSE)
   }
 
@@ -673,7 +656,7 @@ check.variable = function(var, expr, length=TRUE,dim=TRUE, class=TRUE, values=TR
   if (length != FALSE) {
     short.message = paste0("wrong length {{var}}: is {{length_stud}} must {{length_sol}}")
     if (!length(var.stud)==length(var.sol)) {
-      add.failure(ex,short.message, failure.length, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
+      add.failure( failure.length, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
       return(FALSE)
     }
   }  
@@ -685,13 +668,13 @@ check.variable = function(var, expr, length=TRUE,dim=TRUE, class=TRUE, values=TR
     if (class.sol == "integer") class.sol = "numeric"
       
     if (class.stud!=class.sol) {
-      add.failure(ex,short.message, failure.class, var=var, class_stud=class.stud, class_sol = class.sol)
+      add.failure( failure.class, var=var, class_stud=class.stud, class_sol = class.sol)
       return(FALSE)
     }
   }
   if (dim != FALSE) {
     if (!identical(dim(var.stud), dim(var.sol))) {
-      add.failure(ex,failure.dim, failure.dim, var=var)
+      add.failure(failure.dim, failure.dim, var=var)
       return(FALSE)
     }
   }  
@@ -700,164 +683,29 @@ check.variable = function(var, expr, length=TRUE,dim=TRUE, class=TRUE, values=TR
   if (values != FALSE) {
     if (is.list(var.sol) | is.environment(var.sol)) {
       if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
-        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        add.failure("{{var}} has wrong values", failure.values, var=var)
         return(FALSE)
       }
     } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
       if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
-        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        add.failure("{{var}} has wrong values", failure.values, var=var)
         return(FALSE)
       }
       if (!identical(is.na(var.stud),is.na(var.sol))) {
-        add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
+        add.failure("{{var}} has wrong values", failure.values, var=var)
         return(FALSE)        
       }
       
     } else {
       if (! all(var.stud==var.sol)) {
-        add.failure(ex,"wrong values of {{var}}", failure.values, var=var)
+        add.failure("wrong values of {{var}}", failure.values, var=var)
         return(FALSE)
       }
     }
   }
   
   tests.str = flags.to.string(length=length,dim=dim,class=class,values=values)
-  add.success(ex,success.message, var=var, tests=tests.str)
-  return(TRUE)
-}
-
-
-
-#' Test: Compare students variables with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
-#' @param vars a variable name or vector of variable names
-#' @param exists shall existence be checked (similar length, class, values)
-#' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
-#' @param failure.message.add a text that will be added to all failure messages
-#' @param expr
-#' @export 
-check.var = function(vars, expr=NULL,check.all = FALSE,exists=check.all, length=check.all, class=check.all, values=check.all,dim=check.all, tol = .Machine$double.eps ^ 0.5,
-  failure.exists="You have not yet generated the variable {{var}}.",
-  failure.length="Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}.",
-  failure.dim="Your variable {{var}} has the wrong dimensions (rows x columns).",
-  failure.class = "Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}.",
-  failure.values = "Your variable {{var}} has wrong values.",
-  failure.message.add = NULL,
-  success.message = "Great, {{vars}} has correct {{tests}}.", hint.name = NULL,
-  ex=get.ex(),stud.env = ex$stud.env, verbose=FALSE,unsubst.expr = NULL, str.expr = NULL,   sol.env = ex$sol.env, part=NULL) {
-  
-  
-  if (!is.null(unsubst.expr)) {
-    expr = unsubst.expr
-  } else if (!is.null(str.expr)) {
-    expr = parse(text=str.expr, srcfile = NULL)
-  } else {
-    expr = substitute(expr)
-  }
-  
-  restore.point("check.var")
-  
-  set.current.hint(hint.name)
-  set.part(part)
-
-  
-  if (!is.null(failure.message.add)) {
-    failure.exists = paste0(failure.exists,"\n", failure.message.add)
-    failure.length = paste0(failure.length,"\n", failure.message.add)
-    failure.class = paste0(failure.class,"\n", failure.message.add)
-    failure.values = paste0(failure.values,"\n", failure.message.add)
-  }
-  
-  
-  if (!is.null(expr)) {
-    if (length(vars)>1)
-      stop("Error in check.var: if you provide expr, you can only check a single variable!")
-    vars.sol = suppressWarnings(list(eval(expr,stud.env)))
-  } else {
-    vars.sol = lapply(vars, function(var) get(var,sol.env)) 
-  }
-  names(vars.sol) = vars
-  
-  if (exists != FALSE) {
-    short.message = paste0("{{var}} does not exist")
-    for (var in vars) {
-      if (!exists(var,stud.env, inherits=FALSE)) {
-        add.failure(ex,short.message,failure.exists, var = var)
-        return(FALSE)
-      }
-    }
-  }
-  
-  
-  if (length != FALSE) {
-    short.message = paste0("wrong length {{var}}: is {{length_stud}} must {{length_sol}}")
-    for (var in vars) {
-      var.stud = get(var,stud.env)
-      var.sol = vars.sol[[var]]
-      if (!length(var.stud)==length(var.sol)) {
-        add.failure(ex,short.message, failure.length, var=var, length_stud = length(var.stud), length_sol=length(var.sol))
-        return(FALSE)
-      }
-    }
-  }  
-  if (class != FALSE) {
-    for (var in vars) {
-      var.stud = get(var,stud.env)
-      var.sol = vars.sol[[var]]
-      short.message = "wrong class {{var}}: is {{class_stud}} must {{class_sol}}"
-      class.stud = class(var.stud)[1]
-      class.sol = class(var.sol)[1]
-      if (class.stud == "integer") class.stud = "numeric"
-      if (class.sol == "integer") class.sol = "numeric"
-      
-      if (class.stud!=class.sol) {
-        add.failure(ex,short.message, failure.class, var=var, class_stud=class.stud, class_sol = class.sol)
-        return(FALSE)
-      }
-    }
-  }
-  if (dim != FALSE) {
-    for (var in vars) {
-      var.stud = get(var,stud.env)
-      var.sol = vars.sol[[var]]
-      if (!identical(dim(var.stud), dim(var.sol))) {
-        add.failure(ex,failure.dim, failure.dim, var=var)
-        return(FALSE)
-      }
-    }
-  }  
-
-  
-  if (values != FALSE) {
-    for (var in vars) {
-      var.stud = get(var,stud.env)
-      var.sol = vars.sol[[var]]
-
-      if (is.list(var.sol) | is.environment(var.sol)) {
-        if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
-          add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
-          return(FALSE)
-        }
-      } else if (is.numeric(var.stud) & is.numeric(var.sol)) {
-        if (max(abs(var.stud-var.sol), na.rm=TRUE)>tol ) {
-          add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
-          return(FALSE)
-        }
-        if (!identical(is.na(var.stud),is.na(var.sol))) {
-          add.failure(ex,"{{var}} has wrong values", failure.values, var=var)
-          return(FALSE)        
-        }
-        
-      } else {
-        if (! all(var.stud==var.sol)) {
-          add.failure(ex,"wrong values of {{var}}", failure.values, var=var)
-          return(FALSE)
-        }
-      }
-    }
-  }
-  
-  tests.str = flags.to.string(length=length,dim=dim,class=class,values=values)
-  add.success(ex,success.message, vars=paste0(vars,collapse=","), tests=tests.str)
+  add.success(success.message, var=var, tests=tests.str)
   return(TRUE)
 }
 
@@ -951,10 +799,9 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
   warning.message="The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
   failure.message="I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
   success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-  check.warning=TRUE, ex=get.ex(),stud.env = ex$stud.env, hint.name=NULL,part=NULL,...)
+  check.warning=TRUE, ps=get.ps(),stud.env = ps$stud.env, part=NULL,...)
 {
-  set.current.hint(hint.name)
-  set.part(part)
+
 
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
@@ -967,14 +814,14 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
     p.value = test.res$p.value
   }
   if (p.value > alpha.failure) {
-    add.failure(ex,short.message,failure.message,test_name=test.name,p_value=p.value)
+    add.failure(failure.message,test_name=test.name,p_value=p.value)
     return(FALSE)
   }
   
-  add.success(ex,success.message,test_name=test.name,p_value=p.value,...)
+  add.success(success.message,test_name=test.name,p_value=p.value,...)
   
   if (p.value > alpha.warning & check.warning) {
-    add.warning(ex,short.message,warning.message,test_name=test.name,p_value=p.value)
+    add.warning(warning.message,test_name=test.name,p_value=p.value)
     return("warning")
   }
   
@@ -996,10 +843,10 @@ test.H0 = function(test.expr,p.value,test.name="",
                   short.message,warning.message,failure.message,
                    success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
                    
-                  check.warning=TRUE, hint.name=NULL,part=NULL,
-                  ex=get.ex(),stud.env = ex$stud.env,...) {
-  set.current.hint(hint.name)
-  set.part(part)
+                  check.warning=TRUE, part=NULL,
+                  ps=get.ps(),stud.env = ps$stud.env,...) {
+
+
   #browser()
   if (!missing(test.expr)) {
     test.expr = substitute(test.expr)
@@ -1022,14 +869,14 @@ test.H0 = function(test.expr,p.value,test.name="",
   }
   
   if (p.value < alpha.failure) {
-    add.failure(ex,short.message,failure.message,test_name=test.name,p_value=p.value,...)
+    add.failure(failure.message,test_name=test.name,p_value=p.value,...)
     return(FALSE)
   }
 
-  add.success(ex,success.message,test_name=test.name,p_value=p.value,...)
+  add.success(success.message,test_name=test.name,p_value=p.value,...)
   
   if (p.value < alpha.warning & check.warning) {
-    add.warning(ex,short.message,warning.message,test_name=test.name,p_value=p.value,...)
+    add.warning(warning.message,test_name=test.name,p_value=p.value,...)
     return("warning")
   }
   return(TRUE)
@@ -1037,11 +884,8 @@ test.H0 = function(test.expr,p.value,test.name="",
 
 #' Test: The variance of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!", ex=get.ex(),stud.env = ex$stud.env,hint.name=NULL,part=NULL,...) {
+test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!", ps=get.ps(),stud.env = ps$stud.env,part=NULL,...) {
   call.str = as.character(match.call())
-
-  set.current.hint(hint.name)
-  set.part(part)
 
   var.name = call.str[2]
   p.value = sigma.test(vec,sigmasq=true.val)$p.value
@@ -1055,8 +899,8 @@ test.variance = function(vec, true.val, test = "t.test",short.message,warning.me
   if (missing(warning.message)) {
     warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample variance"
   }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,ex=ex, success.message=success.message,
-  var = var.name, vari_stud = var(vec), vari_sol=true.val,hint.name=hint.name,...)
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message, success.message=success.message,
+  var = var.name, vari_stud = var(vec), vari_sol=true.val,...)
   
   
 } 
@@ -1064,10 +908,8 @@ test.variance = function(vec, true.val, test = "t.test",short.message,warning.me
 
 #' Test: The mean of the distribution from which a vector of random numbers has been drawn
 #' @export
-test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired mean of {{mean_sol}}!", ex=get.ex(),stud.env = ex$stud.env,hint.name = NULL,part=NULL,...) {
+test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired mean of {{mean_sol}}!", ps=get.ps(),stud.env = ps$stud.env,part=NULL,...) {
   call.str = as.character(match.call())
-  set.current.hint(hint.name)
-  set.part(part)
 
   stopifnot(test=="t.test")
   
@@ -1083,17 +925,15 @@ test.mean = function(vec, true.val, test = "t.test", short.message,warning.messa
   if (missing(warning.message)) {
     warning.message = "{{var}} has a suspicious mean!\n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
   }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,ex=ex,
-        var = var.name, mean_stud = mean(vec), mean_sol=true.val,hint.name=hint.name,...)
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,
+        var = var.name, mean_stud = mean(vec), mean_sol=true.val,...)
 }
 
 #' Test: Has a vector of random numbers been drawn from a normal distribution?
 #' @export
-test.normality = function(vec,short.message,warning.message,failure.message,ex=get.ex(),stud.env = ex$stud.env, success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",hint.name = NULL,part=NULL,...) {
+test.normality = function(vec,short.message,warning.message,failure.message,ps=get.ps(),stud.env = ps$stud.env, success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",part=NULL,...) {
   call.str = as.character(match.call())
   restore.point("test.normality")
-  set.current.hint(hint.name)
-  set.part(part)
 
   var.name=call.str[2]
   
@@ -1111,15 +951,13 @@ test.normality = function(vec,short.message,warning.message,failure.message,ex=g
   if (missing(warning.message)) {
     warning.message = "{{var}} looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of {{p_value}}."
   }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,ex=ex,
-        var = var.name,hint.name=hint.name,...)
+  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,
+        var = var.name,...)
 }
 
 #' Test: Does a certain condition on the stud's generated variables hold true
 #' @export
-holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",hint.name=NULL,part=NULL,ex=get.ex(),stud.env = ex$stud.env, cond.str=NULL,...) {
-  set.current.hint(hint.name)
-  set.part(part)
+holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",part=NULL,ps=get.ps(),stud.env = ps$stud.env, cond.str=NULL,...) {
 
   if (is.null(cond.str)) {
     cond = substitute(cond)
@@ -1130,10 +968,10 @@ holds.true = function(cond, short.message = failure.message,failure.message="Fai
   restore.point("holds.true")
   
   if (!all(eval(cond,stud.env))) {
-    add.failure(ex,short.message,failure.message,cond=cond.str,...)
+    add.failure(failure.message,cond=cond.str,...)
     return(FALSE)
   }
-  add.success(ex,success.message,cond=cond.str,...)
+  add.success(success.message,cond=cond.str,...)
   #cat(paste0("\n",message, "... ok!"))
   return(TRUE)
 }
