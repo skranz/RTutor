@@ -28,10 +28,10 @@ examples.show.shiny.ps = function() {
 }
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd")) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir) {
   restore.point("init.shiny.ps")
   setwd(dir)
-  ps = init.ps(ps.name,dir)
+  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir)
   ps$is.shiny = TRUE
   ps$shiny.ex.inds = ex.inds
   ps$shiny.dt = ps$rps$shiny.dt 
@@ -105,13 +105,15 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
 #' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
 #' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, ...) {
-  library(restorepoint)
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, ...) {
 
-  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, load.sav=load.sav, sample.solution=sample.solution, import.rmd=import.rmd, rmd.file=rmd.file, ...)
-  ps$catch.errors = catch.errors
+
   
+  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, load.sav=load.sav, sample.solution=sample.solution, import.rmd=import.rmd, rmd.file=rmd.file, dir=dir, rps.dir=rps.dir,...)
+  ps$catch.errors = catch.errors
+ 
   restore.point("show.shiny.ps")
+
   n = NROW(ps$cdt)
   
   for (chunk.ind in 1:n) {
@@ -549,10 +551,9 @@ create.chunk.input.observer = function(chunk.ind, env=parent.frame(), ps=get.ps(
         key.observer(checkKey, chunk.ind,input,session, shiny.env,r=NA,reload.env=TRUE)
         ret = check.shiny.chunk()
         if (isTRUE(ret)) {
-           ps = get.ps()
-           ps$cdt$mode[[chunk.ind]]="output"
-           ps$r.chunk.ui.mode$counter=isolate(ps$r.chunk.ui.mode$counter+1)
-         }
+
+           set.shiny.chunk.checked(chunk.ind=chunk.ind, ps=ps)
+        }
       }      
     }) 
     observe({
@@ -560,22 +561,11 @@ create.chunk.input.observer = function(chunk.ind, env=parent.frame(), ps=get.ps(
         key.observer(checkBtn, chunk.ind,input,session, shiny.env,r=NA,reload.env=TRUE)
         ret = check.shiny.chunk()
         cat("Test result: ", ret)
-         if (isTRUE(ret)) {
-           ps = get.ps()
-           ps$cdt$mode[[chunk.ind]]="output"
-           ps$r.chunk.ui.mode$counter=isolate(ps$r.chunk.ui.mode$counter+1)
-           
-           # set the next chunk to edit mode
-           if (chunk.ind < NROW(ps$cdt)) {
-             if (ps$cdt$ex.ind[chunk.ind] == ps$cdt$ex.ind[chunk.ind+1] &
-                 !ps$cdt$is.solved[chunk.ind+1]) {
-              
-                cat("update next chunk...")
-                ps$cdt$mode[chunk.ind+1] = "input"
-                update.chunk(chunk.ind+1)
-             }
-           }
-         }
+        if (isTRUE(ret)) {
+          # ps$cdt$mode[[chunk.ind]]="output"
+          # ps$r.chunk.ui.mode$counter=isolate(ps$r.chunk.ui.mode$counter+1)
+          set.shiny.chunk.checked()
+        }
       }
     }) 
        
@@ -789,23 +779,36 @@ make.rtutor.server = function(cdt=ps$cdt, ps=get.ps()) {
 eval.to.string = function(code, envir=parent.frame(), convert=TRUE) {
   restore.point("eval.to.string")
   txt = sep.lines(code)
-  li = parse.text.with.source(txt)
-  all.str = NULL
-  add = function(...) {
-    str = paste0(..., collapse="\n")
-    all.str <<- paste0(all.str,str, sep="\n")
-  }
-  i = 1
-  for (i in seq_along(li$expr)) {
-    add("> ",paste0(li$source[[i]], collapse="\n+ "))
-    out = tryCatch(capture.output(eval(li$expr[[i]], envir=envir)),
-                   error = function(e) {
-                     adapt.console.err.message(as.character(e))
-                   })                
-    if (length(out)>0) {
-      add(out)
+  ok = FALSE
+  
+  all.str = tryCatch({
+      li <- parse.text.with.source(txt)
+      ok <- TRUE
+    },
+    error = function(e) {
+      as.character(e)
+    }
+  )
+
+  if (ok) {
+    all.str = NULL
+    add = function(...) {
+      str = paste0(..., collapse="\n")
+      all.str <<- paste0(all.str,str, sep="\n")
+    }
+    i = 1
+    for (i in seq_along(li$expr)) {
+      add("> ",paste0(li$source[[i]], collapse="\n+ "))
+      out = tryCatch(capture.output(eval(li$expr[[i]], envir=envir)),
+                     error = function(e) {
+                       adapt.console.err.message(as.character(e))
+                     })                
+      if (length(out)>0) {
+        add(out)
+      }
     }
   }
+  
   # convert special characters that cause JSON errors when shown in 
   # HTML output or in ace console
   if (convert) {
@@ -907,26 +910,28 @@ run.shiny.chunk.line = function(envir=ps$stud.env, in.R.console=is.null(ps$nali$
 
 help.shiny.chunk = function(ps=get.ps()) {
   restore.point("help.shiny.chunk")
-    if (ps$selection == "") {
-      txt = sep.lines(ps$code)
-      txt = txt[ps$cursor$row+1]
-      txt = word.at.pos(txt, pos=ps$cursor$column+1)
-    } else {
-      txt = ps$selection
-    }
-    help(topic=txt, help_type="html")
-    isRStudio <- isTRUE(Sys.getenv("RSTUDIO") == "1")
-    if (isRStudio) {
-      str = paste0("To show help for '", txt,"' use the help in your RStudio window." )
-      updateAceEditor(ps$session, ps$nali$console, value=str, mode="text")   
-    } else {
-      str = paste0("The help for '", txt,"' is shown in a new browser tab." )
-      updateAceEditor(ps$session, ps$nali$console, value=str, mode="text")   
-    }
+  if (ps$selection == "") {
+    txt = sep.lines(ps$code)
+    txt = txt[ps$cursor$row+1]
+    txt = word.at.pos(txt, pos=ps$cursor$column+1)
+  } else {
+    txt = ps$selection
+  }
+  isRStudio <- isTRUE(Sys.getenv("RSTUDIO") == "1")
+  if (isRStudio) {
+    str = paste0("To show help for '", txt,"' use the help in your RStudio window." )
+    updateAceEditor(ps$session, ps$nali$console, value=str, mode="text")   
+    browser.help(topic=txt)
 
-    #browser()
-    #help(topic=txt, help_type="html")
-    cat("help.shiny.chunk: ",txt)
+  } else {
+    str = paste0("The help for '", txt,"' is shown in a new browser tab." )
+    updateAceEditor(ps$session, ps$nali$console, value=str, mode="text") 
+    help(topic=txt, help_type="html")
+  }
+
+  #browser()
+  #help(topic=txt, help_type="html")
+  cat("help.shiny.chunk: ",txt)
 }
 
 
@@ -976,6 +981,26 @@ check.shiny.chunk = function(ps=get.ps()) {
     }
   }
   return(ret)
+}
+
+set.shiny.chunk.checked = function(chunk.ind=ps$chunk.ind, ps=get.ps()) {          
+
+  
+  r.chunk.ui.mode = paste0("r.chunk_",chunk.ind,".ui.mode")
+  ps$cdt$mode[[chunk.ind]]="output"
+  ps[[r.chunk.ui.mode]]$counter=isolate(ps[[r.chunk.ui.mode]]$counter+1)
+
+  
+  # set the next chunk to edit mode
+  if (chunk.ind < NROW(ps$cdt)) {
+    if (ps$cdt$ex.ind[chunk.ind] == ps$cdt$ex.ind[chunk.ind+1] &
+       !ps$cdt$is.solved[chunk.ind+1]) {
+    
+      cat("update next chunk...")
+      ps$cdt$mode[chunk.ind+1] = "input"
+      update.chunk(chunk.ind+1)
+    }
+  }
 }
 
 is.last.chunk.of.ex = function(chunk.ind, ps=get.ps()) {

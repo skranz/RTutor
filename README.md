@@ -16,34 +16,14 @@ RTutor is an R package that allows to develop interactive R exercises. The inter
 
 ## I Brief overview
 
-## 1. Install the newest version of RTutor
+## 1. Install RTutor
 
-You first need to install some packages. Simply run in R
+You first need to install the newest version of RTutor. To do this, run in R the following 4 lines of codes:
 ```s
-# Install packages from CRAN
-install.packages("devtools")
-install.packages("whisker")
-install.packages("stringr")
-install.packages("JSONIO")
-install.packages("data.table")
-install.packages("dplyr")
-install.packages("shiny")
-install.packages("shinyBS")
-install.packages("xtable")
-install.packages("lmtest")
-install.packages("texreg")
-
-# Install packages from github
-library(devtools)
-install_github(repo="restorepoint", username="skranz")
-install_github(repo="stringtools", username="skranz")
-install_github(repo="shinyAce", username="skranz")
-install_github(repo="dplyrExtras", username="skranz")
-install_github(repo="regtools", username="skranz")
-install_github(repo="RTutor", username="skranz")
-
-
-library(restorepoint)
+if (!require(devtools))
+  install.packages("devtools")
+source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4")
+install.rtutor(update.github=TRUE)
 library(RTutor)
 ```
 

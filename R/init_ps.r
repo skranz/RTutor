@@ -25,7 +25,7 @@ examples.init.ps = function() {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log")) {
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir) {
   restore.point("init.ps")
  
   rps = load.rps(file=rps.file)
