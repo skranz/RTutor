@@ -48,26 +48,6 @@ hint = function(..., ps=get.ps()) {
    }
 }
 
-log.hint = function(hint, ex=get.ex(), log.file = ps$log.file, ps = get.ps(), do.log = ex$code.changed, part=ex$part ) {
-  restore.point("log.int")
-  if (!do.log)
-    return
-    
-  user.name = get.user()$name
-
-  hint.out = paste0(capture.output(eval(hint$code,ex$user.env)), collapse="\n")
-  
-  entry = list(ps.name = ps$name, ex.name=ex$name, test.ind=ex$test.ind, part=part, date=as.character(ex$check.date), user.name = user.name, hint.name = hint$name, hint.out = hint.out, stud.seed = ex$stud.seed,code.changed=as.logical(ex$code.changed),failure.short = ex$failure.short,checks=ex$checks, attempts=ex$attempts, solved=ex$solved, was.solved=ex$was.solved, stud.code=paste0(ex$stud.code, collapse="\n"),
-warnings=ex$warning.messages)
-  
-  library(RJSONIO)
-  json.entry = toJSON(entry)
-  con = file(log.file,open="at")
-  
-  writeLines(json.entry, con)
-  close(con) 
-}
-
 
 #' Default hint for a call
 #' @export

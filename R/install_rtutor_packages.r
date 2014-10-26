@@ -5,7 +5,7 @@ install.rtutor = function(update.cran=FALSE, update.github=TRUE) {
   
   cat("\nInstall required packages from CRAN...")
   
-  pkgs = c("devtools","whisker","stringr","JSONIO","data.table",
+  pkgs = c("devtools","whisker","stringr","data.table",
     "dplyr","shiny","shinyBS","xtable","lmtest","texreg")
   for (pkg in pkgs) {
     if (!update.cran) {
