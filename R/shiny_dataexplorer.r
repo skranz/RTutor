@@ -35,7 +35,7 @@ data.explorer.server = function() {
     })
     
     output$tableDataExplorer = renderDataTable({
-      r.dataExplorerData()
+      signif.cols(r.dataExplorerData(),4)
      }, options = list(bSortClasses = TRUE, aLengthMenu = c(5, 10, 25,50,100),iDisplayLength = 5))
     
     output$dataSummariseUI = renderUI({

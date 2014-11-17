@@ -80,3 +80,65 @@ examples.shiny.test.mathjax = function() {
     server=server)
   , launch.browser = rstudio::viewer)
 }
+
+
+examples.shiny.tabset = function() {
+
+  last.counter = 0
+  ui = fluidPage(
+    tabsetPanel(id="tabset",
+      tabPanel("Plot", value="Plot",
+        actionButton("nextTab1","Next Tab"),
+        plotOutput("plot")
+      ),
+      tabPanel("Summary",value="Summary",
+        verbatimTextOutput("summary")
+      ),
+      tabPanel("Table", value="Table",tableOutput("table"))
+    )
+  
+  )
+  server = function(input, output, session) {
+    observe({
+      counter = input$nextTab1
+      if (counter > last.counter) {
+        cat("Button pressed")
+        last.counter = counter
+        updateTabsetPanel(session, "tabset", selected = "Summary")
+      }
+    })
+  }
+
+  runApp(list(ui=ui,server=server),launch.browser = rstudio::viewer)
+}
+
+
+examples.shiny.navlistPanel = function() {
+
+  last.counter = 0
+  ui = fluidPage(
+    navlistPanel(id="tabset",widths=c(2,10),
+      tabPanel("Plot", value="Plot",
+        actionButton("nextTab1","Next Tab"),
+        plotOutput("plot")
+      ),
+      tabPanel("Summary",value="Summary",
+        verbatimTextOutput("summary")
+      ),
+      tabPanel("Table", value="Table",tableOutput("table"))
+    )
+  
+  )
+  server = function(input, output, session) {
+    observe({
+      counter = input$nextTab1
+      if (counter > last.counter) {
+        cat("Button pressed")
+        last.counter = counter
+        updateTabsetPanel(session, "tabset", selected = "Summary")
+      }
+    })
+  }
+
+  runApp(list(ui=ui,server=server),launch.browser = rstudio::viewer)
+}

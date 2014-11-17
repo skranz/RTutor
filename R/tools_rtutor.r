@@ -257,6 +257,21 @@ examples.print.example = function() {
   print.example('rep(c("A","B","C"),length.out = 10)')
 }
 
+examples.signif.cols = function() {
+  df = data.frame(A="Hi", b=runif(3),c=runif(3)*1000)
+  signif.cols(df,3)
+}
+
+signif.cols = function(dat,digits=4) {
+  li = lapply(dat, function(col) {
+    if (is.numeric(col))
+      return(signif(col, digits))
+    return(col)
+  })
+  names(li) = colnames(dat)
+  do.call("quick.df",li)
+}
+
 signif.or.round = function(val, digits=3) {
   if (any(val>10^digits))
     return(round(val))

@@ -71,12 +71,28 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   list(name=na,type=type, args = args)
 }
 
-describe.chain.call = function(call.obj) {
+describe.chain.call = function(call.obj, chain.operator=NULL) {
   restore.point("describe.chain.call")
+  
   call = call.obj
-  na = name.of.call(call)
-  args = recursive.args.of.call(call, na)
-  list(name=na,type="chain", args = args)
+  # The caller function has determined that we have a chain
+  if (is.null(chain.operator)) {
+    call = call.obj
+    na = name.of.call(call)
+    args = recursive.args.of.call(call, na)
+    return(list(name=na,type="chain", args = args))
+  }
+  # We have a chain if the call is equal to chain.operator
+  na = name.of.call(call)  
+  if (na==chain.operator) {
+    return(describe.chain.call(call.obj, chain.operator=NULL))
+  } else {
+    # No true chain just a single element
+    # For simplicity treat it as a chain
+    args = list(describe.call(call.obj=call.obj))
+    names(args)=na
+    return(list(name=na,type=chain.operator, args = args))    
+  }
 }
 
 #' Checks whether arguments of stud.call are correct given the specification in check.call 

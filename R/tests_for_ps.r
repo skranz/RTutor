@@ -283,11 +283,36 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
   call
 }
 
+# Check arguments just by name
+# Do not evaluate functions
+check.ggplot = function(call, allow.extra.arg=TRUE, ignore.arg=NULL, require.arg=NULL, ignore.constant.arg = TRUE, ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE,  call.object=NULL, ...) {
+  
+  if (!is.null(call.object)) {
+    call = call.object
+  } else {
+    call = substitute(call)
+  }
+  
+  
+  if (is.assignment(call)) {
+    is.assign = TRUE
+    var = deparse1(e[[2]],collapse="\n")
+    ret = check.var.exists(var=var,ps=ps, stud.env=stud.env)
+    if (!ret) return(FALSE)  
+    rhs.call = call[[3]]    
+  } else {
+    is.assign = FALSE
+    rhs.call = call
+  }
+  
+ 
+}
+
 #' Checks an assignment to a variable
 #' @export
 check.assign = function(
   call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,call.object=NULL,  s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE,  ...) {
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, only.check.assign.exists=FALSE,  ...) {
 
   if (!is.null(call.object)) {
     call = call.object
@@ -318,7 +343,6 @@ check.assign = function(
     add.failure(failure.message,...)
     return(FALSE) 
   }
-
   
   ce.rhs = match.call.object(check.expr[[3]], envir=stud.env,s3.method=s3.method)
   dce.rhs = describe.call(call.obj=ce.rhs)

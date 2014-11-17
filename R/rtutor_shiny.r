@@ -8,7 +8,7 @@ examples.show.shiny.ps = function() {
   library(RTutor)
   setwd("D:/libraries/RTutor/examples")
   ps.name = "Example"
-  show.shiny.ps(ps.name, launch.browser=TRUE, import.rmd=TRUE)
+  show.ps(ps.name, launch.browser=TRUE, import.rmd=TRUE)
   
   show.shiny.ps(ps.name, user.name="Seb", load.sav=FALSE, sample.solution=FALSE, import.rmd=TRUE, catch.errors=FALSE)
   
@@ -128,14 +128,195 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   if (!isTRUE(launch.browser))
     launch.browser = rstudio::viewer
   
-  runApp(list(
-    ui = ui,
-    server=server)
-  ,  launch.browser = launch.browser)
+  runApp(list(ui=ui,server=server),launch.browser=launch.browser, quiet=FALSE)
   
 }
 
 show.shiny.ps = show.ps
+
+
+make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
+  restore.point("make.rtutor.ui")
+  
+
+  ex.inds = setdiff(unique(cdt$ex.ind),0)
+  if (!is.null(ps$shiny.ex.inds))
+    ex.inds = intersect(ex.inds, ps$shiny.ex.inds)
+
+  view.inds = setdiff(unique(ps$shiny.dt$view.ind),0)
+  view.ui.li = lapply(view.inds, function(view.ind) {
+    if (view.ind==1) {
+      rows = which(shiny.dt$view.ind == view.ind | shiny.dt$view.ind == 0)
+    } else {
+      rows = which(shiny.dt$view.ind == view.ind)      
+    }
+    ui.li = lapply(rows, function(i) {
+      if (shiny.dt$type[i]=="chunk") {
+        chunk.ind = which(cdt$chunk.name==shiny.dt$chunk.name[i])
+        #make.initial.chunk.ui(chunk.ind)
+        return(ps$cdt$ui[[chunk.ind]])
+      } else {
+        return(shiny.dt$html[[i]])
+      }
+    })
+    do.call("fluidRow", ui.li)
+  })
+  ps$view.ui.li = view.ui.li
+  
+  ex.li = lapply(ex.inds, function(ex.ind) {
+    if (ex.ind==1) {
+      rows = which(shiny.dt$ex.ind == ex.ind | shiny.dt$ex.ind == 0)
+    } else {
+      rows = which(shiny.dt$ex.ind == ex.ind)      
+    }
+    view.inds = unique(shiny.dt$view.ind[rows])
+    ex.name = ps$edt$ex.name[ex.ind]
+    li = lapply(view.inds, function(view.ind) {
+      outputName = paste0("viewUI",view.ind)
+      uiOutput(outputName)
+    })
+    
+    # Button for next exercise
+    if (ex.ind < max(ex.inds)) {
+      #nextExBtn = actionButton(paste0("nextExBtn", ex.ind),"Go to next exercise...")
+      #li = c(li, list(nextExBtn))
+    }
+    
+    do.call("tabPanel", 
+      c(list(title=ex.name, value=paste0("exPanel",ex.ind)), li)
+    )
+  })
+  ex.li[[1]]
+  #ui.li = do.call("c",ui.li)
+  
+  dataExplorerPanel = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
+  loadSavePanel = tabPanel("File",value="loadSaveTabPanel", load.save.ui())
+
+  doc = do.call("tabsetPanel", c(
+    list(id="exTabsetPanel"),ex.li,list(dataExplorerPanel,loadSavePanel)
+  ))
+  
+  ret = navbarPage("RTutor", header=
+    tags$head(
+      tags$script(src = 'http://yandex.st/highlightjs/7.3/highlight.min.js', type = 'text/javascript'),
+      tags$script(src = 'http://yandex.st/highlightjs/7.3/languages/r.min.js', type = 'text/javascript'),
+      tags$link(rel = 'stylesheet', type = 'text/css',
+      href = 'http://yandex.st/highlightjs/7.3/styles/github.min.css')
+    ),                   
+    tabPanel(ps$name, withMathJax(doc))
+  )
+  
+  return(ret)
+
+}
+
+make.rtutor.server = function(cdt=ps$cdt, ps=get.ps()) {
+  restore.point("make.rtutor.server")
+  nali = unlist(cdt$nali)
+  times.obs = rep(0,length(nali))
+  names(times.obs) = nali
+  shiny.env = new.env()
+  shiny.env$times.obs = times.obs
+  
+  server.base = as.list(quote({
+    r.chunk <- reactiveValues(ind = 0, counter=0)
+    #r.chunk.correct <- reactiveValues(ind = 0, counter=0)
+    r.data.counter <- reactiveValues(counter=0)
+    observe({
+      cat("\nr.chunk$ind = ", r.chunk$ind)
+    })
+    
+    # We use early and late input observer in check.trigger to avoid 
+    # running button and key observers when ui is created
+    observe({
+      cat("\n early input observer")
+      ps = get.ps()
+      ps$run.observers = FALSE
+    }, priority=1000)
+
+    observe({
+      cat("\n late input observer")
+      ps = get.ps()
+      ps$run.observers = TRUE  
+    }, priority=-1000) 
+    
+    #observe.nextExBtns(session)
+  })[-1])
+  
+  # Generate the renderUI for all viewUI
+  view.inds = setdiff(unique(ps$shiny.dt$view.ind),0)
+  # Generate the function body of server from all chunks
+  view.ind =1
+  view.server.li = lapply(view.inds, function(view.ind) {
+    ca = substitute(
+      env=list(.view.ind=view.ind, viewUI=paste0("viewUI",view.ind), view.created=as.name(paste0("view.created.",view.ind))),{
+      
+      load.save.observer()
+        
+        
+      view.created = reactiveValues(counter=0)  
+        
+      output[[viewUI]] <- renderUI({
+        cat("\nviewUI",.view.ind, " renderUI")
+
+        ps = get.ps()
+        chunk.inds = setdiff(unique(ps$shiny.dt$chunk.ind[ps$shiny.dt$view.ind==.view.ind]),0)
+        view.created$counter = isolate(view.created$counter+1)
+        for (chunk.ind in chunk.inds) {
+          create.chunk.output.observer(chunk.ind,ps=ps)  
+        }
+        ps$view.ui.li[[.view.ind]]
+      })
+      
+      # An observe that creates the view's observers in a delayed fashion
+      observe({
+        cat("view ",.view.ind, " observer creator")
+        if (view.created$counter>0) {
+          ps = get.ps()
+          chunk.inds = setdiff(unique(ps$shiny.dt$chunk.ind[ps$shiny.dt$view.ind==.view.ind]),0)
+          for (chunk.ind in chunk.inds) {
+            if (ps$cdt$mode[chunk.ind]=="input") {
+              #create.chunk.input.observer(chunk.ind,ps=ps)
+            }
+          }
+        }
+      }, priority=-10)
+    })
+    as.list(ca[-1])
+  })
+  view.server.li = do.call("c",view.server.li)
+
+  #li = c(server.base,view.server.li, li, data.explorer.server())
+  li = c(server.base,view.server.li, data.explorer.server())
+
+  ca = quote({})
+  ca[2:(length(li)+1)] = li
+  #ca
+  server = function(input, output, session) {}
+  body(server) <- ca
+  server
+}
+
+observe.nextExBtns = function(session, ps=get.ps()) {
+  restore.point("observe.nextExBtns")
+  cdt = ps$cdt
+  ex.inds = setdiff(unique(cdt$ex.ind),0)
+  if (!is.null(ps$shiny.ex.inds))
+    ex.inds = intersect(ex.inds, ps$shiny.ex.inds)
+
+
+  ex.ind = 1
+  for (ex.ind in setdiff(ex.inds,max(ex.inds))) {
+    btn = paste0(paste0("nextExBtn", ex.ind))
+    observe({
+      cat("observe ", btn)
+      if (has.counter.increased(btn, session$input[[btn]])) {
+        cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
+        updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
+      }
+    })
+  }
+}
 
 make.chunk.nali = function(chunk.name, chunk.ind=which(ps$cdt$chunk.name==chunk.name), ps = get.ps()) {
   restore.point("make.chunk.nali")
@@ -360,7 +541,6 @@ create.chunk.observer = function(chunk.ind, env=parent.frame(), ps=get.ps()) {
     create.chunk.output.observer(chunk.ind, env, ps)    
   }
 }
-
 
 has.counter.increased = function(id, counter, ps=get.ps()) {
 
@@ -624,155 +804,6 @@ create.chunk.output.observer = function(chunk.ind, env=parent.frame(), ps=get.ps
   
   create.chunk.ui.renderer(chunk.ind, env)
 }  
-
-
-make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
-  restore.point("make.rtutor.ui")
-  
-
-  ex.inds = setdiff(unique(cdt$ex.ind),0)
-  if (!is.null(ps$shiny.ex.inds))
-    ex.inds = intersect(ex.inds, ps$shiny.ex.inds)
-
-  view.inds = setdiff(unique(ps$shiny.dt$view.ind),0)
-  view.ui.li = lapply(view.inds, function(view.ind) {
-    if (view.ind==1) {
-      rows = which(shiny.dt$view.ind == view.ind | shiny.dt$view.ind == 0)
-    } else {
-      rows = which(shiny.dt$view.ind == view.ind)      
-    }
-    ui.li = lapply(rows, function(i) {
-      if (shiny.dt$type[i]=="chunk") {
-        chunk.ind = which(cdt$chunk.name==shiny.dt$chunk.name[i])
-        #make.initial.chunk.ui(chunk.ind)
-        return(ps$cdt$ui[[chunk.ind]])
-      } else {
-        return(shiny.dt$html[[i]])
-      }
-    })
-    do.call("fluidRow", ui.li)
-  })
-  ps$view.ui.li = view.ui.li
-  
-  ex.li = lapply(ex.inds, function(ex.ind) {
-    if (ex.ind==1) {
-      rows = which(shiny.dt$ex.ind == ex.ind | shiny.dt$ex.ind == 0)
-    } else {
-      rows = which(shiny.dt$ex.ind == ex.ind)      
-    }
-    view.inds = unique(shiny.dt$view.ind[rows])
-    ex.name = ps$edt$ex.name[ex.ind]
-    li = lapply(view.inds, function(view.ind) {
-      outputName = paste0("viewUI",view.ind)
-      uiOutput(outputName)
-    })
-    do.call("tabPanel", c(list(title=ex.name, value=ex.ind), li))
-  })
-  ex.li[[1]]
-  #ui.li = do.call("c",ui.li)
-  
-  dataExplorerPanel = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
-  loadSavePanel = tabPanel("File",value="loadSaveTabPanel", load.save.ui())
-  
-  doc = do.call("tabsetPanel", c(ex.li,list(dataExplorerPanel,loadSavePanel), list(id="exTabsetPanel")))
-  
-  ret = navbarPage("RTutor", header=
-    tags$head(
-      tags$script(src = 'http://yandex.st/highlightjs/7.3/highlight.min.js', type = 'text/javascript'),
-      tags$script(src = 'http://yandex.st/highlightjs/7.3/languages/r.min.js', type = 'text/javascript'),
-      tags$link(rel = 'stylesheet', type = 'text/css',
-      href = 'http://yandex.st/highlightjs/7.3/styles/github.min.css')
-    ),                   
-    tabPanel(ps$name, withMathJax(doc))
-  )
-  
-  return(ret)
-
-}
-
-make.rtutor.server = function(cdt=ps$cdt, ps=get.ps()) {
-  restore.point("make.rtutor.server")
-  nali = unlist(cdt$nali)
-  times.obs = rep(0,length(nali))
-  names(times.obs) = nali
-  shiny.env = new.env()
-  shiny.env$times.obs = times.obs
-  
-  server.base = as.list(quote({
-    r.chunk <- reactiveValues(ind = 0, counter=0)
-    #r.chunk.correct <- reactiveValues(ind = 0, counter=0)
-    r.data.counter <- reactiveValues(counter=0)
-    observe({
-      cat("\nr.chunk$ind = ", r.chunk$ind)
-    })
-    
-    # We use early and late input observer in check.trigger to avoid 
-    # running button and key observers when ui is created
-    observe({
-      cat("\n early input observer")
-      ps = get.ps()
-      ps$run.observers = FALSE
-    }, priority=1000)
-
-    observe({
-      cat("\n late input observer")
-      ps = get.ps()
-      ps$run.observers = TRUE  
-    }, priority=-1000) 
-  })[-1])
-  
-  # Generate the renderUI for all viewUI
-  view.inds = setdiff(unique(ps$shiny.dt$view.ind),0)
-  # Generate the function body of server from all chunks
-  view.ind =1
-  view.server.li = lapply(view.inds, function(view.ind) {
-    ca = substitute(
-      env=list(.view.ind=view.ind, viewUI=paste0("viewUI",view.ind), view.created=as.name(paste0("view.created.",view.ind))),{
-      
-      load.save.observer()
-        
-        
-      view.created = reactiveValues(counter=0)  
-        
-      output[[viewUI]] <- renderUI({
-        cat("\nviewUI",.view.ind, " renderUI")
-
-        ps = get.ps()
-        chunk.inds = setdiff(unique(ps$shiny.dt$chunk.ind[ps$shiny.dt$view.ind==.view.ind]),0)
-        view.created$counter = isolate(view.created$counter+1)
-        for (chunk.ind in chunk.inds) {
-          create.chunk.output.observer(chunk.ind,ps=ps)  
-        }
-        ps$view.ui.li[[.view.ind]]
-      })
-      # An observe that creates the view's observers in a delayed fashion
-      observe({
-        cat("view ",.view.ind, " observer creator")
-        if (view.created$counter>0) {
-          ps = get.ps()
-          chunk.inds = setdiff(unique(ps$shiny.dt$chunk.ind[ps$shiny.dt$view.ind==.view.ind]),0)
-          for (chunk.ind in chunk.inds) {
-            if (ps$cdt$mode[chunk.ind]=="input") {
-              #create.chunk.input.observer(chunk.ind,ps=ps)
-            }
-          }
-        }
-      }, priority=-10)
-    })
-    as.list(ca[-1])
-  })
-  view.server.li = do.call("c",view.server.li)
-
-  #li = c(server.base,view.server.li, li, data.explorer.server())
-  li = c(server.base,view.server.li, data.explorer.server())
-
-  ca = quote({})
-  ca[2:(length(li)+1)] = li
-  #ca
-  server = function(input, output, session) {}
-  body(server) <- ca
-  server
-}
 
 
 
@@ -1083,7 +1114,10 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   #stop("stop in chunk.to.html")
   stud.env = ps$cdt$stud.env[[chunk.ind]]
   #all.parent.env(stud.env)
-  html = knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE)
+  html ="Evaluation error!"
+  html = try(
+    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE),
+  )
   
    # Add syntax highlightning
   if (!is.null(nali$chunkUI)) {
