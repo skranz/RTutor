@@ -1,4 +1,73 @@
 
+update.data.explorer.ui = function(ps=get.ps()) {
+  
+  restore.point("update.data.explorer.ui")
+  chunk.ind = ps$chunk.ind
+  cdt = ps$cdt
+  chunk.name = cdt$chunk.name[[chunk.ind]]
+  stud.env = ps$stud.env
+  data = ps$de.dat
+  
+  updateUI("radioDataExplorerUI",{
+      cat("\noutput$radioDataExplorerUI")
+      variable.selector.ui(stud.env, chunk.name)    
+  })
+
+  vars = get.environment.data.var()
+  
+  if (length(vars)>0) {
+    var = vars[1]
+    cat("\nupdate for var ", var)
+    data = set.data.explorer.data(var)
+
+    updateDataTable("tableDataExplorer",signif.cols(data,4),
+      options = list(orderClasses = TRUE, lengthMenu = c(5, 10, 25,50,100),pageLength = 5)) 
+  
+    updateUI("dataSummariseUI",{data.summarise.ui(data)}) 
+    updateUI("dataPlotUI",{data.plot.ui(data)}) 
+    updateUI("variablesDescrUI",{make.var.descr.ui(data)}) 
+  } else {
+    updateDataTable("tableDataExplorer",NULL) 
+    updateUI("dataSummariseUI",NULL) 
+    updateUI("dataPlotUI",NULL) 
+    updateUI("variablesDescrUI",NULL) 
+    
+  }
+    
+}
+
+
+set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) {
+  
+  if (is.null(var)) {
+    var = ps$session$input$radioDataExplorer
+  }
+  restore.point("set.data.explorer.data")
+  if (length(var)>0 & is.character(var)) {
+    if (exists(var, env)) {
+      ret = get(var,env)
+      if (is.matrix(ret)) {
+        ret = as.data.frame(ret)
+      }
+      ps$de.dat = ret
+    }
+  } else {
+    ps$de.dat = NULL
+  }
+  return(ps$de.dat)
+}
+
+#examples.rtutor.shiny()
+make.data.explorer.handlers = function() {
+  restore.point("data.explorer.server")  
+  changeHandler("radioDataExplorer", function(value,...,ps=get.ps()) {
+    set.data.explorer.data(var=value)
+    update.data.explorer.data()
+  })
+}
+
+
+
 #examples.rtutor.shiny()
 data.explorer.server = function() {
   restore.point("data.explorer.server")
@@ -71,10 +140,7 @@ data.explorer.server = function() {
       if (length(cols)==0)
         cols = colnames(dat)
       
-      fun = input$funSelectInput
-      fun = paste0("x",fun)
-      print(fun)
-      out = xsummarise_each_(dat,funs(fun), cols)
+      out = xsummarise_each_(dat,funs(xmean, xmin,xmax), cols)
       out
      }, options = list(aLengthMenu = c(5, 10, 25,50,100),iDisplayLength = 25))
 
@@ -100,11 +166,7 @@ data.explorer.ui = function() {
   )
 }
 
-
-
-variable.selector.ui = function(env=NULL, chunk.name) {
-  restore.point("variable.selector.ui")
-  
+get.environment.data.var=function(env=ps$stud.env, ps=get.ps()) {
   vars = ls(env)
   dvars = unlist(lapply(vars, function(var) {
     x = env[[var]]
@@ -112,7 +174,13 @@ variable.selector.ui = function(env=NULL, chunk.name) {
       return(var)
     return(NULL)
   }))
+  dvars
+}
+
+variable.selector.ui = function(env=ps$stud.env, chunk.name,ps=get.ps()) {
+  restore.point("variable.selector.ui")
   
+  dvars = get.environment.data.var(env)
   if (length(dvars)>0) {
     ret=radioButtons("radioDataExplorer", label = paste0("Chunk ", chunk.name), choices = as.list(dvars), selected = dvars[1] )
   } else {
@@ -129,19 +197,43 @@ data.summarise.ui = function(data) {
   vars = colnames(data)
   group_by_ui = selectizeInput("groupByInput",label="group by", choices=vars, multiple=TRUE)
   col_select_ui = selectizeInput("colSelectInput",label="variables", choices=vars, multiple=TRUE) 
-  funs = c("mean","sd","min","max")
-  fun_select_ui = selectizeInput("funSelectInput",label="functions", choices=funs, selected=funs, multiple=TRUE)
+  #funs = c("mean","sd","min","max")
+  #fun_select_ui = selectizeInput("funSelectInput",label="functions", choices=funs, selected=funs, multiple=TRUE)
   
+  changeHandler("groupByInput",update.data.explorer.summarise)
+  changeHandler("colSelectInput",update.data.explorer.summarise)
+  #changeHandler("funSelectInput",update.data.explorer.summarise)
+
+  update.data.explorer.summarise()
   fluidRow(
     fluidRow(
       column(4,group_by_ui),
-      column(4,col_select_ui),
-      column(4,fun_select_ui)
+      column(4,col_select_ui)
     ),
     dataTableOutput("tableDataSummarise")
   )
   
 }
+
+update.data.explorer.summarise = function(dat=ps$de.dat,input=ps$session$input,ps = get.ps(), session=ps$session,...) {
+  restore.point("update.data.explorer.summarise")
+  
+  updateDataTable("tableDataSummarise",{
+    #browser()
+    cat("\ntrigger new summarise...")
+    groups = isolate(input$groupByInput)
+    if (length(groups)>0)
+      dat = s_group_by(dat, groups)
+    cols = isolate(input$colSelectInput)
+    if (length(cols)==0)
+      cols = colnames(dat)
+        
+    out = xsummarise_each_(dat,funs(xmean,xsd,xmax,xmin), cols)
+    out
+  }, options = list(lengthMenu = c(5, 10, 25,50,100),pageLength = 25)
+  )
+}
+
 
 data.plot.ui = function(data) {
   if (is.null(data))
@@ -156,6 +248,8 @@ data.plot.ui = function(data) {
 
   colorvar_ui = selectizeInput("colorvarInput",label="color group", choices=vars, multiple=FALSE)
   
+  buttonHandler("showPlotBtn",update.data.explorer.plot)
+  
   fluidRow(
     fluidRow(
       column(4,plot_type_ui,colorvar_ui),
@@ -169,21 +263,11 @@ data.plot.ui = function(data) {
 }
 
 
-xmean = function(..., na.rm=TRUE) {
-  tryCatch(suppressWarnings(mean(..., na.rm=na.rm)),
-           error = function(e){return(NA)})
-}
-xmax = function(..., na.rm=TRUE) {
-  tryCatch(suppressWarnings(max(..., na.rm=na.rm)),
-           error = function(e){return(NA)})
-}
-xmin = function(..., na.rm=TRUE) {
-  tryCatch(suppressWarnings(min(..., na.rm=na.rm)),
-           error = function(e){return(NA)})
-}
-xsd = function(..., na.rm=TRUE) {
-  tryCatch(suppressWarnings(sd(..., na.rm=na.rm)),
-           error = function(e){return(NA)})
+update.data.explorer.plot = function(dat=ps$de.dat,input=ps$session$input,ps = get.ps(),...) {
+  updatePlot("plotData", {
+    code = isolate(make.ggplot.code(data.name="dat",type=input$plotTypeInput, xvar=input$xvarInput, yvar=input$yvarInput, colorVar = input$colorvarInput))
+    eval(code)
+  })
 }
 
 
@@ -269,3 +353,22 @@ xsignif = function(x,digits=6) {
     x = signif(x, digits)
   x
 }
+
+xmean = function(..., na.rm=TRUE) {
+  tryCatch(suppressWarnings(mean(..., na.rm=na.rm)),
+           error = function(e){return(NA)})
+}
+xmax = function(..., na.rm=TRUE) {
+  tryCatch(suppressWarnings(max(..., na.rm=na.rm)),
+           error = function(e){return(NA)})
+}
+xmin = function(..., na.rm=TRUE) {
+  tryCatch(suppressWarnings(min(..., na.rm=na.rm)),
+           error = function(e){return(NA)})
+}
+xsd = function(..., na.rm=TRUE) {
+  tryCatch(suppressWarnings(sd(..., na.rm=na.rm)),
+           error = function(e){return(NA)})
+}
+
+

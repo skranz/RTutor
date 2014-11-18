@@ -6,7 +6,7 @@
 hint.for.call(call, ps = get.ps(), env = ps$stud.env,
   stud.expr.li = ps$stud.expr.li, part = ps$part,
   from.assign = !is.null(lhs), lhs = NULL, call.obj = NULL,
-  s3.method = NULL)
+  s3.method = NULL, start.char = "\\n", end.char = "\\n")
 }
 \description{
 Default hint for a call

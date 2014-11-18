@@ -5,7 +5,7 @@
 \usage{
 hint.for.assign(expr, ps = get.ps(), env = ps$stud.env,
   stud.expr.li = ps$stud.expr.li, part = ps$part, s3.method = NULL,
-  expr.object = NULL, ...)
+  expr.object = NULL, start.char = "\\n", end.char = "\\n", ...)
 }
 \description{
 Default hint for an assignment

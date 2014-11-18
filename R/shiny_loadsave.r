@@ -35,103 +35,86 @@ load.save.ui = function(ps=get.ps()) {
   )
 }
 
-load.save.observer = function(server.env = parent.frame()) {
-  expr = substitute(env=list(session = server.env$session), expr= {
-    observe({
-      if (has.counter.increased("loadBtn",input$loadBtn)) {
-        ps = get.ps()
-        file = isolate(input$loadFileInput)
-        
-        
-        ok = load.and.set.sav(file, ps=ps)
-        if (ok) {
-          update.all.chunks()
-          createAlert(session,inputId = "loadSaveAlert",
-            title = "Successfully loaded.",
-            message="",
-            type = "success", append=FALSE
-          )
+make.load.save.handlers = function() {
+  buttonHandler("loadBtn", function(session,..., ps=get.ps()) {
+    file = isolate(session$input$loadFileInput)
+    cat("\nload file ", file)            
+    ok = load.and.set.sav(file, ps=ps)
+    if (ok) {
+      update.all.chunk.ui()
+      createAlert(session,inputId = "loadSaveAlert",
+        title = "Successfully loaded.",
+        message="",
+        type = "success", append=FALSE
+      )
 
-        } else {
-          createAlert(session,inputId = "loadSaveAlert", 
-            title = "Could not load saved solution.",
-            message = ps$failure.message,
-            type = "warning", append=FALSE
-          )          
-        }
-      }
-    }) 
-   observe({
-      if (has.counter.increased("saveAsBtn",input$saveAsBtn)) {
-        
-        ps = get.ps()
-        file = isolate(input$saveFileInput)
-        restore.point("saveAs")
-
-        file.end = paste0("_",ps$name,".sav")
-        if (!str.ends.with(file, file.end)) {
-          createAlert(session,inputId = "saveAsAlert", 
-            title = "Invalid file name",
-            message = paste0('Your file name must end with "', file.end,'".'),
-            type = "warning", append=FALSE
-          )          
-        } else {
-          ps$sav.file = file
-          save.sav(ps=ps)
-          
-          pattern = paste0(".*\\Q_",ps$name,".sav\\E")
-          files = list.files(pattern=pattern)
-          updateSelectizeInput(session,'loadFileInput',choices=files,selected=ps$sav.file)
-          
-          createAlert(session,inputId = "saveAsAlert",
-            title = paste0("Saved as ", ps$sav.file),
-            message="",
-            type = "success", append=FALSE
-          )
-        }
-      }
-    }) 
-
-   
-    # export button
-    observe({
-      if (has.counter.increased("exportBtn",input$exportBtn)) {
-        rmd.file = isolate(input$exportFileInput)
-        export.solution(rmd.file)
-        createAlert(session,inputId = "exportAlert", 
-          title = paste0("Exported to ", rmd.file), 
-          message= "",
-          type = "info", append=FALSE
-        )
-      }
-    })
-   
-    # import button
-    observe({
-      if (has.counter.increased("importBtn",input$importBtn)) {
-        rmd.file = isolate(input$exportFileInput)
-        ok = import.from.rmd(rmd.file)
-        if (ok) {
-          update.all.chunks()
-          createAlert(session,inputId = "exportAlert", 
-            title = paste0("Imported solution from ", rmd.file), 
-            message= "",
-            type = "info", append=FALSE
-          )
-        } else {
-          ps = get.ps()
-          createAlert(session,inputId = "exportAlert", 
-            title = paste0("Import failed"), 
-            message= ps$failure.message,
-            type = "warning", append=FALSE
-          )          
-        }
-      }
-    })  
-
+    } else {
+      createAlert(session,inputId = "loadSaveAlert", 
+        title = "Could not load saved solution.",
+        message = ps$failure.message,
+        type = "warning", append=FALSE
+      )          
+    }   
   })
-  eval(expr,server.env)
+  
+  buttonHandler("saveAsBtn", function(session,..., ps=get.ps()) {
+    file = isolate(session$input$saveFileInput)
+    restore.point("saveAs")
+
+    file.end = paste0("_",ps$name,".sav")
+    if (!str.ends.with(file, file.end)) {
+      createAlert(session,inputId = "saveAsAlert", 
+        title = "Invalid file name",
+        message = paste0('Your file name must end with "', file.end,'".'),
+        type = "warning", append=FALSE
+      )          
+    } else {
+      ps$sav.file = file
+      save.sav(ps=ps)
+      
+      pattern = paste0(".*\\Q_",ps$name,".sav\\E")
+      files = list.files(pattern=pattern)
+      updateSelectizeInput(session,'loadFileInput',choices=files,selected=ps$sav.file)
+      
+      createAlert(session,inputId = "saveAsAlert",
+        title = paste0("Saved as ", ps$sav.file),
+        message="",
+        type = "success", append=FALSE
+      )
+    }
+  })
+
+  buttonHandler("exportBtn", function(session,..., ps=get.ps()) {
+    rmd.file = isolate(session$input$exportFileInput)
+    export.solution(rmd.file)
+    createAlert(session,inputId = "exportAlert", 
+      title = paste0("Exported to ", rmd.file), 
+      message= "",
+      type = "info", append=FALSE
+    )
+  })
+
+  buttonHandler("importBtn", function(session,..., ps=get.ps()) {
+    rmd.file = isolate(session$input$exportFileInput)
+    ok = import.from.rmd(rmd.file)
+    if (ok) {
+      update.all.chunk.ui()
+      createAlert(session,inputId = "exportAlert", 
+        title = paste0("Imported solution from ", rmd.file), 
+        message= "",
+        type = "info", append=FALSE
+      )
+    } else {
+      ps = get.ps()
+      createAlert(session,inputId = "exportAlert", 
+        title = paste0("Import failed"), 
+        message= ps$failure.message,
+        type = "warning", append=FALSE
+      )          
+    }
+  })  
 }
+
 
 
 save.sav = function(file=ps$sav.file, user.name=get.user()$name,ps=get.ps(), copy.into.global=TRUE) {
@@ -189,20 +172,6 @@ compare.sav.with.ps = function(sav, ps) {
   return(list(ok=TRUE, msg=NULL))
 }
 
-
-update.chunk = function(chunk.ind, ps = get.ps()) {
-  restore.point("update.chunk")
-  id = paste0("r.chunk_",chunk.ind,".ui.mode")  
-  ps[[id]]$counter=isolate(ps[[id]]$counter+1)
-  ps$cdt$has.ui.renderer[chunk.ind] = TRUE
-}
-
-update.all.chunks = function(ps=get.ps()) {
-  restore.point("update.all.chunks")
-  for (chunk.ind in ps$cdt$chunk.ps.ind) {
-    update.chunk(chunk.ind, ps)  
-  }
-} 
 
 
 export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),user.name=get.user()$name, ps=get.ps(), copy.into.global=TRUE,...) {

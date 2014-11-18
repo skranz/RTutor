@@ -8,7 +8,8 @@ check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
   ok.if.same.val = TRUE, call.object = NULL, s3.method = NULL,
   ps = get.ps(), stud.env = ps$stud.env, part = ps$part,
-  stud.expr.li = ps$stud.expr.li, verbose = FALSE, ...)
+  stud.expr.li = ps$stud.expr.li, verbose = FALSE,
+  only.check.assign.exists = FALSE, ...)
 }
 \description{
 Checks an assignment to a variable

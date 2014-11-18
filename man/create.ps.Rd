@@ -6,7 +6,7 @@
 create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
   libs = NULL, stop.when.finished = FALSE, extra.code.file = NULL,
-  var.txt.file = NULL, rps.has.sol = TRUE)
+  var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = FALSE)
 }
 \description{
 Generates  _struc.r file, .rps file, empty problem set .r and .rmd files

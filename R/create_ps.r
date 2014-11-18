@@ -1,4 +1,4 @@
-
+CREATE_PS_ENV = new.env()
 
 examples.create.ps = function() {
   library(restorepoint)
@@ -22,8 +22,10 @@ examples.create.ps = function() {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=FALSE) {
   restore.point("create.ps")
+  
+  CREATE_PS_ENV$fragment.only=fragment.only
   setwd(dir)
   txt = readLines(sol.file)
   txt =  name.rmd.chunks(txt=txt)
@@ -580,7 +582,7 @@ add.te.info = function(te) {
   txt = te$block.txt
   #txt = c(paste0("**",info.name,":** "), txt)
   ktxt = knit(text=txt)
-  html= markdownToHTML(text=ktxt, fragment.only=!TRUE)
+  html= markdownToHTML(text=ktxt, fragment.only=CREATE_PS_ENV$fragment.only)
 
   if (FALSE) {
     htmlFile <- tempfile(fileext=".html")
@@ -604,7 +606,7 @@ add.te.award = function(te) {
   txt = te$block.txt
   txt = c(paste0("### Award: ",name,"\n"), txt)
   ktxt = knit(text=txt)
-  html= markdownToHTML(text=ktxt, fragment.only=!TRUE)
+  html= markdownToHTML(text=ktxt, fragment.only=CREATE_PS_ENV$fragment.only)
   if (FALSE) {
     htmlFile <- tempfile(fileext=".html")
     writeLines(html,htmlFile)
@@ -932,21 +934,18 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
       #shiny.dt$html[[i]] = editChunkUI(chunk.name=chunk.name,code=code)
     } else if (dt$type[i]=="task") {
       code = txt[df$start[i]:df$end[i]]
-      #if (any(str.starts.with(code, "a)"))) {
-      #restore.point("jkhskjfhdkjfkjdn")
-      #  stop()
-      #}
       if (nchar(paste0(code, collapse="\n"))==0)  {
         keep.row[i] = FALSE
       } else {
-        dt$html[[i]] = withMathJax(HTML(markdownToHTML(text=code, fragment.only=!TRUE)))
-        #dt$html[[i]] = HTML(markdownToHTML(text=code, fragment.only=!TRUE))
+        #dt$html[[i]] = withMathJax(HTML(markdownToHTML(text=code, fragment.only=!TRUE)))
+        dt$html[[i]] = HTML(markdownToHTML(text=code,fragment.only=CREATE_PS_ENV$fragment.only))
+
       }
     } else if (dt$type[i]=="info") {
       header = txt[df$start[i]]
       info.name = str.between(header,'"','"')
-      html = withMathJax(HTML(rps$infos[[info.name]]$html))
-      #html = HTML(rps$infos[[info.name]]$html)
+      #html = withMathJax(HTML(rps$infos[[info.name]]$html))
+      html = HTML(rps$infos[[info.name]]$html)
       
       collapseId = paste0("collapse_info_",i)
       collapsePanelId = paste0("collapse_panel_info_",i) 

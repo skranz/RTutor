@@ -4,8 +4,8 @@
 \title{Initialize a problem set for the student}
 \usage{
 init.ps(ps.name, dir = getwd(), stud.short.file = paste0(ps.name, ".Rmd"),
-  rps.file = paste0(dir, "/", ps.name, ".rps"), log.file = paste0(dir, "/",
-  ps.name, ".log"))
+  rps.file = paste0(rps.dir, "/", ps.name, ".rps"), log.file = paste0(dir,
+  "/", ps.name, ".log"), rps.dir = dir)
 }
 \arguments{
 \item{ps.name}{the name of the problem set}
