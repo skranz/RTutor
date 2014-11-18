@@ -23,13 +23,13 @@ update.data.explorer.ui = function(ps=get.ps()) {
     updateDataTable("tableDataExplorer",signif.cols(data,4),
       options = list(orderClasses = TRUE, lengthMenu = c(5, 10, 25,50,100),pageLength = 5)) 
   
-    updateUI("dataSummariseUI",{data.summarise.ui(data)}) 
-    updateUI("dataPlotUI",{data.plot.ui(data)}) 
+    #updateUI("dataSummariseUI",{data.summarise.ui(data)}) 
+    #updateUI("dataPlotUI",{data.plot.ui(data)}) 
     updateUI("variablesDescrUI",{make.var.descr.ui(data)}) 
   } else {
     updateDataTable("tableDataExplorer",NULL) 
-    updateUI("dataSummariseUI",NULL) 
-    updateUI("dataPlotUI",NULL) 
+    #updateUI("dataSummariseUI",NULL) 
+    #updateUI("dataPlotUI",NULL) 
     updateUI("variablesDescrUI",NULL) 
     
   }
@@ -158,9 +158,9 @@ data.explorer.ui = function() {
     column(10,
         tabsetPanel(
           tabPanel("Data",dataTableOutput("tableDataExplorer")),
-          tabPanel("Description",uiOutput("variablesDescrUI")),
-          tabPanel("Summary", uiOutput("dataSummariseUI")),
-          tabPanel("Plot", uiOutput("dataPlotUI"))
+          tabPanel("Description",uiOutput("variablesDescrUI"))
+          #tabPanel("Summary", uiOutput("dataSummariseUI")),
+          #tabPanel("Plot", uiOutput("dataPlotUI"))
         )
     )
   )
@@ -308,7 +308,7 @@ make.var.descr.ui = function(dat) {
 var.summary.html = function(v,...) {
   restore.point("var.summary.html ")
 
-  library(xtable)
+  library(hwriter)
   dli = describe.var(v)  
   lab1 = paste0(names(dli)[1:3],":")
   val1 = as.character(dli[1:3])
@@ -321,19 +321,17 @@ var.summary.html = function(v,...) {
     dli = c(dli,list("","",""))
     lab2 = paste0("  ",names(dli)[4:6],":")
     val2 = as.character(xsignif(dli[4:6],4))
-    lab3 = top.var[1:3]
-    val3 = top.share[1:3] 
+    lab3 = paste0("  ",1:3, ": ",top.var[1:3])
+    val3 = top.share[1:3]
     df = data.frame(lab1,val1,lab2,val2,lab3,val3)
-    colnames(df)=c("","","","","value","share")
+    colnames(df)=c("",""," Summary","         ","Most common values","Share")
   } else {
     lab3 = paste0("  ",top.var[1:3])
     val3 = top.share[1:3] 
     df = data.frame(lab1,val1,lab3,val3)
     colnames(df)=c("","","value","share")
   }
-  out = merge.lines(capture.output(
-    print(xtable(df), type="html", include.rownames=FALSE, html.table.attributes=c("border=0,cellspacing=10"))
-  ))
+  out = hwrite(df, NULL, border=2, row.names=FALSE, cellpadding=5)
   out
 }
 

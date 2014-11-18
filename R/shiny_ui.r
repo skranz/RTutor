@@ -19,7 +19,10 @@ make.view.ui = function(view.ind, ps=get.ps()) {
       return(mathJaxRTutor(shiny.dt$html[[i]]))
     }
   })
-  do.call("fluidRow", ui.li)
+  #do.call("fluidRow", ui.li)
+  w = 12-ps$left.margin-ps$right.margin
+  my.ui = do.call("column", c(list(width=w, offset=ps$left.margin),ui.li))
+  fluidRow(my.ui)
 }
 
 # Make the default ui for each view and add it view.ui.li to ps
@@ -94,9 +97,12 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
   dataExplorerPanel = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
   loadSavePanel = tabPanel("File",value="loadSaveTabPanel", load.save.ui())
 
-  doc = do.call("tabsetPanel", c(
-    list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
-  ))
+  
+  #doc = fluidRow(column(8, offset=2,
+  doc=  do.call("tabsetPanel", c(
+      list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
+    ))
+  #))
   
 #   ret = navbarPage("RTutor", header=
 #     tags$head(
@@ -130,7 +136,7 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
                   type = 'text/javascript'),
       tags$link(rel = 'stylesheet', type = 'text/css',
                 href = 'highlightjs/styles/github.min.css')
-    ),                   
+    ),
     tabPanel(ps$name, mathJaxRTutor(doc))
   )
 

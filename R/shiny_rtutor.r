@@ -40,13 +40,15 @@ examples.show.shiny.ps = function() {
 #' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE. 
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, ...) {
 
   app = eventsApp()
   
   ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, load.sav=load.sav, sample.solution=sample.solution, import.rmd=import.rmd, rmd.file=rmd.file, dir=dir, rps.dir=rps.dir,...)
   ps$catch.errors = catch.errors
   ps$offline=offline
+  ps$left.margin = left.margin
+  ps$right.margin = right.margin
   
   restore.point("show.shiny.ps")
 
