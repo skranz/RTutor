@@ -580,6 +580,11 @@ add.te.info = function(te) {
   info.name = str.between(str, '"','"')
   
   txt = te$block.txt
+  
+  if (is.null(txt)) {
+    txt = "-- EMPTY INFO BLOCK --"
+    warning("You have an empty info block \n:", str)
+  }
   #txt = c(paste0("**",info.name,":** "), txt)
   ktxt = knit(text=txt)
   html= markdownToHTML(text=ktxt, fragment.only=CREATE.PS.ENV$fragment.only)
