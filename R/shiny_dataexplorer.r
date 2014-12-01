@@ -13,32 +13,22 @@ update.data.explorer.ui = function(ps=get.ps()) {
       variable.selector.ui(stud.env, chunk.name)    
   })
 
+  make.data.explorer.handlers()
   vars = get.environment.data.var()
   
   if (length(vars)>0) {
     var = vars[1]
     cat("\nupdate for var ", var)
-    data = set.data.explorer.data(var)
-
-    updateDataTable("tableDataExplorer",signif.cols(data,4),
-      options = list(orderClasses = TRUE, lengthMenu = c(5, 10, 25,50,100),pageLength = 5)) 
-  
-    #updateUI("dataSummariseUI",{data.summarise.ui(data)}) 
-    #updateUI("dataPlotUI",{data.plot.ui(data)}) 
-    updateUI("variablesDescrUI",{make.var.descr.ui(data)}) 
+    update.data.explorer.data(var)
   } else {
     updateDataTable("tableDataExplorer",NULL) 
-    #updateUI("dataSummariseUI",NULL) 
-    #updateUI("dataPlotUI",NULL) 
     updateUI("variablesDescrUI",NULL) 
-    
   }
     
 }
 
 
-set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) {
-  
+set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) { 
   if (is.null(var)) {
     var = ps$session$input$radioDataExplorer
   }
@@ -57,12 +47,22 @@ set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) {
   return(ps$de.dat)
 }
 
+update.data.explorer.data  = function(var) {
+  data = set.data.explorer.data(var)
+  updateDataTable("tableDataExplorer",signif.cols(data,4),
+      options = list(orderClasses = TRUE,
+                     lengthMenu = c(5, 10, 25,50,100),
+                     pageLength = 5)) 
+  updateUI("variablesDescrUI",{make.var.descr.ui(data)}) 
+  
+}
+
 #examples.rtutor.shiny()
 make.data.explorer.handlers = function() {
   restore.point("data.explorer.server")  
   changeHandler("radioDataExplorer", function(value,...,ps=get.ps()) {
-    set.data.explorer.data(var=value)
-    update.data.explorer.data()
+    cat("changeRadioDataExplorer...")
+    update.data.explorer.data(var=value)
   })
 }
 
