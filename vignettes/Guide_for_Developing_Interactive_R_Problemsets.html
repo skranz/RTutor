@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>I Brief overview</title>
+<title>Tutorial for Developing Interactive R Problem Sets with RTutor</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -201,14 +201,13 @@ hr {
 </head>
 
 <body>
-<p>Tutorial for Developing Interactive R Problem Sets with RTutor
-!!! Version for RTutor - Preliminary !!!</p>
+<h1>Tutorial for Developing Interactive R Problem Sets with RTutor</h1>
 
-<p>**Date: 2014-10-16</p>
+<p>**Date: 2014-12-01</p>
 
 <p><strong>Author: Sebastian Kranz, Ulm University</strong> </p>
 
-<p>RTutor is an R package that allows to develop interactive R exercises. The interactive exercises directly test a student&#39;s solution and provide hints if not everything is correct. Unlike web-based approaches, as e.g. <a href="https://www.datacamp.com/">https://www.datacamp.com/</a>, RTutor is developed for off-line use. Problemsets can either be solved as Markdown  .rmd file directly in RStudio or in a browser based interface powered by Shiny.  This document gives you an overview how to generate an interactive problem set.</p>
+<p>RTutor is an R package that allows to develop interactive R exercises. The interactive exercises directly test a student&#39;s solution and provide hints if not everything is correct. Unlike web-based approaches, as e.g. <a href="https://www.datacamp.com/">https://www.datacamp.com/</a>, RTutor is developed for off-line use. Problem sets can either be solved as Markdown  .rmd file directly in RStudio or in a browser based interface powered by Shiny.  This document gives you an overview how to generate an interactive problem set.</p>
 
 <h2>I Brief overview</h2>
 
@@ -216,30 +215,10 @@ hr {
 
 <p>You first need to install some packages. Simply run in R</p>
 
-<pre><code class="s"># Install packages from CRAN
-install.packages(&quot;devtools&quot;)
-install.packages(&quot;whisker&quot;)
-install.packages(&quot;stringr&quot;)
-install.packages(&quot;JSONIO&quot;)
-install.packages(&quot;data.table&quot;)
-install.packages(&quot;dplyr&quot;)
-install.packages(&quot;shiny&quot;)
-install.packages(&quot;shinyBS&quot;)
-install.packages(&quot;xtable&quot;)
-install.packages(&quot;lmtest&quot;)
-install.packages(&quot;texreg&quot;)
-
-# Install packages from github
-library(devtools)
-install_github(repo=&quot;restorepoint&quot;, username=&quot;skranz&quot;)
-install_github(repo=&quot;stringtools&quot;, username=&quot;skranz&quot;)
-install_github(repo=&quot;shinyAce&quot;, username=&quot;skranz&quot;)
-install_github(repo=&quot;dplyrExtras&quot;, username=&quot;skranz&quot;)
-install_github(repo=&quot;regtools&quot;, username=&quot;skranz&quot;)
-install_github(repo=&quot;RTutor&quot;, username=&quot;skranz&quot;)
-
-
-library(restorepoint)
+<pre><code class="s">if (!require(devtools))
+  install.packages(&quot;devtools&quot;)
+source_gist(&quot;gist.github.com/skranz/fad6062e5462c9d0efe4&quot;)
+install.rtutor(update.github=TRUE)
 library(RTutor)
 </code></pre>
 
@@ -255,7 +234,9 @@ library(RTutor)
     Author:  Sebastian Kranz
     Date:    12.06.2014
 
-    Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+    Adapt the working directory below and press Ctrl-Alt-R (run all chunks).
+    This creates the problem set files and the sample solution from this solution file.
+
     #&lt; ignore
     ```{r &quot; &quot;}
     library(RTutor)
@@ -264,10 +245,12 @@ library(RTutor)
     ps.name = &quot;Example&quot;; sol.file = paste0(ps.name,&quot;_sol.Rmd&quot;)
     libs = NULL # character vector of all packages you load in the problem set
     #name.rmd.chunks(sol.file) # set auto chunk names in this file
-    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file=NULL, var.txt.file=NULL)
+    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,
+              libs=libs, extra.code.file=NULL, var.txt.file=NULL)
 
     # When you want to solve in the browser
-    show.shiny.ps(ps.name,launch.browser=TRUE, load.sav=FALSE, sample.solution=FALSE, is.solved=FALSE)
+    show.ps(ps.name,launch.browser=TRUE, load.sav=FALSE,
+            sample.solution=FALSE, is.solved=FALSE)
 
     ```
     #&gt;
@@ -293,7 +276,9 @@ library(RTutor)
     ```
 
     #&lt; award &quot;mean means mean&quot;
-    Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called &#39;mean&#39;. Usually, it is much quicker to goggle than to guess function names, however.
+    Well, in some occasions one can just guess the name of an R function.
+    The function to compute the mean of a vector, or matrix is called &#39;mean&#39;.
+    Usually, it is much quicker to goggle than to guess function names, however.
     #&gt;
 
 
@@ -347,13 +332,13 @@ library(RTutor)
 <pre><code class="s">#name.rmd.chunks(sol.file) # set auto chunk names in this file
 </code></pre>
 
-<p>in the example above, the chunk names of your solution file will be automatically set to the naming convention in your empty problem set. This helps to navigate your solution file. To see the changes in your solution file in your RStudio editor window, you have to change the editor tab to some other file and then move back to the tab of your solution file. Unfortunately, sometimes RStudio will have problems to run all chunks with Strg-Alt-R if you have automatically renamed chunk names. If that happens try starting RStudio again.</p>
+<p>in the example above, the chunk names of your solution file will be automatically set to the naming convention in your empty problem set. This helps to navigate your solution file. To see the changes in your solution file in your RStudio editor window, you have to change the editor tab to some other file and then move back to the tab of your solution file. Unfortunately, sometimes RStudio will have problems to run all chunks with Ctrl-Alt-R if you have automatically renamed chunk names. If that happens try starting RStudio again.</p>
 
 <h3>4a Solving and checking the problem in the browser</h3>
 
 <p>The call</p>
 
-<pre><code>    show.shiny.ps(ps.name,launch.browser=TRUE, load.sav=FALSE, sample.solution=FALSE, is.solved=FALSE)
+<pre><code>    show.ps(ps.name,launch.browser=TRUE, load.sav=FALSE, sample.solution=FALSE, is.solved=FALSE)
 </code></pre>
 
 <p>should start your default browser with an empty problem set and you should be able to solve it by working on the first code chunk and pressing the &ldquo;check&rdquo; button when finished. If you set the argument <code>sample.solution=TRUE</code> the problem set is already filled with your sample solution. If you also set <code>is.solved=FALSE</code> all code chunks are already automatically checked when you start the problem set. Pressing the &#39;save&#39; button on some code chunk in your problem set, will save your solution. You can load your previous solution by call show.shiny.ps with the argument <code>load.sav=TRUE</code>. This may not work, however, if you have modified the solution file. The browser version of the problem set is still some work in progress. It should work, but has bugs and needs generally some improvement. 
@@ -374,7 +359,7 @@ library(RTutor)
 
 <ol>
 <li>Save your .rmd problem set file (Ctrl-S) </li>
-<li>and then run all chuncks of your problem set (Ctrl-Alt-R)</li>
+<li>and then run all chunks of your problem set (Ctrl-Alt-R)</li>
 </ol>
 
 <p>How does it work? The header of the problem set file loads the package RTutor and calls the function check.problem.set, which runs automatic tests on the typed solution. If a test passes there is a success message. If a test fails, one gets an error message specifying in which part of the problem set the solution is not yet correct. Often one can type <code>hint()</code> in the R console to get a hint of how to solve the task that is not yet correct.</p>
@@ -385,7 +370,7 @@ library(RTutor)
 
 <h3>5. Iterative Development</h3>
 
-<p>I guess the most natural way to develop a problem set is to iteratively perform the following 3 steps:</p>
+<p>I guess the most natural way to develop a problem set is to repeatedly perform the following 3 steps:</p>
 
 <ol>
 <li>Write and adapt your solution file and generate problem set files with Ctrl-Alt-R</li>
@@ -404,7 +389,7 @@ library(RTutor)
 
 <p>Distributing the problem set for RStudio use is simple: just give your students the structure file as .rps and the empty problem set as .rmd file and tell them to install RStudio and all packages as described above.</p>
 
-<p>Problem sets as R package: I plan to simplify distribution further by the option to create an R package for each problem set or for goups of problem sets, but I have not yet implemented it.</p>
+<p>Problem sets as R package: I plan to simplify distribution further by the option to create an R package for each problem set or for groups of problem sets, but I have not yet implemented it.</p>
 
 <p>Students can then go on solving the problem set. You can also ask them to upload the solutions and possible the log files that track their solution process.</p>
 
@@ -448,7 +433,7 @@ library(RTutor)
 
 <p>There are several keywords with special meaning. We have a problem set header starting with <code># Problemset</code> an exercise header starting with <code>## Exercise</code>. There is an <em>ignore block</em> starting with the line <code>#&lt; ignore</code> and ending with the line <code>#&gt;</code> that contains a code chunk to generate the problem set files from this solution. Code or text within ignore blocks will not become part of the problem set itself.</p>
 
-<p>The description of the exercise is written as standard text, the code of your solution is put in R code chunks. The first code chunk contains a <em>task block</em> starting with <code>#&lt; task</code> and ending with <code>#&gt;</code> that specifies that this code will be shown to the students as part of the task descripton of the problem set.</p>
+<p>The description of the exercise is written as standard text, the code of your solution is put in R code chunks. The first code chunk contains a <em>task block</em> starting with <code>#&lt; task</code> and ending with <code>#&gt;</code> that specifies that this code will be shown to the students as part of the task description of the problem set.</p>
 
 <p>You can already generate an empty problem set from this simple solution file by running Ctrl-Alt-R (see step 3 of part I). In the empty problem set file, places where students have to enter code will be marked by.</p>
 
@@ -477,7 +462,7 @@ library(RTutor)
 
 <p>You can pick any label for the exercise (it can include spaces). Yet, the recommend format for the exercise name is an exercise number, optionally followed by <code>--</code> and a short description, as in the example above.</p>
 
-<p>It is neccessary that your line <em>must</em> starts with </p>
+<p>It is necessary that your line <em>must</em> starts with </p>
 
 <pre><code>## Exercise 
 </code></pre>
@@ -504,7 +489,7 @@ library(RTutor)
 
 <h3>task_notest blocks</h3>
 
-<p>By default also the code as part of a task block will be tested for correctness when the student tests her solution. That is because future code may rely on the given code in the task and we want to make sure that the task code has not been accidently changed by the user. If you don&#39;t want to generate tests for the code given in the task you can do so by wrapping the code instead in a block starting with <code>#&lt; task_notest</code>, e.g.</p>
+<p>By default also the code as part of a task block will be tested for correctness when the student tests her solution. That is because future code may rely on the given code in the task and we want to make sure that the task code has not been accidentally changed by the user. If you don&#39;t want to generate tests for the code given in the task you can do so by wrapping the code instead in a block starting with <code>#&lt; task_notest</code>, e.g.</p>
 
 <pre><code class="r eval=FALSE">#&lt; task_notest
   sum(1:5)
@@ -524,7 +509,7 @@ You must call the function &#39;mean&#39; in part a).
 
 <pre><code>    # Problemset Example 
 
-    ... chunk to generate problem sets is ommited ...
+    ... chunk to generate problem sets is omitted ...
 
     ## Exercise 1 -- Summary statistics
 
@@ -592,7 +577,7 @@ You must call the function &#39;mean&#39; in part a).
 
 <h3>Info blocks</h3>
 
-<p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. They allow addtitional information that will be optionally shown as HTML in the RStudio viewer pane if the user wants to see it. They are very helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:</p>
+<p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. They allow additional information that will be optionally shown as HTML in the RStudio viewer pane if the user wants to see it. They are very helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:</p>
 
 <pre><code>  #&lt; info &quot;useful functions for numeric vectors&quot;
     Here are examples for useful R functions
@@ -625,7 +610,7 @@ Since info blocks will be complied already when the problem set is created, you 
 
 <h2>Adapting tests of student&#39;s solution</h2>
 
-<p>I tried my best to automatically test whether the student entered a correct solution or not. Yet, sometimes we need to manually include specifice variants of tests in the solution file. Here is an example for such a manual test:</p>
+<p>I tried my best to automatically test whether the student entered a correct solution or not. Yet, sometimes we need to manually include specific variants of tests in the solution file. Here is an example for such a manual test:</p>
 
 <pre><code>    #&#39; b) Save in the variable u a vector of 4 different numbers
     u = c(3,6,7,99)  
@@ -654,7 +639,7 @@ Since info blocks will be complied already when the problem set is created, you 
 
 <h3>Specifying parameters of default tests</h3>
 
-<p>By default, tests are generated that call either <code>check.call</code> (a statement that does not assign a varible), <code>check.assign</code> (if a value is assigned to a variable), or <code>check.function</code> (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  <code>#&lt; test_arg</code> allows you to change the arguments of a default test. Consider the following example:</p>
+<p>By default, tests are generated that call either <code>check.call</code> (a statement that does not assign a variable), <code>check.assign</code> (if a value is assigned to a variable), or <code>check.function</code> (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  <code>#&lt; test_arg</code> allows you to change the arguments of a default test. Consider the following example:</p>
 
 <pre><code>    plot(x=p,y=q,main=&quot;A plot&quot;, xlab=&quot;Prices&quot;)
     #&lt; test_arg

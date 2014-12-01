@@ -5,7 +5,7 @@ output:
     toc: yes
 ---
 
-Design Tipps for Interactive Problemsets based on an article
+Design Tips for Interactive Problem sets based on an article
 ===============================================================
 
 **Author: Sebastian Kranz, Ulm University** 
@@ -27,7 +27,7 @@ Design most parts of your problem set with the following typical user in mind:
   2. The user knows already a little bit of R, but does not necessarily know how to use packages like `dplyr`.
   3. The user is primarily interested in the economic analysis of the article.
   4. Whenever the user has computed a summary statistic, has run a regression or has shown a plot, she wants to read a short economic interpretation of the results. Try to always add text with such interpretations: mostly a good place is directly below the code chunk where the user shall perform the computation.
-  5. While the user is also interested in learning some R tricks and seeing and adapting examples of well written R code, she does not like spending time searching through the internet or help files in order to find R commands or their precise syntax. She rather wants you to first  give an example, that she can adapt. She also strongly prefers short, elegant R code & tricks from existing packages. She does not like unelegant, complicated code.
+  5. While the user is also interested in learning some R tricks and seeing and adapting examples of well written R code, she does not like spending time searching through the internet or help files in order to find R commands or their precise syntax. She rather wants you to first  give an example, that she can adapt. She also strongly prefers short, elegant R code & tricks from existing packages. She does not like inelegant, complicated code.
   6. While the user likes solving and reading a well designed problem set, she also can quickly become bored. If solving the task becomes too complicated or she must do too much repeated work, she will just stop solving the problem set. E.g. if many similar computations have to be performed, just let the user solve one or two and provide the remaining computations in the task. 
   7. If the user has good knowledge of R and economics, she should be able to solve the problem set quite quickly by adapting the examples you provide in the task description.
 
@@ -72,15 +72,15 @@ The new RTutor allows two sort of problem sets: HTML-Shiny-based or Markdown-RSt
 
 ### Use info blocks for background information and variable descriptions
 
-When designing problem sets, you often face the following conflict. On the one hand, you may want to give detailed background information. On the other hand, you want your tasks sufficiently short, as you don't want to force the reader to read a lot before she can start analysing the data. To resolve this conflict, you can put a lot of information into info blocks. The user can view info blocks whenever she likes. You should generally put a description of the relevant variables of the current data set in info blocks.
+When designing problem sets, you often face the following conflict. On the one hand, you may want to give detailed background information. On the other hand, you want your tasks sufficiently short, as you don't want to force the reader to read a lot before she can start analyzing the data. To resolve this conflict, you can put a lot of information into info blocks. The user can view info blocks whenever she likes. You should generally put a description of the relevant variables of the current data set in info blocks.
 
 ### Create short code chunks and frequently add explanations and discussions afterwards
 
-Try to avoid too many commands in one code chunk, but rather create more chunks. It is totally ok if the user only has to enter one or two commands in each code chunk. Whenever the user performed some analysis, provide a short explanation or discussion afterwards that helps the user to interpret the results.
+Try to avoid too many commands in one code chunk, but rather create more chunks. It is totally OK if the user only has to enter one or two commands in each code chunk. Whenever the user performed some analysis, provide a short explanation or discussion afterwards that helps the user to interpret the results.
 
 ### Interpret significant coefficients and effect sizes
 
-After showing regression resulst, try to verbally interpret some economically interesting significant coefficients. What do they mean (one unit increase of x changes y by ??? units)? Do they seem economically substantial or rather not so? How big is the uncertainty mirrored in the standard errors? You can also ask the user for the quantitative interpretation via a quizz (see below).
+After showing regression results, try to verbally interpret some economically interesting significant coefficients. What do they mean (one unit increase of x changes y by ??? units)? Do they seem economically substantial or rather not so? How big is the uncertainty mirrored in the standard errors? You can also ask the user for the quantitative interpretation via a quiz (see below).
 
 Also consider using the function `effectplot` in my package `regtools`. It helps to compare the effects that changes in different explanatory variables have on the dependent variable in a standardized fashion.
 
@@ -92,7 +92,7 @@ Don't load and prepare all data sets at once, but try to start small and only lo
 
 ### Start with a descriptive or graphical analysis before you prepare the data
 
-It is ok if at some later point you want to teach the user how to modify and prepare data for the analysis (such skills are definitely useful since much time is usually spent with data preparation). Yet, try to start the problem set with loading data and showing some description or plot. Relegate data preparation to later parts. This means you may provide the user with a data set that you have prepared already yourself. In a later exercise you can explain how you have prepared that data.
+It is OK if at some later point you want to teach the user how to modify and prepare data for the analysis (such skills are definitely useful since much time is usually spent with data preparation). Yet, try to start the problem set with loading data and showing some description or plot. Relegate data preparation to later parts. This means you may provide the user with a data set that you have prepared already yourself. In a later exercise you can explain how you have prepared that data.
 
 ### Don't let the user repeat too often boring tasks
 
@@ -147,11 +147,11 @@ Maybe at some point you want to ask a more complex computation from the user ins
 
 ### If you have a hard task put it in an own exercise and / or be generous with your hints
 
-Even if overal the goal is that the problem set is not too hard to solve. You may want to add one or two more tricky exercises. Then make sure that you put them in an extra exercise, which can be solved optionally. Otherwise be very generous with the hint, e.g. provide the solution in your hint.
+Even if overall the goal is that the problem set is not too hard to solve. You may want to add one or two more tricky exercises. Then make sure that you put them in an extra exercise, which can be solved optionally. Otherwise be very generous with the hint, e.g. provide the solution in your hint.
 
 ### Except you have a very good reason, don't let the user write unelegant, complicated code if you know a nicer way.
 
-Sometimes you think it could be a good idea that the user first uses a complicated way to solve problem and you only later tell how she can solve it more elegantly. Typically this not such a good idea and it is better to skip the unelegant solution and immediatly start with the elegant solution.
+Sometimes you think it could be a good idea that the user first uses a complicated way to solve problem and you only later tell how she can solve it more elegantly. Typically this not such a good idea and it is better to skip the inelegant solution and immediately start with the elegant solution.
 
 
 ## Recommended packages and functions
@@ -163,11 +163,11 @@ This sections gives recommendations for packages and functions you should use fo
 
 #### present regression results: showreg (in regtools)
 
-The package `regtools` contins the function `showreg` to show regression results. It shows results from one or several regression objects in a typical format used in journal articles. The function is basically a wrapper to functions in the package `texreg`. I think that the output of the usual `summary` function typically does not look as nice in an interactive problem set. 
+The package `regtools` contains the function `showreg` to show regression results. It shows results from one or several regression objects in a typical format used in journal articles. The function is basically a wrapper to functions in the package `texreg`. I think that the output of the usual `summary` function typically does not look as nice in an interactive problem set. 
 
 #### basic regression functions
 
-The base R functions `lm` and `glm` allow linear regressions and generalized linear models, including tobit and probit regressions. But there are many specialized functions and packages for other sorts of regressions, e.g.
+The base R functions `lm` and `glm` allow linear regressions and generalized linear models, including Tobit and probit regressions. But there are many specialized functions and packages for other sorts of regressions, e.g.
 
   - `plm`: linear panel data models
   - `mlogit`: discrete choice data
@@ -191,7 +191,7 @@ Since explanatory variables are usually measured in different units, it is often
 
 ### Data preparation: dplyr, tidyr and dplyrExtras
 
-The package `dplyr` and `tidyr` provide a very well thought through framework for many common data manipulation tasks and the functions run fast also for big data sets. Try to use them. Unfortunatley, `dplyr` is still very young and I was missing some functionality. Therefore I wrote the package `dplyrExtras` provides that can be installed from github:
+The package `dplyr` and `tidyr` provide a very well thought through framework for many common data manipulation tasks and the functions run fast also for big data sets. Try to use them. Unfortunately, `dplyr` is still very young and I was missing some functionality. Therefore I wrote the package `dplyrExtras` provides that can be installed from Github:
 ```s
 library(devtools);
 install_github(repo="dplyrExtras", username="skranz")
@@ -199,15 +199,40 @@ install_github(repo="dplyrExtras", username="skranz")
 
 ### Summarising and aggregating data: dplyr (group_by and summarise)
 
-For summarising data, the `summarise` function in `dplyr` is very useful. Combine it with the `group_by` function to perform summaries by groups. Also the `summarise_each` function, as well as the `xsummarise_each` function in `dplyrExtras`, can be helpful. 
+For summarizing data, the `summarise` function in `dplyr` is very useful. Combine it with the `group_by` function to perform summaries by groups. Also the `summarise_each` function, as well as the `xsummarise_each` function in `dplyrExtras`, can be helpful. 
 
 
 ### Graphics: ggplot2 and more
 
 A very nice and powerful graphics package is `gpplot2`. Even though the syntax may look a bit complicated at the beginning, I recommend to use it for most of your figures.  
 
-The ggplot2 package is nicle complemented by the `ggthemes` package that contains several additional themes for the appearance of your plots. I particularly like `theme_wsj()`, which renders your graphics in a 'Wall Street Journal' theme. There is also a Stata theme: `theme_stata()`, which may make your graphs look more similar to those in the original article.
+The ggplot2 package is nicely complemented by the `ggthemes` package that contains several additional themes for the appearance of your plots. I particularly like `theme_wsj()`, which renders your graphics in a 'Wall Street Journal' theme. There is also a Stata theme: `theme_stata()`, which may make your graphs look more similar to those in the original article.
 
 For simple plots you may also sometimes use the standard R functions like `plot` or `hist`. For interactive plots take a look at the packages `googleVis`. In particular the motion plots in `googleVis` can be quite nice. To use it, set in the chunk header the option `results="asis"` to make the output be displayed as HTML. I have not yet figured out how the promising `ggvis` package can be best integrated with RTutor.
 
 
+## Formal Aspects
+
+Your interactive problem set should also stick to the following guidelines for its formal aspects. This is especially recommended if you generate it as part of your Bachelor or Master Thesis.
+
+### Citations and bibliography
+
+Like in a normal Bachelor thesis, please also you citations. For example, if you explain some econometric procedure you may cite an econometric text book or articles that provide more detailed overviews. Similar to citations in footnotes, you can briefly discuss this literature in an info block. Citation format should be the same as in a normal thesis, e.g.:
+
+    ... see Greene (2011, chapter 7) for more details.
+    
+At the end of your last exercise you should add a list of all cited literature (a bibliography) using a similar format as you would use in your thesis.
+
+Of course you can also add web links in your problem set. You must not necessarily use the common citation format for web links and may not necessarily add them to bibliography. Decide yourself, whether you think this is sensible or not for a particular link.
+
+### Spellchecking
+
+Make sure to run a spell and grammar checker on your _sol.Rmd file.
+
+#### RStudio spell checker
+
+RStudio has a spell checker included. Just press F7 while editing your _sol.Rmd file (or go to menu Edit --> Check Spelling).
+
+#### Using a spell and grammar checker of your Office application
+
+Microsoft Word, for example, has a substantially more powerful spell checker than the one included in RStudio. In particular, it also check your grammar to some extend. You can directly open your .Rmd file in Word and use its spell checker. It probably will mark some of your R code or your markdown annotations as wrong, but you just can manually skip those false alerts.
