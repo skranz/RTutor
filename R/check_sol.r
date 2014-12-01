@@ -5,9 +5,22 @@
 #' 
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE) {
+check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive()) {
   
   restore.point("check.problem.set", deep.copy=FALSE)
+  
+  if (from.knitr) {
+    # Allows knitting to HTML even when there are errors
+    knitr::opts_chunk$set(error = TRUE)
+    ps = NULL
+    try(ps <- get.or.init.ps(ps.name,stud.path, stud.short.file, reset), silent=TRUE)
+    
+    # Copy extra code into globalenv
+    if (!is.null(ps$rps$extra.code.env)) {
+      copy.into.env(source=ps$rps$extra.code.env, dest = globalenv()) 
+    }
+    return()
+  }
   
   # If called from knitr, I don't want to check by default
   if (!do.check) return("not checked")

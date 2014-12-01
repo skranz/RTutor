@@ -119,6 +119,7 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
   writeLines(sol.txt, file)
 }
 
+
 write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te,...) {
   
   
