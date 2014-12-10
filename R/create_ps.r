@@ -22,10 +22,12 @@ examples.create.ps = function() {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE) {
   restore.point("create.ps")
   
   CREATE.PS.ENV$fragment.only = fragment.only
+  CREATE.PS.ENV$add.enter.code.here = add.enter.code.here
+  
   setwd(dir)
   txt = readLines(sol.file)
   txt =  name.rmd.chunks(txt=txt)
@@ -49,8 +51,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
   rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
   
+  if (add.shiny)
+    rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
   
-  rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
   source.rps.extra.code(extra.code.file, rps)
   if (!is.null(var.txt.file)) {
     rps$var.dt = read.var.txt(var.txt.file)
@@ -511,8 +514,11 @@ add.te.code = function(te,ck) {
       ck$e.li = c(ck$e.li, e.li)
       ck$e.source.li  = c(ck$e.source.li, e.source.li)
       te$last.e = e.li[[length(e.li)]]
-      enter.code.str =  "\n# enter your code here ...\n"
-      enter.code.str =  ""
+      if (CREATE.PS.ENV$add.enter.code.here) {
+        enter.code.str =  "\n# enter your code here ...\n"
+      } else {
+        enter.code.str =  ""
+      }
       if (!task & 
         !identical(te$task.txt[length(te$task.txt)], enter.code.str)) {
         ck$task.txt = c(ck$task.txt, enter.code.str)

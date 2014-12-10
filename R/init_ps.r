@@ -36,6 +36,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   load.ps.libs(rps$libs)
   
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
+  #print(all.parent.env(ps$ps.baseenv))
   if (!is.null(rps$extra.code.env)) {
     copy.into.env(source=rps$extra.code.env, dest = ps$ps.baseenv) 
   }

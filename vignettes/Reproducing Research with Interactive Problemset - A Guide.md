@@ -236,3 +236,9 @@ RStudio has a spell checker included. Just press F7 while editing your _sol.Rmd 
 #### Using a spell and grammar checker of your Office application
 
 Microsoft Word, for example, has a substantially more powerful spell checker than the one included in RStudio. In particular, it also check your grammar to some extend. You can directly open your .Rmd file in Word and use its spell checker. It probably will mark some of your R code or your markdown annotations as wrong, but you just can manually skip those false alerts.
+
+### Code lines not longer than 80 characters
+
+In order for the code chunks beeing nicely displyed in the HTML version of RTutor, please
+avoid lines of codes that are longer than 80 characters. You can add manual line breaks in
+your R code.

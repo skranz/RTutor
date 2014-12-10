@@ -522,6 +522,7 @@ get.stud.chunk.code = function(txt = ps$stud.code,chunks = ps$cdt$chunk.name, ps
   chunk.name = chunk.name[!na.chunks]
   
   chunk.txt = sapply(seq_along(chunk.start), function (i) {
+      if (chunk.start[i]+1 > chunk.end[i]-1) return("")
       code = txt[(chunk.start[i]+1):(chunk.end[i]-1)]
       paste0(code, collapse="\n")
   })

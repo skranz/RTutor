@@ -135,7 +135,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       if (!from.assign)
         display("You must correctly call the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       if (from.assign)
-        display("You must assign to ", lhs, " a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
+        display("You must assign to '", lhs, "' a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       return(invisible())
     }
     
@@ -153,10 +153,10 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
         s = c(s,paste0("Your argument ", ret$differ.arg, " = ", ret$stud.arg[ret$differ.arg], " differs in its ", ret$differ.detail, " from my solution."))
       }
       if (length(ret$extra.arg)>0) {
-        s = c(s,paste0("In my solution I don't use the argument ", ret$extra.arg))
+        s = c(s,paste0("In my solution I don't use the argument '", ret$extra.arg,"'"))
       }
       if (length(ret$missing.arg)>0) {
-        s = c(s,paste0("You don't use the argument ", ret$missing.arg))
+        s = c(s,paste0("You don't use the argument '", ret$missing.arg,"'"))
       }
       if (length(s)>0) {
         s = paste0("     - ",s, collapse="\n")
@@ -174,7 +174,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (!from.assign)
       display("I don't see a correct call to the function '", check.na, "'",part.str,".\nLet me compare your call(s) with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
     if (from.assign)
-      display("I don't see a correct assignment to ", lhs, ", which should call the function '", check.na, "'",part.str,".\nLet me compare your assignments with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
+      display("I don't see a correct assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,".\nLet me compare your assignments with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
     
   } else if (cde$type == "chain") {
     restore.point("hint.for.call.chain")
@@ -266,7 +266,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     }
   }  else if (cde$type == "math") {
     restore.point("math.fail")
-    hint.str = scramble.text(deparse(call),"?",0.5, keep.char=" ")
+    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
     display("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
   }  else if (cde$type == "var") {
     if (!from.assign)

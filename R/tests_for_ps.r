@@ -476,7 +476,7 @@ check.expr = function(check.expr, correct.expr,
     add.failure(failure.message, check_expr=check.expr.str)
     return(FALSE)
   }
-  if (!identical(length(val.check),length(val.sol))) {
+  if (!is.same(length(val.check),length(val.sol))) {
     add.failure(failure.message, check_expr=check.expr.str)
     return(FALSE)
   }
@@ -619,7 +619,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
         add.failure(failure.values, failure.values, col=col,df=df)
         return(FALSE)
       }
-      if (!identical(is.na(var.stud),is.na(var.sol))) {
+      if (!is.same(is.na(var.stud),is.na(var.sol))) {
         add.failure(failure.values, failure.values, col=col,df=df)
         return(FALSE)        
       }
@@ -697,7 +697,7 @@ check.variable = function(var, expr, length=check.all,dim=check.all, class=check
     }
   }
   if (dim != FALSE) {
-    if (!identical(dim(var.stud), dim(var.sol))) {
+    if (!is.same(dim(var.stud), dim(var.sol))) {
       add.failure(failure.dim, failure.dim, var=var)
       return(FALSE)
     }
@@ -715,7 +715,7 @@ check.variable = function(var, expr, length=check.all,dim=check.all, class=check
         add.failure("{{var}} has wrong values", failure.values, var=var)
         return(FALSE)
       }
-      if (!identical(is.na(var.stud),is.na(var.sol))) {
+      if (!is.same(is.na(var.stud),is.na(var.sol))) {
         add.failure("{{var}} has wrong values", failure.values, var=var)
         return(FALSE)        
       }
