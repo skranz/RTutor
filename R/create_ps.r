@@ -38,6 +38,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   
   write.sample.solution(te=te, header=header,footer=footer,
                         user.name=sol.user.name, ps.dir=dir)
+  write.output.solution(te=te, header=header,footer=footer,
+                        user.name=sol.user.name, ps.dir=dir)
+  
   task.txt = write.empty.ps(te=te,  header=header,footer=footer,
                             user.name=user.name, ps.dir=dir)
   rps = te.to.rps(te=te)
@@ -120,6 +123,13 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
   restore.point("write.sample.solution")
   sol.txt = include.ps.extra.lines(sol.txt, ps.file=file, ps.name=ps.name,te=te,...)
   writeLines(sol.txt, file)
+}
+
+
+write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te,...) {
+  restore.point("write.output.solution")
+  out.txt = include.ps.extra.lines(out.txt, ps.file=file, ps.name=ps.name,te=te,...)
+  writeLines(out.txt, file)
 }
 
 
@@ -269,6 +279,9 @@ parse.no.change.line = function(row,str,txt, te) {
   if (!te$in.chunk & !te$in.block) {
     te$task.txt = c(te$task.txt, str)
     te$sol.txt = c(te$sol.txt, str)
+    te$out.txt = c(te$out.txt, str)
+    
+    
     if (str.starts.with(str,"# Problemset ")) {
       te$ps.name = str.trim(str.right.of(str, "# Problemset "))
     } else if (str.starts.with(str,"## Exercise ")) {
@@ -404,6 +417,7 @@ add.te.chunk = function(te,ck) {
   if (length(ck$e.li)>0 | isTRUE(ck$has.task)) {
     te$task.txt = c(te$task.txt, te$chunk.head, ck$task.txt,"```")
     te$sol.txt = c(te$sol.txt, te$chunk.head, ck$sol.txt,"```")
+    te$out.txt = c(te$out.txt, te$chunk.head, ck$out.txt,"```")
     ck$add = TRUE
   }
   
@@ -487,6 +501,7 @@ add.te.code = function(te,ck) {
   notest = te$block.type == "notest" | te$block.type == "task_notest"
 
   ck$sol.txt = c(ck$sol.txt, te$block.txt)
+  ck$out.txt = c(ck$out.txt, te$block.txt)
   if (task) {
     ck$task.txt = c(ck$task.txt, te$block.txt)
   }
@@ -539,6 +554,7 @@ add.te.compute = function(te,ck,var) {
   ck$test.txt = c(ck$test.txt,test.txt)
   ck$hint.txt = c(ck$hint.txt,hint.txt)
   ck$sol.txt = c(ck$sol.txt, te$block.txt)
+  ck$out.txt = c(ck$out.txt, te$block.txt)
 
   ret = tryCatch(parse.text.with.source(te$block.txt),
     error = function(e) {
@@ -604,6 +620,9 @@ add.te.info = function(te) {
   info = list(info.name=info.name,type="html", html=html, rmd=txt)
   str = paste0('info("', info.name,'") # Run this line (Strg-Enter) to show info')
   te$task.txt = c(te$task.txt,str)
+  te$sol.txt = c(te$sol.txt, str)
+  te$out.txt = c(te$out.txt, paste0("### Info: ", info.name),te$block.txt)
+  
   te$infos[[info.name]] = info
 }
 
@@ -725,6 +744,7 @@ get.empty.chunk = function() {
   ck$hint.txt = NULL
   ck$task.txt = NULL
   ck$sol.txt = NULL
+  ck$out.txt = NULL
   ck$expr = NULL
   ck
 }
@@ -738,6 +758,7 @@ get.empty.te = function() {
   
   te$task.txt = NULL
   te$sol.txt = NULL
+  te$out.txt = NULL
   te$code.txt = NULL
   
   te$part = NULL
@@ -946,6 +967,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
       #shiny.dt$html[[i]] = editChunkUI(chunk.name=chunk.name,code=code)
     } else if (dt$type[i]=="task") {
       code = txt[df$start[i]:df$end[i]]
+      #dt$code[[i]] = code
       #if (any(str.starts.with(code, "a)"))) {
       #restore.point("jkhskjfhdkjfkjdn")
       #  stop()
