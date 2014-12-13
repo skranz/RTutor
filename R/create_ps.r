@@ -129,6 +129,7 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
 write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te,...) {
   restore.point("write.output.solution")
   out.txt = include.ps.extra.lines(out.txt, ps.file=file, ps.name=ps.name,te=te,...)
+  out.txt = name.rmd.chunks(txt = out.txt,only.empty.chunks = FALSE,keep.options = TRUE,valid.file.name = TRUE)
   writeLines(out.txt, file)
 }
 
@@ -842,7 +843,7 @@ paste0("
 
 
 #' Set default names for the chunks of problem set rmd files 
-name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=TRUE, keep.options=TRUE) {
+name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=TRUE, keep.options=TRUE, valid.file.name = FALSE) {
   restore.point("name.rmd.chunks")
   ex.name = ""
   part.name = ""
@@ -863,18 +864,23 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
         } else {
           rhs.str = ""
         }
-        txt[i] = paste0('```{r "',ex.name,' ',part.name, counter.str,'"', rhs.str,"}")
+        chunk.name = paste0(ex.name,' ',part.name, counter.str)
+        if (valid.file.name)
+          chunk.name = str.to.valid.file.name(chunk.name)
+        txt[i] = paste0('```{r "',chunk.name,'"', rhs.str,"}")
       }
       counter = counter+1
     } else if (str.starts.with(str,"## Exercise ")) {
       ex.name = str.right.of(str,"## Exercise ")
       ex.name = gsub("#","", ex.name, fixed=TRUE)
       ex.name = str.left.of(ex.name," --", not.found="all")
-      counter = 1
+      if (!valid.file.name)
+        counter = 1
       part.name = ""
     } else if (!is.na(temp.part <- str_extract(str,"^([a-z]|[ivx]*)\\)")[1]  )) {
       part.name = temp.part
-      counter = 1
+      if (!valid.file.name)
+        counter = 1
     }
   }
   if (!is.null(rmd.file))
@@ -882,7 +888,14 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
   invisible(txt)
 }
 
+examples.str.to.valid.file.name = function() {
+ str.to.valid.file.name("chunk 1 a)")  
+}
 
+str.to.valid.file.name = function(str, replace.char = "_") {
+  str = gsub("[ \\(\\)\\.\\:]",replace.char,str)
+  str
+}
 get.chunk.lines = function(txt) {
   restore.point("get.chunk.lines")
   chunk.start = str.starts.with(txt,"```{")
