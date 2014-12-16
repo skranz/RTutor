@@ -442,22 +442,43 @@ extract.rmd.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps
 
 
 
-stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.env, seed=NULL) {
+stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.env, seed=NULL, store.output = TRUE, source=NULL) {
   restore.point("stepwise.eval.stud.expr")
   if (!is.null(seed))
     set.seed(seed)
   has.error = FALSE
   
+  err.fun = function(e) {        
+    ps$failure.message = paste0("evaluation error in \n  ",
+        deparse1(part.expr),"\n  ",adapt.console.err.message(as.character(e)))
+    has.error <<- TRUE
+  }
+  
+  if (store.output) {
+    ps$chunk.console.out = ""
+    add = function(...) {
+      str = paste0(..., collapse="\n")
+      if (length(str)>0)
+        ps$chunk.console.out = paste0(ps$chunk.console.out,str, sep="\n")
+    }
+  }
+  
   i = 1
   for (i in seq_along(stud.expr)) {
     part.expr = stud.expr[[i]]
-    tryCatch( eval(part.expr, stud.env),
-              error = function(e) {        
-                ps$failure.message = paste0("evaluation error in \n  ",deparse1(part.expr),"\n  ",adapt.console.err.message(as.character(e)))
-                has.error <<- TRUE
-              }
-    )
     
+    if (!store.output) {
+      tryCatch( eval(part.expr, stud.env),error = err.fun)
+    } else {
+      if (is.null(source)) {
+        add("> ",deparse1(part.expr, collapse="\n+"))
+      } else {
+        add("> ",paste0(li$source[[i]], collapse="\n+ "))        
+      }
+      
+      tryCatch(out <- capture.output(eval(part.expr, stud.env)),error = err.fun)
+      if (length(out)>0) add(out)
+    }
     if (has.error) {
       if (is.false(ps$catch.errors))
         stop(ps$failure.message)
@@ -465,8 +486,11 @@ stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.en
       return(FALSE)
     }
   }
+  #cat(ps$chunk.console.out)
   return(!has.error)
 }
+
+
 
 
 

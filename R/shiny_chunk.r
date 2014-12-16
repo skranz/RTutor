@@ -282,12 +282,12 @@ run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,sessi
 }
 
 check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE) {
-  cat("\n check.shiny.chunk1")
+  #cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
-  cat("\n check.shiny.chunk2")
+  #cat("\n check.shiny.chunk2")
   restore.point("check.shiny.chunk")
-  cat("\n check.shiny.chunk3")
+  #cat("\n check.shiny.chunk3")
 
   if (!is.false(ps$catch.errors)) {  
     ret = tryCatch(check.chunk(chunk.ind=chunk.ind),
@@ -302,7 +302,8 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
     ps$cdt$is.solved[chunk.ind] = FALSE
   } else {
     #restore.point("success test shiny chunk")
-    txt = merge.lines(c("You successfully solved the chunk!",eval.to.string(ps$code, ps$stud.env)))
+    txt = merge.lines(c("You successfully solved the chunk!",
+                        ps$chunk.console.out))
     updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
     if (!internal) {
       proceed.with.successfuly.checked.chunk(chunk.ind)
