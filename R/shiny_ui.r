@@ -75,10 +75,11 @@ make.ex.ui = function(ex.ind, ps = get.ps()) {
 make.ex.ui.li = function(ex.inds = NULL, ps = get.ps()) {
   restore.point("make.ex.ui.li")
   shiny.dt = ps$shiny.dt
-  cdt = ps$cdt  
+  cdt = ps$cdt 
+  edt = ps$edt
   
   if (is.null(ex.inds)) {
-    ex.inds = setdiff(unique(cdt$ex.ind),0)
+    ex.inds = setdiff(unique(edt$ex.ind),0)
     if (!is.null(ps$shiny.ex.inds))
       ex.inds = intersect(ex.inds, ps$shiny.ex.inds)    
   }
