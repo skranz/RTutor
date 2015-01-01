@@ -43,15 +43,29 @@ set.nali.names = function(x, nali) {
   x
 }
 
-update.chunk.ui = function(chunk.ind, mode=ps$cdt$mode[chunk.ind], ps=get.ps()) {
+update.chunk.ui = function(chunk.ind, mode=ps$cdt$mode[chunk.ind], ps=get.ps(), session=ps$session) {
   restore.point("update.chunk.ui")
   #browser()
   cat("\nupdate.chunk.ui: ", chunk.ind)
   ps$cdt$mode[chunk.ind] = mode
   ui = get.chunk.ui(chunk.ind, ps=ps)
   nali = ps$cdt$nali[[chunk.ind]]
-  
-  updateUI(nali$chunkUI, ui)
+    
+  updateUI(session,nali$chunkUI, ui)
+
+#  session=ps$session
+
+#   if (mode=="input" & (!is.null(session))) {
+#     cat("\n****************************************\nAutocompletion for ", nali$editor)
+#     restore.point("ihishiuhth")
+# 
+#     updateAceEditor(session, nali$edior, autoComplete = "enabled")
+#     autoComp = aceAutocomplete(nali$editor, ps$session)
+#     observe({
+#       autoComp$resume()
+#     })
+#   }
+
 }
 
 # returns the ui for a chunk based on its current mode 
@@ -131,6 +145,8 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     aceEditor(nali$console, "", mode="r",theme="clouds", height=console.height, fontSize=13,hotkeys = NULL, wordWrap=TRUE, debounce=10, showLineNumbers=FALSE,highlightActiveLine=FALSE)
   )
   
+  #aceAutocomplete(nali$editor)
+
   fluidRow(
     button.row,
     bsAlert(nali$alertOut),
@@ -224,31 +240,31 @@ make.chunk.task.ui = function(...) {
 }
 
 
-make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]],
+make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], session=ps$session,
                                ps=get.ps()) {
   
-  buttonHandler(nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(session,nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
   
-  aceHotkeyHandler(nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(session,nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
   
-  buttonHandler(nali$checkBtn, check.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(nali$checkKey, check.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$checkBtn, check.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(session,nali$checkKey, check.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(nali$hintBtn, hint.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(nali$hintKey, hint.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$hintBtn, hint.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(session,nali$hintKey, hint.shiny.chunk, chunk.ind=chunk.ind)
 
   #buttonHandler(nali$helpBtn, help.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(session,nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(nali$saveBtn, save.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$saveBtn, save.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(nali$outputBtn, output.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$hideBtn, hide.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$hideCodeBtn, hide.code.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$outputBtn, output.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$hideBtn, hide.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(session,nali$hideCodeBtn, hide.code.shiny.chunk, chunk.ind=chunk.ind)
 }
 
 run.shiny.chunk = function(chunk.ind,...,session=ps$session, ps=get.ps()) {
@@ -282,10 +298,11 @@ run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,sessi
 }
 
 check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE) {
-  #cat("\n check.shiny.chunk1")
+  cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
   #cat("\n check.shiny.chunk2")
+  #browser()
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
 

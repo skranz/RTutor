@@ -39,7 +39,7 @@ make.view.ui.li = function(view.inds = NULL,ps=get.ps()) {
   invisible(view.ui.li)  
 }
 
-make.ex.ui = function(ex.ind, ps = get.ps()) {
+make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
   restore.point("make.ex.ui")
   shiny.dt = ps$shiny.dt
   cdt = ps$cdt  
@@ -61,7 +61,7 @@ make.ex.ui = function(ex.ind, ps = get.ps()) {
     btnId = paste0("nextExBtn", ex.ind)
     nextExBtn = actionButton(btnId,"Go to next exercise...")
     li = c(li, list(nextExBtn))    
-    buttonHandler(btnId, ex.ind=ex.ind, function(session,ex.ind,...) {
+    buttonHandler(session,btnId, ex.ind=ex.ind, function(session,ex.ind,...) {
       cat("\nnextExBtn pressed...")
       updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
     })
@@ -145,12 +145,12 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
 }
 
 # Show a view ui
-show.view.ui = function(view.ind, ps = get.ps()) {
+show.view.ui = function(view.ind, ps = get.ps(), session=ps$session) {
   restore.point("show.view.ui")
   id = paste0("viewUI",view.ind)
   ui = ps$view.ui.li[[view.ind]]
   #browser()
-  updateUI(id, ui)
+  updateUI(session,id, ui)
 }
 
 show.view.ui.of.ex = function(ex.ind, ps = get.ps()) {

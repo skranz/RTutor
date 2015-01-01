@@ -1,0 +1,9 @@
+Package: PACKAGE_NAME
+Type: Package
+Title: Title of the Package
+Version: 0.1
+Date: CURRENT_DATE
+Author: AUTHOR_NAME
+Maintainer: AUTHOR_NAME <author@email.net>
+Description: More about what it does (maybe more than one line)
+License: GPL >= 2.0, Creative Commons

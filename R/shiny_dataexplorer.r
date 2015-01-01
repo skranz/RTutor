@@ -1,5 +1,5 @@
 
-update.data.explorer.ui = function(ps=get.ps()) {
+update.data.explorer.ui = function(ps=get.ps(), session=ps$session) {
   
   restore.point("update.data.explorer.ui")
   chunk.ind = ps$chunk.ind
@@ -8,7 +8,7 @@ update.data.explorer.ui = function(ps=get.ps()) {
   stud.env = ps$stud.env
   data = ps$de.dat
   
-  updateUI("radioDataExplorerUI",{
+  updateUI(session,"radioDataExplorerUI",{
       cat("\noutput$radioDataExplorerUI")
       variable.selector.ui(stud.env, chunk.name)    
   })
@@ -21,8 +21,8 @@ update.data.explorer.ui = function(ps=get.ps()) {
     cat("\nupdate for var ", var)
     update.data.explorer.data(var)
   } else {
-    updateDataTable("tableDataExplorer",NULL) 
-    updateUI("variablesDescrUI",NULL) 
+    updateDataTable(session,"tableDataExplorer",NULL) 
+    updateUI(session,"variablesDescrUI",NULL) 
   }
     
 }
@@ -47,20 +47,22 @@ set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) {
   return(ps$de.dat)
 }
 
-update.data.explorer.data  = function(var) {
+update.data.explorer.data  = function(var, ps=get.ps(), session=ps$session) {
+  restore.point("update.data.explorer.data")
+  browser()
   data = set.data.explorer.data(var)
-  updateDataTable("tableDataExplorer",signif.cols(data,4),
+  updateDataTable(session,"tableDataExplorer",signif.cols(data,4),
       options = list(orderClasses = TRUE,
                      lengthMenu = c(5, 10, 25,50,100),
                      pageLength = 5)) 
-  updateUI("variablesDescrUI",{make.var.descr.ui(data)}) 
+  updateUI(session,"variablesDescrUI",{make.var.descr.ui(data)}) 
   
 }
 
 #examples.rtutor.shiny()
-make.data.explorer.handlers = function() {
+make.data.explorer.handlers = function(session=ps$session,ps=get.ps()) {
   restore.point("data.explorer.server")  
-  changeHandler("radioDataExplorer", function(value,...,ps=get.ps()) {
+  changeHandler(session,"radioDataExplorer", function(value,...,ps=get.ps()) {
     cat("changeRadioDataExplorer...")
     update.data.explorer.data(var=value)
   })
@@ -190,7 +192,7 @@ variable.selector.ui = function(env=ps$stud.env, chunk.name,ps=get.ps()) {
 }
 
 
-data.summarise.ui = function(data) {
+data.summarise.ui = function(data,session=ps$session,ps=get.ps()) {
   if (is.null(data))
     return(NULL)
   
@@ -200,9 +202,9 @@ data.summarise.ui = function(data) {
   #funs = c("mean","sd","min","max")
   #fun_select_ui = selectizeInput("funSelectInput",label="functions", choices=funs, selected=funs, multiple=TRUE)
   
-  changeHandler("groupByInput",update.data.explorer.summarise)
-  changeHandler("colSelectInput",update.data.explorer.summarise)
-  #changeHandler("funSelectInput",update.data.explorer.summarise)
+  changeHandler(session,"groupByInput",update.data.explorer.summarise)
+  changeHandler(session,"colSelectInput",update.data.explorer.summarise)
+  #changeHandler(session,"funSelectInput",update.data.explorer.summarise)
 
   update.data.explorer.summarise()
   fluidRow(
@@ -218,7 +220,7 @@ data.summarise.ui = function(data) {
 update.data.explorer.summarise = function(dat=ps$de.dat,input=ps$session$input,ps = get.ps(), session=ps$session,...) {
   restore.point("update.data.explorer.summarise")
   
-  updateDataTable("tableDataSummarise",{
+  updateDataTable(session,"tableDataSummarise",{
     #browser()
     cat("\ntrigger new summarise...")
     groups = isolate(input$groupByInput)
@@ -235,7 +237,7 @@ update.data.explorer.summarise = function(dat=ps$de.dat,input=ps$session$input,p
 }
 
 
-data.plot.ui = function(data) {
+data.plot.ui = function(data,session=ps$session, ps=get.ps()) {
   if (is.null(data))
     return(NULL)
   
@@ -248,7 +250,7 @@ data.plot.ui = function(data) {
 
   colorvar_ui = selectizeInput("colorvarInput",label="color group", choices=vars, multiple=FALSE)
   
-  buttonHandler("showPlotBtn",update.data.explorer.plot)
+  buttonHandler(session,"showPlotBtn",update.data.explorer.plot)
   
   fluidRow(
     fluidRow(
@@ -264,7 +266,7 @@ data.plot.ui = function(data) {
 
 
 update.data.explorer.plot = function(dat=ps$de.dat,input=ps$session$input,ps = get.ps(),...) {
-  updatePlot("plotData", {
+  updatePlot(ps$session,"plotData", {
     code = isolate(make.ggplot.code(data.name="dat",type=input$plotTypeInput, xvar=input$xvarInput, yvar=input$yvarInput, colorVar = input$colorvarInput))
     eval(code)
   })
