@@ -49,7 +49,7 @@ set.data.explorer.data  = function(var=NULL, env = ps$stud.env, ps=get.ps()) {
 
 update.data.explorer.data  = function(var, ps=get.ps(), session=ps$session) {
   restore.point("update.data.explorer.data")
-  browser()
+  #browser()
   data = set.data.explorer.data(var)
   updateDataTable(session,"tableDataExplorer",signif.cols(data,4),
       options = list(orderClasses = TRUE,
@@ -292,7 +292,10 @@ make.var.descr.ui = function(dat) {
  
   restore.point("make.var.descr.html")
   dt = get.var.descr.dt(dat=dat)
+
   if (!is.null(dt)) {
+    dupl = duplicated(dt$var)
+    dt = dt[!dupl,]
     title =  paste0(dt$var,": ", dt$descr)
   } else {
     title = colnames(dat)

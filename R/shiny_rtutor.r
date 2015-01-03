@@ -70,7 +70,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   writeLines(txt, "ui.txt")
   setAppUI(ui, app)
   
-  app$initHandler = function(session, input, output) {
+  app$initHandler = function(session, input, output,...) {
     ps = get.ps()
     ps$session = session
     ps$input = input

@@ -68,6 +68,8 @@ read.var.txt = function(txt.file) {
   txt
   dt = read.table(textConnection(txt), sep="|", quote="", header=TRUE)
   dt = as.data.table(lapply(dt, str.trim))
+  dupl = duplicated(dplyr::select(dt,orgvar,var))
+  dt = dt[!dupl,]
   dt
 }
 
