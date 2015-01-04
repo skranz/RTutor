@@ -19,7 +19,7 @@ examples.show.shiny.ps = function() {
 
   setwd("D:/libraries/RTutor/examples")
   ps.name = "The Impact of Shrouded Fees 3"
-  show.shiny.ps(ps.name, load.sav=FALSE, launch.browser=TRUE, sample.solution=TRUE, is.solved=TRUE)
+  show.shiny.ps(ps.name, load.sav=FALSE, launch.browser=TRUE, sample.solution=TRUE, run.solved=TRUE)
 
   show.shiny.ps(ps.name, launch.browser=TRUE)
   
@@ -35,16 +35,20 @@ examples.show.shiny.ps = function() {
 #' 
 #' @param load.sav shall the last saved be loaded?
 #' @param sample.solution shall the sample solution be shown
-#' @param is.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded?
+#' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)
 #' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
 #' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
-#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE. 
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, ...) {
+#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
+#' @param is.solved DEPRECEATED
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, ...) {
 
   app = eventsApp()
-  
-  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, load.sav=load.sav, sample.solution=sample.solution, import.rmd=import.rmd, rmd.file=rmd.file, dir=dir, rps.dir=rps.dir,...)
+  #browser()
+  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, 
+                     load.sav=load.sav, sample.solution=sample.solution,
+                     run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
+                     dir=dir, rps.dir=rps.dir,...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
@@ -89,7 +93,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 show.shiny.ps = show.ps
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, is.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir) {
   restore.point("init.shiny.ps")
   setwd(dir)
   ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir)
@@ -127,10 +131,20 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
   }
   ps$sav.file = sav.file
   if (load.sav) {
+    if (sample.solution) {
+      cat(paste0("Show sample solution instead of saved solution..."))
+      load.sav = FALSE      
+    } else if (!file.exists(sav.file)) {
+      cat(paste0("Cannot find saved solution '", sav.file, "'.\nShow empty problem set..."))
+      load.sav = FALSE
+    }
+  }
+  
+  if (load.sav) {
     sav = load.sav(ps$sav.file)
     ps$cdt$mode = sav$mode
     ps$cdt$stud.code = sav$stud.code
-    if (is.solved) {
+    if (run.solved) {
       ps$cdt$is.solved = sav$is.solved  
       rerun.solved.chunks(ps)
     }
@@ -139,7 +153,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     ps$cdt$mode[1] = "input"
     if (sample.solution) {
       ps$cdt$stud.code = ps$cdt$sol.txt
-      if (is.solved) {
+      if (run.solved) {
         ps$cdt$is.solved = rep(TRUE,n)   
         rerun.solved.chunks(ps)
         ps$cdt$mode[1] = "output"

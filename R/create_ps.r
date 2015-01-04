@@ -12,7 +12,7 @@ examples.create.ps = function() {
   libs = NULL # character vector of all packages you load in the problem set
   #name.rmd.chunks(sol.file) # set auto chunk names in this file
   create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
-  show.shiny.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, is.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
+  show.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, run.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
 
 }
 
