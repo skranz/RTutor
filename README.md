@@ -4,7 +4,7 @@
 
 **Author: Sebastian Kranz, Ulm University** 
 
-RTutor is an R package that allows to develop interactive R exercises. The interactive exercises directly test a student's solution and provide hints if not everything is correct. Unlike web-based approaches, as e.g. https://www.datacamp.com/, RTutor is developed for off-line use. Problem sets can either be solved as Markdown  .rmd file directly in RStudio or in a browser based interface powered by Shiny.  This document gives you an overview how to generate an interactive problem set.
+RTutor is an R package that allows to develop interactive R exercises. Unlike web-based approaches, as e.g. https://www.datacamp.com/, RTutor is developed for off-line use. Problem sets can either designed to be solved as Markdown  .rmd file directly in RStudio or to be solved in a browser-based interface powered by RStudio's Shiny.
 
 ## Trying out some problem sets
 
