@@ -4,7 +4,7 @@
 \title{Set default names for the chunks of problem set rmd files}
 \usage{
 name.rmd.chunks(rmd.file = NULL, txt = readLines(rmd.file),
-  only.empty.chunks = TRUE, keep.options = TRUE)
+  only.empty.chunks = TRUE, keep.options = TRUE, valid.file.name = FALSE)
 }
 \description{
 Set default names for the chunks of problem set rmd files

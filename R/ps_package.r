@@ -109,7 +109,7 @@ examples.rtutor.package.skel = function() {
   # Create problemset
   create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
 
-  rtutor.package.skel(sol.file=sol.file, ps.name=ps.name, pkg.name="RTutorBankRuns", pkg.parent.dir = "D:/libraries/RTutorBankRuns", libs=libs, author="Joachim Plath", github.user="skranz", extra.code.file = "extracode.r", var.txt.file = "variables.txt", overwrite=FALSE)
+  rtutor.package.skel(sol.file=sol.file, ps.name=ps.name, pkg.name="RTutorBankRuns", pkg.parent.dir = "D:/libraries/RTutorBankRuns", libs=libs, author="Joachim Plath", github.user="skranz", extra.code.file = "extracode.r", var.txt.file = "variables.txt", overwrite=TRUE)
 }
 
 #' Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package
@@ -117,6 +117,7 @@ examples.rtutor.package.skel = function() {
 rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,author="AUTHOR_NAME", github.user = "GITHUB_USERNAME", date=format(Sys.time(),"%Y-%d-%m"),  source.dir = getwd(),rps.file = paste0(ps.name,".rps"), libs=NULL, extra.code.file=NULL, var.txt.file=NULL, ps.file = paste0(ps.name,".Rmd"), overwrite=FALSE, overwrite.ps=TRUE,...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.package.skel")
+
   
   dest.dir = paste0(pkg.parent.dir,"/", pkg.name)
   skel.dir = paste0(path.package("RTutor", quiet = FALSE),"/ps_pkg_skel")
@@ -125,7 +126,6 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
     dir.create(dest.dir)
   
   # Copy package skeletion
-  skel.files = list.files(skel.dir)
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = dest.dir, overwrite=overwrite, recursive = TRUE)
   
@@ -140,7 +140,11 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   dest.files = c("R/package_info.r","DESCRIPTION","NAMESPACE","README.md")
   dest.files = paste0(dest.dir,"/",dest.files)
   file = dest.files[1]
-  lib.txt = paste0(libs, collapse=", ")
+  if (length(libs)>0) {
+    lib.txt = paste0("RTutor, ", paste0(libs, collapse=", "))
+  } else {
+    lib.txt = "RTutor"
+  }
   descr.txt = paste0("RTutor problem set ", ps.name)
   for (file in dest.files) {
     txt = readLines(file)

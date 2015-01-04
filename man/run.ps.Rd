@@ -3,11 +3,36 @@
 \alias{run.ps}
 \title{Run a problem set from a package in the browser}
 \usage{
-run.ps(user.name, ps.name = info$ps[1], dir = getwd(),
+run.ps(user.name, ps.name = info$ps[1], dir = getwd(), load.sav = TRUE,
+  sav.file = paste0(user.name, "_", ps.name, ".sav"),
+  sample.solution = FALSE, run.solved = FALSE, import.rmd = FALSE,
+  rmd.file = paste0(ps.name, "_", user.name, "_export.rmd"),
+  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
   info = ps.pkg.info(), ...)
+}
+\arguments{
+\item{user.name}{Your user name}
+
+\item{ps.name}{Name of the problem set. By default the first problem set name of your manually loaded RTutor problem set package.}
+
+\item{dir}{your working directory for the problem set}
+
+\item{load.sav}{Default=TRUE Shall a previously saved solution be loaded?}
+
+\item{sav.file}{Optional an alternative name for the saved solution}
+
+\item{sample.solution}{shall the sample solution be shown?}
+
+\item{run.solved}{if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (By default FALSE, since starting the problem set then may take quite a while)}
+
+\item{import.rmd}{shall the solution be imported from the rmd file specificed in the argument rmd.file}
+
+\item{rmd.file}{name of the .rmd file that shall be imported if import.rmd=TRUE}
+
+\item{offline}{(FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.}
 }
 \description{
 Only works if a package with problem sets is loaded.
-For problem sets stored in a local .rps file use show.ps() instead
+For problem sets stored in a local .rps file, use show.ps() instead
 }
 

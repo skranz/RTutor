@@ -20,8 +20,8 @@ To start the problem set first create a working directory in which files like th
 library(PACKAGE_NAME)
 
 # Adapt your working directory to an existing folder
-setwd("C:/problemsets")
+setwd("C:/problemsets/PACKAGE_NAME")
 # Adapt your user name
-run.ps(user.name="Jon Doe")
+run.ps(user.name="Jon Doe", load.sav=TRUE, sample.solution=FALSE)
 ```
 If everything works fine, a browser window should open, in which you can start exploring the problem set.

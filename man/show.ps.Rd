@@ -5,17 +5,18 @@
 \usage{
 show.ps(ps.name, user.name = "Seb", sav.file = NULL,
   load.sav = !is.null(sav.file), sample.solution = FALSE,
-  is.solved = load.sav, import.rmd = FALSE, rmd.file = paste0(ps.name,
+  run.solved = load.sav, import.rmd = FALSE, rmd.file = paste0(ps.name,
   "_", user.name, "_export.rmd"), launch.browser = TRUE,
   catch.errors = TRUE, dir = getwd(), rps.dir = dir,
-  offline = !can.connect.to.MathJax(), ...)
+  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
+  is.solved, ...)
 }
 \arguments{
 \item{load.sav}{shall the last saved be loaded?}
 
 \item{sample.solution}{shall the sample solution be shown}
 
-\item{is.solved}{if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded?}
+\item{run.solved}{if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)}
 
 \item{import.rmd}{shall the solution be imported from the rmd file specificed in the argument rmd.file}
 
@@ -24,6 +25,8 @@ show.ps(ps.name, user.name = "Seb", sav.file = NULL,
 \item{catch.errors}{by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()}
 
 \item{offline}{(FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.}
+
+\item{is.solved}{DEPRECEATED}
 }
 \description{
 ... contains parameters specified in init.shiny.ps. They are explained here.
