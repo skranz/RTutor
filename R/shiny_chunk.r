@@ -240,31 +240,30 @@ make.chunk.task.ui = function(...) {
 }
 
 
-make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], session=ps$session,
-                               ps=get.ps()) {
+make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=get.ps()) {
   
-  buttonHandler(session,nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(session,nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
   
-  aceHotkeyHandler(session,nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
   
-  buttonHandler(session,nali$checkBtn, check.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(session,nali$checkKey, check.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$checkBtn, check.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(nali$checkKey, check.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(session,nali$hintBtn, hint.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(session,nali$hintKey, hint.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$hintBtn, hint.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(nali$hintKey, hint.shiny.chunk, chunk.ind=chunk.ind)
 
   #buttonHandler(nali$helpBtn, help.shiny.chunk, chunk.ind=chunk.ind)
-  aceHotkeyHandler(session,nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
+  aceHotkeyHandler(nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(session,nali$saveBtn, save.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(session,nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(session,nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$saveBtn, save.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
 
-  buttonHandler(session,nali$outputBtn, output.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(session,nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(session,nali$hideBtn, hide.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(session,nali$hideCodeBtn, hide.code.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$outputBtn, output.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$hideBtn, hide.shiny.chunk, chunk.ind=chunk.ind)
+  buttonHandler(nali$hideCodeBtn, hide.code.shiny.chunk, chunk.ind=chunk.ind)
 }
 
 run.shiny.chunk = function(chunk.ind,...,session=ps$session, ps=get.ps()) {

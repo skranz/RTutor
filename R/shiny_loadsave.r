@@ -36,7 +36,7 @@ load.save.ui = function(ps=get.ps()) {
 }
 
 make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
-  buttonHandler(session,"loadBtn", function(session,..., ps=get.ps()) {
+  buttonHandler("loadBtn", function(session,..., ps=get.ps()) {
     file = isolate(session$input$loadFileInput)
     cat("\nload file ", file)            
     ok = load.and.set.sav(file, ps=ps)
@@ -57,7 +57,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
     }   
   })
   
-  buttonHandler(session,"saveAsBtn", function(session,..., ps=get.ps()) {
+  buttonHandler("saveAsBtn", function(session,..., ps=get.ps()) {
     file = isolate(session$input$saveFileInput)
     restore.point("saveAs")
 
@@ -84,7 +84,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
     }
   })
 
-  buttonHandler(session,"exportBtn", function(session,..., ps=get.ps()) {
+  buttonHandler("exportBtn", function(session,..., ps=get.ps()) {
     rmd.file = isolate(session$input$exportFileInput)
     export.solution(rmd.file)
     createAlert(session,inputId = "exportAlert", 
@@ -94,7 +94,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
     )
   })
 
-  buttonHandler(session,"importBtn", function(session,..., ps=get.ps()) {
+  buttonHandler("importBtn", function(session,..., ps=get.ps()) {
     rmd.file = isolate(session$input$exportFileInput)
     ok = import.from.rmd(rmd.file)
     if (ok) {

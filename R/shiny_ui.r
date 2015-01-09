@@ -61,7 +61,7 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
     btnId = paste0("nextExBtn", ex.ind)
     nextExBtn = actionButton(btnId,"Go to next exercise...")
     li = c(li, list(nextExBtn))    
-    buttonHandler(session,btnId, ex.ind=ex.ind, function(session,ex.ind,...) {
+    buttonHandler(btnId, ex.ind=ex.ind, function(session,ex.ind,...) {
       cat("\nnextExBtn pressed...")
       updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
     })

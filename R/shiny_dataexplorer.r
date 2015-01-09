@@ -60,9 +60,9 @@ update.data.explorer.data  = function(var, ps=get.ps(), session=ps$session) {
 }
 
 #examples.rtutor.shiny()
-make.data.explorer.handlers = function(session=ps$session,ps=get.ps()) {
+make.data.explorer.handlers = function(ps=get.ps()) {
   restore.point("data.explorer.server")  
-  changeHandler(session,"radioDataExplorer", function(value,...,ps=get.ps()) {
+  changeHandler("radioDataExplorer", function(value,...,ps=get.ps()) {
     cat("changeRadioDataExplorer...")
     update.data.explorer.data(var=value)
   })
@@ -202,9 +202,9 @@ data.summarise.ui = function(data,session=ps$session,ps=get.ps()) {
   #funs = c("mean","sd","min","max")
   #fun_select_ui = selectizeInput("funSelectInput",label="functions", choices=funs, selected=funs, multiple=TRUE)
   
-  changeHandler(session,"groupByInput",update.data.explorer.summarise)
-  changeHandler(session,"colSelectInput",update.data.explorer.summarise)
-  #changeHandler(session,"funSelectInput",update.data.explorer.summarise)
+  changeHandler("groupByInput",update.data.explorer.summarise)
+  changeHandler("colSelectInput",update.data.explorer.summarise)
+  #changeHandler("funSelectInput",update.data.explorer.summarise)
 
   update.data.explorer.summarise()
   fluidRow(
@@ -250,7 +250,7 @@ data.plot.ui = function(data,session=ps$session, ps=get.ps()) {
 
   colorvar_ui = selectizeInput("colorvarInput",label="color group", choices=vars, multiple=FALSE)
   
-  buttonHandler(session,"showPlotBtn",update.data.explorer.plot)
+  buttonHandler("showPlotBtn",update.data.explorer.plot)
   
   fluidRow(
     fluidRow(
