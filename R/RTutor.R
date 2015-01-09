@@ -26,12 +26,27 @@ reset.ps = function(ps=get.ps()) {
   init.ps(ps$name,ps$stud.path,ps$stud.short.file)
 }
 
-
+#' Get the current problem set
+#' 
+#' Either a globally stored problem set or
+#' if RTutor runs as a web-app the associated problem set
+#' with the current shiny session
+#' 
 #' @export
-get.ps = function() {
+get.ps = function(force.global = FALSE) {
   if (!exists(".__rtutor_ps",.GlobalEnv))
     return(NULL)
-  get(".__rtutor_ps",.GlobalEnv)
+  gps = get(".__rtutor_ps",.GlobalEnv)
+  if (force.global)
+    return(gps)
+  
+  if (isTRUE(gps$running.web.app)) {
+    # if we have a local variant; get the local problem set
+    app = getApp()
+    if (!is.null(app[["ps"]]))
+      return(app[["ps"]])    
+  }
+  return(gps)
 }
 
 #' @export

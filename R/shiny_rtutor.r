@@ -41,7 +41,7 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, ...) {
 
   app = eventsApp()
   #browser()
@@ -74,20 +74,36 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   writeLines(txt, "ui.txt")
   setAppUI(ui, app)
   
-  app$initHandler = function(session, input, output,...) {
-    ps = get.ps()
-    ps$session = session
-    ps$input = input
-    ps$output = output
+  if (make.session.ps) {
+    app$initHandler = function(session, input, output,app,...) {
+      # make local copy of ps
+      ops = get.ps(TRUE)
+      ops$running.web.app = TRUE
+      ps = copy.ps.for.session(ops)
+    
+      app$ps = ps
+      ps$session = session
+      ps$input = input
+      ps$output = output
+    } 
+  } else {
+    app$initHandler = function(session, input, output,...) {
+      ps = get.ps(TRUE)
+      ps$running.web.app = TRUE
+      ps$session = session
+      ps$input = input
+      ps$output = output
+    }     
+  }
+  
+  if (make.web.app) {
+    return(app)
   }
   
   if (!isTRUE(launch.browser))
     launch.browser = rstudio::viewer
   
-  
-  
   runEventsApp(app=app,ui=ui,launch.browser=launch.browser, quiet=FALSE)
-  
 }
 
 show.shiny.ps = show.ps

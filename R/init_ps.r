@@ -20,6 +20,27 @@ examples.init.ps = function() {
   ps$cdt
 }
 
+#' Makes a local copy of a problem set for a new shiny session
+copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
+  if (!empty.stud.env)
+    stop("Current version can only make copies of empty.stud.env")
+  
+  ops = ps
+  ps = as.environment(as.list(ps))
+  class(ps) = c("Problemset","environment")
+  
+  ps$cdt = copy(ops$cdt)
+  ps$edt = copy(ops$edt)
+  
+  cdt = ps$cdt; edt = ps$edt
+  cdt$stud.env = lapply(1:NROW(cdt), function(chunk.ind) {
+    new.stud.env(chunk.ind)
+  })
+  env.li  = replicate(NROW(edt),new.stud.env(chunk.ind=0), simplify=FALSE)
+  edt$ex.final.env = env.li  
+  return(ps)  
+}
+
 #' Initialize a problem set for the student
 #' @param ps.name the name of the problem set
 #' @param dir the path in which the stud has stored his file
