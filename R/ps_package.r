@@ -66,7 +66,7 @@ get.package.info = function(package=NULL) {
     return(ps.pkg.info())
   
   call = paste0(package,"::ps.pkg.info()")
-  eval(parse(text=call))
+  eval(base::parse(text=call))
 }
 
 #' Run a problem set from a package in the browser

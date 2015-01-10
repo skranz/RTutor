@@ -188,13 +188,13 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     display("parse stud.code...")
   }
   if (!is.false(ps$catch.errors)) {  
-    tryCatch( ps$stud.expr.li <- parse(text=stud.code, srcfile=NULL),
+    tryCatch( ps$stud.expr.li <- base::parse(text=stud.code, srcfile=NULL),
               error = function(e) {
                 ps$failure.message=paste0("parser error: ",geterrmessage())
                 has.error <<- TRUE
               })
   } else {
-    ps$stud.expr.li <- parse(text=stud.code, srcfile=NULL)    
+    ps$stud.expr.li <- base::parse(text=stud.code, srcfile=NULL)    
   }
   if (has.error)
     return(FALSE)

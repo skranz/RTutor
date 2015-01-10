@@ -584,7 +584,7 @@ add.te.settings = function(te) {
   restore.point("add.te.settings")
   txt = te$block.txt
   env = new.env()
-  eval(parse(text=txt,srcfile=NULL), envir=env)
+  eval(base::parse(text=txt,srcfile=NULL), envir=env)
   import.var = as.list(env$import.var)
   if (length(import.var)>0) {
     if (is.null(names(import.var)))
@@ -1037,7 +1037,7 @@ chunk.opt.string.to.list = function(str, with.name=FALSE) {
   tokens = str.split(str,",")
   str = str.between(str,"{r","}")
   code = paste0("list(",str,")")
-  li = eval(parse(text=code,srcfile=NULL))
+  li = eval(base::parse(text=code,srcfile=NULL))
   
   if (!with.name) {
     li = li[-1]

@@ -285,7 +285,7 @@ make.ggplot.code = function(data.name="dat",type="line",xvar="",yvar="",colorvar
   geom = type
   
   com = paste0("qplot(data=",data.name,str,",geom='",geom,"')")
-  parse(text=com,srcfile=NULL)  
+  base::parse(text=com,srcfile=NULL)  
 }
 
 make.var.descr.ui = function(dat) {

@@ -454,7 +454,7 @@ check.expr = function(check.expr, correct.expr,
   if (!is.null(unsubst.check.expr)) {
     check.expr = unsubst.check.expr
   } else if (!is.null(str.check.expr)) {
-    check.expr = parse(text=str.check.expr, srcfile = NULL)
+    check.expr = base::parse(text=str.check.expr, srcfile = NULL)
   } else {
     check.expr = substitute(check.expr)
   }
@@ -462,7 +462,7 @@ check.expr = function(check.expr, correct.expr,
   if (!is.null(unsubst.correct.expr)) {
     correct.expr = unsubst.correct.expr
   } else if (!is.null(str.correct.expr)) {
-    correct.expr = parse(text=str.correct.expr, srcfile = NULL)
+    correct.expr = base::parse(text=str.correct.expr, srcfile = NULL)
   } else {
     correct.expr = substitute(correct.expr)
   }
@@ -516,7 +516,7 @@ check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ps=get.ps
   if (!is.null(unsubst.expr)) {
     expr = unsubst.expr
   } else if (!is.null(str.expr)) {
-    expr = parse(text=str.expr, srcfile = NULL)
+    expr = base::parse(text=str.expr, srcfile = NULL)
   } else {
     expr = substitute(expr)
   }
@@ -560,7 +560,7 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
   if (!is.null(unsubst.expr)) {
     expr = unsubst.expr
   } else if (!is.null(str.expr)) {
-    expr = parse(text=str.expr, srcfile = NULL)
+    expr = base::parse(text=str.expr, srcfile = NULL)
   } else {
     expr = substitute(expr)
   }
@@ -987,7 +987,7 @@ holds.true = function(cond, short.message = failure.message,failure.message="Fai
     cond = substitute(cond)
     cond.str = deparse1(cond)
   } else {
-    cond = parse(text=cond.str,srcfile=NULL)
+    cond = base::parse(text=cond.str,srcfile=NULL)
   }
   restore.point("holds.true")
   

@@ -228,6 +228,8 @@ eval.to.string = function(code, envir=parent.frame(), convert=TRUE) {
     }
     i = 1
     for (i in seq_along(li$expr)) {
+      source = "Source was not parsed..."
+      
       add("> ",paste0(li$source[[i]], collapse="\n+ "))
       out = tryCatch(capture.output(eval(li$expr[[i]], envir=envir)),
                      error = function(e) {

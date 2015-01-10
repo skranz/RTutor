@@ -348,15 +348,30 @@ get.expr.src.lines = function(expr) {
   sapply(attr(expr,"srcref"), function(e) e[1])
 }
 
+
+example=parse.text.with.source = function() {
+  parse.text.with.source("y = 1+2")
+}
+
+
 parse.text.with.source = function(text) {
   restore.point("parse.text.with.source")
   if (is.null(text))
     return(NULL)
-  e = parse(text=text)
+  e = base::parse(text=text)
   if (length(e)==0)
     return(NULL)
   str = sapply(attr(e,"srcref"), function(e) paste0(as.character(e), collapse="\n"))
   
+  if (length(str)<length(e)) {
+    nstr = sapply(e, deparse1)
+    cat("\nparse.text.with.source does not return correct source:\n")
+    cat("is:\n")
+    cat(paste0(str, collapse="\n"))
+    cat("should be:\n")
+    cat(paste0(nstr, collapse="\n"))
+    str = nstr
+  }
   list(expr = e, source = str) 
 }
 

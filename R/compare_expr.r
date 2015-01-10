@@ -25,7 +25,7 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   if (!is.null(call.obj)) {
     call = call.obj
   } else if (!is.null(call.str)) {
-    call = parse(call.str,srcfile=NULL)
+    call = base::parse(call.str,srcfile=NULL)
   } else {
     call = substitute(call)
   }
@@ -386,7 +386,7 @@ examples.code.has.call = function() {
 
 find.matching.calls = function(code.str, call.str, call = parse(text=call.str, srcfile=NULL)[[1]]) {
   
-  code.li = as.list(parse(text=code.str, srcfile=NULL))
+  code.li = as.list(base::parse(text=code.str, srcfile=NULL))
   call = 
 
   code.names = sapply(code.li, name.of.call)

@@ -226,7 +226,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       }
       
       ccode = paste(ccode, op, deparse1(cde$arg[[i]]))
-      ccall = parse(text=ccode,srcfile=NULL) 
+      ccall = base::parse(text=ccode,srcfile=NULL) 
       sde.li = sde.li[correct]
       stud.expr.li = stud.expr.li[correct]
       scode.li = scode.li[correct]
