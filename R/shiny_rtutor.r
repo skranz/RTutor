@@ -41,14 +41,15 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, ...) {
 
   app = eventsApp()
   #browser()
   ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, 
                      load.sav=load.sav, sample.solution=sample.solution,
                      run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
-                     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,...)
+                     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
+                     show.solution.btn = show.solution.btn,...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
@@ -107,11 +108,14 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 show.shiny.ps = show.ps
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE) {
   restore.point("init.shiny.ps")
   setwd(dir)
   ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing)
   ps$is.shiny = TRUE
+  ps$show.solution.btn = show.solution.btn
+
+  
   ps$shiny.ex.inds = ex.inds
   ps$shiny.dt = ps$rps$shiny.dt 
   ps$chunk.ind = 0

@@ -26,7 +26,7 @@ make.chunk.nali = function(chunk.name, chunk.ind=which(ps$cdt$chunk.name==chunk.
     "runLineKey","runKey","checkKey","hintKey","helpKey",
     "runLineBtn","runBtn","checkBtn","hintBtn","helpBtn","dataBtn",
     "outputBtn","hideBtn","hideCodeBtn", "restoreBtn", "saveBtn", 
-    "editBtn","labelBtn","alertOut",
+    "editBtn","solutionBtn","alertOut",
     "inputPanel","outputPanel"
   )
   nali = paste0(name,"_",base.names)
@@ -123,6 +123,13 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     label = "not yet solved"
   }
   
+  solutionBtn  = NULL
+  if (isTRUE(ps$show.solution.btn)) {
+    solutionBtn=bsActionButton(nali$solutionBtn, "solution",size="mini")
+  } else {
+    solutionBtn  = NULL
+  }
+
   button.row = fluidRow(
 #     bsButtonGroup(nali$inoutBtnGroup, toggle="radio",value="input",
 #        bsActionButton(nali$outputBtn, "output", size="mini"),
@@ -134,11 +141,9 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     bsActionButton(nali$hintBtn, "hint", size="mini"),
     bsActionButton(nali$runBtn, "run chunk",size="mini"),
     bsActionButton(nali$dataBtn, "data", size="mini"),
-    bsActionButton(nali$restoreBtn, "restore", size="mini"),
-    bsActionButton(nali$saveBtn, "save", size="mini"),
-
-    bsActionButton(nali$labelBtn, label,size="mini")
-
+    #bsActionButton(nali$restoreBtn, "restore", size="mini"),
+    solutionBtn,
+    bsActionButton(nali$saveBtn, "save", size="mini")
   )
   edit.row = fluidRow(
     aceEditor(nali$editor, code, mode="r",theme=theme, height=height, fontSize=13,hotkeys = keys, wordWrap=TRUE, debounce=10),
@@ -283,8 +288,11 @@ make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=ge
 
   buttonHandler(nali$saveBtn, save.shiny.chunk, chunk.ind=chunk.ind)
   buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
-  buttonHandler(nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
+  #buttonHandler(nali$restoreBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
+  if (isTRUE(ps$show.solution.btn))
+    buttonHandler(nali$solutionBtn, solution.shiny.chunk, chunk.ind=chunk.ind)
 
+  
   buttonHandler(nali$outputBtn, output.shiny.chunk, chunk.ind=chunk.ind)
   buttonHandler(nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
   buttonHandler(nali$hideBtn, hide.shiny.chunk, chunk.ind=chunk.ind)
@@ -431,6 +439,20 @@ restore.shiny.chunk = function(chunk.ind=ps$chunk.ind,...,session=ps$session,ps=
   updateAceEditor(ps$session, ps$nali$console, value="restored original task code...", mode="text")
 }
  
+
+solution.shiny.chunk = function(chunk.ind=ps$chunk.ind,...,session=ps$session,ps=get.ps()) {
+  restore.point("restore.shiny.chunk")
+  set.shiny.chunk(chunk.ind)
+
+  ps$cdt$stud.code[[chunk.ind]] = ps$cdt$sol.txt[[chunk.ind]]
+  #ps$cdt$is.solved[[chunk.ind]] = FALSE
+  ps$stud.code = ps$cdt$stud.code[[chunk.ind]]
+  
+  updateAceEditor(ps$session, ps$nali$editor, value=ps$stud.code, mode="r")
+  updateAceEditor(ps$session, ps$nali$console, value="Sample solution shown", mode="text")
+}
+ 
+
 hide.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
   restore.point("hide.shiny.chunk")
   set.shiny.chunk(chunk.ind)
