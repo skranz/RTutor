@@ -402,7 +402,7 @@ mathJaxRTutor <- function(html, ps=get.ps()) {
   
   #path =  paste0(system.file('www', package='RTutor'),"/MathJax")
   #if (!file.exists(path))
-  path <- 'http://cdn.mathjax.org/mathjax/latest'
+  path <- '//cdn.mathjax.org/mathjax/latest'
   
   command = paste0(path, '/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
   #path <- 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
