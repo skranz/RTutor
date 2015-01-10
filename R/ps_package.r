@@ -85,7 +85,7 @@ get.package.info = function(package=NULL) {
 #' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
 #' @param rmd.file name of the .rmd file that shall be imported if import.rmd=TRUE
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE. 
-run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),  sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, info=get.package.info(package), package=NULL, deploy.local=TRUE, ...) {
+run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),  sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, info=get.package.info(package), package=NULL, deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app, ...) {
   restore.point("run.ps")
   
   pkg.dir = path.package(info$package)
@@ -100,7 +100,7 @@ run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav
     }
   }
   show.ps(user.name=user.name, ps.name=ps.name, dir=dir, rps.dir=rps.dir,
-    sav.file=sav.file,load.sav = load.sav, sample.solution=sample.solution, run.solved=run.solved, import.rmd=import.rmd, rmd.file = rmd.file, offline=offline, left.margin=2, right.margin=2,...)
+    sav.file=sav.file,load.sav = load.sav, sample.solution=sample.solution, run.solved=run.solved, import.rmd=import.rmd, rmd.file = rmd.file, offline=offline, left.margin=2, right.margin=2,make.web.app=make.web.app, save.nothing=save.nothing,...)
 }
 
 examples.rtutor.package.skel = function() {

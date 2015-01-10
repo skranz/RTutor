@@ -48,7 +48,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, 
                      load.sav=load.sav, sample.solution=sample.solution,
                      run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
-                     dir=dir, rps.dir=rps.dir, save.nothing=FALSE,...)
+                     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
