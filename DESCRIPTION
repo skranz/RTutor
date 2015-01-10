@@ -8,4 +8,6 @@ Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: Tools for creating R problem sets with automatic assessment of student's solutions
 License: Programm code: GPL >= 2.0
          Contributed problem sets: Creative Commons
-Depends: shinyEvents,markdown,whisker, stringr, stringtools, data.table, dplyr, shiny, dplyrExtras, shinyAce, shinyBS, hwriter, texreg, lmtest, restorepoint, RCurl
+Depends: shinyEvents,markdown,whisker, stringr, stringtools, data.table, dplyr,
+         shiny, dplyrExtras, shinyAce, shinyBS, hwriter, texreg, lmtest,
+         restorepoint, RCurl, knitr
