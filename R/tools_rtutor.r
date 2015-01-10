@@ -352,7 +352,7 @@ parse.text.with.source = function(text) {
   restore.point("parse.text.with.source")
   if (is.null(text))
     return(NULL)
-  e = parse(text=text,srcfile)
+  e = parse(text=text)
   if (length(e)==0)
     return(NULL)
   str = sapply(attr(e,"srcref"), function(e) paste0(as.character(e), collapse="\n"))
