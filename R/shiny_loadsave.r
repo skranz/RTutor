@@ -119,6 +119,8 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
 
 save.sav = function(file=ps$sav.file, user.name=get.user()$name,ps=get.ps(), copy.into.global=TRUE) {
   restore.point("save.sav")
+
+  if (isTRUE(ps$save.nothing)) return()
   sav = list(
     ps.name = ps$name,
     user.name = user.name,

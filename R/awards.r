@@ -106,7 +106,10 @@ load.user = function(dir = get.ps()$stud.path) {
   return(invisible(user))
 }
 
-save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path) {
+save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path, ps = get.ps()) {
+  if (isTRUE(ps$save.nothing))
+    return()
+  
   file = paste0(dir,"/current_user.Ruser")
   save(user, file=file)
   # Backup

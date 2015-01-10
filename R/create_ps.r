@@ -350,7 +350,7 @@ parse.chunk.ends = function(row,str,txt, te) {
   if (te$block.type %in% te$markdown.blocks) {
     te$block.txt = c(te$block.txt, str)
   } else if (te$in.block) {
-    stop(paste0(te$chunk.str, " ending in row ", row, " you forgot to close your ", block.type," block with #>"), call.=FALSE)      
+    stop(paste0(te$chunk.str, " ending in row ", row, " you forgot to close your ", te$block.type," block with #>"), call.=FALSE)      
   } else {
     te$block.end = row-1
     add.te.block(te)
@@ -387,7 +387,7 @@ parse.block.starts = function(row,str,txt, te) {
     stop(paste0(te$chunk.str," in row ", row, " you open a block of unknown type:\n  '", te$block.type,"'\nI only know the block types:\n  ", paste0(te$blocks, collapse=", "),"."), call.=FALSE)
   }
   if (te$in.chunk & !te$block.type %in% te$code.blocks) {
-    stop(paste0(te$chunk.str, " in row ", row, " you open a '", block.type,"' block. But '", te$block.type, "' blocks can only be opened in your markdown text outside of code chunks."), call.=FALSE)
+    stop(paste0(te$chunk.str, " in row ", row, " you open a '", te$block.type,"' block. But '", te$block.type, "' blocks can only be opened in your markdown text outside of code chunks."), call.=FALSE)
   }
   if (!te$in.chunk & !te$block.type %in% te$markdown.blocks) {
     stop(paste0(" in row ", row, " you open a '", te$block.type,"' block outside a code chunk. But '", te$block.type, "' blocks can only be opened inside code chunks."), call.=FALSE)

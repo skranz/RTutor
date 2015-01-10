@@ -46,7 +46,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir) {
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE) {
   restore.point("init.ps")
  
   rps = load.rps(file=rps.file)
@@ -55,6 +55,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$name = ps.name
   ps$rps = rps
   load.ps.libs(rps$libs)
+  ps$save.nothing = save.nothing
   
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
   #print(all.parent.env(ps$ps.baseenv))

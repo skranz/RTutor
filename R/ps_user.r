@@ -59,6 +59,8 @@ set.ups = function(ups) {
 
 save.ups = function() {
   ps = get.ps()
+  if (isTRUE(ps$save.nothing)) return()
+  
   user = get.user()
   dir = get.ps()$stud.path
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")

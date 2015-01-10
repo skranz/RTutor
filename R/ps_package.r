@@ -60,6 +60,15 @@ examples.run.ps = function() {
 }
 
 
+get.package.info = function(package=NULL) {
+  restore.point("get.package.info")
+  if (is.null(package))
+    return(ps.pkg.info())
+  
+  call = paste0(package,"::ps.pkg.info()")
+  eval(parse(text=call))
+}
+
 #' Run a problem set from a package in the browser
 #' 
 #' Only works if a package with problem sets is loaded.
@@ -76,17 +85,19 @@ examples.run.ps = function() {
 #' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
 #' @param rmd.file name of the .rmd file that shall be imported if import.rmd=TRUE
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE. 
-run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),  sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, info=ps.pkg.info(), ...) {
+run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),  sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, info=get.package.info(package), package=NULL, deploy.local=TRUE, ...) {
   restore.point("run.ps")
   
-  setwd(dir)
   pkg.dir = path.package(info$package)
   rps.dir = paste0(pkg.dir,"/ps")
   material.dir = paste0(pkg.dir,"/material/",ps.name)
   
-  ret = deploy.ps(ps.name=ps.name, dir=dir, material.dir=material.dir)
-  if (!ret) {
-    return()
+  if (deploy.local) {
+    setwd(dir)
+    ret = deploy.ps(ps.name=ps.name, dir=dir, material.dir=material.dir)
+    if (!ret) {
+      return()
+    }
   }
   show.ps(user.name=user.name, ps.name=ps.name, dir=dir, rps.dir=rps.dir,
     sav.file=sav.file,load.sav = load.sav, sample.solution=sample.solution, run.solved=run.solved, import.rmd=import.rmd, rmd.file = rmd.file, offline=offline, left.margin=2, right.margin=2,...)
@@ -110,6 +121,18 @@ examples.rtutor.package.skel = function() {
   create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
 
   rtutor.package.skel(sol.file=sol.file, ps.name=ps.name, pkg.name="RTutorBankRuns", pkg.parent.dir = "D:/libraries/RTutorBankRuns", libs=libs, author="Joachim Plath", github.user="skranz", extra.code.file = "extracode.r", var.txt.file = "variables.txt", overwrite=TRUE)
+  
+  
+  ##### Example 
+  setwd("D:/libraries/RTutor/examples")
+  ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+  libs = c() # character vector of all packages you load in the problem set
+  #name.rmd.chunks(sol.file) # set auto chunk names in this file
+
+  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
+
+   rtutor.package.skel(sol.file=sol.file, ps.name=ps.name, pkg.name="RTutorExample", pkg.parent.dir = "D:/libraries/RTutorExample", libs=libs, author="Sebastian Kranz", github.user="skranz", overwrite=TRUE)
+
 }
 
 #' Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package

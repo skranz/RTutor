@@ -6,6 +6,10 @@ examples.translate.old.sol = function() {
   in.file = "Problem_Set_Sol.Rmd"
   out.file = "Bank Runs 2_sol.Rmd"
   
+  setwd("D:/libraries/RTutor/examples")
+  in.file = "intro_sol.Rmd"
+  out.file = "intro2_sol.Rmd"
+  
   translate.old.rtutor.sol(in.file=in.file, out.file=out.file)
 }
 
