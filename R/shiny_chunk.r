@@ -146,11 +146,13 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   )
   
   #aceAutocomplete(nali$editor)
+  award.ui = make.chunk.award.ui(chunk.ind)
 
   fluidRow(
     button.row,
     bsAlert(nali$alertOut),
-    edit.row
+    edit.row,
+    award.ui
   )
 }
 
@@ -181,10 +183,13 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   html = HTML(html)
   
   cat("\nbefore fluidRow(")
+  award.ui = make.chunk.award.ui(chunk.ind)
+
   fluidRow(
     button.row,
     bsAlert(nali$alertOut),
-    html
+    html,
+    award.ui
   )
 }
 
@@ -208,11 +213,13 @@ make.chunk.hide.code.ui = function(chunk.ind, ps = get.ps()) {
   } else {
     html = HTML(chunk.to.html(code, chunk.ind, eval=FALSE, echo=TRUE,nali=nali))
   }
+  award.ui = make.chunk.award.ui(chunk.ind)
 
   fluidRow(
     button.row,
     bsAlert(nali$alertOut),
-    html
+    html,
+    award.ui
   )
 }
 
@@ -228,11 +235,29 @@ make.chunk.hidden.ui = function(chunk.ind, ps = get.ps()) {
     bsActionButton(nali$dataBtn, "data", size="mini"),
     bsActionButton(nali$saveBtn, "save", size="mini")
   ) 
+  award.ui = make.chunk.award.ui(chunk.ind)
   fluidRow(
     button.row,
-    bsAlert(nali$alertOut)
-
+    bsAlert(nali$alertOut),
+    award.ui
   )
+}
+
+make.chunk.award.ui = function(chunk.ind, ps=get.ps(), user = get.user()) {
+  ck = ps$cdt[chunk.ind,]
+  #cdt$award.name
+  if (is.na(ck$award.name)) return(NULL)
+  html = user$awards[[ck$award.name]]$html
+  if (is.null(html)) return(NULL)
+  restore.point("make.chunk.award.ui")
+  
+  collapseId = paste0("collapse_award_",chunk.ind)
+  collapsePanelId = paste0("collapse_panel_award_",chunk.ind) 
+  ahtml = bsCollapse(open = NULL, id = collapseId,
+    bsCollapsePanel(paste0("Award: ",ck$award.name),id=collapsePanelId, HTML(html) )
+  )
+  
+  ahtml
 }
 
 make.chunk.task.ui = function(...) {

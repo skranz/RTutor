@@ -21,7 +21,8 @@ PS: awards() shows all your awards
   return(TRUE)
 }
 
-show.award = function(award, award.name = award$award.name, html=award$html, txt=award$txt) {
+show.award = function(award, award.name = award$award.name, html=award$html, txt=award$txt, ps=get.ps()) {
+  if (isTRUE(ps$is.shiny)) return()
   if (!is.null(html)) {
     htmlFile <- tempfile(fileext=".html")
     writeLines(html,htmlFile )

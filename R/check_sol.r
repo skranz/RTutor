@@ -280,6 +280,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   
   if (!is.na(ck$award.name)) {
     give.award(ck$award.name, ps=ps)
+    #if (isTRUE(ps$is.shiny))
+    #  update.chunk.ui(chunk.ind = chunk.ind)
   }
   
   set.ups(ups)
