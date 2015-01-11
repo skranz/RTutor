@@ -492,7 +492,7 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
 data.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
                             ...,ps=get.ps()) {
   restore.point("data.shiny.chunk")
-  set.shiny.chunk(chunk.ind)
+  set.shiny.chunk(chunk.ind, from.data.btn = TRUE)
   update.data.explorer.ui()
   updateTabsetPanel(session, inputId="exTabsetPanel",
                     selected = "dataExplorerTabPanel")
@@ -501,7 +501,7 @@ data.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
 save.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
                             ...,ps=get.ps()) {
   restore.point("data.shiny.chunk")
-  set.shiny.chunk(chunk.ind)
+  #set.shiny.chunk(chunk.ind)
   save.sav()
   nali = ps$cdt$nali[[chunk.ind]]
 
@@ -515,7 +515,7 @@ save.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
 
 set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
                            input=session$input,session=ps$session,
-                           ps=get.ps(),reload.env=FALSE) {
+                           ps=get.ps(),reload.env=FALSE, from.data.btn = FALSE) {
   restore.point("set.shiny.chunk")
   #browser()
   cat("start set.shiny.chunk\n")
@@ -537,6 +537,11 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
       reload.env = !isTRUE(ps$chunk.ind == chunk.ind)  
   
   ps$chunk.ind = chunk.ind
+  if (from.data.btn & ps$cdt$mode[chunk.ind]!="input") {
+    reload.env = FALSE
+    ps$stud.env = ps$cdt$stud.env[[ps$chunk.ind]]
+  }
+  
   if (reload.env) {
     stud.env = NULL
     if (!is.false(ps$catch.errors)) {  
