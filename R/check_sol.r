@@ -477,7 +477,7 @@ stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.en
       } else {
         add("> ",paste0(li$source[[i]], collapse="\n+ "))        
       }
-      
+      out = NULL
       tryCatch(out <- capture.output(eval(part.expr, stud.env)),error = err.fun)
       if (length(out)>0) add(out)
     }
