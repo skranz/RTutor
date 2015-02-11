@@ -1,3 +1,18 @@
+# # from and to must be sorted and non-overlapping
+# match.intervals = function(x, from, to) {
+#   from = c(2,5,10.1); to=c(3,8,12)
+#   x = 0:15
+#   
+#   vec = as.numeric(t(cbind(from, to)))
+#   int=findInterval(x,vec)
+#   int.rev=length(vec)-findInterval(-x,rev(-vec))
+#   
+#   res = pmin(int, int.rev)
+#   res[res %% 2 == 0] = NA
+#   
+#   rbind(x,int, int.rev, res)
+# }
+
 quick.df = function (...) 
 {
   df = list(...)

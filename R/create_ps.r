@@ -255,8 +255,11 @@ parse.sol.line = function(row,txt, te) {
   chunk.ends = str.starts.with(str,"```") & ! chunk.starts
   block.starts = str.starts.with(str,"#<")
   block.ends = str.starts.with(str,"#>")
-   
-  change = chunk.starts | chunk.ends | block.starts | block.ends
+  
+  command.line  = str.starts.with(str,"#!")
+  #if (command.line) stop()
+  
+  change = chunk.starts | chunk.ends | block.starts | block.ends | command.line
  
   if (!change) {    
     parse.no.change.line(row,str,txt,te)    
@@ -273,6 +276,8 @@ parse.sol.line = function(row,txt, te) {
     parse.block.starts(row,str,txt,te)    
   } else if (block.ends) {
     parse.block.ends(row,str,txt,te)    
+  } else if (command.line) {
+    parse.command.line(row,str,txt,te)
   }
   te
 }
@@ -413,6 +418,27 @@ parse.block.ends = function(row,str,txt, te) {
       te$block.type = ""        
     }
   }
+}
+
+parse.command.line = function(row,str,txt, te) {
+  restore.point("parse.command.line")  
+  #if (row==25) stop()
+  
+  if (te$in.block) {
+    stop(paste0("In row ", row, " you have written the command \n",str,"\n inside a block. Command lines must be outside blocks"), call.=FALSE)      
+  }
+  if (te$in.chunk) {
+    stop(paste0("In row ", row, " you have written the command \n",str,"\n inside a chunk. Command lines must be outside chuncks"), call.=FALSE)      
+  }
+ 
+  str = str.trim(str.right.of(str,"#!"))
+  com = stringtools::str.left.of(str," ")
+  if (com == "start_note" | com == "end_note") {
+    te$task.txt = c(te$task.txt, paste0("#! ", str))
+  } else {
+    stop(paste0("In row ", row, " you have written an unknown command:\n",str), call.=FALSE)          
+  }
+  
 }
 
 
@@ -582,8 +608,7 @@ add.te.compute = function(te,ck,var) {
 } 
 
 
-add.te.settings = function(te) {
-  
+add.te.settings = function(te) {  
   restore.point("add.te.settings")
   txt = te$block.txt
   env = new.env()
@@ -929,23 +954,39 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   info.start = which((str.starts.with(txt,"info(")))
   cont.start = which((str.starts.with(txt,"#. continue")))
   
+  note.start = which((str.starts.with(txt,"#! start_note")))
+  note.end = which((str.starts.with(txt,"#! end_note")))
+  if (length(note.start) != length(note.end)) {
+    stop(paste0("You have ",length(note.start)," '#! start_node' commands but",length(note.end), " end_node commands!")
+  }
+  
   
   
   df.chunk = data.frame(start=chunk.start, type="chunk", type.ind=seq_along(chunk.start))
   df.info = data.frame(start=info.start, type=rep("info", length(info.start)), type.ind=seq_along(info.start))
   df.cont = data.frame(start=cont.start, type=rep("continue", length(cont.start)), type.ind=seq_along(cont.start))
-  df.task = data.frame(start=sort(c(1,ex.start,chunk.end+1, info.start+1, cont.start+1)), type="task")
-
-
   
+  df.note.start = data.frame(start=note.start, type="note.start", type.ind=seq_along(note.start))
+  df.note.end = data.frame(start=note.end, type="note.end", type.ind=seq_along(note.end))
+  
+  
+  df.task = data.frame(start=sort(c(1,ex.start,note.start+1, note.end+1,chunk.end+1, info.start+1, cont.start+1)), type="task")
+  
+
+
   df.task$type.ind = 1:NROW(df.task)
   
   
-  df = rbind(df.chunk,df.info,df.cont, df.task)
+  df = rbind(df.chunk,df.info,df.cont, df.task, df.note.start, df.note.end)
   df = df[!duplicated(df$start),]
   df = arrange(df, start)
   df$end = c(df$start[-1]-1, length(txt))
   df
+  
+  in.note = cumsum(df$type=="note.start") - cumsum(df$type=="note.end") 
+  df$note = cumsum(df$type=="note.start")*df$in.note
+  df = df[! df$type %in% c("note.start","note.end"),]
+  
   n = NROW(df)
 
   df.ex = data.frame(start=c(1,ex.start), ex.ind = c(0,seq_along(ex.start)))
@@ -962,7 +1003,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   df
   
   
-  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="")
+  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="", note.ind = df$note.ind)
   keep.row = rep(TRUE, NROW(dt))
   
   i = 5
