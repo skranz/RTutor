@@ -165,7 +165,10 @@ te.to.rps = function(te) {
     has.test = nchar(str)>0
     
     chunk.opt = lapply(ex$chunks, function(ck) ck$chunk.opt)
-
+    
+    optional = sapply(ex$chunks, function(ck) isTRUE(ck$chunk.opt$optional))
+    
+    
     test.expr = lapply(ex$chunks, function(ck) {
       lapply(ck$test.txt, parse.text)
     })
@@ -184,7 +187,7 @@ te.to.rps = function(te) {
     })
     
     
-    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt) 
+    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt, optional=optional) 
     # Remove chunks without expressions
     dt = dt[add.chunk,]
     if (NROW(dt)>0) 

@@ -58,6 +58,12 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$save.nothing = save.nothing
   
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
+  
+  
+  # for backwards compatibility
+  if (! ("optional" %in% colnames(rps$cdt)))
+    rps$cdt$optional = FALSE
+  
   #print(all.parent.env(ps$ps.baseenv))
   if (!is.null(rps$extra.code.env)) {
     copy.into.env(source=rps$extra.code.env, dest = ps$ps.baseenv) 
@@ -65,6 +71,8 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   
   
   cdt = rps$cdt
+  
+  
   
   cdt$is.solved = FALSE
   cdt$chunk.changed = FALSE

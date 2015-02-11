@@ -376,12 +376,24 @@ import.var.into.stud.env = function(import.var, dest.env, ps = get.ps()) {
   return(TRUE)
 }
 
+
 can.chunk.be.edited = function(chunk.ind, ps = get.ps()) {
   restore.point("can.chunk.be.edited")
   
-  ck = ps$cdt[chunk.ind,]
+  cdt = ps$cdt
+  ck = cdt[chunk.ind,]
   ex.ind = ck$ex.ind
-  if (ck$chunk.ex.ind == 1) {
+  
+  
+  non.optional = which(cdt$ex.ind == ex.ind & !cdt$optional) 
+  if (length(non.optional)==0) {
+    start.ex = TRUE
+  } else {
+    first.ind = non.optional[1]
+    start.ex = chunk.ind <= first.ind
+  }
+  
+  if (start.ex) {
     if (ex.ind==1)
       return(TRUE)
     ex.names = names(ps$edt$import.var[[ck$ex.ind]])
@@ -391,16 +403,18 @@ can.chunk.be.edited = function(chunk.ind, ps = get.ps()) {
     ex.inds = edt$ex.ind[match(ex.names,edt$ex.name)]
     
     chunks = which(ps$cdt$ex.ind %in% ex.inds)
-    solved = all(ps$cdt$is.solved[chunks])
+    solved = all(ps$cdt$is.solved[chunks] | ps$cdt$optional[chunks])    
     if (all(solved))
       return(TRUE)
     ps$failure.message = paste0("You must first solve and check all chunks in exercise(s) ", paste0(ex.names[ex.inds],collapse=", "), " before you can start this exercise.")
     return(FALSE)
   } else {
-    if (ps$cdt$is.solved[chunk.ind-1]) {
+    ex.rows = which(cdt$ex.ind == ex.ind & cdt$chunk.ps.ind < chunk.ind) 
+    if (all(ps$cdt$is.solved[ex.rows] | ps$cdt$optional[ex.rows])) {
       return(TRUE)
     }
-    ps$failure.message = paste0("You must first solve and check the previous chunk before you can edit and solve this chunk.")
+        
+    ps$failure.message = paste0("You must first solve and check all previous, non-optional chunks in this exercise before you can edit and solve this chunk.")
     return(FALSE) 
   }
   
