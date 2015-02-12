@@ -957,9 +957,10 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   note.start = which((str.starts.with(txt,"#! start_note")))
   note.end = which((str.starts.with(txt,"#! end_note")))
   if (length(note.start) != length(note.end)) {
-    stop(paste0("You have ",length(note.start)," '#! start_node' commands but",length(note.end), " end_node commands!")
+    stop(paste0("You have ",length(note.start)," '#! start_node' commands but",length(note.end), " end_node commands!"))
   }
-  
+  note.name = str.right.of(txt[note.start],"#! start_note ")
+  note.name = str.between(note.name,'"','"')
   
   
   df.chunk = data.frame(start=chunk.start, type="chunk", type.ind=seq_along(chunk.start))
@@ -984,7 +985,10 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   df
   
   in.note = cumsum(df$type=="note.start") - cumsum(df$type=="note.end") 
-  df$note = cumsum(df$type=="note.start")*df$in.note
+  df$note.ind = cumsum(df$type=="note.start")*in.note
+  df$note.label = ""
+  df$note.label[in.note==1] = note.name[df$note.ind[in.note==1]]
+  
   df = df[! df$type %in% c("note.start","note.end"),]
   
   n = NROW(df)
@@ -1003,7 +1007,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   df
   
   
-  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="", note.ind = df$note.ind)
+  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="", note.ind = df$note.ind, note.label=df$note.label)
   keep.row = rep(TRUE, NROW(dt))
   
   i = 5
