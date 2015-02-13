@@ -19,6 +19,10 @@ make.view.ui = function(view.ind, ps=get.ps()) {
       return(mathJaxRTutor(shiny.dt$html[[i]]))
     }
   })
+  
+  ui.li = adapt.view.li.for.notes(ui.li,shiny.dt, rows)
+
+  
   #do.call("fluidRow", ui.li)
   w = 12-ps$left.margin-ps$right.margin
   my.ui = do.call("column", c(list(width=w, offset=ps$left.margin),ui.li))
@@ -56,6 +60,7 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
     uiOutput(outputName)
   })
   
+  
   # Button for next exercise
   if (ex.ind < max(ps$cdt$ex.ind)) {
     btnId = paste0("nextExBtn", ex.ind)
@@ -70,6 +75,32 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
   do.call("tabPanel", 
     c(list(title=ex.name, value=paste0("exPanel",ex.ind)), li)
   )
+}
+
+adapt.view.li.for.notes = function(view.li, shiny.dt, rows) {
+  note.inds = setdiff(unique(shiny.dt$note.ind[rows]),0)
+  if (length(note.inds)==0) return(view.li)
+  
+  restore.point("adapt.view.li.for.notes")  
+  remove.rows = NULL
+  note.ind = 1
+  for (note.ind in note.inds) {
+    nrows =  which(shiny.dt$note.ind[rows] == note.ind)
+    note.name = shiny.dt$note.label[rows[nrows[1]]]
+    
+    nli = view.li[nrows]
+    collapseId = paste0("collapse_note_",note.ind)
+    collapsePanelId = paste0("collapse_panel_note_",note.ind)
+    panel = do.call("bsCollapsePanel", 
+                    c(list(title=note.name, id =  collapsePanelId),
+                      view.li[nrows]))    
+    ui = bsCollapse(open = NULL, id = collapseId, panel)
+    view.li[[nrows[1]]] = ui 
+    remove.rows = c(remove.rows, nrows[-1])
+  }
+  if (length(remove.rows)>0)
+    view.li = view.li[-remove.rows]
+  view.li
 }
 
 make.ex.ui.li = function(ex.inds = NULL, ps = get.ps()) {

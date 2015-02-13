@@ -61,8 +61,14 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   
   
   # for backwards compatibility
-  if (! ("optional" %in% colnames(rps$cdt)))
-    rps$cdt$optional = FALSE
+    if (! ("optional" %in% colnames(rps$cdt)))
+      rps$cdt$optional = FALSE
+    
+    if (! ("note.ind" %in% colnames(rps$shiny.dt))) {
+      rps$shiny.dt$note.ind = 0
+      rps$shiny.dt$note.label = ""   
+    }
+  # end backwards compatibility
   
   #print(all.parent.env(ps$ps.baseenv))
   if (!is.null(rps$extra.code.env)) {
