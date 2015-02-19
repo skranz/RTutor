@@ -967,8 +967,12 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   df.info = data.frame(start=info.start, type=rep("info", length(info.start)), type.ind=seq_along(info.start))
   df.cont = data.frame(start=cont.start, type=rep("continue", length(cont.start)), type.ind=seq_along(cont.start))
   
-  df.note.start = data.frame(start=note.start, type="note.start", type.ind=seq_along(note.start))
-  df.note.end = data.frame(start=note.end, type="note.end", type.ind=seq_along(note.end))
+  if (length(note.start)>0) {
+    df.note.start = data.frame(start=note.start, type="note.start", type.ind=seq_along(note.start))
+    df.note.end = data.frame(start=note.end, type="note.end", type.ind=seq_along(note.end))
+  } else {
+    df.note.start = df.note.end = NULL
+  }
   
   
   df.task = data.frame(start=sort(c(1,ex.start,note.start+1, note.end+1,chunk.end+1, info.start+1, cont.start+1)), type="task")
