@@ -316,6 +316,21 @@ update.log.test.result = function(...) {
 make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
   restore.point("make.chunk.stud.env")
   ck = ps$cdt[chunk.ind,]
+  
+  cdt = ps$cdt
+  
+  # Find index of closest non-optional parent
+  ex.ind = ck$ex.ind  
+  non.optional = which(cdt$ex.ind == ex.ind & !cdt$optional)
+  non.optional = non.optional[non.optional < chunk.ind]
+  
+  if (length(non.optional)==0) {
+    start.ex = TRUE
+  } else {
+    parent.ind = max(non.optional)  
+  }
+
+  
   if (ck$chunk.ex.ind == 1) {
     # First chunk in exercise: generate new stud.env
     stud.env = new.stud.env(chunk.ind)
@@ -323,7 +338,7 @@ make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
 
   } else {
     # Later chunk in an exercise: simply copy previous stud.env
-    stud.env = copy.stud.env(ps$cdt$stud.env[[chunk.ind-1]], chunk.ind)
+    stud.env = copy.stud.env(ps$cdt$stud.env[[parent.ind]], chunk.ind)
   }
   stud.env
 }
