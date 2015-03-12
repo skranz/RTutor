@@ -360,9 +360,21 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   stud.env = ps$cdt$stud.env[[chunk.ind]]
   #all.parent.env(stud.env)
   html ="Evaluation error!"
+  
+  cat("knit2html")
+  restore.point("chunk.to.html.knit2html")
   html = try(
     knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE),
   )
+  
+  # correct weird error if a summary is shown
+  # the siginifcance levels '***' cause a latex error
+  #html = gsub("&#39;","",html)
+  #html = gsub("&gt;","",html)
+  #html = gsub("|","",html,fixed=TRUE)
+  #html = gsub("---","",html,fixed=TRUE)
+
+  #html = gsub(":","",html) 
   
    # Add syntax highlightning
   if (!is.null(nali$chunkUI)) {

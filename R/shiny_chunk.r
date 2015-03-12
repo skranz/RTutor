@@ -52,20 +52,7 @@ update.chunk.ui = function(chunk.ind, mode=ps$cdt$mode[chunk.ind], ps=get.ps(), 
   nali = ps$cdt$nali[[chunk.ind]]
     
   updateUI(session,nali$chunkUI, ui)
-
-#  session=ps$session
-
-#   if (mode=="input" & (!is.null(session))) {
-#     cat("\n****************************************\nAutocompletion for ", nali$editor)
-#     restore.point("ihishiuhth")
-# 
-#     updateAceEditor(session, nali$edior, autoComplete = "enabled")
-#     autoComp = aceAutocomplete(nali$editor, ps$session)
-#     observe({
-#       autoComp$resume()
-#     })
-#   }
-
+  cat("\nend update.chunk.ui\n")
 }
 
 # returns the ui for a chunk based on its current mode 
@@ -333,7 +320,7 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
-  #cat("\n check.shiny.chunk2")
+  cat("\n check.shiny.chunk2")
   #browser()
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
@@ -358,10 +345,14 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
       proceed.with.successfuly.checked.chunk(chunk.ind)
     }
   }
+  
+  cat("\nend check.shiny.chunk.ui\n")
   return(ret)
 }
 
 proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
+  restore.point("proceed.with.successfuly.checked.chunk")
+  
   ps$cdt$is.solved[chunk.ind] = TRUE
   if (is.last.chunk.of.ex(chunk.ind)) {
     ex.ind = ps$cdt$ex.ind[chunk.ind]
