@@ -5,9 +5,10 @@
 #' 
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive()) {
-  
+check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
+
   restore.point("check.problem.set", deep.copy=FALSE)
+
   
   if (from.knitr) {
     # Allows knitting to HTML even when there are errors
@@ -51,6 +52,7 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   
   ps = get.or.init.ps(ps.name,stud.path, stud.short.file, reset)
   ps$catch.errors = catch.errors
+  ps$use.null.device = use.null.device
   
   set.ps(ps)
   ps$warning.messages = list()
@@ -63,7 +65,10 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   cdt$stud.code = get.stud.chunk.code(ps=ps)
   cdt$code.is.task = cdt$stud.code == cdt$task.txt
   cdt$chunk.changed = cdt$stud.code != cdt$old.stud.code
-
+  cdt$old.stud.code = cdt$stud.code
+  
+  #test.code.df = data.frame(stud.code = cdt$stud.code, old.stud.code = cdt$old.stud.code)
+  
   ex.changed = summarise(group_by(as.data.frame(cdt),ex.ind), ex.changed = any(chunk.changed))$ex.changed
 
   ex.check.order = unique(c(which(ex.changed),ps$ex.last.mod, which(!edt$ex.solved)))
@@ -77,6 +82,7 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   ps$cdt = cdt
   # Check exercises
   i = 1
+
   for (i in ex.check.order) {
     ps$ex.last.mod = i
     ex.name = edt$ex.name[i]
@@ -97,9 +103,17 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
     save.ups()
     if (ret==FALSE) {
       edt$ex.solved[i] = FALSE
+      if (cdt$code.is.task[ps$chunk.ind]) {
+        message = paste0("You have not yet started with chunk ", cdt$chunk.name[ps$chunk.ind],"\nIf you have no clue how to start, try hint().")
+        #cat(message)
+        stop.without.error(message)
+      }
+      
       message = ps$failure.message
       message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
       message = paste(message,code.change.message)
+      
+      
       stop(message, call.=FALSE, domain=NA)
     } else if (ret=="warning") {
       message = paste0(ps$warning.messages,collapse="\n\n")
@@ -241,6 +255,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   e.ind = 1
 
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1 
+
+  # Turn graphics device off
+  if (isTRUE(ps$use.null.device))
+    try(png("NUL"), silent=TRUE)
+
   for (e.ind in seq_along(ck$e.li[[1]])) {
     ps$e.ind = e.ind  
     tests = ck$test.expr[[1]][[e.ind]]
@@ -254,7 +273,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       if (verbose) {
         display("  Test #", test.ind, ": ",deparse1(test))
       }
+      
+
+      
       ret = eval(test,ps$stud.env)
+      
       ps$tdt$test.passed[tdt.ind] = ret    
       update.ups.test.result(passed=ret,ps=ps)
       #update.log.test.result(ret,ups, ck, ps)
@@ -262,6 +285,10 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       if (ret==FALSE) {
         set.ups(ups)
         ps$test.log = c(ps$test.log, ps$failure.message)
+        # Back to normal graphics device
+        if (isTRUE(ps$use.null.device))
+          try(dev.off(), silent=TRUE) 
+
         return(FALSE)        
       } else if (ret=="warning") {
         had.warning = TRUE
@@ -275,7 +302,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       }
     }
   }
-  
+
+  # Back to normal graphics device
+  if (isTRUE(ps$use.null.device))
+    try(dev.off(), silent=TRUE) 
+
   ps$cdt$is.solved[[chunk.ind]] = TRUE
   
   if (!is.na(ck$award.name)) {
