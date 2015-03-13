@@ -41,7 +41,7 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, ...) {
 
   app = eventsApp()
   #browser()
@@ -102,7 +102,14 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   if (!isTRUE(launch.browser))
     launch.browser = rstudio::viewer
   
+  
+  if (disable.graphics.dev)
+   try(png("NUL"),silent=TRUE)
+  
   runEventsApp(app=app,ui=ui,launch.browser=launch.browser, quiet=FALSE)
+  
+  if (disable.graphics.dev)
+    try(dev.off(),silent=TRUE)
 }
 
 show.shiny.ps = show.ps
