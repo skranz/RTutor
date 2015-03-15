@@ -45,7 +45,7 @@ The RTutor package has a function `rtutor.package.skel` that creates a package s
     pkg.parent.dir = "D:/libraries/RTutorExample", # Parent directory 
     author="Sebastian Kranz", # Your name
     github.user="skranz",     # Your github user name
-    overwrite=TRUE            # Do you want to override if package directory exists?
+    overwrite=FALSE  # Do you want to override if package directory exists?
   )
 
 ```
@@ -127,9 +127,10 @@ run.ps(user.name="Jon Doe", ps.name="Example2", package="RTutorExample",
        load.sav=TRUE, sample.solution=FALSE)
 ```
 
-### Step 7: Create a Github account and upload package.
+### Step 7: Updating problem sets
 
-This is explained in the next Section
+If you want to update the problem sets in your package, simple copy manually the new files into the problem set folder under /inst/ps. Then build your new package, test it and upload the changes to Github.
+There is no need to create the whole package with the package skeleton again.
 
 
 ## Host your package on Github

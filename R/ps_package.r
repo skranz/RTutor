@@ -5,7 +5,7 @@ examples.deploy.ps = function() {
 
 # Copies data sets and other required files to solve problem set
 # into the directory specified with dir
-deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), pkg = ps.pkg.info(),
+deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), info = ps.pkg.info(),
     ask.user=TRUE, overwrite=FALSE,
     pkg.dir = path.package(info$package),
     rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
@@ -13,12 +13,6 @@ deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), pkg = ps.pkg.info(),
 {
   restore.point("deploy.ps")
       
-  if (!overwrite) {
-    if (is.ps.deployed(dir=dir, material.dir=material.dir)) {
-      return(TRUE)
-    }
-  }
-
   if (!file.exists(dir)){
     warning(paste0("The directory '",dir,"' does not yet exist. Please create the directory before you proceed."))
     return(FALSE)
@@ -28,6 +22,13 @@ deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), pkg = ps.pkg.info(),
     cat("\nThe problem set has no additional materials. No files need to be copied to the working directory '",dir,"'.")
     return(TRUE)
   }
+  
+  if (!overwrite) {
+    if (is.ps.deployed(dir=dir, material.dir=material.dir)) {
+      return(TRUE)
+    }
+  }
+
   
   if (ask.user) {
     cat(paste0("\nDo you want to deploy the problem set to '", dir,"'?"))
@@ -69,6 +70,8 @@ get.package.info = function(package=NULL) {
   if (is.null(package))
     return(ps.pkg.info())
   
+  library(package,character.only = TRUE)
+  
   call = paste0(package,"::ps.pkg.info()")
   eval(base::parse(text=call))
 }
@@ -76,6 +79,7 @@ get.package.info = function(package=NULL) {
 
 # Try old and new folder structure
 find.pkg.rps.dir = function(ps.name, pkg.dir) {
+  restore.point("find.pkg.rps.dir")
   # New folder format /ps/ps.name
   dir = paste0(pkg.dir,"/ps/",ps.name)      
   if (file.exists(dir)) return(dir)
@@ -90,6 +94,8 @@ find.pkg.rps.dir = function(ps.name, pkg.dir) {
 
 # Try old and new folder structure
 find.pkg.material.dir = function(ps.name, pkg.dir) {
+  restore.point("find.pkg.material.dir")
+  
   # New folder format /ps/ps.name/material
   dir = paste0(pkg.dir,"/ps/",ps.name,"/material")      
   if (file.exists(dir)) return(dir)
@@ -130,23 +136,24 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 #' 
 #' 
 run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(), package=NULL,
-    load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav",
+    load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),
     sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, 
     rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"),
     offline=!can.connect.to.MathJax(), 
     left.margin=2, right.margin=2, 
     info=get.package.info(package),  
     deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app,
-    pkg.dir = path.package(info$package)),
+    pkg.dir = path.package(info$package),
     rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
     material.dir = find.pkg.material.dir(ps.name, pkg.dir),    
     ...) {
   
-  
+  #browser()
   restore.point("run.ps")
   if (deploy.local) {
     setwd(dir)
-    ret = deploy.ps(ps.name=ps.name, dir=dir, material.dir=material.dir)
+    ret = deploy.ps(ps.name=ps.name, dir=dir, material.dir=material.dir, 
+                    info=info, rps.dir=rps.dir, pkg.dir=pkg.dir)
     if (!ret) {
       return()
     }
