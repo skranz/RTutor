@@ -5,14 +5,14 @@ examples.deploy.ps = function() {
 
 # Copies data sets and other required files to solve problem set
 # into the directory specified with dir
-deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), material.dir=NULL, pkg = ps.pkg.info(), ask.user=TRUE, overwrite=FALSE) {
+deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), pkg = ps.pkg.info(),
+    ask.user=TRUE, overwrite=FALSE,
+    pkg.dir = path.package(info$package),
+    rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
+    material.dir = find.pkg.material.dir(ps.name, pkg.dir) ) 
+{
   restore.point("deploy.ps")
-    
-  if (is.null(material.dir)) {
-    pkg.dir = path.package(info$package)
-    material.dir = paste0(pkg.dir,"/material/",ps.name)
-  }
-  
+      
   if (!overwrite) {
     if (is.ps.deployed(dir=dir, material.dir=material.dir)) {
       return(TRUE)
@@ -24,6 +24,10 @@ deploy.ps = function(ps.name=pkg$ps[1], dir=getwd(), material.dir=NULL, pkg = ps
     return(FALSE)
   }
 
+  if (is.null(material.dir)) {
+    cat("\nThe problem set has no additional materials. No files need to be copied to the working directory '",dir,"'.")
+    return(TRUE)
+  }
   
   if (ask.user) {
     cat(paste0("\nDo you want to deploy the problem set to '", dir,"'?"))
@@ -69,6 +73,38 @@ get.package.info = function(package=NULL) {
   eval(base::parse(text=call))
 }
 
+
+# Try old and new folder structure
+find.pkg.rps.dir = function(ps.name, pkg.dir) {
+  # New folder format /ps/ps.name
+  dir = paste0(pkg.dir,"/ps/",ps.name)      
+  if (file.exists(dir)) return(dir)
+  
+  # Old folder format /ps
+  dir = paste0(pkg.dir,"/ps")      
+  if (file.exists(dir)) return(dir)
+  
+  err = paste0("Could not find ps directory for ", ps.name, " in your package folder ", pkg.dir)
+  stop(err)
+}
+
+# Try old and new folder structure
+find.pkg.material.dir = function(ps.name, pkg.dir) {
+  # New folder format /ps/ps.name/material
+  dir = paste0(pkg.dir,"/ps/",ps.name,"/material")      
+  if (file.exists(dir)) return(dir)
+  
+  # Old folder format /material/ps.name
+  material.dir = paste0(pkg.dir,"/material/",ps.name)    
+  if (file.exists(dir)) return(dir)
+
+  # No material directory found
+  #warning("Your problem set has no material directory.")
+  return(NULL)
+}
+
+
+
 #' Run a problem set from a package in the browser
 #' 
 #' Only works if a package with problem sets is loaded.
@@ -84,16 +120,29 @@ get.package.info = function(package=NULL) {
 #' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (By default FALSE, since starting the problem set then may take quite a while)
 #' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
 #' @param rmd.file name of the .rmd file that shall be imported if import.rmd=TRUE
-#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE. 
-#' @param pkg.dir Folder to look in for problem set
-run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav",
-  pkg.dir = path.package(info$package)),  sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, info=get.package.info(package), package=NULL, deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app, ...) {
+#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
+#' @param left.margin number of colums for left margin in browser window (total columns=12) 
+#' @param right.margin number of colums for right margin in browser window (total columns=12)
+#' @param pkg.dir the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package
+#' @param rps.dir directory of rps.files. Will be set to default for current package
+#' @param material.dir directory of additional problem set files. Will be set to default for current package
+#' 
+#' 
+run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),
+    load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav",
+    sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, 
+    rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"),
+    offline=!can.connect.to.MathJax(), 
+    left.margin=2, right.margin=2, 
+    info=get.package.info(package), package=NULL, 
+    deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app,
+    pkg.dir = path.package(info$package)),
+    rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
+    material.dir = find.pkg.material.dir(ps.name, pkg.dir),    
+    ...) {
+  
+  
   restore.point("run.ps")
-  
-
-  rps.dir = paste0(pkg.dir,"/ps")
-  material.dir = paste0(pkg.dir,"/material/",ps.name)
-  
   if (deploy.local) {
     setwd(dir)
     ret = deploy.ps(ps.name=ps.name, dir=dir, material.dir=material.dir)
@@ -150,11 +199,15 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   if (!file.exists(dest.dir))
     dir.create(dest.dir)
   
-  # Copy package skeletion
+  # Copy package skeleton
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = dest.dir, overwrite=overwrite, recursive = TRUE)
   
-  mat.dir = paste0(dest.dir,"/inst/material/",ps.name)
+  rps.dir =paste0(dest.dir,"/inst/ps/",ps.name)
+  if (!file.exists(rps.dir))
+    dir.create(rps.dir)
+  
+  mat.dir = paste0(dest.dir,"/inst/ps/",ps.name,"/material")
   if (!file.exists(mat.dir))
     dir.create(mat.dir)
 
@@ -186,9 +239,8 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   
   
   # Copy files into ps
-  ps.dir = paste0(dest.dir,"/inst/ps")
   file.copy(from = c(sol.file, rps.file, extra.code.file, var.txt.file, ps.file),
-            to=ps.dir, overwrite=overwrite.ps)
+            to=rps.dir, overwrite=overwrite.ps)
   
   cat(paste0("Package skeleton created in ", paste0(dest.dir,"/",pkg.name), ". ",
              "\nRead 'TO DO.txt' for the remaining steps."))
