@@ -1,57 +1,165 @@
 ---
 title: "Deploy RTutor Problem Set as a Package on Github"
 author: "Sebastian Kranz"
-date: "Sunday, December 21, 2014"
-output: html_document
+date: "15.03.2015"
+output:
+  html_document:
+    highlight: textmate
+    theme: readable
+    toc: yes
 ---
 
+## Ways to distribute a RTutor problem set
 
-1. Create an RStudio Package Project for this folder. See the description here:
+Once you have created and tested one or several RTutor problem sets, you want to distribute them to users. There are different ways for doing so.
+
+  1. Just provide the users the .rps (and possible .rmd file for markdown based problem sets) and additional material and let them manually copy the files in their working directory.
+  
+  2. Create an R package that contains one or more problem sets (including supplementary data) and host it on Github or CRAN.
+  
+  3. Host the problem set directly in the web using shinyapps.io or another web server that runs shiny server.
+  
+This vignette describes the second option.
+
+## Creating an R package for your problem set
+
+This process describes how to create an R package for your problem set. Currently the infrastructure is designed for Shiny-based problem sets, but it can also be extended to RMarkdown-based problem sets.  
+
+### Step 1 Create package skeleton with `rtutor.package.skel`
+
+The RTutor package has a function `rtutor.package.skel` that creates a package skeleton for a problem set package. You first need to call `create.ps` to create all problem set files from your solution files. Here is an example:
+
+```{r eval=FALSE}
+
+  # Working folder that contains your solution file
+  setwd("D:/libraries/RTutor/examples")
+
+  # First generate your problem set in the usual manner
+  ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+  libs = c() # character vector of all packages you load in the problem set
+  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
+
+  # This function creates a skeleton for your problem set package
+  rtutor.package.skel(sol.file=sol.file, ps.name=ps.name,libs=libs,
+    pkg.name="RTutorExample",   # Name of the problem set package
+    pkg.parent.dir = "D:/libraries/RTutorExample", # Parent directory 
+    author="Sebastian Kranz", # Your name
+    github.user="skranz",     # Your github user name
+    overwrite=TRUE            # Do you want to override if package directory exists?
+  )
+
+```
+
+
+### Step 2 Create an RStudio Package Project for this folder. 
+
+See the description here:
 
   https://support.rstudio.com/hc/en-us/articles/200486488-Developing-Packages-with-RStudio
 
-2. If you want to distribute the data sets used in your problem set directly 
-   with your problem sets, copy those data sets into the subfolder:
+### Step 3 Add data sets 
 
-   		/inst/materials/problemset_name
+If you want to distribute the data sets used in your problem set directly with your problem sets, copy those data sets into the subfolder:
 
-3. Edit the file "DESCRIPTION"
+   		/inst/ps/problemset_name/materials/
+
+### Step 4 update DESCRIPTION and README.MD
+
+Edit the file "DESCRIPTION"
 	- generate or update the problem set description / title
 	- check the DATE and possibly update it
 	- check and correct your name and email in the AUTHOR and MAINTAINER fields
 	- check whether you agree with the licences and possibly adapt them
 
-4. Edit the file "README.MD"
+Edit the file "README.MD"
 	- Add a brief description (2-3 lines) of the problem set.
 
-5. Try to build the package with RStudio with the menu point
+###  Step 5 Build the package with RStudio
+
+Try to build the package with RStudio with the menu point
 	
 	Build -> Build and Reload
 
    - Afterwards check whether you can run the problem set as explained in the README.MD file	
+   
+### Step 6 Optionally add additional problem sets in your package
 
-6. Host your package on Github
+A package can contain more than one problem set. Currently `rtutor.package.skel` only generates a package structure for a single problem set. Adding more problem sets requires manual adaption of the package.
+
+#### 6.1 Adapt `package_info.r`
+
+The R folder of your new package contains a file `package_info.r` that has a content similar as follows:
+
+```{r eval=FALSE}
+ps.pkg.info = function() {
+  # Name of this package
+  package = "RTutorExample"
+  
+  # Name of problem sets in the package
+  ps = c("Example")
+  
+  list(package=package, ps = ps)
+}
+```
+
+If you want to have several problem sets, you must adapt the line   `ps = c("Example")`. Say we want to add a second problem set "Example2". We then must write
+```{r evale=FALSE}
+  ps = c("Example","Example2")
+```
+
+#### 6.2 Create folder under inst/ps and copy files
+
+You manually have to create a folder for your new problem set under inst/ps. For example if we add a problem set `Example2`, you need to create the folders
+
+```
+./inst/ps/Example2
+./inst/ps/Example2/material
+```
+
+In the first folder, you copy your .rps file (and if you like other .rmd files like your solution file). In the material subfolder you copy data sets that your problem set uses.
+
+#### 6.3 Adapt README.MD
+
+You finally should adapt the file README.MD to make the user aware of the multiple problem sets. In particular the command `run.ps` needs to specify the name of the problem set if another than the first problem set shall be run, e.g.
+
+```{r eval =FALSE}
+run.ps(user.name="Jon Doe", ps.name="Example2", package="RTutorExample",
+       load.sav=TRUE, sample.solution=FALSE)
+```
+
+### Step 7: Create a Github account and upload package.
+
+This is explained in the next Section
+
+
+## Host your package on Github
 	
-	- It is easiest to distribute your package if you host it as an open source project on Github.
-		- There are different ways to host your package on Github. I just describe the way I use on Windows.
-	 	- An alternative way to use Github is described here: http://r-pkgs.had.co.nz/git.html 
+- It is easiest to distribute your package if you host it as an open source project on Github.
+  
+	- There are different ways to host your package on Github. I just describe the way I use on Windows.
+  
+ 	- An alternative way to use Github is described here: http://r-pkgs.had.co.nz/git.html 
 
-	- Create a user account on Github by signing up here: https://github.com/
-		- You can pick a user name that is related to your true name (first name and / or family name), like my user name "skranz" or some anonymous user name. I guess that is a matter of taste. Personally, I find names that link to the true name more convenient, but you can observe both on github.
+- Create a user account on Github by signing up here: https://github.com/
 
-	- If you use Windows install and start Github for Windows as explained here:
+	- You can pick a user name that is related to your true name (first name and / or family name), like my user name "skranz" or some anonymous user name. I guess that is a matter of taste. Personally, I find names that link to the true name more convenient, but you can observe both on github.
 
-		https://help.github.com/articles/getting-started-with-github-for-windows/
+- If you use Windows install and start Github for Windows as explained here:
 
-	- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer somewhere in your github for windows folder. See
+	https://help.github.com/articles/getting-started-with-github-for-windows/
 
-		https://help.github.com/categories/github-for-windows/
+- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer somewhere in your github for windows folder. See
 
-	- After you have created your github project or you have changed it, you can commit your changes
-	  and then synchronize your local changes with the Github version. See here:
+	https://help.github.com/categories/github-for-windows/
 
-	  https://help.github.com/articles/synchronizing-repositories/
+- After you have created your github project or you have changed it, you can commit your changes and then synchronize your local changes with the Github version. See here:
 
-7. Check whether you can see your package on the github webpage, as a repository under your username.
+  https://help.github.com/articles/synchronizing-repositories/
 
-8. Check whether your package can be installed and run from Github in the way described in the README.md file. 
+- Check whether you can see your package on the github webpage, as a repository under your username.
+
+- Check whether your package can be installed and run from Github in the way described in the README.md file.
+
+## Hosting problem set in the web using shinyapps.io
+
+tbd

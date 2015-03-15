@@ -114,6 +114,7 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 #' @param user.name Your user name
 #' @param ps.name Name of the problem set. By default the first problem set name of your manually loaded RTutor problem set package.
 #' @param dir your working directory for the problem set
+#' @param package name of the package that contains your problem set
 #' @param load.sav Default=TRUE Shall a previously saved solution be loaded?
 #' @param sav.file Optional an alternative name for the saved solution
 #' @param sample.solution shall the sample solution be shown?
@@ -128,13 +129,13 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 #' @param material.dir directory of additional problem set files. Will be set to default for current package
 #' 
 #' 
-run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(),
+run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(), package=NULL,
     load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav",
     sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, 
     rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"),
     offline=!can.connect.to.MathJax(), 
     left.margin=2, right.margin=2, 
-    info=get.package.info(package), package=NULL, 
+    info=get.package.info(package),  
     deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app,
     pkg.dir = path.package(info$package)),
     rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
