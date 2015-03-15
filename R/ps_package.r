@@ -268,13 +268,20 @@ example.rtutor.app.skel = function() {
   app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   
   # Create app based on .rps
+  ps.name = "Example"
+  setwd("D:/libraries/RTutor/examples")
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
                   rps.app = TRUE, rps.dir = getwd(), overwrite=TRUE)
-  
+ 
+
   # Create app based on a problem set package
+  ps.name = "Example"
+  setwd("D:/libraries/RTutor/examples")
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
-                  package.name = "RTutorExample", rps.app = FALSE,
-                  overwrite=TRUE)
+                  pkg.name = "RTutorExample", rps.app = FALSE,
+                  github.user = "skranz", overwrite=TRUE)
   
 }
 
@@ -289,7 +296,7 @@ example.rtutor.app.skel = function() {
 #' @param rps.dir the folder of your rps.file 
 rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", ...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
-  restore.point("rtutor.package.skel")
+  restore.point("rtutor.app.skel")
 
   
   if (!file.exists(app.dir))
@@ -316,7 +323,7 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   }
   
 
-  # Copy package skeleton
+  # Copy app skeleton
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = app.dir, overwrite=overwrite, recursive = TRUE)
   

@@ -23,9 +23,7 @@ if (FALSE) {
   # Older bootstrap2 shiny version that makes RTutor look better
   install_github("skranz/shiny",ref = "master")
 
-  # You need to install your own package from your github account
-  install_github("GITHUB_USERNAME/PACKAGE_NAME",ref = "master") 
-}
+ }
 
 # 4. You must now install the shinyapps package and open a free account
 #    on shinyapps.io. See the description here:
@@ -39,10 +37,9 @@ if (FALSE) {
   #  http://shiny.rstudio.com/articles/shinyapps.html 
 
   shinyapps::setAccountInfo(
-    name='<SHINYAPPS_USERNAME>',
-  	token='<TOKEN>',
-		secret='<SECRET>'
-  )
+  	      name='<SHINYAPPS_USERNAME>',
+  		  token='<TOKEN>',
+		  secret='<SECRET>')
 
   library(shinyapps)
   
