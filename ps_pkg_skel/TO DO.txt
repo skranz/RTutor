@@ -1,52 +1,7 @@
 TO DO:
 
+Take a look at the vignettes for deploying RTutor problem sets in the folder
 
-1. Create an RStudio Package Project for this folder. See the description here:
+https://github.com/skranz/RTutor/tree/master/vignettes
 
-	https://support.rstudio.com/hc/en-us/articles/200486488-Developing-Packages-with-RStudio
-
-2. If you want to distribute the data sets used in your problem set directly 
-   with your problem sets, copy those data sets into the subfolder:
-
-   		/inst/materials/problemset_name
-
-3. Edit the file "DESCRIPTION"
-	- generate or update the problem set description / title
-	- check the DATE and possibly update it
-	- check and correct your name and email in the AUTHOR and MAINTAINER fields
-	- check whether you agree with the licences and possibly adapt them
-
-4. Edit the file "README.MD"
-	- Add a brief description (2-3 lines) of the problem set.
-
-5. Try to build the package with RStudio with the menu point
-	
-	Build -> Build and Reload
-
-   - Afterwards check whether you can run the problem set as explained in the README.MD file	
-
-6. Host your package on Github
-	
-	- It is easiest to distribute your package if you host it as an open source project on Github.
-		- There are different ways to host your package on Github. I just describe the way I use on Windows.
-	 	- An alternative way to use Github is described here: http://r-pkgs.had.co.nz/git.html 
-
-	- Create a user account on Github by signing up here: https://github.com/
-		- You can pick a user name that is related to your true name (first name and / or family name), like my user name "skranz" or some anonymous user name. I guess that is a matter of taste. Personally, I find names that link to the true name more convenient, but you can observe both on github.
-
-	- If you use Windows install and start Github for Windows as explained here:
-
-		https://help.github.com/articles/getting-started-with-github-for-windows/
-
-	- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer somewhere in your github for windows folder. See
-
-		https://help.github.com/categories/github-for-windows/
-
-	- After you have created your github project or you have changed it, you can commit your changes
-	  and then synchronize your local changes with the Github version. See here:
-
-	  https://help.github.com/articles/synchronizing-repositories/
-
-7. Check whether you can see your package on the github webpage, as a repository under your username.
-
-8. Check whether your package can be installed and run from Github in the way described in the README.md file. 
+for the additional steps.

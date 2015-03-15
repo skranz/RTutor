@@ -22,6 +22,7 @@ library(PACKAGE_NAME)
 # Adapt your working directory to an existing folder
 setwd("C:/problemsets/PACKAGE_NAME")
 # Adapt your user name
-run.ps(user.name="Jon Doe", load.sav=TRUE, sample.solution=FALSE)
+run.ps(user.name="Jon Doe", package="PACKAGE_NAME",
+       load.sav=TRUE, sample.solution=FALSE)
 ```
 If everything works fine, a browser window should open, in which you can start exploring the problem set.
