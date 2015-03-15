@@ -299,6 +299,10 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   if (!file.exists(app.app.dir))
     dir.create(app.app.dir)
 
+  work.dir = paste0(app.dir,"/app/work")
+  if (!file.exists(work.dir))
+    dir.create(work.dir)
+
   
   if (!rps.app) {
     base.dir = path.package("RTutor", quiet = FALSE)
@@ -307,23 +311,15 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
     base.dir = path.package("RTutor", quiet = FALSE)
     skel.dir = paste0(base.dir,"/ps_app_skel/rpsApp")    
 
-    app.rps.dir =paste0(app.dir,"/app/rps")
-    if (!file.exists(app.rps.dir))
-      dir.create(app.rps.dir)
-
-    file.copy(from = paste0(rps.dir,"/",rps.file),to = app.rps.dir,
+    file.copy(from = paste0(rps.dir,"/",rps.file),to = work.dir,
               overwrite=overwrite, recursive = TRUE)
   }
   
 
-  
   # Copy package skeleton
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = app.dir, overwrite=overwrite, recursive = TRUE)
   
-  work.dir = paste0(app.dir,"/app/work")
-  if (!file.exists(work.dir))
-    dir.create(work.dir)
 
   
   # Replace placeholder strings
@@ -337,6 +333,7 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
       txt = gsub("PACKAGE_NAME",pkg.name,txt, fixed=TRUE)
     txt = gsub("PS_NAME",ps.name,txt, fixed=TRUE)
     txt = gsub("APP_NAME",app.name,txt, fixed=TRUE)
+    txt = gsub("APP_PATH",app.dir,txt, fixed=TRUE)
     txt = gsub("GITHUB_USERNAME",github.user,txt, fixed=TRUE)
     writeLines(txt,file)
   }

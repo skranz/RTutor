@@ -14,6 +14,7 @@ if (FALSE) {
   library(devtools)
   install_github("skranz/shinyEvents",ref = "master")  
   install_github("skranz/regtools",ref = "master")
+  install_github("skranz/dplyrExtras",ref = "master")
 
   # Pick master or development version of RTutor
   install_github("skranz/RTutor",ref = "master")  
@@ -42,9 +43,8 @@ if (FALSE) {
 
   library(shinyapps)
   
-  # Adapt the path to your app directory in which this
-  # file is stored
-  setwd("D:/libraries/APP_NAME/")
+  # Set app directory as working directory
+  setwd("APP_PATH/app")
 
   # This command deploys your app on shinyapps.io
   deployApp(appName="APP_NAME")
