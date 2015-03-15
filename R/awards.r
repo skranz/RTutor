@@ -14,7 +14,7 @@ give.award = function(award.name, award = ps$rps$awards[[award.name]] , user = g
 
 PS: awards() shows all your awards
 '))
-  award$granted.in = ps$ps.name
+  award$granted.in = ps$name
   user$awards[[award.name]] = award 
   update.user()
   show.award(award)
