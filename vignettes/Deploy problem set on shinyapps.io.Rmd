@@ -1,0 +1,56 @@
+---
+title: "Deploy a problem set on shinyapps.io"
+author: "Sebastian Kranz"
+date: "15.03.2015"
+output:
+  html_document:
+    highlight: textmate
+    theme: readable
+    toc: yes
+---
+
+This vignette explains how you can host a problem set directly in the web using shinyapps.io. The steps are also useful if you want to host it on another web server that runs shiny server.
+
+You can create an app based on an .rps file or based on a problem set package hosted that is hosted on Github (see the corresponding vignette for how to create such a package)
+
+
+### 1. Create an app based on an skeleton with `rtutor.app.skel`
+
+The RTutor package has a function `rtutor.app.skel` that creates a skeleton of your app directory and a file `deployapp.r` which contains commands to deploy your app. 
+
+Here is an example fore creating an app based on an .rps file:
+
+
+
+
+```{r eval=FALSE}
+  # Create app based on .rps
+ 
+  ps.name = "Example" # problem set name
+  # Folder that contains your .rps file
+  rps.dir = "D:/libraries/RTutor/examples"
+  # Folder in which app shall be created
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
+  rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",
+                  app.dir=app.dir, rps.dir = rps.dir,
+                  rps.app = TRUE, overwrite=TRUE)
+ 
+```
+
+Creating an app based on an problem set package works similar. Here is an example:
+
+```{r eval=FALSE}
+  # Create app based on a problem set package
+  ps.name = "Example"
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
+  rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
+                  pkg.name = "RTutorExample", rps.app = FALSE,
+                  github.user = "skranz", overwrite=TRUE)
+```
+
+In both cases you must just adapt the examples above.
+
+### 2. Open `deployapp.r` and follow the described steps
+
+Now in your app directory, e.g. "D:/libraries/RTutor/examples/ExampleApp" a file `deployapp.r` is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.
+

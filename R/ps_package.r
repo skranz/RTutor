@@ -268,16 +268,18 @@ example.rtutor.app.skel = function() {
   app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   
   # Create app based on .rps
-  ps.name = "Example"
-  setwd("D:/libraries/RTutor/examples")
+  
+  ps.name = "Example" # problem set name
+  # Folder that contains your .rps file
+  rps.dir = "D:/libraries/RTutor/examples"
+  # Folder in which app shall be created
   app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
-                  rps.app = TRUE, rps.dir = getwd(), overwrite=TRUE)
+                  rps.app = TRUE, rps.dir = rps.dir, overwrite=TRUE)
  
 
   # Create app based on a problem set package
   ps.name = "Example"
-  setwd("D:/libraries/RTutor/examples")
   app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
                   pkg.name = "RTutorExample", rps.app = FALSE,

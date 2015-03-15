@@ -163,4 +163,4 @@ There is no need to create the whole package with the package skeleton again.
 
 ## Hosting problem set in the web using shinyapps.io
 
-tbd
+See the separate vignette.
