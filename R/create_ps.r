@@ -155,6 +155,7 @@ te.to.rps = function(te) {
   
   # Create a data frame with chunk metadata
   li = lapply(seq_along(te$ex), function(ex.ind) {
+    restore.point("te.to.rps.inner")
     ex = te$ex[[ex.ind]]
     if (length(ex$chunks)==0) 
       return(NULL)
@@ -502,8 +503,7 @@ add.te.block = function(te) {
     var = args
     add.te.compute(te,ck,var)
   } else if (type == "hint") {
-    #browser()
-    ck$hint.txt[length(ck$hint.txt)] <- btxt
+    ck$hint.txt[length(ck$hint.txt)] <- paste0(btxt,collapse="\n")
   } else if (type == "add_to_hint") {
     hint.txt = hint.code.for.e(te$last.e,extra.code = btxt)  
     ck$hint.txt[length(ck$hint.txt)] <- hint.txt
