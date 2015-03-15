@@ -526,8 +526,6 @@ Consider the following example:
     T = 100
     #< test
       check.variable("T",100,values=FALSE)
-    #>
-    #< extra_test
       holds.true(T>=5, failure.message="You must set T>=5.")
     #>
     ```

@@ -1,0 +1,1 @@
+shinyServer(app$server)

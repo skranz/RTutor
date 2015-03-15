@@ -194,6 +194,8 @@ examples.rtutor.package.skel = function() {
 
 }
 
+
+
 #' Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package
 #'  
 rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,author="AUTHOR_NAME", github.user = "GITHUB_USERNAME", date=format(Sys.time(),"%Y-%d-%m"),  source.dir = getwd(),rps.file = paste0(ps.name,".rps"), libs=NULL, extra.code.file=NULL, var.txt.file=NULL, ps.file = paste0(ps.name,".Rmd"), overwrite=FALSE, overwrite.ps=TRUE,...) {
@@ -254,5 +256,95 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
              "\nRead 'TO DO.txt' for the remaining steps."))
   
 }
+
+example.rtutor.app.skel = function() {
+  setwd("D:/libraries/RTutor/examples")
+  ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+  libs = c() # character vector of all packages you load in the problem set
+  #name.rmd.chunks(sol.file) # set auto chunk names in this file
+
+  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
+
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   
+  # Create app based on .rps
+  rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
+                  rps.app = TRUE, rps.dir = getwd(), overwrite=TRUE)
+  
+  # Create app based on a problem set package
+  rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",app.dir=app.dir, 
+                  package.name = "RTutorExample", rps.app = FALSE,
+                  overwrite=TRUE)
+  
+}
+
+#' Generate a skeleton for a shinyapps.io app of a problem set
+#' 
+#' @param ps.name Name of the problem set
+#' @param app.name Name of your app. Should have no white spaces or special characters
+#' @param app.dir Your local directory to which you want to deploy your app files
+#' @param rps.app locgical. If TRUE create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.
+#' @param pkg.name If you create the app from a package this is the name of your package.
+#' @param rps.file The name of your rps file without directory if you create the app from a .rps file
+#' @param rps.dir the folder of your rps.file 
+rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", ...) {
+  #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
+  restore.point("rtutor.package.skel")
+
+  
+  if (!file.exists(app.dir))
+    dir.create(app.dir)
+  
+  app.app.dir = paste0(app.dir,"/app")
+  if (!file.exists(app.app.dir))
+    dir.create(app.app.dir)
+
+  
+  if (!rps.app) {
+    base.dir = path.package("RTutor", quiet = FALSE)
+    skel.dir = paste0(base.dir,"/ps_app_skel/packageApp")
+  } else {
+    base.dir = path.package("RTutor", quiet = FALSE)
+    skel.dir = paste0(base.dir,"/ps_app_skel/rpsApp")    
+
+    app.rps.dir =paste0(app.dir,"/app/rps")
+    if (!file.exists(app.rps.dir))
+      dir.create(app.rps.dir)
+
+    file.copy(from = paste0(rps.dir,"/",rps.file),to = app.rps.dir,
+              overwrite=overwrite, recursive = TRUE)
+  }
+  
+
+  
+  # Copy package skeleton
+  long.skel.files = list.files(skel.dir,full.names = TRUE)
+  file.copy(from = long.skel.files,to = app.dir, overwrite=overwrite, recursive = TRUE)
+  
+  work.dir = paste0(app.dir,"/app/work")
+  if (!file.exists(work.dir))
+    dir.create(work.dir)
+
+  
+  # Replace placeholder strings
+  dest.files = c("deployapp.R","app/global.R")
+  dest.files = paste0(app.dir,"/",dest.files)
+  file = dest.files[1]
+  descr.txt = paste0("RTutor problem set ", ps.name)
+  for (file in dest.files) {
+    txt = readLines(file, warn=FALSE)
+    if (!is.null(pkg.name))
+      txt = gsub("PACKAGE_NAME",pkg.name,txt, fixed=TRUE)
+    txt = gsub("PS_NAME",ps.name,txt, fixed=TRUE)
+    txt = gsub("APP_NAME",app.name,txt, fixed=TRUE)
+    txt = gsub("GITHUB_USERNAME",github.user,txt, fixed=TRUE)
+    writeLines(txt,file)
+  }
+  
+  cat(paste0("App skeleton created in ", app.dir, ". ",
+             "\nAdapt the file 'deployapp.R' and run the commands to deploy your app on shinyapps.io."))
+  
+}
+  
+
 
