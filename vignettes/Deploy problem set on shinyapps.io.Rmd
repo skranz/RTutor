@@ -21,19 +21,18 @@ The RTutor package has a function `rtutor.app.skel` that creates a skeleton of y
 Here is an example fore creating an app based on an .rps file:
 
 
-
-
 ```{r eval=FALSE}
   # Create app based on .rps
  
   ps.name = "Example" # problem set name
+  libs = c("foreign", "ggplot2") # list of all libraries used by ps
   # Folder that contains your .rps file
   rps.dir = "D:/libraries/RTutor/examples"
   # Folder in which app shall be created
   app.dir = "D:/libraries/RTutor/examples/ExampleApp"
   rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",
                   app.dir=app.dir, rps.dir = rps.dir,
-                  rps.app = TRUE, overwrite=TRUE)
+                  rps.app = TRUE, libs=libs,overwrite=TRUE)
  
 ```
 
