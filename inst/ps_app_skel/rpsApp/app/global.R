@@ -1,4 +1,6 @@
 library(RTutor)
+DEPENDS_LIBRARIES
+
 setwd("./work")
 app =  show.ps(user.name = "Guest",
 			   ps.name = "PS_NAME",

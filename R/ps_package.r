@@ -212,6 +212,7 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   # Copy package skeleton
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = dest.dir, overwrite=overwrite, recursive = TRUE)
+
   
   rps.dir =paste0(dest.dir,"/inst/ps/",ps.name)
   if (!file.exists(rps.dir))
@@ -249,8 +250,7 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   
   
   # Copy files into ps
-  file.copy(from = c(sol.file, rps.file, extra.code.file, var.txt.file, ps.file),
-            to=rps.dir, overwrite=overwrite.ps)
+  file.copy(from = c(sol.file, rps.file, extra.code.file, var.txt.file, ps.file), to=rps.dir, overwrite=overwrite.ps)
   
   cat(paste0("Package skeleton created in ", paste0(dest.dir,"/",pkg.name), ". ",
              "\nRead 'TO DO.txt' for the remaining steps."))
@@ -296,7 +296,7 @@ example.rtutor.app.skel = function() {
 #' @param pkg.name If you create the app from a package this is the name of your package.
 #' @param rps.file The name of your rps file without directory if you create the app from a .rps file
 #' @param rps.dir the folder of your rps.file 
-rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", ...) {
+rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", libs=NULL, ...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.app.skel")
 
@@ -336,11 +336,20 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   dest.files = paste0(app.dir,"/",dest.files)
   file = dest.files[1]
   descr.txt = paste0("RTutor problem set ", ps.name)
+  
+  if (length(libs)==0) {
+    lib.txt = ""
+  } else {
+    lib.txt = paste0("library(",libs,")", collapse="\n")
+  }
+
+  
   for (file in dest.files) {
     txt = readLines(file, warn=FALSE)
     if (!is.null(pkg.name))
       txt = gsub("PACKAGE_NAME",pkg.name,txt, fixed=TRUE)
     txt = gsub("PS_NAME",ps.name,txt, fixed=TRUE)
+    txt = gsub("DEPENDS_LIBRARIES",lib.txt,txt, fixed=TRUE)
     txt = gsub("APP_NAME",app.name,txt, fixed=TRUE)
     txt = gsub("APP_PATH",app.dir,txt, fixed=TRUE)
     txt = gsub("GITHUB_USERNAME",github.user,txt, fixed=TRUE)
