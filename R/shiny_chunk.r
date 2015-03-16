@@ -384,7 +384,7 @@ hint.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
 
   check.shiny.chunk(chunk.ind, internal=TRUE)
   txt = tryCatch(merge.lines(capture.output(hint(ps=ps))),
-         error = function(e) {merge.linesas.character(e)})
+         error = function(e) {merge.lines(as.character(e))})
   txt = paste0("Hint: ", txt)
   updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
 }
