@@ -26,6 +26,9 @@ check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, se
   # If called from knitr, I don't want to check by default
   if (!do.check) return("not checked")
   
+  log.event(type="check_ps")
+
+  
   if (set.warning.1) {
     if (options()$warn<1)
       options(warn=1)
@@ -242,8 +245,10 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 #       has.error <<- TRUE
 #     }
 #   )
-  if (has.error)
+  if (has.error) {
+    log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
     return(FALSE)
+  }
   
   
   had.warning = FALSE
@@ -251,7 +256,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     display("run tests...")
   }
   ups = get.ups()
-  ps$success.log = ps$test.log = NULL
+  #ps$success.log = ps$test.log = NULL
   e.ind = 1
 
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1 
@@ -284,7 +289,9 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       
       if (ret==FALSE) {
         set.ups(ups)
-        ps$test.log = c(ps$test.log, ps$failure.message)
+        log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=e.ind,code=stud.code, ok=FALSE,message=ps$failure.message)        
+        
+        #ps$test.log = c(ps$test.log, ps$failure.message)
         # Back to normal graphics device
         if (isTRUE(ps$use.null.device))
           try(dev.off(), silent=TRUE) 
@@ -292,9 +299,9 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
         return(FALSE)        
       } else if (ret=="warning") {
         had.warning = TRUE
-        ps$test.log = c(ps$test.log, ps$warning.message)
+        #ps$test.log = c(ps$test.log, ps$warning.message)
       } else {
-        ps$test.log = c(ps$test.log, ps$success.message)
+        #ps$test.log = c(ps$test.log, ps$success.message)
         if (!is.null(ps$success.message) & !passed.before) {
           ps$success.log = c(ps$success.log,ps$success.message)
           cat(paste0(ps$success.message,"\n"))
@@ -314,6 +321,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     #if (isTRUE(ps$is.shiny))
     #  update.chunk.ui(chunk.ind = chunk.ind)
   }
+
+  log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=TRUE,message="")         
   
   set.ups(ups)
   if (had.warning) {

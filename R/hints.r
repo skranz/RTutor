@@ -40,6 +40,8 @@ hint = function(..., ps=get.ps()) {
   eval(hint.expr,ps$stud.env)
   #log.hint(hint=hint, ex = ex, ps = ps)
   
+  log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)  
+
   # Update ups statistics
   ups = get.ups()
   if (!ups$tdt$success[ps$tdt.ind]) {

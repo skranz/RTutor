@@ -155,7 +155,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
 ) {
 
   expr = substitute(call)
-  #restore.point("check.call")
+  restore.point("check.call")
     
   #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   part.str = paste0(" in chunk ",  ps$chunk.name)

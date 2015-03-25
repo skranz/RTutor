@@ -1,6 +1,6 @@
 examples.import.logs = function() {
-  dir = "D:/lehre/energieoekonomik/rinteractive"
-  ret = import.logs(dir)
+  dir = "D:/lehre/empIOUlm/rtutor/"
+  df = import.logs(dir)
 
   ret$ex.df
   head(ret$fail.df)
@@ -11,85 +11,66 @@ import.logs = function(dir, check.sub.dir = TRUE) {
   restore.point("import.logs")
 
   library(dplyr)
-  library(stringtools)  
-  adapt.ps.dir(dir)
+  library(stringtools)
+  library(data.table)
+  #adapt.ps.dir(dir)
   
   files = list.files(path=dir,pattern=glob2rx("*.log"), recursive=check.sub.dir, full.names=TRUE)
+  
+  file = files[1]
   
   li = lapply(files,function(file) {
     restore.point("fhehf")
     
      
     txt = readLines(file)
-    close.rows = which(txt == "}")
-    close.rows = close.rows[-length(close.rows)]
-    txt[close.rows] = paste0(txt[close.rows],",")
-    txt[length(txt)] = "}]"
-    txt[1]='[ {'
+    last.row = max(which(str.trim(txt)==","))
+    txt = c("[",txt[1:(last.row-1)],"]")
     txt = paste0(txt,collapse="")
     
-    li = fromJSON(txt)
-    li = lapply(li, function(obj) do.call("data.table",obj[-length(obj)]))
-    dt = rbindlist(li)
-    dt$logId = round(runif(1,0,1e11))
-    dt$logFile = file
-    
-    ex.file = paste0(dirname(file),"/",str.left.of(basename(file),".log"),".r")
-    txt = readLines(ex.file)
-    user.row = txt[str.starts.with(str.trim(txt),"user.name")][1]
-    user.name = str.trim(str.left.of(str.right.of(user.row, "="),"#"))
-    dt$user.name = user.name
-    
-    dt
-  })
-  dt = rbindlist(li)
+    li = fromJSON(txt, simplifyDataFrame = FALSE)
   
-  setcolorder(dt, c("user.name",colnames(dt)[-NCOL(dt)]))
+    df = as.tbl(as.data.frame(rbindlist(li, fill=TRUE)))
+    df = mutate(df,logFile=file)
+    df
+  })
+  df = bind_rows(li)
+  df = mutate(df,
+    ce = paste0(chunk,".",e.ind),
+    row = 1:NROW(df)
+  )
+}
 
-  dt = mutate(dt,
-              ok  = failure.short == "No failure message recorded",
-              not.exist = str.ends.with(failure.short," does not exist"),
-              error = (!(ok | not.exist)) & code.changed
+log.summary = function(df, num.chunks = max(df$chunk)) {
+
+  num.users = length(unique(df$user))
+  
+  d = df
+  d = filter(d, !is.na(chunk))
+  d = group_by(d,chunk,user)
+  d = mutate(d, was.solved = cumsum(type=="check_chunk" & ok)>0)
+  
+  # Summarise by user and chunk
+  dcu = suppressWarnings(summarise(d,
+    solved =  any(type=="check_chunk" & ok),
+    errors =  sum(type=="check_chunk" & !ok & !was.solved),
+    hints  =  sum(type=="hint" & !was.solved),
+    start.time = min(time),
+    solved.time = min(time[type=="check_chunk" & ok])
+  ))
+  
+  # Summarise by chunk
+  dc = summarise(group_by(dcu,chunk),
+    attempted = NROW(solved),             
+    solved =  sum(solved),
+    not.solved = sum(!solved),
+    av.errors = mean(errors),
+    av.hints = mean(hints),
+    used.hint = sum(hints>0),
+    no.hint = sum(hints==0)
   )
   
-  
-  df = as.data.frame(dt)
-  
-  # Show list of all errors
-  all.df = df %.%
-    filter(error==TRUE) %.%
-    dplyr::select(-stud.code)
-  
-  # Summarize errors by exercise and users
-  exus.df = df %.%
-    group_by(ex.name,ps.name,user.name) %.%
-    summarise(sum_error=sum(error), once_ok=any(ok), log_entries=length(ok)) %.%
-    arrange(user.name, ex.name)
-  exus.df
-  
-  # Count failures of specific type
-  fail.df = df %.%
-    filter(error==TRUE) %.%
-    group_by(ps.name,ex.name,failure.short) %.%
-    summarise(times.failure=length(failure.short), num.users=length(unique(user.name))) %.%
-    arrange(desc(num.users),desc(times.failure), ex.name) %.%
-    mutate(failure.short = str.left(failure.short,50)) %.%
-    dplyr::select(num.users,times.failure, ex.name, failure.short, ps.name)
- 
-  fail.df = as.data.frame(fail.df)
-  fail.df
-  
-  colnames(df)
-   
-  # Summarize errors by exercise
-  ex.df = exus.df %.%
-    group_by(ex.name,ps.name) %.%
-    summarise(mean_errors=mean(sum_error), share_users_correct=mean(once_ok)) %.%
-    arrange(share_users_correct,desc(mean_errors), ex.name)     
-  ex.df  
-  
-  
-  list(all.df=all.df,exus.df=exus.df, ex.df=ex.df, fail.df=fail.df)
+  list(dcu=dcu,dc=dc)
 }
 
 # Changes ps.dir to the current folder for all problem set files

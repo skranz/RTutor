@@ -110,6 +110,9 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$stud.short.file = stud.short.file
   ps$log.file = log.file  
   class(ps) = c("Problemset","environment")
+  
+  log.event(type="init_ps")
+  
   return(ps)
 }
 
