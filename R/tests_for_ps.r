@@ -46,7 +46,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   code = substitute(code)
   
   
-  restore.point("check.function")
+  #restore.point("check.function")
 
   #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
   part.str = paste0(" in chunk ",  ps$chunk.name)
@@ -154,7 +154,9 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
   ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE,  ... 
 ) {
 
-  expr = substitute(call)
+  expr = call = substitute(call)
+  
+  # restore.point can lead to error
   restore.point("check.call")
     
   #part.str = ifelse(is.null(part),"",paste0(" in part ", part))
