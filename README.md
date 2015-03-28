@@ -12,9 +12,9 @@ Before developing your own problem sets, you may want to try out some existing p
 
 ### On the Optimal Taxation of Top Incomes
    - Hosted on shiny.apps.io:
-   https://skranz.shinyapps.io/RTutorTopIncomeTaxation/
+   https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
    
-  - Github: https://github.com/skranz/RTutorTopIncomeTaxation
+  - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
 
 ### An interesting case study of a bank run
   - Github: https://github.com/skranz/RTutorBankRuns
