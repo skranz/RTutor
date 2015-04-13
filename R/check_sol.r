@@ -36,17 +36,17 @@ check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, se
     str= paste0("I could not find your problem set directory '", stud.path,"'.  Please set in the first code chunk of the your problem set the variable 'ps.dir' to the directory in which you have saved your problem set.
                  
 Note: use / instead of \\ to separate folders in 'ps.dir'")
-    stop(str)
+    stop(str,call. = FALSE)
   }
   if (!file.exists(paste0(stud.path,"/", stud.short.file))) {
     str= paste0("I could not find your file '", stud.short.file,"' in your problem set folder '",stud.path,"'. Please set the variables ps.dir and ps.file to the right values in the first chunk of your problem set. The variable 'ps.file' must have the same file name than your problem set file.")
-    stop(str)    
+    stop(str,call. = FALSE)    
   }
   
   setwd(stud.path)
   
   if (user.name=="ENTER A USER NAME HERE") {
-    stop('You have not picked a user name. Change the variable "user.name" in your problem set file from "ENTER A USER NAME HERE" to some user.name that you can freely pick.')
+    stop('You have not picked a user name. Change the variable "user.name" in your problem set file from "ENTER A USER NAME HERE" to some user.name that you can freely pick.',call. = FALSE)
   }
 
   log.event(type="check_ps")
