@@ -37,12 +37,24 @@ log.event = function(type,ok=TRUE, ..., user.name=get.user.name(),ps=get.ps()) {
     ),args)
   
   log.file = ps$log.file
-
+  
+  if (is.null(log.file)) return()
+  
   json = paste0(jsonlite::toJSON(li),"\n,")
-  try({
-    con = file(log.file,open="at")
-    writeLines(json, con)
-    close(con) 
-  })
+  
+
+  if (file.exists(log.file)) {
+    try({
+      con = file(log.file,open="at")
+      writeLines(json, con)
+      close(con) 
+    },silent = TRUE)
+  } else {
+    try({
+      con = file(log.file,open="wt")
+      writeLines(json, con)
+      close(con) 
+    },silent = TRUE)
+  }
 }
 
