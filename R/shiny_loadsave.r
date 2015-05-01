@@ -14,19 +14,19 @@ load.save.ui = function(ps=get.ps()) {
   }
   
   file.end = paste0("_",ps$name,".sav")
-  fluidRow(
-    fluidRow(
+  chunk.fluidRow(
+    chunk.fluidRow(
       bsActionButton("loadBtn","Load"),
       selectizeInput('loadFileInput',"",choices=files,multiple=FALSE, width="80%", selected=ps$sav.file),
       bsAlert("loadSaveAlert")
     ),
-    fluidRow(
+    chunk.fluidRow(
       bsActionButton("saveAsBtn","Save as"),
       textInput('saveFileInput',"",value=ps$sav.file),
       helpText(paste0('(file name must end with "',file.end,'")')),
       bsAlert("saveAsAlert")
     ),
-    fluidRow(
+    chunk.fluidRow(
       bsActionButton("exportBtn","Export to Rmd"),
       bsActionButton("importBtn","Import from Rmd"),
       textInput('exportFileInput',"",value=paste0("exported_",get.user()$name,"_",ps$name,".Rmd")),

@@ -155,7 +155,7 @@ my.env = as.environment(list(x=data.frame(a=1, b= 1:5),y=3, m=matrix(runif(9),3,
 
 
 data.explorer.ui = function() {
-  fluidRow(
+  chunk.fluidRow(
     column(2,uiOutput("radioDataExplorerUI")),
     column(10,
         tabsetPanel(
@@ -207,8 +207,8 @@ data.summarise.ui = function(data,session=ps$session,ps=get.ps()) {
   #changeHandler("funSelectInput",update.data.explorer.summarise)
 
   update.data.explorer.summarise()
-  fluidRow(
-    fluidRow(
+  chunk.fluidRow(
+    chunk.fluidRow(
       column(4,group_by_ui),
       column(4,col_select_ui)
     ),
@@ -252,8 +252,8 @@ data.plot.ui = function(data,session=ps$session, ps=get.ps()) {
   
   buttonHandler("showPlotBtn",update.data.explorer.plot)
   
-  fluidRow(
-    fluidRow(
+  chunk.fluidRow(
+    chunk.fluidRow(
       column(4,plot_type_ui,colorvar_ui),
       column(4,xvar_ui,xfacet_ui),
       column(4,yvar_ui,yfacet_ui)
