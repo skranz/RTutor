@@ -1052,7 +1052,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
       collapseId = paste0("collapse_info_",i)
       collapsePanelId = paste0("collapse_panel_info_",i) 
       dt$html[[i]] = bsCollapse(open = NULL, id = collapseId,
-        bsCollapsePanel(paste0("Info: ",info.name),id=collapsePanelId, html )
+        bsCollapsePanel(paste0("Info: ",info.name),value=collapsePanelId, html )
       )
 
     } else if (dt$type[i]=="continue") {

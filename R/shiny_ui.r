@@ -88,11 +88,11 @@ adapt.view.li.for.notes = function(view.li, shiny.dt, rows) {
     nrows =  which(shiny.dt$note.ind[rows] == note.ind)
     note.name = shiny.dt$note.label[rows[nrows[1]]]
     
-    nli = view.li[nrows]
+    #nli = view.li[nrows]
     collapseId = paste0("collapse_note_",note.ind)
     collapsePanelId = paste0("collapse_panel_note_",note.ind)
     panel = do.call("bsCollapsePanel", 
-                    c(list(title=note.name, id =  collapsePanelId),
+                    c(list(title=note.name, value =  collapsePanelId),
                       view.li[nrows]))    
     ui = bsCollapse(open = NULL, id = collapseId, panel)
     view.li[[nrows[1]]] = ui 
@@ -125,37 +125,19 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
   
   view.ui.li = make.view.ui.li(ps=ps)
   ex.ui.li = make.ex.ui.li(ps=ps)
+  #show.html(view.ui.li[[3]])
   
   dataExplorerPanel = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
   loadSavePanel = tabPanel("File",value="loadSaveTabPanel", load.save.ui())
 
   
-  #doc = fluidRow(column(8, offset=2,
   doc=  do.call("tabsetPanel", c(
       list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
-    ))
-  #))
-  
-#   ret = navbarPage("RTutor", header=
-#     tags$head(
-#       tags$script(src = 'http://yandex.st/highlightjs/7.3/highlight.min.js', type = 'text/javascript'),
-#       tags$script(src = 'http://yandex.st/highlightjs/7.3/languages/r.min.js', type = 'text/javascript'),
-#       tags$link(rel = 'stylesheet', type = 'text/css',
-#       href = 'http://yandex.st/highlightjs/7.3/styles/github.min.css')
-#     ),                   
-#     tabPanel(ps$name, mathJaxRTutor(doc))
-#   )
+  ))
 
-  
-#   tabset.ui = do.call("tabsetPanel", c(
-#     list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
-#   ))
-#   
-#  
 
   # WARNING: If highlightjs cannot be loaded, whole problem set
   # fails to work (very hard to detect bug)
-
   # Link to local highlightjs version
   dir = paste0(system.file('www', package='RTutor'),"/highlightjs")
   addResourcePath('highlightjs', paste0(system.file('www', package='RTutor'),"/highlightjs"))
@@ -178,6 +160,9 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
 # Show a view ui
 show.view.ui = function(view.ind, ps = get.ps(), session=ps$session) {
   restore.point("show.view.ui")
+  if (view.ind==3)
+    restore.point("show.view.ui.3")
+    
   id = paste0("viewUI",view.ind)
   ui = ps$view.ui.li[[view.ind]]
   #browser()

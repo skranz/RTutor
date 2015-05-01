@@ -1,11 +1,17 @@
 
+chunk.fluidRow = function(...) {
+  li = list(...)
+  names(li) = NULL
+  li
+}
+
 # set all information for the initial chunk ui
 # when a problem set is started
 make.initial.chunk.ui = function(chunk.ind, ps=get.ps()) {
   restore.point("make.initial.chunk.ui")
   chunk.name = ps$cdt$chunk.name[chunk.ind]
   nali = make.chunk.nali(chunk.name) 
-  ui = fluidRow(
+  ui = chunk.fluidRow(
     uiOutput(nali$chunkUI)   
   )
   ps$cdt$nali[[chunk.ind]] = nali
@@ -71,11 +77,11 @@ get.chunk.ui = function(chunk.ind, ps=get.ps(),... ) {
     return(make.chunk.hide.code.ui(chunk.ind=chunk.ind,...))  
     
   } else if (mode=="inactive") {
-    fluidRow(
+    chunk.fluidRow(
       HTML("You must first solve the earlier chunks...")   
     )    
   } else  {
-    fluidRow(
+    chunk.fluidRow(
       HTML("Not shown")   
     )    
   }
@@ -112,27 +118,27 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   
   solutionBtn  = NULL
   if (isTRUE(ps$show.solution.btn)) {
-    solutionBtn=bsActionButton(nali$solutionBtn, "solution",size="mini")
+    solutionBtn=bsButton(nali$solutionBtn, "solution",size="extra-small")
   } else {
     solutionBtn  = NULL
   }
 
-  button.row = fluidRow(
+  button.row = chunk.fluidRow(
 #     bsButtonGroup(nali$inoutBtnGroup, toggle="radio",value="input",
-#        bsActionButton(nali$outputBtn, "output", size="mini"),
-#        bsActionButton(nali$inputBtn, "input",size="mini"),
-#        bsActionButton(nali$hideBtn, "hide",size="mini")    
+#        bsButton(nali$outputBtn, "output", size="extra-small"),
+#        bsButton(nali$inputBtn, "input",size="extra-small"),
+#        bsButton(nali$hideBtn, "hide",size="extra-small")    
 #     ),              
-    bsActionButton(nali$outputBtn, "output", size="mini"),
-    bsActionButton(nali$checkBtn, "check",size="mini"),
-    bsActionButton(nali$hintBtn, "hint", size="mini"),
-    bsActionButton(nali$runBtn, "run chunk",size="mini"),
-    bsActionButton(nali$dataBtn, "data", size="mini"),
-    #bsActionButton(nali$restoreBtn, "restore", size="mini"),
+    bsButton(nali$outputBtn, "output", size="extra-small"),
+    bsButton(nali$checkBtn, "check",size="extra-small"),
+    bsButton(nali$hintBtn, "hint", size="extra-small"),
+    bsButton(nali$runBtn, "run chunk",size="extra-small"),
+    bsButton(nali$dataBtn, "data", size="extra-small"),
+    #bsButton(nali$restoreBtn, "restore", size="extra-small"),
     solutionBtn,
-    bsActionButton(nali$saveBtn, "save", size="mini")
+    bsButton(nali$saveBtn, "save", size="extra-small")
   )
-  edit.row = fluidRow(
+  edit.row = chunk.fluidRow(
     aceEditor(nali$editor, code, mode="r",theme=theme, height=height, fontSize=13,hotkeys = keys, wordWrap=TRUE, debounce=10),
     aceEditor(nali$console, "", mode="r",theme="clouds", height=console.height, fontSize=13,hotkeys = NULL, wordWrap=TRUE, debounce=10, showLineNumbers=FALSE,highlightActiveLine=FALSE)
   )
@@ -140,7 +146,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   #aceAutocomplete(nali$editor)
   award.ui = make.chunk.award.ui(chunk.ind)
 
-  fluidRow(
+  chunk.fluidRow(
     button.row,
     bsAlert(nali$alertOut),
     edit.row,
@@ -154,12 +160,12 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
   
-  button.row = fluidRow(
-    bsActionButton(nali$editBtn, "edit",size="mini"),
-    bsActionButton(nali$hideBtn, "hide",size="mini"),
-    bsActionButton(nali$hideCodeBtn, "hide code",size="mini"),    
-    bsActionButton(nali$dataBtn, "data", size="mini"),
-    bsActionButton(nali$saveBtn, "save", size="mini")
+  button.row = chunk.fluidRow(
+    bsButton(nali$editBtn, "edit",size="extra-small"),
+    bsButton(nali$hideBtn, "hide",size="extra-small"),
+    bsButton(nali$hideCodeBtn, "hide code",size="extra-small"),    
+    bsButton(nali$dataBtn, "data", size="extra-small"),
+    bsButton(nali$saveBtn, "save", size="extra-small")
 
   ) 
   is.solved = ps$cdt$is.solved[[chunk.ind]]
@@ -174,10 +180,10 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   }
   html = HTML(html)
   
-  cat("\nbefore fluidRow(")
+  cat("\nbefore chunk.fluidRow(")
   award.ui = make.chunk.award.ui(chunk.ind)
 
-  fluidRow(
+  chunk.fluidRow(
     button.row,
     bsAlert(nali$alertOut),
     html,
@@ -191,12 +197,12 @@ make.chunk.hide.code.ui = function(chunk.ind, ps = get.ps()) {
   
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]  
-  button.row = fluidRow(
-    bsActionButton(nali$outputBtn, "show code",size="mini"),
-    bsActionButton(nali$hideBtn, "hide all",size="mini"),
-    bsActionButton(nali$editBtn, "edit",size="mini"),
-    bsActionButton(nali$dataBtn, "data", size="mini"),
-    bsActionButton(nali$saveBtn, "save", size="mini")
+  button.row = chunk.fluidRow(
+    bsButton(nali$outputBtn, "show code",size="extra-small"),
+    bsButton(nali$hideBtn, "hide all",size="extra-small"),
+    bsButton(nali$editBtn, "edit",size="extra-small"),
+    bsButton(nali$dataBtn, "data", size="extra-small"),
+    bsButton(nali$saveBtn, "save", size="extra-small")
   )
   is.solved = ps$cdt$is.solved[[chunk.ind]]
   if (is.solved) {
@@ -207,7 +213,7 @@ make.chunk.hide.code.ui = function(chunk.ind, ps = get.ps()) {
   }
   award.ui = make.chunk.award.ui(chunk.ind)
 
-  fluidRow(
+  chunk.fluidRow(
     button.row,
     bsAlert(nali$alertOut),
     html,
@@ -221,14 +227,14 @@ make.chunk.hidden.ui = function(chunk.ind, ps = get.ps()) {
   
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]  
-  button.row = fluidRow(
-    bsActionButton(nali$outputBtn, "hidden: show output",size="mini"),
-    bsActionButton(nali$editBtn, "edit",size="mini"),
-    bsActionButton(nali$dataBtn, "data", size="mini"),
-    bsActionButton(nali$saveBtn, "save", size="mini")
+  button.row = chunk.fluidRow(
+    bsButton(nali$outputBtn, "hidden: show output",size="extra-small"),
+    bsButton(nali$editBtn, "edit",size="extra-small"),
+    bsButton(nali$dataBtn, "data", size="extra-small"),
+    bsButton(nali$saveBtn, "save", size="extra-small")
   ) 
   award.ui = make.chunk.award.ui(chunk.ind)
-  fluidRow(
+  chunk.fluidRow(
     button.row,
     bsAlert(nali$alertOut),
     award.ui
@@ -246,7 +252,7 @@ make.chunk.award.ui = function(chunk.ind, ps=get.ps(), user = get.user()) {
   collapseId = paste0("collapse_award_",chunk.ind)
   collapsePanelId = paste0("collapse_panel_award_",chunk.ind) 
   ahtml = bsCollapse(open = NULL, id = collapseId,
-    bsCollapsePanel(paste0("Award: ",ck$award.name),id=collapsePanelId, HTML(html) )
+    bsCollapsePanel(paste0("Award: ",ck$award.name),value=collapsePanelId, HTML(html) )
   )
   
   ahtml

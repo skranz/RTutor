@@ -86,7 +86,7 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   ps$cdt = cdt
   # Check exercises
   i = 1
-
+  # i = 8
   for (i in ex.check.order) {
     ps$ex.last.mod = i
     ex.name = edt$ex.name[i]

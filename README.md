@@ -23,9 +23,10 @@ Before developing your own problem sets, you may want to try out some existing p
 
 To install RTutor without any bigger contributed problem set, just run in R
 ```s
-if (!require(devtools))
+if (!require(devtools)) 
   install.packages("devtools")
-source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4")
+
+devtools::source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4")
 install.rtutor(update.github=TRUE)
 library(RTutor)
 ```

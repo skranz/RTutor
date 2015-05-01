@@ -45,6 +45,8 @@ The RTutor package has a function `rtutor.package.skel` that creates a package s
     pkg.parent.dir = "D:/libraries/RTutorExample", # Parent directory 
     author="Sebastian Kranz", # Your name
     github.user="skranz",     # Your github user name
+    extra.code.file=NULL, # name of extra.code.file
+    var.txt.file=NULL,    # name of var.txt.file
     overwrite=FALSE  # Do you want to override if package directory exists?
   )
 
@@ -57,11 +59,18 @@ See the description here:
 
   https://support.rstudio.com/hc/en-us/articles/200486488-Developing-Packages-with-RStudio
 
-### Step 3 Add data sets 
+### Step 3 Add data sets and other files
 
 If you want to distribute the data sets used in your problem set directly with your problem sets, copy those data sets into the subfolder:
 
-   		/inst/ps/problemset_name/materials/
+   		/inst/ps/problemset_name/material/
+  
+Also take a look at the /inst/ps/problemset_name folder. It should contain at least the .rps, _sol.rmd file. If your problem set uses an extra.code.file or var.text.file, those files should also be there, to be able to rebuild the .rps file from the solution file. 
+
+### If you want no open access to the sample solution
+
+If you want to avoid that students can easily access the solution, you have to remove the _sol.rmd file from the /inst/ps/problemset_name folder. The drawback is that then the problem set cannot be changed or rebuild from source by other researchers. Also make sure that you set the argument `rps.has.sol = FALSE` in your call to `create.ps`, since otherwise a sample solution can be created from the .rps file.
+
 
 ### Step 4 update DESCRIPTION and README.MD
 
@@ -149,7 +158,7 @@ There is no need to create the whole package with the package skeleton again.
 
 	https://help.github.com/articles/getting-started-with-github-for-windows/
 
-- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer somewhere in your github for windows folder. See
+- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer on the left your github for windows window. See
 
 	https://help.github.com/categories/github-for-windows/
 

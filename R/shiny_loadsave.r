@@ -2,6 +2,7 @@
 load.save.ui = function(ps=get.ps()) {
   restore.point("load.save.ui")
   
+  if (is.null(ps$sav.file)) return()
   pattern = paste0(".*\\Q_",ps$name,".sav\\E")
   
   files = list.files(pattern=pattern)
