@@ -52,16 +52,34 @@ The RTutor package has a function `rtutor.package.skel` that creates a package s
 
 ```
 
+The call to `rtutor.package.skel` creates a package folder with your package name below the specified pkg.parent.dir folder. In your example above, the created package folder would be
 
-### Step 2 Create an RStudio Package Project for this folder. 
+`D:/libraries/RTutorExample/RTutorExample`
 
-See the description here:
+(Note: I personally often find it convenient to put the package as a subfolder of a folder with the same name. This allows me to store in the parent directory, here `D:/libraries/RTutorExample/`, files that I locally use, e.g. for testing something out, but that shall not be part of the Github project.)
+
+
+#### Choosing a Package Name
+
+It would be good to have a package name of the Form "RTutorXXX". To quickly identify RTutor problem set packages. **Please don't use any special characters, nor spaces in your package name.** If your name consists of words, use the Camel case conventiton to separate them, e.g. "RTutorBankRuns". Don't choose a package name that is too long.
+
+### Step 2 Create an RStudio Package Project for the created folder.
+
+Now create in RStudio a new package project for your folder using the menus:
+
+File 
+  -> New Project ...
+  -> Existing Directory
+  
+Chose as project folder your package folder, e.g. in our example, we would choose the folder `D:/libraries/RTutorExample/RTutorExample`.   
+
+See also the description here:
 
   https://support.rstudio.com/hc/en-us/articles/200486488-Developing-Packages-with-RStudio
 
 ### Step 3 Add data sets and other files
 
-If you want to distribute the data sets used in your problem set directly with your problem sets, copy those data sets into the subfolder:
+If you want to distribute the data sets used in your problem set directly with your problem sets, copy those data sets into the following subfolder of your package folder:
 
    		/inst/ps/problemset_name/material/
   
