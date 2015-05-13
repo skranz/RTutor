@@ -53,15 +53,14 @@ hint = function(..., ps=get.ps()) {
 
 #' Default hint for a call
 #' @export
-hint.for.function = function(code, ...,  ex=get.ex(), env = get.ex()$stud.env, part=NULL) {
+hint.for.function = function(code, ..., ps = get.ps()) {
   code = substitute(code)
   restore.point("hint.for.function")
 
   #stop()
-  part.str = ifelse(is.null(part),"",paste0(" in part ", part))
-  
-  stud.env = env
-  env = new.env(parent=stud.env)
+  part.str = ""
+  stud.env = ps$stud.env
+  env = new.env(parent=ps$stud.env)
   eval(code,env)
   fun.name = ls(env)[1]
   sol.fun = get(fun.name,env)
