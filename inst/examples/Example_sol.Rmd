@@ -6,7 +6,7 @@ Date:    12.06.2014
 
 Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
 #< ignore
-```{r "create_ps",include=FALSE, eval=FALSE}
+```{r "create_ps"}
 library(restorepoint)
 # facilitates error detection
 set.restore.point.options(display.restore.point=TRUE)

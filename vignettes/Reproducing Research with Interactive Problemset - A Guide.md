@@ -169,7 +169,7 @@ The package `regtools` contains the function `showreg` to show regression result
 
 The base R functions `lm` and `glm` allow linear regressions and generalized linear models, including Tobit and probit regressions. But there are many specialized functions and packages for other sorts of regressions, e.g.
 
-  - `plm`: linear panel data models
+  - `lfe`: for large panel data sets with fixed effects
   - `mlogit`: discrete choice data
   
 For other models search the internet.
