@@ -10,14 +10,18 @@ RTutor is an R package that allows to develop interactive R exercises. Problem s
 
 Before developing your own problem sets, you may want to try out some existing problem sets. Check out those very nice problem sets by students of mine, which replicate the main insights of interesting economic articles:
 
-### On the Optimal Taxation of Top Incomes
-   - Hosted on shiny.apps.io:
-   https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
-   
+### On the Optimal Taxation of Top Incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
+  - shiny.apps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
+   
 
-### An interesting case study of a bank run
+### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
+  
+### A macroeconomic study of credit booms and busts (by Thomas Clausing)
+  - Github: https://github.com/tcl89/creditboomsgonebust
+  - shinyapps.io: https://tcl89.shinyapps.io/creditboomsgonebust 
+
 
 ## Installing the newest version of RTutor
 
