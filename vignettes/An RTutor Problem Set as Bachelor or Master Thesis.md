@@ -5,14 +5,126 @@ output:
     toc: yes
 ---
 
-Design Tips for Interactive Problem sets based on an article
+An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 ===============================================================
 
-**Author: Sebastian Kranz, Ulm University** 
+** Prof. Dr. Sebastian Kranz, Ulm University** 
+
+This guide helps you writing an RTutor problem set based on an economic
+article as part of your Bachelor- or Masterthesis. Such a Thesis 
+requires substantial time and work: you need to dig deep into the topic
+of the article, into econometric methods and into R programming.
+So this is not the easiest way for writing a Thesis, but from those students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
+
+# Part 1: Overview of the main steps
+
+## 1. Find an interesting economic article
+
+First you need to find an interesting article for which the data (and ideally also the original code) is accessible. I have created a website that helps to search for candidate articles:   
+
+
+[http://econfin.de:3838/articles/](http://econfin.de:3838/articles/)
+
+
+You can search for specific topics by entering different [Journal of Economic Literature (JEL) codes](https://www.aeaweb.org/econlit/jelCodes.php), that classify economic articles by different topics. 
+
+The shown articles contain a link to journal website of the article ([example](https://www.aeaweb.org/articles.php?doi=10.1257/aer.100.3.724)). You can download the article there (due to access restrictions this works only from the university network).
+
+### Zip file with data and code
+From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is unaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
+
+### Contributed code
+Most articles have contributed Stata code in `.do` files, which can be opended with any text editor. Sometimes there is also code in other languages like Matlab `.m` or C, Fortran, Python, R, ... As a rough rule of thumb, articles that only contain Stata code are easier to replicate than articles that also contain Matlab or other code. If you search for articles with JEL code, you see for many articles already an overview of the types and size of code files, e.g.
+```
+  Inventories, Lumpy Trade, and Large Devaluations (55.41 MB, aer, 2010/12)
+  ...
+  Code in KB: do: 53 m: 449; Data (decompressed): 206.6 MB
+```
+This article has 54 KB of Stata code (in .do files) and 449 KB of Matlab code in (.m) files and around 206.6 MB of data files.
+
+
+### Selecting an article
+
+Best find some candidate articles and the talk with me before selecting one.
+Some constraints have to be satisfied, e.g. you should not take some article
+for which already a RTutor problem set has been created.
+
+## 2. Take a look at an existing interactive problem set
+
+(Note: You can swap steps 2 or 3) 
+On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.com/skranz/RTutor) you find links to several RTutor problem sets that have been created as part of a Bachelor- or Masterthesis. Try installing one or more problem sets from their github page and try them out. This helps you to get an idea, how problems could be structured, which elements you like, and which you like less. Also you can learn a bit more R. For starts, I would recommend:
+
+[https://github.com/JonasSend/RTutorTopIncomeTaxation](https://github.com/JonasSend/RTutorTopIncomeTaxation)
+
+You can also download the whole github package as ZIP file and take a look at the source code of the problem set. If the problem set is called `myps`, the source code of the problem set is in the file `myps_sol.rmd` in the folder `/inst/ps/myps/`.
+
+## 3. Work through the article and replicate the code in R
+
+Now work through your article and the code. Then try to replicate most results in R. At this point you don't have yet to think about the design of the problem set, just try to make the analysis run in R. It is a good idea, however, to already use helpful R packages like `dplyr`, `ggplo2`, `reshape2` or `tidyr` at this point to write simpler R code. You learn about their functionality by solving an existing problem set in step 2. If you cannot replicate all results in R, or you find bugs in the Stata code, write down all these points. This will be a useful appendix to your Thesis.
+
+
+Even though your final "product" will be written in R, it can be helpful to run the given code in Stata, in order to better understand it. I can send you a guide for several ways how to use Stata at Ulm University.
+
+## 4. Create the interactive RTutor problem set
+
+Now you can start creating the RTutor problem set. An overview of creating problem sets is given here:
+
+https://github.com/skranz/RTutor/blob/master/vignettes/Guide_for_Developing_Interactive_R_Problemsets.md
+
+As an initial template for your problem, either use the example file in the RTutor package:
+
+https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/Example_sol.Rmd
+
+or a solution file from one of the existing problem sets. First try to make the example run before you build your own exercises. Note that some bugs and features are not yet well documented. So just drop by, if it does not run.
+
+Part 2 below gives detailed advice on how the problem set should be structured, and which R packages seem usful. Also drop by regularly to get feedback and discuss problems.
+
+## 5. Host your problem set on Github and shinyapps.io
+
+If you have finished a first version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on github. How to do it, is explained in detail here:
+
+[Deploy RTutor problem sets on Github](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
+
+Furthermore, I would recommend to also host your problem set on shinyapps.io. This allows users to directly solve your problem set in the web without having to install R. (The free service is restricted to 30 access hours per month, however). This is described here:
+
+[Deploy RTutor problem sets on shinyapps.io](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd)
+
+
+
+## 6. Write your Thesis
+
+Your problem set will be the core and main part of your Thesis. Many essential parts a thesis, like discussion of related literature, references, own discussion etc., can also be part of your problem set. (In the problem set, you may want to put some longer literature discussion in a footnote). Still you may add some extra aspects in your written thesis, e.g. discuss how you have designed your problem set and which problems you have encountered.
+
+
+Many existing problem sets also contain their thesis in the github repositories, which can give you some idea, how you can create the thesis from your problem set. 
+
+You can write your Thesis using Word, Latex, Latex via Lyx, or directly in a Markdown format. When you create your interactive problem set with the command `create.ps(...)` a file with the ending `..._output_solution.Rmd` is created in your working directory. It contains a RMarkdown version of your solved problem set, which you can translate from RStudio to Latex or Word in order to easier include your problem set in your thesis.
+
+
+To create a Latex file add the following codes as first lines of the `..._output_solution.Rmd`
+```
+  ---
+  output:
+    pdf_document:
+      keep_tex: true
+  ---
+```
+If you want to convert to Word, add instead:
+```
+  ---
+  output:
+    word_document: default
+  ---
+```
+
+
+
+
+# Part 2: Suggestions for your RTutor problem set
 
 This is a list of suggestions when you create as part of your Bachelor or Master thesis an interactive problem set that reproduce the analysis of a published economic article. Also take a look at the general RTutor Guide for making problem sets.
 
-## Main Philosophy
+## Main Philosophy of your problem set
 
 ```
 Send the user on an interesting, data-driven journey into the economic contents of the article
@@ -37,7 +149,7 @@ Design most parts of your problem set with the following typical user in mind:
 
 Give only a brief background of the content and try to start quickly with loading an interesting data set. Let the user generate summary statistics and figures of interesting aspects. 
 
-### Tell the story with the data
+### Tell the economic story with the data
 
 Typically, show first the data and then based on the data, develop step by step the story, hypothesis and results of the paper. Nevertheless, you still should give a very short summary, the length of a an abstract, at the beginning of the problem set.
 
@@ -69,10 +181,29 @@ You can translate the original variable names to your new variables in a code ch
 
 The new RTutor allows two sort of problem sets: HTML-Shiny-based or Markdown-RStudio-based. Even though for longer courses the Markdown-RStudio-based approach has some advantages, with our target user in mind, you should definitely design the problem set for the HTML-Shiny-based format. 
 
+### Start with an overview and table of content and end with a conclusion and bibliography
+
+Your first 'Exercise' can have the name 'Overview' and just briefly describe the structure of your problem set and give a table of content that briefly describes the exercises. Here the user should not solve anything here.
+
+Your last 'Exercise' can have the name 'Summary' or 'Conclusion' and can contain some final thoughts and bibliography that lists all used references.
+
+You can create these two special exercises after you have created the 'core' of your problem set.
+
+### Allow exercises to be solved independent from each other
+
+RTutor has the option to use results from an earlier exercise in a later exercise. This requires that the user can only start the later exercise if he has finished the earlier exercise. Try to avoid this structure in your problem. Instead allow each exercise to be solved separately. This means that typically you will load some data at the beginning of each exercise, even though you have already loaded the data before.
+
+### Split long exercises
+
+Try to avoid very long exercises. Better split them up in sub-exercises, e.g. Exercise 3.1 , Exercise 3.2 and so on.
+
 
 ### Use info blocks for background information and variable descriptions
 
 When designing problem sets, you often face the following conflict. On the one hand, you may want to give detailed background information. On the other hand, you want your tasks sufficiently short, as you don't want to force the reader to read a lot before she can start analyzing the data. To resolve this conflict, you can put a lot of information into info blocks. The user can view info blocks whenever she likes. You should generally put a description of the relevant variables of the current data set in info blocks.
+
+There is also the possibility to use footnotes that contain code chunks that the user can optionally solve. This feature, has first been used in the problem set `creditboomsgonebust` by Thomas Clausing, but is not yet well documented. Ask me if you want to use these footnotes. 
+
 
 ### Create short code chunks and frequently add explanations and discussions afterwards
 
@@ -165,6 +296,7 @@ This sections gives recommendations for packages and functions you should use fo
 
 The package `regtools` contains the function `showreg` to show regression results. It shows results from one or several regression objects in a typical format used in journal articles. The function is basically a wrapper to functions in the package `texreg`. I think that the output of the usual `summary` function typically does not look as nice in an interactive problem set. 
 
+
 #### basic regression functions
 
 The base R functions `lm` and `glm` allow linear regressions and generalized linear models, including Tobit and probit regressions. But there are many specialized functions and packages for other sorts of regressions, e.g.
@@ -179,8 +311,8 @@ For other models search the internet.
 Dealing with robust standard errors in R is traditionally a bit more complicated than in Stata, but can be done. Many forms of robust standard errors can be computed with the package `sandwich`, but there is no direct support for clustered standard errors. The package `multiwayvcov` allows different versions of clustered standard errors. The package `lfe` contains methods to compute robust and clustered standard errors for panel data sets. 
 For simplicity, the function `showreg` contains the arguments `robust` and `robust.type` or the more general `vcov.li` that allow showing robust standard errors in an output table. 
 
-### Marginal effects for probit and logit models:
 
+### Marginal effects for probit and logit models:
 
 To show marginal effects for probit and logit models use the argument `coef.transform="mfx"` in `showreg`. It based on functions from the package `mfx` (not yet fully tested, though)
 
@@ -241,3 +373,27 @@ Microsoft Word, for example, has a substantially more powerful spell checker tha
 In order for the code chunks beeing nicely displyed in the HTML version of RTutor, please
 avoid lines of codes that are longer than 80 characters. You can add manual line breaks in
 your R code.
+
+
+## Examples of nice features in existing problem sets
+
+### Overall, nicely designed problem set. With good didactical structure of questions
+
+    - RTutorTopIncomeTaxation
+
+### Interactive footnoes
+
+    - creditboomsgonebust
+
+### Nice ggplot2 plots
+
+    - almost all problem sets
+
+### Nice lattice barplots
+
+    - creditboomsgonebust 2.1b), 2.2
+
+### Nice motion plots
+
+    - RTutorTopIncomeTaxation ??.?
+
