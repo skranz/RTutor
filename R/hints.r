@@ -189,9 +189,9 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     })
     
     correct.calls = which(scomb.chain.na == comb.chain.na)
-    chain.str = paste0(chain.na, "...", collapse = paste0(" ",op,"\n  "))
+    chain.str = paste0(chain.na, "???", collapse = paste0(" ",op,"\n  "))
     chain.str = paste0(assign.str, chain.str)
-    display("My solution consists of a chain of the form:\n\n", chain.str,"\n\nThe ... may stand for some function arguments wrapped in () that you must figure out.", start.char=start.char, end.char=end.char)
+    display("My solution consists of a chain of the form:\n\n", chain.str,"\n\nThe ??? may stand for some function arguments wrapped in () that you must figure out.", start.char=start.char, end.char=end.char)
     if (length(correct.calls)==0) {
       return(invisible())
     }
@@ -243,14 +243,14 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     } else if (fail > 1) {
       wrong.call.na = name.of.call(cde$arg[[fail]])
       if (fail == 2) {
-        display("Your following commands have the first element of the chain correct, but seem wrong already in the second element '", wrong.call.na,"':")
+        display("In your following chain, I can detect wrong results already after the second element '", wrong.call.na,"':")
       } else {
-        display("Your following commands have the first ", fail-1," elements of the chain correct, but seem wrong already in element ", fail,", the call to '", wrong.call.na,"':")
+        display("In your following chains, I can detect wrong results already after element ", fail,", the call to '", wrong.call.na,"':")
       }
       scall.str = sapply(sde.li, function(sde) {
         sna = sapply(sde$arg, deparse1)
         err.code = rep("", length(sna))
-        err.code[fail] = " !! WRONG !!"
+        err.code[fail] = " !! WRONG RESULTS !!"
         paste0(sna[1]," ",op,err.code[1],paste0("\n   ", sna[-1]," ", op,err.code[-1], collapse=""))
       })
       display(scall.str)

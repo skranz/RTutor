@@ -478,7 +478,8 @@ add.te.block = function(te) {
   if (type %in% c("chunk","task","task_notest","notest")) {
     add.te.code(te,ck)
   } else if (type == "extra_test") {
-    ck$test.txt = c(ck$test.txt,btxt)
+    ind = length(ck$test.txt)
+    ck$test.txt[[ind]] = paste0(ck$test.txt[[ind]],"\n",btxt)
   } else if (type == "test") {
     test.txt = paste0(btxt, collapse="\n")
     ck$test.txt[length(ck$test.txt)] <- test.txt

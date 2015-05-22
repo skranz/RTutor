@@ -1,5 +1,7 @@
 ---
 output:
+  pdf_document:
+    toc: yes
   html_document:
     theme: readable
     toc: yes

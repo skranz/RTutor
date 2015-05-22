@@ -36,7 +36,7 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   type = "fun"
   if (na %in% c("+","-","*","/","%*%","(")) {
     type="math"
-  } else if (na == "%.%") { 
+  } else if (na == "%.%" | na == "%>%") { 
     type="chain"
   } else if (na == "<-" | na =="=") { 
     type="assign"

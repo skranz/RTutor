@@ -331,7 +331,9 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
 
 update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps=get.ps()) {
-  passed.before = ps$tdt$test.passed[tdt.ind] 
+  passed.before = ps$tdt$test.passed[tdt.ind]
+  ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
+  
   if (is.na(ups$tdt$first.call.date[tdt.ind]))
     ups$tdt$first.call.date[tdt.ind] = Sys.time()
   if (passed==FALSE) {
