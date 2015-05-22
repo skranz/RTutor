@@ -872,7 +872,14 @@ paste0("
 
 
 #' Set default names for the chunks of problem set rmd files 
-name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=TRUE, keep.options=TRUE, valid.file.name = FALSE) {
+#' @param rmd.file file name 
+#' @param txt alternative the code as txt file
+#' @param only.empy.chunks if FALSE (default) name all chunks. 
+#'        Otherwise only empty chunks are overwritten
+#' @param keep.option if TRUE (default) don't change chunk options;
+#'        otherwise clear all chunk options (dangerous)
+#' 
+name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=FALSE, keep.options=TRUE, valid.file.name = FALSE) {
   restore.point("name.rmd.chunks")
   ex.name = ""
   part.name = ""
