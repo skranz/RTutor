@@ -1,24 +1,25 @@
 ---
+title: An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
+author: Sebastian Kranz, Ulm University 
+date: 'Version from 2015-05-26'
 output:
   pdf_document:
+    number_sections: yes
     toc: yes
   html_document:
     theme: readable
     toc: yes
 ---
 
-An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
-===============================================================
-
-** Prof. Dr. Sebastian Kranz, Ulm University** 
-
-This guide helps you writing an RTutor problem set based on an economic
-article as part of your Bachelor- or Masterthesis. Such a Thesis 
-requires substantial time and work: you need to dig deep into the topic
-of the article, into econometric methods and into R programming.
-So this is not the easiest way for writing a Thesis, but from those students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
 
 # Part 1: Overview of the main steps
+
+This guide helps you writing an RTutor problem set based on an economic
+article as part of your Bachelor or Master thesis. Such a thesis 
+requires substantial time and work: you need to dig deep into the topic
+of the article, into econometric methods and into R programming.
+So this is not the easiest way for writing a thesis, but from those students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
+
 
 ## 1. Find an interesting economic article
 
@@ -33,10 +34,10 @@ You can search for specific topics by entering different [Journal of Economic Li
 The shown articles contain a link to journal website of the article ([example](https://www.aeaweb.org/articles.php?doi=10.1257/aer.100.3.724)). You can download the article there (due to access restrictions this works only from the university network).
 
 ### Zip file with data and code
-From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is unaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
+From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is inaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
 
 ### Contributed code
-Most articles have contributed Stata code in `.do` files, which can be opended with any text editor. Sometimes there is also code in other languages like Matlab `.m` or C, Fortran, Python, R, ... As a rough rule of thumb, articles that only contain Stata code are easier to replicate than articles that also contain Matlab or other code. If you search for articles with JEL code, you see for many articles already an overview of the types and size of code files, e.g.
+Most articles have contributed Stata code in `.do` files, which can be opened with any text editor. Sometimes there is also code in other languages like Matlab `.m` or C, Fortran, Python, R, ... As a rough rule of thumb, articles that only contain Stata code are easier to replicate than articles that also contain Matlab or other code. If you search for articles with JEL code, you see for many articles already an overview of the types and size of code files, e.g.
 ```
   Inventories, Lumpy Trade, and Large Devaluations (55.41 MB, aer, 2010/12)
   ...
@@ -54,11 +55,11 @@ for which already a RTutor problem set has been created.
 ## 2. Take a look at an existing interactive problem set
 
 (Note: You can swap steps 2 or 3) 
-On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.com/skranz/RTutor) you find links to several RTutor problem sets that have been created as part of a Bachelor- or Masterthesis. Try installing one or more problem sets from their github page and try them out. This helps you to get an idea, how problems could be structured, which elements you like, and which you like less. Also you can learn a bit more R. For starts, I would recommend:
+On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.com/skranz/RTutor) you find links to several RTutor problem sets that have been created as part of a Bachelor- or Master thesis. Try installing one or more problem sets from their Github page and try them out. This helps you to get an idea, how problems could be structured, which elements you like, and which you like less. Also you can learn a bit more R. For starts, I would recommend:
 
 [https://github.com/JonasSend/RTutorTopIncomeTaxation](https://github.com/JonasSend/RTutorTopIncomeTaxation)
 
-You can also download the whole github package as ZIP file and take a look at the source code of the problem set. If the problem set is called `myps`, the source code of the problem set is in the file `myps_sol.rmd` in the folder `/inst/ps/myps/`.
+You can also download the whole Github package as ZIP file and take a look at the source code of the problem set. If the problem set is called `myps`, the source code of the problem set is in the file `myps_sol.rmd` in the folder `/inst/ps/myps/`.
 
 ## 3. Work through the article and replicate the code in R
 
@@ -71,7 +72,9 @@ Even though your final "product" will be written in R, it can be helpful to run 
 
 Now you can start creating the RTutor problem set. An overview of creating problem sets is given here:
 
-https://github.com/skranz/RTutor/blob/master/vignettes/Guide_for_Developing_Interactive_R_Problemsets.md
+http://econfin.de/rtutor]  (link to pdf)
+
+https://Github.com/skranz/RTutor/blob/master/vignettes/Guide_for_Developing_Interactive_R_Problemsets.md  (markdown)
 
 As an initial template for your problem, either use the example file in the RTutor package:
 
@@ -79,11 +82,11 @@ https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/Example_sol
 
 or a solution file from one of the existing problem sets. First try to make the example run before you build your own exercises. Note that some bugs and features are not yet well documented. So just drop by, if it does not run.
 
-Part 2 below gives detailed advice on how the problem set should be structured, and which R packages seem usful. Also drop by regularly to get feedback and discuss problems.
+Part 2 below gives detailed advice on how the problem set should be structured, and which R packages seem useful. Also drop by regularly to get feedback and discuss problems.
 
 ## 5. Host your problem set on Github and shinyapps.io
 
-If you have finished a first version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on github. How to do it, is explained in detail here:
+If you have finished a first version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on Github. How to do it, is explained in detail here:
 
 [Deploy RTutor problem sets on Github](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
 
@@ -98,7 +101,7 @@ Furthermore, I would recommend to also host your problem set on shinyapps.io. Th
 Your problem set will be the core and main part of your Thesis. Many essential parts a thesis, like discussion of related literature, references, own discussion etc., can also be part of your problem set. (In the problem set, you may want to put some longer literature discussion in a footnote). Still you may add some extra aspects in your written thesis, e.g. discuss how you have designed your problem set and which problems you have encountered.
 
 
-Many existing problem sets also contain their thesis in the github repositories, which can give you some idea, how you can create the thesis from your problem set. 
+Many existing problem sets also contain their thesis in the Github repositories, which can give you some idea, how you can create the thesis from your problem set. 
 
 You can write your Thesis using Word, Latex, Latex via Lyx, or directly in a Markdown format. When you create your interactive problem set with the command `create.ps(...)` a file with the ending `..._output_solution.Rmd` is created in your working directory. It contains a RMarkdown version of your solved problem set, which you can translate from RStudio to Latex or Word in order to easier include your problem set in your thesis.
 
@@ -193,7 +196,7 @@ You can create these two special exercises after you have created the 'core' of 
 
 ### Allow exercises to be solved independent from each other
 
-RTutor has the option to use results from an earlier exercise in a later exercise. This requires that the user can only start the later exercise if he has finished the earlier exercise. Try to avoid this structure in your problem. Instead allow each exercise to be solved separately. This means that typically you will load some data at the beginning of each exercise, even though you have already loaded the data before.
+RTutor has the option to use results from an earlier exercise in a later exercise. This requires that the user can only start the later exercise if he has finished the earlier exercise. Try to avoid this structure in your problem set. Instead allow each exercise to be solved separately. This means that typically you will load some data at the beginning of each exercise, even though you have already loaded the data before.
 
 ### Split long exercises
 
@@ -372,7 +375,7 @@ Microsoft Word, for example, has a substantially more powerful spell checker tha
 
 ### Code lines not longer than 80 characters
 
-In order for the code chunks beeing nicely displyed in the HTML version of RTutor, please
+In order for the code chunks being nicely displayed in the HTML version of RTutor, please
 avoid lines of codes that are longer than 80 characters. You can add manual line breaks in
 your R code.
 
