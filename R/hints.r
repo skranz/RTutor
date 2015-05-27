@@ -254,6 +254,9 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
         paste0(sna[1]," ",op,err.code[1],paste0("\n   ", sna[-1]," ", op,err.code[-1], collapse=""))
       })
       display(scall.str)
+      if (wrong.call.na=="group_by") {
+        display("\nNote: For group_by(...) RTutor requires the groups and their order to be equal to the sample solution. You must call ", deparse1(ccall[[1]][[fail]]),".")
+      }
       
       if (!is.null(dim(cval)) & FALSE) {
         display("\nHere are the first two lines of the results when calling my solution up to the wrong call to '", wrong.call.na,"'")

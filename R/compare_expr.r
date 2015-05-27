@@ -144,7 +144,7 @@ remove.names = function(x) {
   x  
 }
 
-is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE) {
+is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE) {
   restore.point("is.same")
   
   if(identical(x,y))
@@ -152,6 +152,13 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
   
   if (length(x)!=length(y))
     return(FALSE)
+
+  if (check.groups) {
+    if (is(x,"tbl") | is(y,"tbl")) {
+      ret = try(identical(dplyr::groups(x),dplyr::groups(y)))
+      if (identical(ret,FALSE)) return(FALSE)
+    }
+  }
   
   if (check.all.equal) {
     if (is.data.frame(x) & is.data.frame(y)) {
@@ -235,7 +242,7 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
 }
 
 
-compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, tol=1e-12, details = TRUE, check.all.equal=TRUE) {
+compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, groups=TRUE, tol=1e-12, details = TRUE, check.all.equal=TRUE) {
   wrong = NULL
   
   if (is.same(var.stud, var.sol))
@@ -273,11 +280,35 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
   if (!is.null(wrong))
     return(wrong)
 
+  if (groups != FALSE) {
+    if (is(x,"tbl")) {
+      gr.x = dplyr::groups(x)
+      gr.y = dplyr::groups(y)
+      if (!setequal(gr.x,gr.y)) {
+        if (details) {
+          wrong = c(wrong,"groups are wrong")
+        } else {
+          wrong = c(wrong,"groups")
+        }
+      } else if (!identical(gr.x,gr.y)) {
+         if (details) {
+          wrong = c(wrong,paste0("group order must be ",paste0(gr.x,collapse=", ")))
+        } else {
+          wrong = c(wrong,"groups_order")
+        }
+      }
+    }
+  }
+  if (!is.null(wrong))
+    return(wrong)
+  
   if (names != FALSE) {
     if (!identical(names(var.stud),names(var.sol))) {
       wrong = c(wrong,"names")
     }
   }  
+  
+  
   if (values != FALSE) {
     if (is.list(var.sol) | is.environment(var.sol)) {
       if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
