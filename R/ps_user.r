@@ -89,7 +89,7 @@ stats = function() {
     end.time = max(success.date)
   )
   res$completed = ifelse(is.na(res$end.time), "",strftime(res$end.time, format="%H:%M %d.%m."))
-  res$ex.name = ps$edt$ex.name
+  res$ex.name = ps$edt$ex.name[res$ex.ind]
   sr = dplyr::select(res,ex.name,percentage.solved,hints, completed)
   colnames(sr) = c("Ex","solved (%)","hints","completed")
   rownames(sr) = NULL
