@@ -454,11 +454,12 @@ By default, tests are generated that call either `check.call` (a statement that 
       allow.extra.arg=TRUE
     #>
 ```
-The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the check.call function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution.
+The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the `check.call` function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of `check.call` for a description of arguments.
+
+If the sample solution assigns a value to a variable, the default function is `check.assign`. See its help file for possible arguments.
 
 
 
-  
 # Examples and tipps for creating tests and hints
 
 ## Testing a function written by the student

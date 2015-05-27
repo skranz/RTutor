@@ -25,7 +25,7 @@ Before developing your own problem sets, you may want to try out some existing p
 
 ## Installing the newest version of RTutor
 
-To install RTutor without any bigger contributed problem set, just run in R
+To install RTutor with all required additional packages, just run in R
 ```s
 if (!require(devtools)) 
   install.packages("devtools")
@@ -35,6 +35,12 @@ install.rtutor(update.github=TRUE)
 library(RTutor)
 ```
 
+If you only want to update the RTutor package (and have the other packages already installed). You can just type:
+
+```s
+devtools::install_github("skranz/RTutor")
+```
+(You may have to restart your R session / RStudio for the update to work.)
 ## Create your own problem sets
 
 Take a look at the .md files in the vignette folder for documentation of how to create own problem sets.
