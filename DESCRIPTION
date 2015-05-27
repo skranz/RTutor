@@ -1,8 +1,8 @@
 Package: RTutor
 Type: Package
 Title: Creating R problem sets with automatic assement of student's solutions
-Version: 2015.05.01
-Date: 2015-05-01
+Version: 2015.05.27
+Date: 2015-05-27
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: Tools for creating R problem sets with automatic assessment of student's solutions
