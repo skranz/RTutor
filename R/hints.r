@@ -23,11 +23,11 @@ hint = function(..., ps=get.ps()) {
     
   if (is.null(ps$chunk.ind)) {
     cat("Please test the chunk before you ask for a hint.")
-    return(invisible())
+    return(invisible(""))
   }
   if (ps$e.ind == 0) {
     cat("There is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
-    return(invisible())
+    return(invisible(""))
   }
   
   #ps$chunk.ind
@@ -35,7 +35,7 @@ hint = function(..., ps=get.ps()) {
   hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
   if (length(hint.expr)==0) {
     cat("Sorry, but there is no hint for your current problem.")
-    return()
+    return(invisible(""))
   }
   eval(hint.expr,ps$stud.env)
   #log.hint(hint=hint, ex = ex, ps = ps)
@@ -47,7 +47,8 @@ hint = function(..., ps=get.ps()) {
   if (!ups$tdt$success[ps$tdt.ind]) {
      ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
      save.ups()
-   }
+  }
+  invisible("")
 }
 
 

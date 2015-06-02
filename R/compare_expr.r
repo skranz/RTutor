@@ -281,9 +281,9 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
     return(wrong)
 
   if (groups != FALSE) {
-    if (is(x,"tbl")) {
-      gr.x = dplyr::groups(x)
-      gr.y = dplyr::groups(y)
+    if (is(var.sol,"tbl")) {
+      gr.x = dplyr::groups(var.sol)
+      gr.y = dplyr::groups(var.stud)
       if (!setequal(gr.x,gr.y)) {
         if (details) {
           wrong = c(wrong,"groups are wrong")
