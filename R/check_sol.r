@@ -143,7 +143,7 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
   ex.name = ps$edt$ex.name[ex.ind]
   
   if (check.all) {
-    min.chunk = min(ck.rows) 
+    min.chunk = min(which(ck.rows)) 
   } else {
     rows = which(ck.rows & ((!cdt$is.solved) | cdt$chunk.changed)) 
     # All chunks solved and no chunk changed

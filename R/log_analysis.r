@@ -7,38 +7,19 @@ examples.import.logs = function() {
   ret$exus.df
 }
 
-import.logs = function(dir, check.sub.dir = TRUE) {
-  restore.point("import.logs")
+import.log = function(log.file=NULL, txt = readLines(log.file)) {
+  restore.point("import.log")
 
-  library(dplyr)
-  library(stringtools)
-  library(data.table)
-  #adapt.ps.dir(dir)
+  last.row = max(which(str.trim(txt)==","))
+  txt = c("[",txt[1:(last.row-1)],"]")
+  txt = paste0(txt,collapse="")
   
-  files = list.files(path=dir,pattern=glob2rx("*.log"), recursive=check.sub.dir, full.names=TRUE)
+  li = fromJSON(txt, simplifyDataFrame = FALSE)
+
+  df = as.tbl(as.data.frame(rbindlist(li, fill=TRUE)))
+  #df = mutate(df,log.file=log.file)
+  df
   
-  file = files[1]
-  
-  li = lapply(files,function(file) {
-    restore.point("fhehf")
-    
-     
-    txt = readLines(file)
-    last.row = max(which(str.trim(txt)==","))
-    txt = c("[",txt[1:(last.row-1)],"]")
-    txt = paste0(txt,collapse="")
-    
-    li = fromJSON(txt, simplifyDataFrame = FALSE)
-  
-    df = as.tbl(as.data.frame(rbindlist(li, fill=TRUE)))
-    df = mutate(df,logFile=file)
-    df
-  })
-  df = bind_rows(li)
-  df = mutate(df,
-    ce = paste0(chunk,".",e.ind),
-    row = 1:NROW(df)
-  )
 }
 
 log.summary = function(df, num.chunks = max(df$chunk)) {

@@ -84,12 +84,23 @@ examples = function() {
 #' 
 #' Only works after you have once checked your problem set!
 #' @export
-zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.path) {
+zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.path, ask=TRUE) {
   restore.point("zip.solution")
   
   if (is.null(ps)) {
     display("You must check your problem set before you can zip the solution")
-    return()
+    return(invisible(NULL))
+  }
+  
+
+  if (ask) {
+    stats()
+    cat("\nDo you want to zip your solution with the stats above?\n(If the stats seem wrong, cancel and check your problem set again.)")
+    res = readline(prompt="Type y and Enter to continue: ")
+    if (!tolower(res)=="y") {
+      cat("\nCancelled zipping of solution.")
+      return(invisible(NULL))
+    }
   }
   
   old.dir = getwd()
@@ -104,6 +115,7 @@ zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.
   zip(zip.file, files)
   display(paste0("Created zipped solution ", zip.file))
   setwd(old.dir)
+  return(invisible(zip.file))
 }
 
 unzip.solutions = function(dir = getwd(), dest.dir = dir) {
@@ -120,6 +132,4 @@ unzip.solutions = function(dir = getwd(), dest.dir = dir) {
   })
   
 }
-
-#shell('START mailto:sebkranz@gmail.com?subject=Test_Mailto&body=see_attachment')
 
