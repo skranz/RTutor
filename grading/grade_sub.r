@@ -70,7 +70,6 @@ write.grade.log = function(msg, console="cat") {
   }
 }
 
-
 grade.sub.df = function(sub.df) {
   restore.point("grade.all.using.ups")
   
@@ -106,101 +105,88 @@ grade.sub.df = function(sub.df) {
 }
 
 
+load.grd.with.names = function(file) {
+  grd = load.grd(file)
+  stud.name = str.left.of(file,"_")
+  Encoding(stud.names) <- "UTF-8"
+  grd$stud.name = stud.name
+  
+  grd
+}
 
-#' Unpack the zips of the individual submissions 
-#' store meta data in a sub.csv and return the data.frame 
-unpack.sub.zips = function(as, as.dir = paste0(base.dir,"/stud/",as), base.dir, do.unpack=TRUE) {
- 
-  if (length(as)>1) {
-    restore.point("unpack.sub.zips.outer")
+load.grds = function(as=NULL, base.dir=NULL, files=NULL) {
+  if (is.null(files) & length(as)>1) {
     ass = as
     li = lapply(ass, function(as) {
-      unpack.sub.zips(as=as, base.dir=base.dir)
+      dir = paste0(base.dir,"/sub/",as)
+      list.files(dir,pattern = glob2rx("*.sub"),full.names = TRUE)
     })
-    sub.df = bind_rows(li)
-    return(sub.df)
+    files = do.call("c",li)
   }
-  restore.point("unpack.sub.zips.inner")
-  
-  zips.dir = paste0(as.dir,"/zips")
-
-
-  zips = c(
-    list.files(path = zips.dir, pattern=glob2rx("*.zip")),
-    list.files(path = zips.dir, pattern=glob2rx("*.ZIP")),
-    list.files(path = zips.dir, pattern=glob2rx("*.Zip"))
-  )
-  
-  stud.names = str.left.of(zips,"_")
-  Encoding(stud.names) <- "UTF-8"
-  
-  stud.id = str.between(zips,"_","_assignsubmission") 
-  
-  sub.df = data.frame(as=as, stud.name=stud.names, stud.id=stud.id, zip=zips, zip.dir = zips.dir)
+  grd.li = lapply(files, load.grd.with.name)  
+  grd.li
+}
   
 
-  zip = zips[1]
-  li = lapply(seq_along(zips), function(i) {
-    restore.point("inner.unzip")
-    zip = zips[i]
-
-    rdf = unzip(paste0(zips.dir,"/",zip), list=TRUE)
+import.subs = function(as=NULL, base.dir=NULL, files=NULL, grd.li = NULL) {
+  restore.point("import.subs")
   
-    fdf = data_frame(as=as,stud.id=sub.df$stud.id[i], stud.name=sub.df$stud.name[i],ext =tolower(file_ext(rdf$Name)), file=rdf$Name, size=rdf$Length, date = rdf$Date)
-    fdf
-    
-    
+  if (is.null(grd.li)) {
+    grd.li = load.grds(as=as, base.dir=base.dir, files=files)
+  }
+
+  # Grade all rows of sub.df separately
+  li = lapply(grd.li, function(grd) {
+    res = grd$total
+    res$stud.name = grd$stud.name
+    res
   })
-  fdf = bind_rows(li)
-  fdf$base = str.left.of(fdf$file,paste0(".", fdf$ext))
-  
-  sdf = summarise(group_by(fdf,stud.id),
-    has.ups = sum(ext=="ups"),
-    has.rmd = sum(ext=="rmd"),
-    has.log = sum(ext=="log"),
-    ups.org.file = first(file[ext=="ups"]),
-    rmd.org.file = first(file[ext=="rmd"]),
-    log.org.file = first(file[ext=="log"]),
-    ups.date = first(date[ext=="ups"]),
-    rmd.date = first(date[ext=="rmd"]),
-    ups.seconds.lag  = rmd.date- ups.date, 
-    ps.name = first(str.left.of(file[ext=="log"],".log")),
-    user.name = first(str.trim(str.left.of(base[ext=="ups"],"_")))
-  )
-  sub.df = left_join(sub.df, sdf, by="stud.id")
+  sub.df = bind_rows(li)
 
-  # Do the unzipping
-  temp.dir = paste0(as.dir,"/temp") 
-  types = c("ups","rmd","log")
-  for (type in types) {
-    type.dir = paste0(as.dir,"/",type)
-    if (!dir.exists(type.dir))
-      dir.create(type.dir)
+  sub.df = mutate(group_by(sub.df, ps.name),
+    time.rank = rank(finished.time, ties.method="min"),
+    perc.time.rank = 100*time.rank / length(time.rank),
     
-    sub.df[[paste0(type,".file")]] = 
-      paste0(type.dir,"/",sub.df$stud.name,"___", sub.df[[paste0(type,".org.file")]])
-  }
-    
-  i = 1
-  if (do.unpack) {
-    for (i in seq_along(zips)) {
-      zip = zips[i]
-      # unzip to temporal folder
-      unzip(paste0(zips.dir,"/",zip), exdir = temp.dir)
-      for (type in types) {
-        org.file = paste0(sub.df[i,paste0(type,".org.file")])
-        new.file =  paste0(sub.df[i,paste0(type,".file")])
-      
-        file.copy(from =  paste0(temp.dir,"/",org.file),
-                    to =  paste0(new.file),
-                  overwrite=TRUE)
-        #file.remove(paste0(temp.dir,"/",file))
-      }
-    }
-  }
-  try(write.csv(sub.df,file = paste0(as.dir,"/sub.csv"),row.names = FALSE))
+    success.rank = rank(num.success, ties.method="min"),
+    hints.rank = rank(num.success, ties.method="min")
+  )
   
-  return(sub.df)
+  sdf = summarise(group_by(res, stud.name),
+    num.test = sum(num.test),
+    num.success = sum(num.success),
+    num.hints = sum(num.hints),
+    num.ps = length(as),
+    median.time.rank = median(as.numeric(time.rank)),
+    min.ps.share.solved = min(share.solved),
+    mean.ps.share.solved = mean(share.solved)
+  )
+  sdf = arrange(ungroup(sdf), -num.success, num.hints)
+  sdf$share.solved = sdf$num.success / max(sdf$num.test)
+  
+  sum.df = ungroup(sdf)
+  
+  
+  # Grade all rows of sub.df separately
+  li = lapply(grd.li, function(grd) {
+    res = grd$by.chunk
+    res$stud.name = grd$stud.name
+    res
+  })
+  by.chunk = bind_rows(li)
+
+  
+  # Grade all rows of sub.df separately
+  li = lapply(grd.li, function(grd) {
+    res = grd$by.ex
+    res$stud.name = grd$stud.name
+    res
+  })
+  by.ex = bind_rows(li)
+  
+  
+  as.environment(list(grd.li = grd.li, sub.df=sub.df, sum.df=sum.df, by.chunk=by.chunk, by.ex=by.ex))
+
+  
 }
 
 #' Takes assignment ZIPs with all students' solutions 
@@ -244,6 +230,7 @@ unpack.big.zips = function(base.dir) {
   return(list(ass=ass))
 }
 
+# not yet working
 check.submitted.rmd = function(sub.df, run.dir=paste0(base.dir,"/run"), res.dir = paste0(base.dir,"/runzip"),base.dir = getwd(),copy.zip = TRUE,ask = TRUE, verbose=TRUE) {
 
   restore.point("check.submitted.rmd")
@@ -275,12 +262,8 @@ check.submitted.rmd = function(sub.df, run.dir=paste0(base.dir,"/run"), res.dir 
     setwd(run.dir)
     cat("\nCheck problemset ", su$ps.name, " of ", su$stud.name,"\n")
 
-    res = try(check.problem.set(ps.name=su$ps.name, stud.path=run.dir, stud.short.file=su$rmd.org.file,reset = TRUE,user.name = su$user.name))
+    new.grd = try(grade.ps(ps.name=su$ps.name, stud.path=run.dir, stud.short.file=su$rmd.org.file,reset = TRUE,user.name = su$user.name))
     
-    new.ups = get.ups()
-    
-    oug = grade.ups(stud.id = su$stud.id, ups.file = su$ups.file)
-    nug = grade.ups(stud.id = su$stud.id, ups=new.ups)
     if (!identical(oug$num.success, nug$num.success)) {
       write.grade.log(paste0("Recheck ", su$ps.name, " of ", su$stud.name,"\n",
         "num.success has changed from ", oug$num.success, " to ", nug$num.success))

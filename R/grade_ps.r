@@ -1,8 +1,8 @@
-#' Grade your problem set
+#' Grade your problem set and make submission file
 #' 
 #' The command will rerun and check all chunks of your problem set and grade it, i.e. it determines which tests are passed or not. The results are stored in a grading file: psname___username.grd, which will be part of the submitted solution. The function works similarly than check.problem.set, but makes sure that all exercies are checked.
 #'@export
-grade.ps = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
+make.submission = grade.ps = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
 
   restore.point("grade.ps")
 
@@ -114,5 +114,13 @@ grade.ps = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stu
   grd.file = paste0(grd$ps.name,"_",grd$user.name,".sub")
   grd = as.environment(grd)
   save(grd,file=grd.file)
-  
+ 
+  invisible(grd) 
 }
+
+
+load.grd = function(file) {
+  load(file)
+  return(grd)
+}
+
