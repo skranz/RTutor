@@ -478,7 +478,7 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
     session = ps$session
   } else {
     nali = ps$cdt$nali[[chunk.ind]]
-    createAlert(session,inputId = nali$alertOut, 
+    rtutorAlert(session,nali$alertOut, 
         title = "Cannot edit chunk", 
         message= ps$failure.message,
         type = "info", append=FALSE

@@ -43,14 +43,14 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
     ok = load.and.set.sav(file, ps=ps)
     if (ok) {
       update.all.chunk.ui()
-      createAlert(session,inputId = "loadSaveAlert",
+      rtutorAlert(session,"loadSaveAlert",
         title = "Successfully loaded.",
         message="",
         type = "success", append=FALSE
       )
 
     } else {
-      createAlert(session,inputId = "loadSaveAlert", 
+      rtutorAlert(session,"loadSaveAlert", 
         title = "Could not load saved solution.",
         message = ps$failure.message,
         type = "warning", append=FALSE
@@ -64,7 +64,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
 
     file.end = paste0("_",ps$name,".sav")
     if (!str.ends.with(file, file.end)) {
-      createAlert(session,inputId = "saveAsAlert", 
+      rtutorAlert(session,"saveAsAlert", 
         title = "Invalid file name",
         message = paste0('Your file name must end with "', file.end,'".'),
         type = "warning", append=FALSE
@@ -77,7 +77,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
       files = list.files(pattern=pattern)
       updateSelectizeInput(session,'loadFileInput',choices=files,selected=ps$sav.file)
       
-      createAlert(session,inputId = "saveAsAlert",
+      rtutorAlert(session,"saveAsAlert",
         title = paste0("Saved as ", ps$sav.file),
         message="",
         type = "success", append=FALSE
@@ -88,7 +88,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
   buttonHandler("exportBtn", function(session,..., ps=get.ps()) {
     rmd.file = isolate(session$input$exportFileInput)
     export.solution(rmd.file)
-    createAlert(session,inputId = "exportAlert", 
+    rtutorAlert(session,"exportAlert", 
       title = paste0("Exported to ", rmd.file), 
       message= "",
       type = "info", append=FALSE
@@ -100,14 +100,14 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
     ok = import.from.rmd(rmd.file)
     if (ok) {
       update.all.chunk.ui()
-      createAlert(session,inputId = "exportAlert", 
+      rtutorAlert(session,"exportAlert", 
         title = paste0("Imported solution from ", rmd.file), 
         message= "",
         type = "info", append=FALSE
       )
     } else {
       ps = get.ps()
-      createAlert(session,inputId = "exportAlert", 
+      rtutorAlert(session, "exportAlert", 
         title = paste0("Import failed"), 
         message= ps$failure.message,
         type = "warning", append=FALSE
