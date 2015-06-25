@@ -490,6 +490,20 @@ data.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
                             ...,ps=get.ps()) {
   restore.point("data.shiny.chunk")
   set.shiny.chunk(chunk.ind, from.data.btn = TRUE)
+
+  if (FALSE) {  
+    RRprofStart()
+    update.data.explorer.ui()
+    RRprofStop()
+  # Uncomment to open the report
+    RRprofReport()
+  
+    Rprof(tmp <- tempfile())
+    update.data.explorer.ui()
+    Rprof()
+    summaryRprof(tmp)
+    unlink(tmp)
+  }
   update.data.explorer.ui()
   updateTabsetPanel(session, inputId="exTabsetPanel",
                     selected = "dataExplorerTabPanel")

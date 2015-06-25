@@ -502,7 +502,7 @@ describe.var.logical= function(v, name=NULL, funs = c("valid.obs","unique.obs","
 
 
 describe.var.internal = function(v, name=NULL, funs = c("valid.obs","unique.obs", "mean","min","max","sd")) {
-  restore.point("describe.var")
+  #restore.point("describe.var")
   vec = lapply(seq_along(funs), function(i) {
     res = tryCatch(
       suppressWarnings(do.call(funs[[i]],list(v, na.rm=TRUE))),
@@ -524,11 +524,24 @@ describe.var.internal = function(v, name=NULL, funs = c("valid.obs","unique.obs"
 get.top.x.obs = function(v, top.x=5, digits=4) {
   restore.point("get.top.x.obs")
   uv = unique(v)
-  shares = (table(v, useNA="ifany") / length(v))
+  
+  qu.df = data_frame(v=v)
+  counts.df = summarise(group_by(qu.df,v), counts = n())
+  
+  shares = counts.df[["counts"]] / length(v)
   shares = sort(shares, decreasing = TRUE)
-  names = as.character(names(shares))
+  names = counts.df[["v"]]
+  
+  #shares = (table(v, useNA="ifany") / length(v))
+  #names = as.character(names(shares))
+  
+  
+  
+  shares = sort(shares, decreasing = TRUE)
   if (is.numeric(v)) {
     names = as.character(signif(as.numeric(names),digits))
+  } else {
+    names = as.character(names)
   }
   names[is.na(names)] = "<NA>"
   top.x = min(top.x, length(shares))

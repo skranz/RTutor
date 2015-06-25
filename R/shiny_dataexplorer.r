@@ -69,97 +69,12 @@ make.data.explorer.handlers = function(ps=get.ps()) {
 }
 
 
-
-#examples.rtutor.shiny()
-data.explorer.server = function() {
-  restore.point("data.explorer.server")
-  ca = quote({
-    output$radioDataExplorerUI = renderUI({
-      cat("\noutput$radioDataExplorerUI")
-      #browser()
-      chunk.ind = ps$chunk.ind
-      r.data.counter$counter
-      ps = get.ps()
-      cdt = ps$cdt
-      stud.env = ps$stud.env
-      chunk.name = cdt$chunk.name[[chunk.ind]]
-      variable.selector.ui(stud.env, chunk.name)
-    })
-    r.dataExplorerData = reactive({
-      cat("r.dataExplorerData")
-      r.data.counter$counter
-      
-      var = input$radioDataExplorer
-      cat("Selected variable: ", var)
-      ps = get.ps()
-      env = ps$stud.env
-      if (length(var)>0 & is.character(var)) {
-        if (exists(var, env)) {
-          ret = get(var,env)
-          if (is.matrix(ret)) {
-            ret = as.data.frame(ret)
-          }
-          return(ret)
-        }
-      }
-      return(NULL)      
-    })
-    
-    output$tableDataExplorer = renderDataTable({
-      signif.cols(r.dataExplorerData(),4)
-     }, options = list(bSortClasses = TRUE, aLengthMenu = c(5, 10, 25,50,100),iDisplayLength = 5))
-    
-    output$dataSummariseUI = renderUI({
-      dat = r.dataExplorerData()
-      data.summarise.ui(dat)
-    })
-    output$dataPlotUI = renderUI({
-      dat = r.dataExplorerData()
-      data.plot.ui(dat)
-    })
-    output$variablesDescrUI = renderUI({
-      dat = r.dataExplorerData()
-      #HTML(get.var.descr.html(dat))
-      make.var.descr.ui(dat)
-    })
-
-    output$plotData = renderPlot({
-      counter =  input$showPlotBtn
-      if (counter==0)
-        return(NULL)
-      dat = isolate(r.dataExplorerData())
-      code = isolate(make.ggplot.code(data.name="dat",type=input$plotTypeInput, xvar=input$xvarInput, yvar=input$yvarInput, colorVar = input$colorvarInput))
-      eval(code)
-    })
-    
-    
-    output$tableDataSummarise = renderDataTable({
-      dat = r.dataExplorerData()
-      groups = input$groupByInput
-      if (length(groups)>0)
-        dat = s_group_by(dat, groups)
-      cols = input$colSelectInput
-      if (length(cols)==0)
-        cols = colnames(dat)
-      
-      out = xsummarise_each_(dat,funs(xmean, xmin,xmax), cols)
-      out
-     }, options = list(aLengthMenu = c(5, 10, 25,50,100),iDisplayLength = 25))
-
-    
-  })
-  as.list(ca[-1])
-}
-
-my.env = as.environment(list(x=data.frame(a=1, b= 1:5),y=3, m=matrix(runif(9),3,3)))
-
-
 data.explorer.ui = function() {
   chunk.fluidRow(
     column(2,uiOutput("radioDataExplorerUI")),
     column(10,
         tabsetPanel(
-          tabPanel("Data",dataTableOutput("tableDataExplorer")),
+          tabPanel("Data",DT::dataTableOutput("tableDataExplorer")),
           tabPanel("Description",uiOutput("variablesDescrUI"))
           #tabPanel("Summary", uiOutput("dataSummariseUI")),
           #tabPanel("Plot", uiOutput("dataPlotUI"))
@@ -212,7 +127,7 @@ data.summarise.ui = function(data,session=ps$session,ps=get.ps()) {
       column(4,group_by_ui),
       column(4,col_select_ui)
     ),
-    dataTableOutput("tableDataSummarise")
+    DT::dataTableOutput("tableDataSummarise")
   )
   
 }
@@ -288,7 +203,7 @@ make.ggplot.code = function(data.name="dat",type="line",xvar="",yvar="",colorvar
   base::parse(text=com,srcfile=NULL)  
 }
 
-make.var.descr.ui = function(dat) {
+old.make.var.descr.ui = function(dat) {
  
   restore.point("make.var.descr.html")
   dt = get.var.descr.dt(dat=dat)
@@ -306,37 +221,83 @@ make.var.descr.ui = function(dat) {
   panels = lapply(seq_along(title), function(i) {
     bsCollapsePanel(title[i], body[[i]])    
   })
-  do.call(bsCollapse, panels)
+  do.call(bsCollapse, c(panels,list(id="dataExplorerVarDescrCollapse")))
+  #changeHandler("dataExplorerVarDescrCollapse",change.var.descr.collapse)
+}
+
+make.var.descr.ui = function(dat) {
+ 
+  restore.point("make.var.descr.html")
+  dt = get.var.descr.dt(dat=dat)
+
+  if (!is.null(dt)) {
+    dupl = duplicated(dt$var)
+    dt = dt[!dupl,]
+    title =  paste0(dt$var,": ", dt$descr)
+  } else {
+    title = colnames(dat)
+  }
+  
+  dyncoll = dynCollapse(id="dataExplorerVarDescrCollapse",labels=paste0(colnames(dat),": ", dt$descr), values=colnames(dat), panel.fun = open.var.descr.collapse)
+  #changeHandler("dataExplorerVarDescrCollapse",change.var.descr.collapse)
+}
+
+open.var.descr.collapse = function(collapseValue,app=getApp(), ps=get.ps(), ...) {
+  args = list(...)
+  restore.point("open.var.descr.collapse")
+  cat("open.var.descr.collapse")
+  col = collapseValue
+  dat = ps$de.dat
+  v = dat[[col]]
+  HTML(var.summary.html(v))
 }
 
 
 var.summary.html = function(v,...) {
   restore.point("var.summary.html ")
-
+  #return("")
+  
   library(hwriter)
   dli = describe.var(v)  
   lab1 = paste0(names(dli)[1:3],":")
   val1 = as.character(dli[1:3])
 
-  top = get.top.x.obs(v,3)
-  top.var = c(as.character(top$var), rep("",3))
-  top.share = c(paste0(round(top$share*100,1),"%"),rep("",3))
-  
-  if (length(dli)>3) {
-    dli = c(dli,list("","",""))
-    lab2 = paste0("  ",names(dli)[4:6],":")
-    val2 = as.character(xsignif(dli[4:6],4))
-    lab3 = paste0("  ",1:3, ": ",top.var[1:3])
-    val3 = top.share[1:3]
-    df = data.frame(lab1,val1,lab2,val2,lab3,val3)
-    colnames(df)=c("",""," Summary","         ","Most common values","Share")
+  use.top = length(v)<1000
+  use.top = TRUE
+  if (!use.top) {
+    if (length(dli)>3) {
+      dli = c(dli,list("","",""))
+      lab2 = paste0("  ",names(dli)[4:6],":")
+      val2 = as.character(xsignif(dli[4:6],4))
+      df = data.frame(lab1,val1,lab2,val2)
+      colnames(df)=c("",""," Summary","         ")
+    } else {
+      df = data.frame(lab1,val1)
+      colnames(df)=c("","")
+    }
   } else {
-    lab3 = paste0("  ",top.var[1:3])
-    val3 = top.share[1:3] 
-    df = data.frame(lab1,val1,lab3,val3)
-    colnames(df)=c("","","value","share")
+    
+    
+    top = get.top.x.obs(v,3)
+    top.var = c(as.character(top$var), rep("",3))
+    top.share = c(paste0(round(top$share*100,1),"%"),rep("",3))
+    
+    if (length(dli)>3) {
+      dli = c(dli,list("","",""))
+      lab2 = paste0("  ",names(dli)[4:6],":")
+      val2 = as.character(xsignif(dli[4:6],4))
+      lab3 = paste0("  ",1:3, ": ",top.var[1:3])
+      val3 = top.share[1:3]
+      df = data.frame(lab1,val1,lab2,val2,lab3,val3)
+      colnames(df)=c("",""," Summary","         ","Most common values","Share")
+    } else {
+      lab3 = paste0("  ",top.var[1:3])
+      val3 = top.share[1:3] 
+      df = data.frame(lab1,val1,lab3,val3)
+      colnames(df)=c("","","value","share")
+    }
   }
-  out = hwrite(df, NULL, border=2, row.names=FALSE, cellpadding=5)
+  out = hwrite(df, NULL, border=0, row.names=FALSE, cellpadding=10)
   out
 }
 
