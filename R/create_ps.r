@@ -901,8 +901,8 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
           rhs.str = ""
         }
         chunk.name = paste0(ex.name,' ',part.name, counter.str)
-        if (valid.file.name)
-          chunk.name = str.to.valid.file.name(chunk.name)
+
+        chunk.name = str.to.valid.chunk.name(chunk.name)
         txt[i] = paste0('```{r "',chunk.name,'"', rhs.str,"}")
       }
       counter = counter+1
@@ -926,6 +926,10 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
 
 examples.str.to.valid.file.name = function() {
  str.to.valid.file.name("chunk 1 a)")  
+}
+str.to.valid.chunk.name = function(str, replace.char = "_") {
+  str = gsub("[^a-zA-Z0-9_]",replace.char,str)
+  str
 }
 
 str.to.valid.file.name = function(str, replace.char = "_") {
