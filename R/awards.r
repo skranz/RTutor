@@ -34,14 +34,37 @@ show.award = function(award, award.name = award$award.name, html=award$html, txt
 
 #' Show all your awards
 #' @export
-awards = function(user = get.user(), details=TRUE) {
-  cat(paste0("Hi ",user$name,", you have earned ", length(user$awards)," awards:\n"))
-  if (!details) {
-    print(names(user$awards))
-  } else {
-    for (ad in user$awards) {
-      cat(paste0("\n*** ",ad$award.name, " ***\n", ad$txt," (awarded in ", ad$granted.in, ")\n"))
+awards = function(user = get.user(), as.html=FALSE, details=TRUE) {
+  
+  if (!as.html) {
+    cat(paste0("Hi ",user$name,", you have earned ", length(user$awards)," awards:\n"))
+    if (!details) {
+      print(names(user$awards))
+    } else {
+      for (ad in user$awards) {
+        cat(paste0("\n*** ",ad$award.name, " ***\n", ad$txt," (awarded in ", ad$granted.in, ")\n"))
+      }
     }
+  } else {
+    if (!details) {
+      txt = paste0("<h4>",names(user$awards),"...</h4>")
+      
+    } else {
+#       li = lapply(user$awards, function(ad) {
+#         bsCollapsePanel(title=ad$award.name,HTML(ad$html))
+#       })
+#       names(li) = NULL
+#       pa = do.call(bsCollapse,li)
+#       txt = as.character(pa)  
+      
+      txt = sapply(user$awards, function(ad) {
+        paste0(ad$html)
+      })
+    }
+    txt = c(paste0("<h3>You have earned ", length(user$awards)," awards</h3>"),txt)
+
+    txt = HTML(paste0(txt, collapse="\n"))
+    txt
   }
 }
 
