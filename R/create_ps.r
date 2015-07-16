@@ -232,7 +232,11 @@ te.to.rps = function(te) {
     rbindlist(li)
   })
   tdt = rbindlist(li)
-  tdt$test.ps.ind = 1:NROW(tdt)
+  if (NROW(tdt)>0) {
+    tdt$test.ps.ind = 1:NROW(tdt)
+  } else {
+    tdt$test.ps.ind = c()
+  }
   rps$tdt=tdt
   
   # Just store exercise names
