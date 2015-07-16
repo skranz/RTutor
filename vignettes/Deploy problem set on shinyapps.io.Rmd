@@ -9,7 +9,7 @@ output:
     toc: yes
 ---
 
-This vignette explains how you can host a problem set directly in the web using shinyapps.io. The steps are also useful if you want to host it on another web server that runs shiny server.
+This vignette explains how you can host a problem set directly in the web using shinyapps.io.
 
 You can create an app based on an .rps file or based on a problem set package hosted that is hosted on Github (see the corresponding vignette for how to create such a package)
 
@@ -53,3 +53,6 @@ In both cases you must just adapt the examples above.
 
 Now in your app directory, e.g. "D:/libraries/RTutor/examples/ExampleApp" a file `deployapp.r` is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.
 
+### Security issues
+
+RTutor problem sets allow the user to run arbitrary code. So unless you have really figured out security issues, I would definitely *not* recommend hosting shinyapps on your own shinyserver. (I personally have not figured out these security issues.) Since RStudio allows to run arbitrary apps on shinyapps.io, they probably have carefully sandboxed their app environment. Still, maliciously minded users may damage your app on shinyapps.io e.g. by deleting data. So deploying an app on shinyapps.io allows users to have a glimpse at your app, but it is not really useful as robust deployment, e.g. for use in a course. If you want to use RTutor in a course, users should locally install RTutor and the problem set (see the main vignette for deplyoment options).  
