@@ -15,13 +15,11 @@ if (FALSE) {
   install_github("skranz/shinyEvents",ref = "master")  
   install_github("skranz/regtools",ref = "master")
   install_github("skranz/dplyrExtras",ref = "master")
+  install_github("skranz/stringtools",ref = "master")
 
   # Pick master or development version of RTutor
   install_github("skranz/RTutor",ref = "master")  
   #install_github("skranz/RTutor",ref = "develop")
-
-  # Older bootstrap2 shiny version that makes RTutor look better
-  install_github("skranz/shiny",ref = "master")
 
  }
 
