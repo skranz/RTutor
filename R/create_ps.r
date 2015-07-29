@@ -655,7 +655,7 @@ add.te.info = function(te) {
   str = paste0('info("', info.name,'") # Run this line (Strg-Enter) to show info')
   te$task.txt = c(te$task.txt,str)
   te$sol.txt = c(te$sol.txt, str)
-  te$out.txt = c(te$out.txt, paste0("### Info: ", info.name),te$block.txt)
+  te$out.txt = c(te$out.txt,"\n***\n", paste0("### Info: ", info.name),te$block.txt,"\n***\n")
   
   te$infos[[info.name]] = info
 }
@@ -678,7 +678,10 @@ add.te.award = function(te) {
     rstudio::viewer(htmlFile)  
   }
   award = list(award.name=name, chunk.name=te$prev.chunk.name, html=paste0(html,collapse="\n"), txt=paste0(te$block.txt, collapse="\n"))
+  te$out.txt = c(te$out.txt,"\n***\n", paste0("### Award: ", name),te$block.txt,"\n***\n")
+
   te$awards[[name]] = award
+  
 }
 
 
