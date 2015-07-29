@@ -4,11 +4,11 @@
 
 **Author: Sebastian Kranz, Ulm University** 
 
-RTutor is an R package that allows to develop interactive R exercises. Problem sets can be solved off-line or can hosted in the web via shiny server. Problem sets can be designed as a Markdown  .rmd file (to be solved directly in RStudio) or use a browser-based interface powered by RStudio's Shiny.
+RTutor is an R package that allows to develop interactive R exercises. Problem sets can be solved off-line or can be hosted in the web with shinyapps.io. Problem sets can be designed as a Markdown  .rmd file (to be solved directly in RStudio) or use a browser-based interface powered by RStudio's Shiny. While the web interface looks nicer, I personally use problem sets in the Markdown format when teaching advanced economic classes.
 
 ## Trying out some problem sets
 
-Before developing your own problem sets, you may want to try out some existing problem sets. Check out those very nice problem sets by students of mine, which replicate the main insights of interesting economic articles:
+For the web-based interface, several students at Ulm University have created very nice problem sets that allow to interactively replicate the main insights of interesting economic articles and to learn a bit about R and econometrics. Before developing your own problem sets, you may want to try out some of these examples:
 
 ### On the Optimal Taxation of Top Incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
