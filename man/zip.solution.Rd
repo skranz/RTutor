@@ -5,7 +5,7 @@
 \title{Create a zip file of your solution that can be submitted}
 \usage{
 zip.solution(ps = get.ps(), user.name = get.user()$name,
-  dir = ps$stud.path)
+  dir = ps$stud.path, ask = TRUE)
 }
 \description{
 Only works after you have once checked your problem set!

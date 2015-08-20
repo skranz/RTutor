@@ -35,8 +35,6 @@ Start by trying to run the simple example and then try to build your own exercis
 ## Make sure that you call `create.ps` with the option `rps.has.sol=FALSE`
 
 
-
-
 ## Installation and Usage Guide for Students
 
 It is a good idea to create for your course a short guide that explains students, how to install R, RStudio and all required packages, and how to download, solve and submit RTutor problem sets. 
@@ -46,6 +44,7 @@ Here is a template (in markdown format) of such a guide, which you can adapt for
 
 (You can edit the guide in RStudio).
 
+... to be done ...
 
 # Further Topics
 

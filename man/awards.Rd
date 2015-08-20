@@ -4,7 +4,7 @@
 \alias{awards}
 \title{Show all your awards}
 \usage{
-awards(user = get.user(), details = TRUE)
+awards(user = get.user(), as.html = FALSE, details = TRUE)
 }
 \description{
 Show all your awards
