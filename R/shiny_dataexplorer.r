@@ -56,6 +56,7 @@ update.data.explorer.data  = function(var, ps=get.ps(), session=ps$session) {
                      lengthMenu = c(5, 10, 25,50,100),
                      pageLength = 5)) 
   updateUI(session,"variablesDescrUI",{make.var.descr.ui(data)}) 
+  updateUI(session,"dataPlotUI",{data.plot.ui(data)}) 
   
 }
 
@@ -75,9 +76,9 @@ data.explorer.ui = function() {
     column(10,
         tabsetPanel(
           tabPanel("Data",DT::dataTableOutput("tableDataExplorer")),
-          tabPanel("Description",uiOutput("variablesDescrUI"))
+          tabPanel("Description",uiOutput("variablesDescrUI")),
           #tabPanel("Summary", uiOutput("dataSummariseUI")),
-          #tabPanel("Plot", uiOutput("dataPlotUI"))
+          tabPanel("Plot", uiOutput("dataPlotUI"))
         )
     )
   )
@@ -157,34 +158,64 @@ data.plot.ui = function(data,session=ps$session, ps=get.ps()) {
     return(NULL)
   
   vars = c("",colnames(data))
-  plot_type_ui = selectizeInput("plotTypeInput",label="plot type", choices=c("point","line"), multiple=FALSE)
-  xvar_ui = selectizeInput("xvarInput",label="x", choices=vars, multiple=FALSE)
-  yvar_ui = selectizeInput("yvarInput",label="y", choices=vars, multiple=FALSE)
-  xfacet_ui = selectizeInput("xfacetInput",label="x facet", choices=vars, multiple=FALSE)
-  yfacet_ui = selectizeInput("yfacetInput",label="y facet", choices=vars, multiple=FALSE)
-
-  colorvar_ui = selectizeInput("colorvarInput",label="color group", choices=vars, multiple=FALSE)
   
+  if (FALSE) {
+    plot_type_ui = selectizeInput("plotTypeInput",label="plot type", choices=c("point","line"), multiple=FALSE)
+    xvar_ui = selectizeInput("xvarInput",label="x", choices=vars, multiple=FALSE)
+    yvar_ui = selectizeInput("yvarInput",label="y", choices=vars, multiple=FALSE)
+    xfacet_ui = selectizeInput("xfacetInput",label="x facet", choices=vars, multiple=FALSE)
+    yfacet_ui = selectizeInput("yfacetInput",label="y facet", choices=vars, multiple=FALSE)
+  
+    colorvar_ui = selectizeInput("colorvarInput",label="color group", choices=vars, multiple=FALSE)
+    
+    buttonHandler("showPlotBtn",update.data.explorer.plot)
+    
+    chunk.fluidRow(
+      chunk.fluidRow(
+        column(4,plot_type_ui,colorvar_ui),
+        column(4,xvar_ui,xfacet_ui),
+        column(4,yvar_ui,yfacet_ui)
+      ),
+      actionButton("showPlotBtn","Show Plot"),
+      plotOutput("plotData")
+    )
+  }
+  
+  vars = c(colnames(data))  
+  xvar_ui = selectizeInput("xvarInput",label="x", choices=vars, multiple=FALSE)
+  yvar_ui = selectizeInput("yvarInput",label="y", choices=c("_none_",vars), multiple=FALSE)
+  groupby_ui = selectizeInput("groupbyInput",label="group by", choices=vars, multiple=FALSE)
   buttonHandler("showPlotBtn",update.data.explorer.plot)
   
   chunk.fluidRow(
     chunk.fluidRow(
-      column(4,plot_type_ui,colorvar_ui),
-      column(4,xvar_ui,xfacet_ui),
-      column(4,yvar_ui,yfacet_ui)
+      column(3,xvar_ui),
+      column(3,yvar_ui),
+      #column(3,groupby_ui),
+      column(3,actionButton("showPlotBtn","Show"))
     ),
-    actionButton("showPlotBtn","Show Plot"),
     plotOutput("plotData")
   )
+  
   
 }
 
 
 update.data.explorer.plot = function(dat=ps$de.dat,input=ps$session$input,ps = get.ps(),...) {
-  updatePlot(ps$session,"plotData", {
-    code = isolate(make.ggplot.code(data.name="dat",type=input$plotTypeInput, xvar=input$xvarInput, yvar=input$yvarInput, colorVar = input$colorvarInput))
-    eval(code)
-  })
+#   updatePlot(ps$session,"plotData", {
+#     code = isolate(make.ggplot.code(data.name="dat",type=input$plotTypeInput, xvar=input$xvarInput, yvar=input$yvarInput, colorVar = input$colorvarInput))
+#     eval(code)
+#   })
+  x = input$xvarInput
+  y = input$yvarInput
+  if (isTRUE(y=="_none_")) y = NULL
+  #by = input$groupbyInput
+  by = NULL
+  restore.point("update.data.explorer.plot")
+  setPlot("plotData",
+    DescBy(x=x,y=y,by=by,data=dat,plotit=TRUE)  
+  )
+  
 }
 
 
@@ -249,7 +280,14 @@ open.var.descr.collapse = function(collapseValue,app=getApp(), ps=get.ps(), ...)
   col = collapseValue
   dat = ps$de.dat
   v = dat[[col]]
-  HTML(var.summary.html(v))
+  html = HTML(var.summary.html(v))
+  if (require(DescTools)) {
+    id = paste0("dataExplorer__",col)
+    plotUI = plotOutput(id, height="300px")
+    setPlot(id, Desc(v,plotit=TRUE, main=""))
+    return(list(html, plotUI))
+  }
+  return(html)
 }
 
 
@@ -336,3 +374,55 @@ xsd = function(..., na.rm=TRUE) {
 }
 
 
+DescBy = function(x,y=NULL,by=NULL, data, plotit=FALSE, catit=TRUE) {
+  restore.point("DescBy")
+  if (length(y)==0) y=NULL
+  if (isTRUE(nchar(y)==0)) y=NULL
+  if (length(by)==0) by=NULL
+  if (isTRUE(nchar(by)==0)) by=NULL
+  
+  use.value = FALSE
+  if (is.character(x)) {
+    if (is.null(y)) {
+      use.value = TRUE
+    } else {
+      form.str = paste0(paste0(x, collapse="+"),"~", paste0(y,collapse="+"))
+      form = as.formula(form.str)
+    }
+  } else {
+    form = x
+  }
+  if (is.null(by)) {
+    if (use.value) {
+      value = data[[x]]
+      txt = capture.output(Desc(value, main=x, plotit=plotit))
+    } else {
+      txt = capture.output(Desc(form, data=data, plotit=plotit))
+    }
+    #Desc(driver ~ operator, data=d.pizza, plotit=TRUE)
+  } else {
+    txt = NULL
+    col = by
+    vals = setdiff(unique(d[[col]]),NA)
+    
+    for (val in vals) {
+      if (use.value) {
+        value = data[data[[col]]==val,,drop=FALSE][[x]]
+        txt = capture.output(Desc(value, main=x, plotit=plotit))
+      } else {
+        df = data[data[[col]]==val,,drop=FALSE]
+        str = capture.output(Desc(form, data=df, plotit=plotit))
+      }
+      txt = c(
+        txt,
+        paste0("\n\n", col," = ", val,"\n"),
+        str
+      )
+    }
+    
+  }
+  if (catit) {
+    cat("\n",paste0(txt,collapse="\n"))
+  }
+  invisible(txt)
+}
