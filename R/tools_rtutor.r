@@ -571,3 +571,124 @@ move.library = function(name, pos=2) {
   suppressWarnings(detach(ns,character.only=TRUE, force=TRUE))
   attachNamespace(name,pos=pos)
 }
+
+
+grow.list = function(li) {
+  c(li, vector("list", length(li)))
+}
+
+growlist = function(len=100) {
+  g = new.env()
+  g$size = 0
+  g$li =  vector("list",len)
+  g$len = len
+  g
+}
+growlist.add = function(g, el) {
+  size = g$size+1
+  g$size = size
+  if (g$len< size) {
+    g$li = c(g$li, vector("list", size))
+    g$len = g$len + size
+    cat("increase.size to", g$len," \n")
+  }
+  g$li[[size]] = el 
+  return(NULL)
+}
+
+growlist.to.list = function(g) {
+  g$li[1:g$size]
+}
+
+
+examples.grow.list = function() {
+  
+  
+  growlist.madd = function(gli, ...) {
+    li = list(...)
+    len =  length(li)
+    if (length(gli$li)< gli$size+len)
+      c(gli$li, vector("list", gli$size+len))
+    #gli[(gli$size+1)gli] = 
+    gli$size = gli$size+length(gli)
+  } 
+  
+  # I did not find an elegant solution for quickly growing a list
+  # if its size is not known ex-ante and we do not want to fully unlist it
+  # grow list seems so far the best approach
+  library(microbenchmark)
+  runBenchmark <- function(n) {
+      microbenchmark(times = 3,
+          growlist = {
+            g = growlist(100)
+            for(i in 1:n) {
+              growlist.add(g, list(i=i))
+            }
+          },        
+          grow_list = {
+            li = vector("list",10)
+            for(i in 1:n) {
+              if (length(li)<i) li = grow.list(li)
+              li[[i]] = list(i=i) 
+            }
+          },
+          prelocate = {
+            li = vector("list",n)
+            for(i in 1:n) {
+              li[[i]] = list(i=i) 
+            }
+          },
+          rstack = {
+            s = rstack()
+            for(i in 1:n) {s = insert_top(s,list(i))}
+          },
+           c_ = {
+              a <- list(0)
+              for(i in 1:n) {a = c(a, list(i))}
+          },
+          list_ = {
+              a <- NULL
+              for(i in 1:n) {a <- list(a, list(i=i))}
+              unlist(a)
+          },
+          by_index = {
+              a <- list(0)
+              for(i in 1:n) {a[length(a) + 1] <- i}
+              a
+          }
+       )
+  }
+  runBenchmark(n = 1000)
+  
+  fun = function(g,i) {
+    g$li[[i]]<-list(i=i)
+  }
+  fun2 = function(g,i) {
+    size = g$size+1
+    g$size = size
+    g$li[[g$size]]<-list(i=i)
+    len = length(g$li)
+
+  }
+  
+
+  Rprof(tmp <- tempfile())
+  n = 100000
+  g = growlist(1000)
+  for(i in 1:n) {
+    growlist.add(g, list(i=i))
+  }
+
+  li = vector("list",10)
+  for(i in 1:n) {
+    if (length(li)<i) li = grow.list(li)
+    li[[i]] = list(i=i) 
+  }
+  #growlist.to.list(g)
+  
+  Rprof()
+  summaryRprof(tmp)
+  unlink(tmp)
+    
+
+}

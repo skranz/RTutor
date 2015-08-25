@@ -9,10 +9,16 @@ make.view.ui = function(view.ind, ps=get.ps()) {
     rows = which(shiny.dt$view.ind == view.ind)      
   }
   ui.li = lapply(rows, function(i) {
+    #restore.point("hdkgkdhighoifhg")
     if (shiny.dt$type[i]=="chunk") {
       chunk.ind = which(cdt$chunk.name==shiny.dt$chunk.name[i])
       ui=make.initial.chunk.ui(chunk.ind)
       return(ps$cdt$ui[[chunk.ind]])
+    } else if (shiny.dt$type[i]=="addon") {
+      ao = ps$rps$addons[[ shiny.dt$addon.id[i] ]]
+      Addon = ps$rps$Addons[[ao$rta$type]]
+      html = Addon$shiny.ui.fun(ao)
+      return(mathJaxRTutor(html))      
     } else {
       #return(shiny.dt$html[[i]])
 

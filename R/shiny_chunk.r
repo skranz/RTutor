@@ -264,6 +264,7 @@ make.chunk.task.ui = function(...) {
 
 
 make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=get.ps()) {
+  restore.point("make.chunk.handlers")
   
   buttonHandler(nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
   aceHotkeyHandler(nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)

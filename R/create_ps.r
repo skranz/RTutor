@@ -22,17 +22,22 @@ examples.create.ps = function() {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL) {
   restore.point("create.ps")
   
   CREATE.PS.ENV$fragment.only = fragment.only
   CREATE.PS.ENV$add.enter.code.here = add.enter.code.here
+  Addons = make.addons.list(addons)
   
   setwd(dir)
   txt = readLines(sol.file)
   txt =  name.rmd.chunks(txt=txt)
-  te = parse.sol.rmd(txt=txt)
   
+  te = get.empty.te(Addons=Addons) 
+  te = parse.sol.rmd(txt=txt, te=te)
+
+  te$items.df = rbindlist(te$items[1:te$num.items]) 
+    
   if (!is.null(ps.name))
     te$ps.name = ps.name
   
@@ -105,8 +110,7 @@ load.rps = function(ps.name=NULL,file = paste0(ps.name,".rps")) {
 }
 
 
-parse.sol.rmd = function(sol.file=NULL, txt=NULL) {
-  te = get.empty.te()  
+parse.sol.rmd = function(sol.file=NULL, txt=NULL, te = get.empty.te()) {
   if (is.null(txt))
     txt = readLines(sol.file)
 
@@ -204,16 +208,29 @@ te.to.rps = function(te) {
     })
   })
 
-  # Awards
-  adt = rbindlist(te$awards)
-  if (length(adt)==0)
-    adt = data.table(chunk.name=character(0), award.name=character(0))
+  items.df = te$items.df
+
+  # Addons data.table: ao.dt
+  li = lapply(te$addons, function(ao) {
+    rta = ao$rta
+    list(id=rta$id,type=rta$type,optional=rta$optional)
+  })
+  ao.dt = rbindlist(li)
+  rows =  items.df$type == "addon"
+  ao.dt$award.name = items.df$award.name[rows]
+  ao.dt$item.pos = items.df$item.pos[rows]
+  ao.dt$ex.name = items.df$ex.name[rows]
+
+  rps$ao.dt = ao.dt
+  rps$Addons = te$Addons
+  rps$addons = te$addons
+
+    
+  # Match awards to cdt
+  rows = match(cdt$chunk.name, items.df$id)
+  cdt$award.name = items.df$award.name[rows] 
+  cdt$item.pos = items.df$item.pos[rows]
   
-  # Beware: left_join orders by chunk.name!
-  cdt = left_join(cdt, dplyr::select(adt, chunk.name, award.name),by="chunk.name")
-  # restore original order
-  ord = order(cdt$chunk.ps.ind)
-  cdt = cdt[ord,]
   rps$cdt = cdt
   rps$awards = te$awards
   
@@ -370,6 +387,7 @@ parse.chunk.ends = function(row,str,txt, te) {
     add.te.chunk(te,te$act.chunk)
     
     te$prev.chunk.name = te$chunk.name
+    te$prev.chunk.end = row
     te$in.chunk = FALSE
     te$chunk.name = ""
     te$chunk.str = ""
@@ -454,8 +472,15 @@ add.te.chunk = function(te,ck) {
     te$sol.txt = c(te$sol.txt, te$chunk.head, ck$sol.txt,"```")
     te$out.txt = c(te$out.txt, te$chunk.head, ck$out.txt,"```")
     ck$add = TRUE
+    add.te.item(te=te, type="chunk", id = ck$chunk.name)
   }
   
+}
+
+add.te.item = function(te, type="", id="") {
+  num.items = te$num.items+1
+  te$num.items = num.items
+  te$items[[num.items]] = list(item.pos = num.items, ex.name=te$ex.name, type=type,id=id, award.name="")
 }
 
 add.te.block = function(te) {
@@ -463,7 +488,6 @@ add.te.block = function(te) {
   type = te$block.type
   args = str.trim(str.right.of(te$block.head, te$block.type))
   ck = te$act.chunk
-  
   btxt = te$block.txt
   
   # Check if code in block can be parsed
@@ -519,6 +543,9 @@ add.te.block = function(te) {
   } else if (type == "award") {
     add.te.award(te)
   } else if (type == "ignore") {
+  } else if (type %in% names(te$Addons)) {
+    args.li = eval(parse(text=paste0("list(",args,")")))
+    add.te.addon(te,type=type, args=args.li)
   } else {
     str = paste0(chunk.str, " there is an unknown block head: ", te$block.head)
     stop(str, call.=FALSE)
@@ -661,7 +688,35 @@ add.te.info = function(te) {
 }
 
 
+add.te.addon = function(te,type,args=NULL) {
+  restore.point("add.te.addon")
+  #stop()
+  name = args[[1]]
+
+  txt = te$block.txt
+  Addon = te$Addons[[type]]
+  ao = Addon$parse.fun(txt,type=type,name=name,args=args[-1])
+
+  
+  rta = ao$rta
+  rta$id = paste0("addon__",type,"__",name)
+
+  placeholder = paste0("#! ", rta$id)
+  
+  
+  te$task.txt = c(te$task.txt,placeholder)
+  te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao,..))
+  te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao,..))
+
+  te$addons[[rta$id]] = ao
+  
+  add.te.item(te=te, type="addon", id = rta$id)
+}
+
+
 add.te.award = function(te) {
+  restore.point("add.te.award")
+  #stop()
   require(knitr)
   require(markdown)
   
@@ -677,11 +732,15 @@ add.te.award = function(te) {
     writeLines(html,htmlFile)
     rstudio::viewer(htmlFile)  
   }
-  award = list(award.name=name, chunk.name=te$prev.chunk.name, html=paste0(html,collapse="\n"), txt=paste0(te$block.txt, collapse="\n"))
+  
+  # item (chunk or addon) to which the award belongs
+  te$items[[te$num.items]]$award.name = name
+
+  award = list(award.name=name, html=paste0(html,collapse="\n"), txt=paste0(te$block.txt, collapse="\n"))
   te$out.txt = c(te$out.txt,"\n***\n", paste0("### Award: ", name),te$block.txt,"\n***\n")
 
   te$awards[[name]] = award
-  
+
 }
 
 
@@ -786,8 +845,9 @@ get.empty.chunk = function() {
   ck
 }
 
-get.empty.te = function() {
+get.empty.te = function(Addons=NULL) {
   te = new.env()
+  te$Addons = Addons
   te$block.type = ""
   te$in.block = FALSE
   te$in.chunk = FALSE
@@ -802,16 +862,20 @@ get.empty.te = function() {
   te$last.e = NULL
   te$counter = 0
 
-  te$markdown.blocks = c("info","award","ignore")
+  te$markdown.blocks = c("info","award","ignore",names(te$Addons))
   te$code.blocks = c("test","test_arg","test_hint_arg","extra_test","test_calls",
                   "hint","add_to_hint",
                   "task","task_notest","notest",
                   "compute","settings")
-  te$blocks = c(te$markdown.blocks, te$code.blocks)
+  te$blocks = c(te$markdown.blocks, te$code.blocks, names(te$Addons))
   te$act.chunk = NULL
   te$act.ex = NULL
   te$ps.name = NULL
-  te$ex = te$infos = te$awards = list()
+  te$ex = te$infos = te$awards = te$addons = list()
+  
+  te$items = vector("list",1000)
+  te$num.items = 0
+  
   te
 }
 
@@ -971,12 +1035,13 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   chunk.end.plus1 = chunk.end+1
   ex.start = which(str.starts.with(txt,"## Exercise "))
   info.start = which((str.starts.with(txt,"info(")))
+  addon.start = which((str.starts.with(txt,"#! addon__")))
   cont.start = which((str.starts.with(txt,"#. continue")))
   
   note.start = which((str.starts.with(txt,"#! start_note")))
   note.end = which((str.starts.with(txt,"#! end_note")))
   if (length(note.start) != length(note.end)) {
-    stop(paste0("You have ",length(note.start)," '#! start_node' commands but",length(note.end), " end_node commands!"))
+    stop(paste0("You have ",length(note.start)," '#! start_node' commands but ",length(note.end), " end_node commands!"))
   }
   note.name = str.right.of(txt[note.start],"#! start_note ")
   note.name = str.between(note.name,'"','"')
@@ -984,6 +1049,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   
   df.chunk = data.frame(start=chunk.start, type="chunk", type.ind=seq_along(chunk.start))
   df.info = data.frame(start=info.start, type=rep("info", length(info.start)), type.ind=seq_along(info.start))
+  df.addon = data.frame(start=addon.start, type=rep("addon", length(addon.start)), type.ind=seq_along(addon.start))
   df.cont = data.frame(start=cont.start, type=rep("continue", length(cont.start)), type.ind=seq_along(cont.start))
   
   if (length(note.start)>0) {
@@ -994,14 +1060,14 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   }
   
   
-  df.task = data.frame(start=sort(c(1,ex.start,note.start+1, note.end+1,chunk.end+1, info.start+1, cont.start+1)), type="task")
+  df.task = data.frame(start=sort(c(1,ex.start,note.start+1, note.end+1,chunk.end+1,addon.start+1, info.start+1, cont.start+1)), type="task")
   
 
 
   df.task$type.ind = 1:NROW(df.task)
   
   
-  df = rbind(df.chunk,df.info,df.cont, df.task, df.note.start, df.note.end)
+  df = rbind(df.chunk,df.info,df.addon,df.cont, df.task, df.note.start, df.note.end)
   df = df[!duplicated(df$start),]
   df = arrange(df, start)
   df$end = c(df$start[-1]-1, length(txt))
@@ -1030,7 +1096,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   df
   
   
-  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="", note.ind = df$note.ind, note.label=df$note.label)
+  dt = data.table(fragment.ind = 1:n,ex.ind=df$ex.ind, view.ind=df$view.ind, type=df$type, type.ind=df$type.ind, chunk.name="",chunk.ind=0,info.name="", html=vector("list", n), code="", note.ind = df$note.ind, note.label=df$note.label, addon.id="")
   keep.row = rep(TRUE, NROW(dt))
   
   i = 5
@@ -1073,9 +1139,9 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
       dt$html[[i]] = bsCollapse(open = NULL, id = collapseId,
         bsCollapsePanel(paste0("Info: ",info.name),value=collapsePanelId, html )
       )
-
+    } else if (dt$type[i]=="addon") {
+      dt$addon.id[[i]] = str.right.of(txt[df$start[i]],"#! ")
     } else if (dt$type[i]=="continue") {
-      
     }
   }
   

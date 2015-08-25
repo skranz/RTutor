@@ -189,6 +189,13 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
       ps$cdt$stud.code = ps$cdt$task.txt
     }
   }
+  
+  # init addons for shiny
+  for (ao in ps$rps$addons) {
+    Addon = ps$rps$Addons[[ao$rta$type]]
+    Addon$shiny.init.fun(ao=ao,ps=ps)
+  }
+  
   set.ps(ps)
   
 }
