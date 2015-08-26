@@ -9,6 +9,62 @@
 
 # clear.user()
 
+
+# clear.user()
+get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
+  restore.point("get.user")
+  if (!exists(".__rtutor_user",.GlobalEnv)) {
+    file = paste0(dir,"/current_user.Ruser")
+    if (file.exists(file)) {
+      user = load.user(dir)
+      if (is.null(user.name) | identical(user$name, user.name))
+        return(user)
+    }
+    if (is.null(user.name))
+      user.name = "GUEST"
+    init.user(user.name)
+    save.user()
+  }
+  user = get(".__rtutor_user",.GlobalEnv)
+  if (!identical(user$name, user.name) & !is.null(user.name)) {
+    user = init.user(user.name)
+    save.user()    
+  }
+  return(user)
+}
+
+
+init.user = function(user.name="GUEST") {
+  user = as.environment(list(name=user.name, awards = list()))
+  assign(".__rtutor_user.name",user.name,.GlobalEnv)  
+  assign(".__rtutor_user",user,.GlobalEnv)
+  user
+}
+
+update.user = function(user=get.user()) {
+  save.user(user)
+}
+
+load.user = function(dir = get.ps()$stud.path) {
+  file = paste0(dir,"/current_user.Ruser")
+  load(file=file)
+  assign(".__rtutor_user.name",user$name,.GlobalEnv)  
+  assign(".__rtutor_user",user,.GlobalEnv)  
+  return(invisible(user))
+}
+
+save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path, ps = get.ps()) {
+  if (isTRUE(ps$save.nothing))
+    return()
+  
+  file = paste0(dir,"/current_user.Ruser")
+  save(user, file=file)
+  # Backup
+  file = paste0(dir,"/user_",user.name,".Ruser")
+  save(user, file=file)
+}
+
+
 init.ups = function() {
   ps = get.ps()
   user=get.user()

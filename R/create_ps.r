@@ -213,7 +213,7 @@ te.to.rps = function(te) {
   # Addons data.table: ao.dt
   li = lapply(te$addons, function(ao) {
     rta = ao$rta
-    list(id=rta$id,type=rta$type,optional=rta$optional)
+    list(id=rta$id,type=rta$type,optional=rta$optional,changes.env=rta$changes.env, max.points=rta$max.points, solved=rta$solved, points=rta$points)
   })
   ao.dt = rbindlist(li)
   rows =  items.df$type == "addon"
@@ -480,7 +480,7 @@ add.te.chunk = function(te,ck) {
 add.te.item = function(te, type="", id="") {
   num.items = te$num.items+1
   te$num.items = num.items
-  te$items[[num.items]] = list(item.pos = num.items, ex.name=te$ex.name, type=type,id=id, award.name="")
+  te$items[[num.items]] = list(item.pos = num.items, ex.name=te$ex.name, type=type,id=id, award.name=NA_character_)
 }
 
 add.te.block = function(te) {

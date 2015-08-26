@@ -45,13 +45,22 @@ rtutor.quiz.block.parse = function(txt,type="quiz",name="",id=paste0("addon__",t
   restore.point("rtutor.quiz.block.parse")
   qu = shinyQuiz(id = id,yaml = merge.lines(txt),add.handler = FALSE)
 
-  rta = as.environment(list(type=type,name=name,optional=TRUE, prev.solved=FALSE, solved=FALSE))
+  rta = as.environment(list(
+    id=id,type=type,optional=TRUE, changes.env=FALSE, max.points=length(qu$parts),
+    solved=FALSE, points=0, was.solved=FALSE, had.points=0
+  ))
   qu$rta = rta
   qu
 }
 
 rtutor.quiz.handler = function(app,qu,part.ind, part.solved, solved,...) {
-  cat("Quiz solved = ", solved)
+  restore.point("rtutor.quiz.handler")
+  
+  rta = qu$rta; state=qu$state
+  
+  rta$solved = state$solved
+  rta$points = (sum(state$part.solved) / length(state$part.solved))*rta$max.points
+  process.checked.addon(rta)
 }
 
 examples.quiz = function() {

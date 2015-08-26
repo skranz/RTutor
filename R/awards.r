@@ -32,6 +32,49 @@ show.award = function(award, award.name = award$award.name, html=award$html, txt
   }
 }
 
+get.award.ui.id = function(award.name,ps=get.ps()) {
+  award.ind = which(names(ps$rps$awards) == award.name)
+  paste0("awardUI__",award.ind)
+}
+
+show.shiny.awards = function(ps=get.ps(), user=get.user()) {
+  awards = intersect(names(ps$rps$awards), names(user$awards))
+  for (award.name in awards) {
+    show.shiny.award(award.name)
+  }
+}
+
+show.shiny.award = function(award.name) {
+  html = shiny.award.ui(award.name=award.name)
+  id = get.award.ui.id(award.name)
+  setUI(id, html)
+}
+
+shiny.award.ui = function(award.name, ps=get.ps(), user = get.user()) {
+  restore.point("shiny.award.ui")
+  
+  html = user$awards[[award.name]]$html
+  if (is.null(html)) return(NULL)
+  restore.point("shiny.award.ui")
+  
+  award.ind = which(names(user$awards) == award.name)[1] 
+  
+  collapseId = paste0("collapse_award_",award.ind)
+  collapsePanelId = paste0("collapse_panel_award_",award.ind) 
+  ahtml = bsCollapse(open = NULL, id = collapseId,
+    bsCollapsePanel(paste0("Award: ",award.name),value=collapsePanelId, HTML(html) )
+  )
+  # GOLD: #DFC463
+  txt = gsub(
+    '<div class="panel-heading"',
+    '<div class="panel-heading" style="background-color: #DFC463;box-shadow: 2px 2px 2px #888888;"',
+    as.character(ahtml), fixed=TRUE
+  )
+  return(HTML(txt))  
+  ahtml
+}
+
+
 #' Show all your awards
 #' @export
 awards = function(user = get.user(), as.html=FALSE, details=TRUE) {
@@ -86,59 +129,6 @@ clear.user = function(dir = get.ps()$stud.path) {
   if (file.exists(file))
     file.remove(file)
   
-}
-
-# clear.user()
-get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
-  restore.point("get.user")
-  if (!exists(".__rtutor_user",.GlobalEnv)) {
-    file = paste0(dir,"/current_user.Ruser")
-    if (file.exists(file)) {
-      user = load.user(dir)
-      if (is.null(user.name) | identical(user$name, user.name))
-        return(user)
-    }
-    if (is.null(user.name))
-      user.name = "GUEST"
-    init.user(user.name)
-    save.user()
-  }
-  user = get(".__rtutor_user",.GlobalEnv)
-  if (!identical(user$name, user.name) & !is.null(user.name)) {
-    user = init.user(user.name)
-    save.user()    
-  }
-  return(user)
-}
-
-init.user = function(user.name="GUEST") {
-  user = as.environment(list(name=user.name, awards = list()))
-  assign(".__rtutor_user.name",user.name,.GlobalEnv)  
-  assign(".__rtutor_user",user,.GlobalEnv)
-  user
-}
-
-update.user = function(user=get.user()) {
-  save.user(user)
-}
-
-load.user = function(dir = get.ps()$stud.path) {
-  file = paste0(dir,"/current_user.Ruser")
-  load(file=file)
-  assign(".__rtutor_user.name",user$name,.GlobalEnv)  
-  assign(".__rtutor_user",user,.GlobalEnv)  
-  return(invisible(user))
-}
-
-save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path, ps = get.ps()) {
-  if (isTRUE(ps$save.nothing))
-    return()
-  
-  file = paste0(dir,"/current_user.Ruser")
-  save(user, file=file)
-  # Backup
-  file = paste0(dir,"/user_",user.name,".Ruser")
-  save(user, file=file)
 }
 
 awards.details = function() {S

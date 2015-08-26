@@ -315,8 +315,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
   if (!is.na(ck$award.name)) {
     give.award(ck$award.name, ps=ps)
-    #if (isTRUE(ps$is.shiny))
-    #  update.chunk.ui(chunk.ind = chunk.ind)
+    if (isTRUE(ps$is.shiny))
+      show.shiny.award(ck$award.name)
   }
 
   log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=TRUE,message="")
