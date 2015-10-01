@@ -41,7 +41,7 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, ...) {
 
   app = eventsApp()
   #browser()
@@ -49,7 +49,8 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
                      load.sav=load.sav, sample.solution=sample.solution,
                      run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
                      dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
-                     show.solution.btn = show.solution.btn, clear.user=clear.user,...)
+                     show.solution.btn = show.solution.btn, clear.user=clear.user,
+                     check.whitelist=check.whitelist, wl=wl,...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
@@ -115,10 +116,10 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 show.shiny.ps = show.ps
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL) {
   restore.point("init.shiny.ps")
   setwd(dir)
-  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing)
+  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl)
   
   if (clear.user) {
     user = init.user(user.name = user.name)
@@ -235,8 +236,8 @@ observe.nextExBtns = function(session, ps=get.ps()) {
 }
 
 
-eval.to.string = function(code, envir=parent.frame(), convert=TRUE) {
-  restore.point("eval.to.string")
+rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check.whitelist=isTRUE(ps$check.whitelist), ps=get.ps()) {
+  restore.point("rtutor.eval.to.string")
   txt = sep.lines(code)
   ok = FALSE
   
@@ -249,6 +250,14 @@ eval.to.string = function(code, envir=parent.frame(), convert=TRUE) {
     }
   )
 
+  if (ok & check.whitelist) {
+    res = rtutor.check.whitelist(li,ps=ps)
+    ok = res$ok
+    if (!ok) {
+      all.str = res$msg
+    }
+  } 
+  
   if (ok) {
     all.str = NULL
     add = function(...) {
@@ -282,7 +291,7 @@ eval.to.string = function(code, envir=parent.frame(), convert=TRUE) {
 
 eval.in.ace.console = function(code,envir=parent.frame(), consoleId, session) {
   restore.point("eval.in.ace.console")
-  out = eval.to.string(code,envir, convert=TRUE)
+  out = rtutor.eval.to.string(code,envir, convert=TRUE)
 
   #iconv(out,"UTF-8", "LATIN2")
   if (length(out)==0)
@@ -300,7 +309,7 @@ eval.in.ace.console = function(code,envir=parent.frame(), consoleId, session) {
 
 eval.in.console = function(code, envir=parent.frame()) {
   restore.point("eval.in.console")
-  out = eval.to.string(code,envir)
+  out = rtutor.eval.to.string(code,envir)
   cat(out)
 }
 
@@ -324,14 +333,14 @@ rerun.solved.chunks = function(ps = get.ps()) {
     
     if (!is.false(ps$catch.errors)) {  
       ok = tryCatch({
-        out <- eval.to.string(code,ps$stud.env)
+        out <- rtutor.eval.to.string(code,ps$stud.env)
         TRUE
       }, error = function(e) {
         message(as.character(e))
         FALSE
       })
     } else {
-      out <- eval.to.string(code,ps$stud.env)      
+      out <- rtutor.eval.to.string(code,ps$stud.env)      
     }
     if (!ok) 
       break

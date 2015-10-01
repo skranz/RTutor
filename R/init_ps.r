@@ -46,7 +46,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE) {
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL) {
   restore.point("init.ps")
  
   rps = load.rps(file=rps.file)
@@ -112,6 +112,11 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   class(ps) = c("Problemset","environment")
   
   log.event(type="init_ps")
+  
+  ps$check.whitelist = check.whitelist
+  ps$wl = wl
+  if (isTRUE(ps$check.whitelist))
+    library(WhitelistEval)
   
   return(ps)
 }

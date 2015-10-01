@@ -217,6 +217,17 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   if (has.error)
     return(FALSE)
 
+  
+  if (isTRUE(ps$check.whitelist)) {
+    if (verbose) 
+      display("check whitelist")
+    res = rtutor.check.whitelist(ps$stud.expr.li,ps=ps)
+    if (!res$ok) {
+      ps$failure.message=paste0("security error: ",res$msg)
+      return(FALSE)
+    }
+  } 
+
 
   if (verbose) {
     display("make.chunk.stud.env...")
