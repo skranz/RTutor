@@ -218,11 +218,15 @@ te.to.rps = function(te) {
   items.df = te$items.df
 
   # Addons data.table: ao.dt
+  
+  
   li = lapply(te$addons, function(ao) {
     rta = ao$rta
     list(id=rta$id,type=rta$type,optional=rta$optional,changes.env=rta$changes.env, max.points=rta$max.points, solved=rta$solved, points=rta$points)
   })
-  ao.dt = rbindlist(li)
+  
+  ao.dt = as_data_frame(rbindlist(li))
+
   rows =  items.df$type == "addon"
   ao.dt$award.name = items.df$award.name[rows]
   ao.dt$item.pos = items.df$item.pos[rows]
