@@ -11,4 +11,3 @@ License: Programm code: GPL >= 2.0
 Depends: shinyEvents,markdown,whisker, stringr, stringtools, data.table, dplyr,
          shiny (>= 0.11.1), dplyrExtras, shinyAce, shinyBS (>= 0.61), hwriter, texreg, lmtest,
          restorepoint, RCurl, knitr, jsonlite, DT, DescTools
-Suggests: WhitelistEval
