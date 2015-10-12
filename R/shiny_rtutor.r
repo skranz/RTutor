@@ -101,7 +101,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   }
   
   if (!isTRUE(launch.browser))
-    launch.browser = rstudio::viewer
+    launch.browser = rstudioapi::viewer
   
   
   if (disable.graphics.dev)

@@ -52,6 +52,6 @@ examples.code_complete = function() {
     ac.myace <- myaceAutocomplete("myace",session)
     ac.myace$resume()
   }
-  runEventsApp(app, launch.browser=rstudio::viewer)
+  runEventsApp(app, launch.browser=rstudioapi::viewer)
   
 }

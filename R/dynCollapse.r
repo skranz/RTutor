@@ -9,7 +9,7 @@ examples.dyn.collapse = function() {
     })
   )
   app$ui = ui
-  runEventsApp(app, launch.browser=rstudio::viewer)
+  runEventsApp(app, launch.browser=rstudioapi::viewer)
   
 }
 

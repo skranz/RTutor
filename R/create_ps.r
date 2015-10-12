@@ -687,7 +687,7 @@ add.te.info = function(te) {
   if (FALSE) {
     htmlFile <- tempfile(fileext=".html")
     writeLines(html,htmlFile)
-    rstudio::viewer(htmlFile)  
+    rstudioapi::viewer(htmlFile)  
   }
   info = list(info.name=info.name,type="html", html=html, rmd=txt)
   str = paste0('info("', info.name,'") # Run this line (Strg-Enter) to show info')
@@ -741,7 +741,7 @@ add.te.award = function(te) {
   if (FALSE) {
     htmlFile <- tempfile(fileext=".html")
     writeLines(html,htmlFile)
-    rstudio::viewer(htmlFile)  
+    rstudioapi::viewer(htmlFile)  
   }
   
   # item (chunk or addon) to which the award belongs

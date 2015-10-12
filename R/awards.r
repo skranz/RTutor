@@ -26,7 +26,11 @@ show.award = function(award, award.name = award$award.name, html=award$html, txt
   if (!is.null(html)) {
     htmlFile <- tempfile(fileext=".html")
     writeLines(html,htmlFile )
-    rstudio::viewer(htmlFile)
+    if (require(rstudioapi)) {
+      rstudioapi::viewer(htmlFile)
+    } else {
+      cat(paste0("\n*** ",award.name, " ***\n", txt," (awarded in ", award$granted.in, ")\n"))
+    }
   } else {
     cat(paste0("\n*** ",award.name, " ***\n", txt," (awarded in ", award$granted.in, ")\n"))
   }

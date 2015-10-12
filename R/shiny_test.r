@@ -78,7 +78,7 @@ examples.shiny.test.mathjax = function() {
   runApp(list(
     ui=ui,
     server=server)
-  , launch.browser = rstudio::viewer)
+  , launch.browser = rstudioapi::viewer)
 }
 
 
@@ -109,7 +109,7 @@ examples.shiny.tabset = function() {
     })
   }
 
-  runApp(list(ui=ui,server=server),launch.browser = rstudio::viewer)
+  runApp(list(ui=ui,server=server),launch.browser = rstudioapi::viewer)
 }
 
 
@@ -140,5 +140,5 @@ examples.shiny.navlistPanel = function() {
     })
   }
 
-  runApp(list(ui=ui,server=server),launch.browser = rstudio::viewer)
+  runApp(list(ui=ui,server=server),launch.browser = rstudioapi::viewer)
 }

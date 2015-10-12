@@ -11,7 +11,11 @@ info = function(info.name, ps = get.ps()) {
   }
   htmlFile <- tempfile(fileext=".html")
   writeLines(infos[[info.name]]$html,htmlFile )
-  rstudio::viewer(htmlFile)
+  if (require(rstudioapi)) {
+    rstudioapi::viewer(htmlFile)
+  } else {
+    cat("Info boxes can only be shown from RStudio. Please install the package rstudioapi.")
+  }
 
 }
 

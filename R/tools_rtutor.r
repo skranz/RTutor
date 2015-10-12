@@ -118,7 +118,8 @@ view.in.pane = function(html=NULL, markdown=NULL) {
   } else if (!is.null(html)) {
     writeLines(html,htmlFile)
   }
-  rstudio::viewer(htmlFile)
+  if (require(rstudio))
+    rstudioapi::viewer(htmlFile)
 }
 
 

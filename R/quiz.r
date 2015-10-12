@@ -90,7 +90,7 @@ award:
   app$ui = qu$ui
   add.quiz.handlers(qu)
   
-  runEventsApp(app, launch.browser=rstudio::viewer)
+  runEventsApp(app, launch.browser=rstudioapi::viewer)
   
 }
 
