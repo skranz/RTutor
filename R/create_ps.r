@@ -11,9 +11,10 @@ examples.create.ps = function() {
   ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
   libs = NULL # character vector of all packages you load in the problem set
   #name.rmd.chunks(sol.file) # set auto chunk names in this file
-  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
+  create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, whitelist.report = TRUE)
   show.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, run.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
 
+  ps = init.ps(ps.name)
 }
 
 
@@ -22,7 +23,7 @@ examples.create.ps = function() {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist()) {
   restore.point("create.ps")
   
   CREATE.PS.ENV$fragment.only = fragment.only
@@ -45,6 +46,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
                         user.name=sol.user.name, ps.dir=dir)
   write.output.solution(te=te, header=header,footer=footer,
                         user.name=sol.user.name, ps.dir=dir)
+  
   
   task.txt = write.empty.ps(te=te,  header=header,footer=footer,
                             user.name=user.name, ps.dir=dir)
@@ -73,6 +75,11 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   if (!rps.has.sol) {
     rps$cdt$sol.txt = rep("",NROW(rps$cdt))
   }
+  
+  if (whitelist.report) {
+    rtutor.whitelist.report(rps=rps, te=te, wl=wl)
+  }
+
   
   save.rps(rps)
   remove.ups(ps.name=rps$ps.name)

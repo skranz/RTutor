@@ -75,8 +75,8 @@ grade.sub.df = function(sub.df) {
   
   # Grade all rows of sub.df separately
   li = lapply(1:NROW(sub.df), function(i) {
-    grd = load.grd(sub.df$grd.file)
-    grd$total
+    sub = load.sub(sub.df$sub.file)
+    sub$total
   })
   df = bind_rows(li)
   res = cbind(sub.df, df)
@@ -105,16 +105,16 @@ grade.sub.df = function(sub.df) {
 }
 
 
-load.grd.with.names = function(file) {
-  grd = load.grd(file)
+load.sub.with.names = function(file) {
+  sub = load.sub(file)
   stud.name = str.left.of(file,"_")
   Encoding(stud.names) <- "UTF-8"
-  grd$stud.name = stud.name
+  sub$stud.name = stud.name
   
-  grd
+  sub
 }
 
-load.grds = function(as=NULL, base.dir=NULL, files=NULL) {
+load.subs = function(as=NULL, base.dir=NULL, files=NULL) {
   if (is.null(files) & length(as)>1) {
     ass = as
     li = lapply(ass, function(as) {
@@ -123,22 +123,22 @@ load.grds = function(as=NULL, base.dir=NULL, files=NULL) {
     })
     files = do.call("c",li)
   }
-  grd.li = lapply(files, load.grd.with.name)  
-  grd.li
+  sub.li = lapply(files, load.sub.with.name)  
+  sub.li
 }
   
 
-import.subs = function(as=NULL, base.dir=NULL, files=NULL, grd.li = NULL) {
+import.subs = function(as=NULL, base.dir=NULL, files=NULL, sub.li = NULL) {
   restore.point("import.subs")
   
-  if (is.null(grd.li)) {
-    grd.li = load.grds(as=as, base.dir=base.dir, files=files)
+  if (is.null(sub.li)) {
+    sub.li = load.subs(as=as, base.dir=base.dir, files=files)
   }
 
   # Grade all rows of sub.df separately
-  li = lapply(grd.li, function(grd) {
-    res = grd$total
-    res$stud.name = grd$stud.name
+  li = lapply(sub.li, function(sub) {
+    res = sub$total
+    res$stud.name = sub$stud.name
     res
   })
   sub.df = bind_rows(li)
@@ -167,24 +167,24 @@ import.subs = function(as=NULL, base.dir=NULL, files=NULL, grd.li = NULL) {
   
   
   # Grade all rows of sub.df separately
-  li = lapply(grd.li, function(grd) {
-    res = grd$by.chunk
-    res$stud.name = grd$stud.name
+  li = lapply(sub.li, function(sub) {
+    res = sub$by.chunk
+    res$stud.name = sub$stud.name
     res
   })
   by.chunk = bind_rows(li)
 
   
   # Grade all rows of sub.df separately
-  li = lapply(grd.li, function(grd) {
-    res = grd$by.ex
-    res$stud.name = grd$stud.name
+  li = lapply(sub.li, function(sub) {
+    res = sub$by.ex
+    res$stud.name = sub$stud.name
     res
   })
   by.ex = bind_rows(li)
   
   
-  as.environment(list(grd.li = grd.li, sub.df=sub.df, sum.df=sum.df, by.chunk=by.chunk, by.ex=by.ex))
+  as.environment(list(sub.li = sub.li, sub.df=sub.df, sum.df=sum.df, by.chunk=by.chunk, by.ex=by.ex))
 
   
 }
@@ -262,7 +262,7 @@ check.submitted.rmd = function(sub.df, run.dir=paste0(base.dir,"/run"), res.dir 
     setwd(run.dir)
     cat("\nCheck problemset ", su$ps.name, " of ", su$stud.name,"\n")
 
-    new.grd = try(grade.ps(ps.name=su$ps.name, stud.path=run.dir, stud.short.file=su$rmd.org.file,reset = TRUE,user.name = su$user.name))
+    new.sub = try(grade.ps(ps.name=su$ps.name, stud.path=run.dir, stud.short.file=su$rmd.org.file,reset = TRUE,user.name = su$user.name))
     
     if (!identical(oug$num.success, nug$num.success)) {
       write.grade.log(paste0("Recheck ", su$ps.name, " of ", su$stud.name,"\n",

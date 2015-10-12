@@ -116,7 +116,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$check.whitelist = check.whitelist
   ps$wl = wl
   if (isTRUE(ps$check.whitelist))
-    library(WhitelistEval)
+    library(whitelistcalls)
   
   return(ps)
 }
