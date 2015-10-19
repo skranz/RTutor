@@ -1,7 +1,7 @@
 ---
 title: An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 author: Sebastian Kranz, Ulm University 
-date: 'Version from 2015-05-26'
+date: 'Version from 2015-10-19'
 output:
   pdf_document:
     number_sections: yes
@@ -23,15 +23,21 @@ So this is not the easiest way for writing a thesis, but from those students who
 
 ## 1. Find an interesting economic article
 
-First you need to find an interesting article for which the data (and ideally also the original code) is accessible. I have created a website that helps to search for candidate articles:   
+First you need to find an interesting article for which the data (and ideally also the original code) is accessible.
 
+**New**: A  list of selected articles with data from the *Review of Eeconomics and Statistics* can be found here:
+
+[http://econfin.de/rtutor/restat.html](http://econfin.de/rtutor/restat.html)
+
+(I have sorted the beginning of the list according to which articles I found more interesting.)
+
+**Article database**: I have created a searchable database of articles with data from selected journals (AER, AEJ, REStud). It can be found here:
 
 [http://econfin.de:3838/articles/](http://econfin.de:3838/articles/)
 
+You can search for specific topics in the database by entering different [Journal of Economic Literature (JEL) codes](https://www.aeaweb.org/econlit/jelCodes.php), that classify economic articles by different topics. 
 
-You can search for specific topics by entering different [Journal of Economic Literature (JEL) codes](https://www.aeaweb.org/econlit/jelCodes.php), that classify economic articles by different topics. 
-
-The shown articles contain a link to journal website of the article ([example](https://www.aeaweb.org/articles.php?doi=10.1257/aer.100.3.724)). You can download the article there (due to access restrictions this works only from the university network).
+The shown articles contain a link to the journal website of the article ([example](https://www.aeaweb.org/articles.php?doi=10.1257/aer.100.3.724)). You can download the article there (due to access restrictions this works only from the university network).
 
 ### Zip file with data and code
 From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is inaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
