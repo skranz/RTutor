@@ -12,7 +12,8 @@ show.ps(ps.name, user.name = "Seb", sav.file = NULL,
   offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
   is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
   save.nothing = FALSE, show.solution.btn = TRUE,
-  disable.graphics.dev = TRUE, ...)
+  disable.graphics.dev = TRUE, clear.user = FALSE,
+  check.whitelist = !is.null(wl), wl = NULL, ...)
 }
 \arguments{
 \item{load.sav}{shall the last saved be loaded?}

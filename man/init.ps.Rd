@@ -6,7 +6,8 @@
 \usage{
 init.ps(ps.name, dir = getwd(), stud.short.file = paste0(ps.name, ".Rmd"),
   rps.file = paste0(rps.dir, "/", ps.name, ".rps"), log.file = paste0(dir,
-  "/", ps.name, ".log"), rps.dir = dir, save.nothing = FALSE)
+  "/", ps.name, ".log"), rps.dir = dir, save.nothing = FALSE,
+  check.whitelist = !is.null(wl), wl = NULL, use.memoise = NULL)
 }
 \arguments{
 \item{ps.name}{the name of the problem set}

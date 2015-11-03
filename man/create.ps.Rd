@@ -8,10 +8,35 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
   libs = NULL, stop.when.finished = FALSE, extra.code.file = NULL,
   var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = TRUE,
-  add.enter.code.here = FALSE, add.shiny = TRUE)
+  add.enter.code.here = FALSE, add.shiny = TRUE, addons = NULL,
+  whitelist.report = FALSE, wl = rtutor.default.whitelist(),
+  use.memoise = FALSE, memoise.funs = rtutor.default.memoise.funs())
+}
+\arguments{
+\item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
+
+\item{ps.name}{the name of the problem set}
+
+\item{user.name}{can pick a default user.name (will typically not be set)}
+
+\item{sol.user.name}{the user.name set in the sample solution}
+
+\item{dir}{the directory in which all files are found and wil be saved to}
+
+\item{libs}{character vector with names of libraries that will be used by the problem set}
+
+\item{extra.code.file}{the name of an r file that contains own functions that will be accessible in the problme set}
+
+\item{var.txt.file}{name of the file that contains variable descriptions (see thee vignette for an explanation of the file format)}
+
+\item{rps.has.sol}{shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily}
+
+\item{use.memoise}{shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.}
+
+\item{memoise.funs}{list of functions that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file.}
 }
 \description{
-Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
-and a sample solution .rmd file (overwrites existing files)
+Generates  .rps file, and .rmd files for empty ps , sample solution
+and output solution
 }
 

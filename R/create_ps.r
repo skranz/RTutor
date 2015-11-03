@@ -20,10 +20,22 @@ examples.create.ps = function() {
 
 #' Generate a problem set from a solution file
 #' 
-#' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
-#' and a sample solution .rmd file (overwrites existing files)
+#' Generates  .rps file, and .rmd files for empty ps , sample solution 
+#' and output solution
+#' 
+#' @param sol.file file name of the _sol.rmd file that specifies the problem set
+#' @param ps.name the name of the problem set
+#' @param user.name can pick a default user.name (will typically not be set)
+#' @param sol.user.name the user.name set in the sample solution
+#' @param dir the directory in which all files are found and wil be saved to
+#' @param libs character vector with names of libraries that will be used by the problem set
+#' @param extra.code.file the name of an r file that contains own functions that will be accessible in the problme set
+#' @param var.txt.file name of the file that contains variable descriptions (see thee vignette for an explanation of the file format)
+#' @param rps.has.sol shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily
+#' @param use.memoise shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.
+#' @param memoise.funs list of functions that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file. 
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(), memoise.funs = rtutor.default.memoise.funs(), use.memoise=FALSE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs()) {
   restore.point("create.ps")
   
   CREATE.PS.ENV$fragment.only = fragment.only
