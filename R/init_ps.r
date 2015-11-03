@@ -46,10 +46,14 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL) {
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL) {
   restore.point("init.ps")
  
   rps = load.rps(file=rps.file)
+  
+  if (!is.null(use.memoise))
+    rps$use.memoise = use.memoise
+  
   ps = new.env()
   set.ps(ps)
   ps$name = ps.name
@@ -58,6 +62,10 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$save.nothing = save.nothing
   
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
+  
+  if (isTRUE(rps$use.memoise)) {
+    copy.into.env(dest=ps$ps.baseenv, source=rps$memoise.fun.li)
+  }
   
   
   # for backwards compatibility

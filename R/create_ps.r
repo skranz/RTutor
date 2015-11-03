@@ -23,7 +23,7 @@ examples.create.ps = function() {
 #' Generates  _struc.r file, .rps file, empty problem set .r and .rmd files
 #' and a sample solution .rmd file (overwrites existing files)
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist()) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(), memoise.funs = rtutor.default.memoise.funs(), use.memoise=FALSE) {
   restore.point("create.ps")
   
   CREATE.PS.ENV$fragment.only = fragment.only
@@ -80,6 +80,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     rtutor.whitelist.report(rps=rps, te=te, wl=wl)
   }
 
+  rps$use.memoise = use.memoise
+  if (use.memoise)
+    rps$memoise.fun.li = memoise.fun.li(memoise.funs)
   
   save.rps(rps)
   remove.ups(ps.name=rps$ps.name)
@@ -914,7 +917,6 @@ check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FAL
 
 # To check your solution in RStudio save (Ctrl-S) and then run all chunks (Ctrl-Alt-R)
 ```
-Name: `r user.name`
 ") 
   str
 }
