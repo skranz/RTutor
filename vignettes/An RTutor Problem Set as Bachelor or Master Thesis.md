@@ -249,7 +249,11 @@ There are many ways to perform some analysis in R, but one goal of the problem s
 You may want to write some own functions that simplify some steps of the analysis and make the user code shorter. You can put them into an extra .r file whose file name you pass as argument `extra.code.file` to `create.ps`. Your functions can then be called everywhere in the problem set. 
 
 ### Use quizzes
-You can also ask the user a question about the data or regression results in form of a quiz. Here is an example, how you can implement a quiz chunk:
+
+You can also ask the user a question about the data or regression results in form of a quiz. There is now an addon that allows to include multiple choice and other quizes in a nice format in shiny based problem sets. It is not yet well documented, but the file `QuizExample_sol.Rmd` in the folder `/inst/examples` contains an example, how this quiz addon can be used. The examples, are hopefully self explanatory. Important is that you set the parameter `addons="quiz"` in your call to `create.ps`.
+
+
+Alternatively, you can include quizes as part of a normal R code chunk. Here is an example, how you can implement a quiz chunk:
 
 ```
     c) Look at the different plots to answer the following questions (replace '???' with the right answer):
@@ -303,9 +307,11 @@ This sections gives recommendations for packages and functions you should use fo
 
 ### Regressions
 
-#### present regression results: showreg (in regtools)
+#### present regression results: stargazer
 
-The package `regtools` contains the function `showreg` to show regression results. It shows results from one or several regression objects in a typical format used in journal articles. The function is basically a wrapper to functions in the package `texreg`. I think that the output of the usual `summary` function typically does not look as nice in an interactive problem set. 
+The package `stargazer` contains the function `stargazer` that allows to show regression results as nice HTML tables similar to the tables shown in scientific articles. The package `texreg` contains similar functions, but seem a bit less powerful and not compatible with as large a set of regression models. 
+
+That function `showreg` in my package `regtools` is a wrapper to `texreg` or `stagazer` and also allows to show robust standard errors (not clustered ones) in a simple fashion (see below).
 
 
 #### basic regression functions
@@ -317,10 +323,15 @@ The base R functions `lm` and `glm` allow linear regressions and generalized lin
   
 For other models search the internet.
 
-### Robust standard errors: showreg, sandwich, multiwayvcov, lfe
+### Robust standard errors: lfe, sandwich, multiwayvcov
 
-Dealing with robust standard errors in R is traditionally a bit more complicated than in Stata, but can be done. Many forms of robust standard errors can be computed with the package `sandwich`, but there is no direct support for clustered standard errors. The package `multiwayvcov` allows different versions of clustered standard errors. The package `lfe` contains methods to compute robust and clustered standard errors for panel data sets. 
-For simplicity, the function `showreg` contains the arguments `robust` and `robust.type` or the more general `vcov.li` that allow showing robust standard errors in an output table. 
+Dealing with robust standard errors in R is traditionally a bit more complicated than in Stata, but can be done. 
+
+Often papers report 'cluster robust' standard errors. To obtain these, it is best to run your linear regression or IV regression with the function `felm` in the package `lfe`, which allows for clusters in the regression formula (see the documentation for `felm`). If you output the results with `stargazer` or `showreg` those cluster robust standard errors should then be automatically be shown.
+
+Many other forms of robust standard errors can be computed with the package `sandwich`, but there is no direct support for clustered standard errors. The package `multiwayvcov` allows different versions of clustered standard errors. If you want to show the robust standard errors with stargazer, you have to provide the computed standard errors separately.
+
+For simplicity, the function `showreg` contains the arguments `robust` and `robust.type` or the more general `vcov.li` that allow showing robust standard errors in an output table.
 
 
 ### Marginal effects for probit and logit models:
@@ -329,7 +340,7 @@ To show marginal effects for probit and logit models use the argument `coef.tran
 
 ### Effect sizes: effectplot (in regtools)
 
-Since explanatory variables are usually measured in different units, it is often not easy to compare the sizes of the effects that 'typical' changes of different explanatory variables have on the dependent variable in a regression model. The function `effectplot` shall help for such comparison. The key idea is to compare the effects the explanatory variables change from e.g. their 10% quantile to their 90% quantile. For non-linear specifications also the package `effects` is quite helpful, to see how effects change over the range of values of an explanatory variable.
+Since explanatory variables are usually measured in different units, it is often not easy to compare the sizes of the effects that 'typical' changes of different explanatory variables have on the dependent variable in a regression model. The function `effectplot` in my package `regtools` shall help for such comparison. The key idea is to compare the effects the explanatory variables change from e.g. their 10% quantile to their 90% quantile. For non-linear specifications also the package `effects` is quite helpful, to see how effects change over the range of values of an explanatory variable.
 
 ### Data preparation: dplyr, tidyr and dplyrExtras
 
