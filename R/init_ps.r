@@ -83,20 +83,21 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
     copy.into.env(source=rps$extra.code.env, dest = ps$ps.baseenv) 
   }
   
-  
-  cdt = rps$cdt
+    
+  cdt = as_data_frame(rps$cdt)
   
   
   
   cdt$is.solved = FALSE
   cdt$chunk.changed = FALSE
-  cdt$stud.env = lapply(1:NROW(cdt), function(chunk.ind) {
+  cdt$stud.env =lapply(1:NROW(cdt), function(chunk.ind) {
     new.stud.env(chunk.ind)
   })
   cdt$old.stud.code = cdt$task.txt
-  #cdt$stud.code = cdt$task.txt
+
+  cdt = as.data.table(cdt)
   
-  ps$cdt = cdt  
+  ps$cdt = rps$cdt = cdt  
   ps$tdt = rps$tdt
   
   edt = rps$edt
