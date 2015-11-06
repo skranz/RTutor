@@ -9,11 +9,12 @@ Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This cr
 #< ignore
 ```{r "create_ps",include=TRUE , eval=TRUE}
 library(RTutor)
+library(yaml)
 #library(restorepoint)
 #setwd("D:/libraries/RTutor/examples")
 setwd("D:/libraries/RTutor/RTutor/inst/examples")
 ps.name = "QuizExample"; sol.file = paste0(ps.name,"_sol.Rmd")
-libs = c() 
+libs = c("yaml") 
 # Important add the parameter addons="quiz" !
 create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE, addons="quiz")
 
@@ -104,5 +105,11 @@ Enter 2*2
 ---
 
 ## Exercise 2 -- Empty
+
+
+Enter 2*2
+```{r}
+2*2
+```
 
 That's all folks!
