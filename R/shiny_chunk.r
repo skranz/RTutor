@@ -172,11 +172,19 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   cat("code:\n", code)
   if (is.solved) {
     code = code
-    html = chunk.to.html(code, chunk.ind, nali=nali)
+    opts = ps$cdt$chunk.opt[[chunk.ind]]
+    if (!is.null(opts[["output"]])) {
+      html = chunk.special.output(code, chunk.ind, nali=nali, output=opts[["output"]], ps=ps) 
+    } else {
+      html = chunk.to.html(code, chunk.ind, nali=nali)
+      html = HTML(html)
+    }
   } else {
     html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
+    html = HTML(html)
   }
-  html = HTML(html)
+  
+  restore.point("make.chunk.output.ui.2")
   
   cat("\nbefore chunk.fluidRow(")
 
