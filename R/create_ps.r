@@ -33,7 +33,7 @@ examples.create.ps = function() {
 #' @param var.txt.file name of the file that contains variable descriptions (see thee vignette for an explanation of the file format)
 #' @param rps.has.sol shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily
 #' @param use.memoise shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.
-#' @param memoise.funs list of functions that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file. 
+#' @param memoise.funs character vector of function names that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file. 
 #' @export
 create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs()) {
   restore.point("create.ps")
