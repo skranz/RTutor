@@ -15,6 +15,7 @@ chunk.special.output = function(txt, chunk.ind, output=ps$cdt$chunk.opt[[chunk.i
 chunk.output.htmlwidget = function(txt, chunk.ind,widget.name, widget.id=paste0("chunkHtmlWidget_",ps$cdt$nali[[chunk.ind]]$name), outputFun = NULL, ps = get.ps(), nali=NULL, app=getApp(), width="100%", height="400px",...) {
   restore.point("chunk.output.htmlwidget")
 
+  txt = paste0("{\n", paste0(txt, collapse="\n"),"\n}")
   expr = parse(text=txt)[[1]]
   
   if (is.null(outputFun)) {
@@ -26,7 +27,7 @@ chunk.output.htmlwidget = function(txt, chunk.ind,widget.name, widget.id=paste0(
   ui = outputFun(widget.id,width=width,height=height)
   stud.env = ps$cdt$stud.env[[chunk.ind]]
   
-  app$output[[widget.id]] = app$session$output[[widget.id]] =  shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
+  app$output[[widget.id]] = app$session$output[[widget.id]] =  htmlwidgets::shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
   
   #app$session$output[[widget.id]] = shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
   
