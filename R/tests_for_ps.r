@@ -454,11 +454,12 @@ check.regression = function(var, str.expr, part=NULL, ps=get.ps(),stud.env = ps$
 
 #' Test: Compare the expression check.expr evaluated in the student's environment with the solution correct.expr
 #' 
+#' @param check.expr the expression to be checked
+#' @param correct.expr the correct expression
 #' @param vars a variable name or vector of variable names
 #' @param exists shall existence be checked (similar length, class, values)
 #' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
 #' @param failure.message.add a text that will be added to all failure messages
-#' @param expr
 #' @export 
 check.expr = function(check.expr, correct.expr,
     failure.message = "{{check_expr}} has the wrong values!",

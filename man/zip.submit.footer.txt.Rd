@@ -7,6 +7,17 @@
 zip.submit.footer.txt(ps.name)
 }
 \description{
-Generate default footer text for a Rmd file
+## Sumbitting your solution
+}
+\details{
+Submit your solution as a zip file with name
+`solution_",ps.name,"_by_username.zip`
+that contains the files
+`",ps.name,".rmd, ", ps.name,".log, username_",ps.name,".ups`
+(replace `username` by your user name)
+
+If you have installed RTools (http://cran.r-project.org/bin/windows/Rtools/) and updated your Windows PATH variable you can also try calling
+`zip.solution()` 
+to generate the zip file automatically.
 }
 

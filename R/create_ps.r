@@ -948,7 +948,6 @@ install.header.txt = function() {
 }
 
 #' Generate default footer text for a Rmd file
-#' @export
 zip.submit.footer.txt = function(ps.name) {
 paste0("
 #'

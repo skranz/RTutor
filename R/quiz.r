@@ -97,16 +97,16 @@ award:
 quizDefaults = function(lang="en") {
   if (lang=="de") {
     list(
-      success = "richtig!",
-      failure= "leider falsch",
-      success_color = "blue",
+      success = "Richtig!",
+      failure= "Leider noch nicht richtig.",
+      success_color = "black",
       failure_color = "red"
     )
   } else {
     list(
-      success = "correct",
-      failure= "not correct",
-      success_color = "blue",
+      success = "Great, you answered correctly!",
+      failure= "Sorry, not yet correct.",
+      success_color = "black",
       failure_color = "red"
     )
   }
@@ -186,7 +186,7 @@ init.quiz.part = function(part=qu$parts[[part.ind]], part.ind=1, qu, has.check.b
   } else if (!is.null(part$answer)) {
     if (is.numeric(part$answer)) {
       part$type = "numeric"
-      if (is.null(part$roundto)) part$roundto=0
+      if (is.null(part$roundto)) part$roundto=1e-7
     } else {
       part$type = "text"
     }
@@ -247,7 +247,7 @@ quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnI
   )
   if (solution) {
     if (part$type=="numeric") {
-      answer = numericInput(part$answerId, label = "",value = part$answer)
+      answer = textInput(part$answerId, label = "",value = part$answer)
     } else if (part$type =="text") {
       answer = textInput(part$answerId, label = "",value = part$answer)
     } else if (part$type=="mc") {
@@ -257,7 +257,7 @@ quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnI
     }
   } else {
     if (part$type=="numeric") {
-      answer = numericInput(part$answerId, label = "",value = NULL)
+      answer = textInput(part$answerId, label = "",value = "")
     } else if (part$type =="text") {
       answer = textInput(part$answerId, label = "",value = "")
     } else if (part$type=="mc") {
@@ -272,7 +272,7 @@ quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnI
   } else {
     button = NULL
   }
-  list(head,answer,button, uiOutput(part$resultId))
+  list(head,answer,uiOutput(part$resultId),button)
 }
 
 
