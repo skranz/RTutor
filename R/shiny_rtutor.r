@@ -367,13 +367,14 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   if (paste0(txt,collapse="\n") == "")
     txt = "# Press 'edit' to enter your code."
   
-  if (success.message) {
-    txt = c("# Great, solved correctly!",txt)
-  } else {
-    txt = c("# Not yet solved...",txt)
-    echo = TRUE
-  }
-  
+  if (isTRUE(ps$cdt$num.e[[chunk.ind]]>0)) {
+    if (success.message) {
+      txt = c("# Great, solved correctly!",txt)
+    } else {
+      txt = c("# Not yet solved...",txt)
+      echo = TRUE
+    }
+  }  
   opt = default.out.chunk.options()
   copt = ps$cdt$chunk.opt[[chunk.ind]]
   if (length(copt)>0) {

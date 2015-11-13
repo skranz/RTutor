@@ -1,5 +1,15 @@
 # News for RTutor package
 
+### 2015-11-13: hints at beginning of chunk possible
+
+- You can now add a hint block at the beginning of a chunk,
+  before any other command.
+  While other hints are linked to the previous expression that will
+  be tested, the initial hint works for the whole chunk.
+  It will be shown in addition to any expression specific hint.
+  It will also  be shown if the code cannot be evaluated
+  or in a chunk that has no expression to be tested.
+
 
 ### 2015-11-08: htmlwidget support
 

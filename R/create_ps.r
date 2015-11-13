@@ -202,6 +202,11 @@ te.to.rps = function(te) {
     hint.expr = lapply(ex$chunks, function(ck) {
       lapply(ck$hint.txt, parse.text)
     })
+    chunk.hint = lapply(ex$chunks, function(ck) {
+      if (is.null(ck$chunk.hint.txt)) return(NULL)
+      parse.text(ck$chunk.hint.txt)
+    })
+    
     sol.txt =  sapply(ex$chunks, function(chunk) paste0(chunk$sol.txt, collapse="\n"))
     
     task.txt =  sapply(ex$chunks, function(chunk) paste0(chunk$task.txt, collapse="\n"))
@@ -214,7 +219,7 @@ te.to.rps = function(te) {
     })
     
     
-    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt, optional=optional) 
+    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt, optional=optional, chunk.hint=chunk.hint) 
     # Remove chunks without expressions
     dt = dt[add.chunk,]
     if (NROW(dt)>0) 
@@ -558,7 +563,13 @@ add.te.block = function(te) {
     var = args
     add.te.compute(te,ck,var)
   } else if (type == "hint") {
-    ck$hint.txt[length(ck$hint.txt)] <- paste0(btxt,collapse="\n")
+    restore.point("shfkjdkfhdkhfurhui")
+    
+    if (length(ck$hint.txt) == 0) {
+      ck$chunk.hint.txt =  paste0(btxt,collapse="\n")
+    } else {
+      ck$hint.txt[length(ck$hint.txt)] <- paste0(btxt,collapse="\n")
+    }
   } else if (type == "add_to_hint") {
     hint.txt = hint.code.for.e(te$last.e,extra.code = btxt)  
     ck$hint.txt[length(ck$hint.txt)] <- hint.txt
@@ -864,6 +875,7 @@ get.empty.chunk = function() {
   ck = new.env()
   ck$test.txt = NULL
   ck$hint.txt = NULL
+  ck$chunk.hint.txt = NULL
   ck$task.txt = NULL
   ck$sol.txt = NULL
   ck$out.txt = NULL

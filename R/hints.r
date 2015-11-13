@@ -24,33 +24,72 @@ info = function(info.name, ps = get.ps()) {
 #' @export
 hint = function(..., ps=get.ps()) {
   restore.point("hint")
-    
+
   if (is.null(ps$chunk.ind)) {
     cat("Please test the chunk before you ask for a hint.")
     return(invisible(""))
   }
+
+    
+  # In old RTutor version there was no chunk.hint
+  if ("chunk.hint" %in% colnames(ps$cdt)) {
+    chunk.hint = ps$cdt$chunk.hint[[ps$chunk.ind]]
+  } else {
+    chunk.hint = NULL
+  }
+  
+  do.log = TRUE
+  
+  # No expression set
   if (ps$e.ind == 0) {
-    cat("There is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
-    return(invisible(""))
+    if (!is.null(chunk.hint)) {
+      eval(chunk.hint,ps$stud.env)
+      log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind) 
+      if (ps$cdt$num.e[[ps$chunk.ind]]>0) {
+        cat("\nI can't give you a more specific hint, since I can't run your code, due to an error.")
+      }
+    } else {
+      do.log = FALSE
+      if (ps$cdt$num.e[[ps$chunk.ind]]==0) {
+        cat("Sorry, but there is no hint for your current problem.")
+      } else {
+        cat("There is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
+      }
+    }
+    
+  # hint for expression ps$e.ind  
+  } else {
+    hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
+    if (length(hint.expr)==0) {
+      if (!is.null(chunk.hint)) {
+        eval(hint.expr,ps$stud.env)
+        log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind) 
+      } else {
+        do.log = FALSE
+        cat("Sorry, but there is no hint for your current problem.")
+      }
+    } else {
+      eval(hint.expr,ps$stud.env)
+      if (!is.null(chunk.hint)) {
+        eval(chunk.hint,ps$stud.env)
+      }  
+    }
   }
   
   #ps$chunk.ind
   #ps$e.ind  
-  hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
-  if (length(hint.expr)==0) {
-    cat("Sorry, but there is no hint for your current problem.")
-    return(invisible(""))
-  }
-  eval(hint.expr,ps$stud.env)
-  #log.hint(hint=hint, ex = ex, ps = ps)
+  if (do.log) {
+    log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)  
   
-  log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)  
-
-  # Update ups statistics
-  ups = get.ups()
-  if (!ups$tdt$success[ps$tdt.ind]) {
-     ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
-     save.ups()
+    # Update ups statistics
+    if (isTRUE(ps$e.ind>0)) {
+      ups = get.ups()
+      
+      if (!ups$tdt$success[ps$tdt.ind]) {
+         ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
+         save.ups()
+      }
+    } 
   }
   invisible("")
 }
