@@ -1,3 +1,50 @@
+#" ?foo / help(foo)
+#' @export
+knit_print.help_files_with_topic = function(x, options) {
+  n = length(x)
+  topic = attr(x, 'topic')
+  if (n == 0) return(paste(
+    "No documentation for '", topic, "' in specified packages and libraries",
+    sep = ''
+  ))
+  base = basename(file <- as.character(x))
+  pkg  = basename(dirname(dirname(file)))
+  if (n > 1) return(paste(
+    "Help on topic '", topic, "' was found in the following packages:\n\n",
+    paste('  *', pkg, collapse = '\n'), sep = ''
+  ))
+
+  db = tools::Rd_db(pkg)
+  Rd = db[[which(base == sub('[.]Rd$', '', basename(names(db))))]]
+  Rd = extract_Rd(Rd, options$render.args$help$sections)
+
+  type = knitr:::pandoc_to()
+  if (is.null(type)) {
+    type = knitr:::out_format()
+    if (type == 'html') type = 'HTML' else if (type != 'latex') type = 'txt'
+  } else {
+    type = if (type %in% c('html', 'markdown')) 'HTML' else {
+      # it seems \bold in \usepackage{Rd} conflicts with a certain package in
+      # the Pandoc template, so unfortunately we cannot use latex format here
+
+      # if (type %in% c('latex', 'beamer')) 'latex' else
+      'txt'
+    }
+  }
+
+  # call tools::Rd2[txt,HTML,latex]
+  convert = getFromNamespace(paste('Rd', type, sep = '2'), 'tools')
+  out = paste(capture.output(convert(Rd)), collapse = '\n')
+  # only need the body fragment (Rd2HTML(fragment = TRUE) does not really work)
+  if (type == 'HTML') {
+    out = gsub('.*?<body>(.*)</body>.*', '<div class="r-help-page">\\1</div>', out)
+    out = gsub('<pre>', '<pre class="r">', out)
+  }
+
+  # I do not know where _\b came from in the text mode...
+  if (type == 'txt') gsub('_\b', '', out) else asis_output(out)
+}
+
 
 
 browser.help <- function (topic, package = NULL, lib.loc = NULL, verbose = getOption("verbose"), try.all.packages = getOption("help.try.all.packages"), help_type = "html", browser=NULL) 

@@ -170,7 +170,7 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
 #' @param ex.name The name of the exercise
 #' @param stud.code The code of the student's solution as a string (or vector of strings)
 #' @export
-check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE) {
+check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE, store.output=TRUE) {
   restore.point("check.chunk")
 
   ck = ps$cdt[chunk.ind,]
@@ -248,8 +248,12 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   #eval(ps$stud.expr.li, ps$stud.env)
   ps$e.ind = 0
 
-
-  has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env)
+  # We may not store output for speed reasons
+  # storing output slows down checking of chunk if large
+  # data frame is shown
+  if (!store.output) ps$chunk.console.out=""
+  has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env, store.output=store.output)
+  
 #   tryCatch( eval(ps$stud.expr.li, stud.env),
 #     error = function(e) {
 #       # Evaluate expressions line by line and generate failure message
@@ -274,9 +278,14 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1
 
   # Turn graphics device off
-  if (isTRUE(ps$use.null.device))
+  
+  if (isTRUE(ps$use.null.device)) {
     try(png("NUL"), silent=TRUE)
+    on.exit(try(dev.off(), silent=TRUE),add = TRUE)
+  }
+  # Back to normal graphics device
 
+  
   for (e.ind in seq_along(ck$e.li[[1]])) {
     ps$e.ind = e.ind
     tests = ck$test.expr[[1]][[e.ind]]
@@ -301,8 +310,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
         ps$test.log = c(ps$test.log, ps$failure.message)
         # Back to normal graphics device
-        if (isTRUE(ps$use.null.device))
-          try(dev.off(), silent=TRUE)
+        #if (isTRUE(ps$use.null.device))
+        #  try(dev.off(), silent=TRUE)
 
         return(FALSE)
       } else if (ret=="warning") {
@@ -319,8 +328,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
 
   # Back to normal graphics device
-  if (isTRUE(ps$use.null.device))
-    try(dev.off(), silent=TRUE)
+  #if (isTRUE(ps$use.null.device))
+  #  try(dev.off(), silent=TRUE)
 
   ps$cdt$is.solved[[chunk.ind]] = TRUE
 

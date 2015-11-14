@@ -306,7 +306,7 @@ run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,sessi
   }
 }
 
-check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE) {
+check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE, max.lines=300, store.output=FALSE) {
   cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
@@ -316,11 +316,11 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   #cat("\n check.shiny.chunk3")
 
   if (!is.false(ps$catch.errors)) {  
-    ret = tryCatch(check.chunk(chunk.ind=chunk.ind),
+    ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output),
          error = function(e) {ps$failure.message <- as.character(e)
           return(FALSE)})
   } else {
-    ret = check.chunk(chunk.ind=chunk.ind)   
+    ret = check.chunk(chunk.ind=chunk.ind,store.output=store.output)   
   }
   if (!ret) {
     txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
@@ -328,8 +328,16 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
     ps$cdt$is.solved[chunk.ind] = FALSE
   } else {
     #restore.point("success test shiny chunk")
-    txt = merge.lines(c("You successfully solved the chunk!",
+    
+    if (NROW(ps$chunk.console.out)>max.lines) {
+      txt = merge.lines(
+        c("You successfully solved the chunk!",
+           ps$chunk.console.out[1:max.lines],
+          paste0("\n...", NROW(ps$chunk.console.out)-max.lines," lines ommited...")))
+    } else {
+      txt = merge.lines(c("You successfully solved the chunk!",
                         ps$chunk.console.out))
+    }
     updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
     if (!internal) {
       proceed.with.successfuly.checked.chunk(chunk.ind)
