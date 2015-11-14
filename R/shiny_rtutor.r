@@ -358,7 +358,7 @@ rerun.solved.chunks = function(ps = get.ps()) {
 }
  
 
-chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.ind]]$name), ps = get.ps(), eval=TRUE, success.message=isTRUE(ps$cdt$is.solved[[chunk.ind]]), echo=TRUE, nali=NULL) {
+chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.ind]]$name), ps = get.ps(), eval=TRUE, success.message=isTRUE(ps$cdt$is.solved[[chunk.ind]]), echo=TRUE, nali=NULL, quiet=TRUE) {
   restore.point("chunk.to.html")
   if (is.null(txt))
     return("")
@@ -399,7 +399,7 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   cat("knit2html")
   restore.point("chunk.to.html.knit2html")
   html = try(
-    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE),
+    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet),
   )
   
   # correct weird error if a summary is shown

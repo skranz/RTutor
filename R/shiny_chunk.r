@@ -399,21 +399,14 @@ help.shiny.chunk = function(chunk.ind, cursor=NULL, selection="",...,session=ps$
   } else {
     txt = ps$selection
   }
-  isRStudio <- isTRUE(Sys.getenv("RSTUDIO") == "1")
-  if (isRStudio) {
-    str = paste0("To show help for '", txt,"' use the help in your RStudio window." )
-    updateAceEditor(ps$session, ps$nali$console, value=str, mode="text")   
-    browser.help(topic=txt)
+  
+  help = get.help.txt(txt)
+  # To do: replace special characters in a better manner
+  help = iconv(help, to='ASCII//TRANSLIT')
+  #Encoding(help) = "UTF8"
+  updateAceEditor(ps$session, ps$nali$console, value=help, mode="text")   
 
-  } else {
-    str = paste0("The help for '", txt,"' is shown in a new browser tab." )
-    updateAceEditor(ps$session, ps$nali$console, value=str, mode="text") 
-    help(topic=txt, help_type="html")
-  }
-
-  #browser()
-  #help(topic=txt, help_type="html")
-  cat("help.shiny.chunk: ",txt)
+  return()
 }
 
 restore.shiny.chunk = function(chunk.ind=ps$chunk.ind,...,session=ps$session,ps=get.ps()) {
