@@ -559,11 +559,10 @@ check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ps=get.ps
 #' Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution 
 #' @param df name of the data frame or matrix
 #' @param col name of the column
-#' @param expr
+#' @param expr the test expression that will be evaluated
 #' @param exists shall existence be checked (similar length, class, values)
 #' @param failure.exists a message that is shown if the variable does not exists (similar the other failure.??? variables)
 #' @param failure.message.add a text that will be added to all failure messages
-
 #' @export 
 check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","matrix"),check.all = FALSE,exists=check.all, length=check.all, class=check.all, values=check.all,tol = .Machine$double.eps ^ 0.5,
     failure.exists="{{df}} does not have a column {{col}}.",

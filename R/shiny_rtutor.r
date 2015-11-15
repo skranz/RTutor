@@ -383,7 +383,6 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   opt$eval = eval
   opt$echo = echo
   
-  
   header = paste0("```{r '",name,"'",chunk.opt.list.to.string(opt,TRUE),"}")
   
   
@@ -397,33 +396,18 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   html ="Evaluation error!"
   
   cat("knit2html")
-  restore.point("chunk.to.html.knit2html")
   html = try(
-    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet),
+    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
   )
-  
-  # correct weird error if a summary is shown
-  # the siginifcance levels '***' cause a latex error
-  #html = gsub("&#39;","",html)
-  #html = gsub("&gt;","",html)
-  #html = gsub("|","",html,fixed=TRUE)
-  #html = gsub("---","",html,fixed=TRUE)
+  restore.point("chunk.to.html.knit2html")
 
-  #html = gsub(":","",html) 
-  
-   # Add syntax highlightning
+  # Add syntax highlightning
   if (!is.null(nali$chunkUI)) {
     html = paste0(paste0(html,collapse="\n"),"\n",
      "<script>$('#",nali$chunkUI," pre code').each(function(i, e) {hljs.highlightBlock(e)});</script>")
   }
 
-  #file = tempfile(fileext=".html")
-  #writeLines(html,file)
-  #browseURL(file)
-  
-  #html= markdownToHTML(text=ktxt)
   html
-  #ktxt
 }
 
 chunk.opt.list.to.string = function(li, add.comma=!TRUE) {

@@ -790,7 +790,23 @@ examples.test.code.for.e = function() {
   f(fun <- function(x) {x*x})
 }
 
-test.code.for.e = function(e, extra.arg="") {
+get.expr.test.args = function(e) {
+  restore.point("get.expr.test.args")
+  e = quote(ggplot(aes(x=hp,y=mpg, color=year),data=scat) + geom_point() + geom_point(shape=1) + geom_smooth())
+  
+  funs = find.funs(e)
+  
+  no.value.funs = c("plot","hist","qplot","geom_point","geom_line","geom_smooth","geom_density","lines","points","facet_wrap")
+  if (any(funs %in% no.value.funs)) {
+    args = "check.arg.by.value=FALSE, allow.extra.arg=TRUE,ok.if.same.val = FALSE"  
+  } else {
+    args = ""
+  }
+  args
+  
+}
+
+test.code.for.e = function(e, extra.arg=get.expr.test.args(e)) {
   restore.point("test.code.for.e")
   if (is.null(e))
     return("")

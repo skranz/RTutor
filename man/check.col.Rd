@@ -21,6 +21,8 @@ check.col(df, col, expr = NULL, class.df = c("data.frame", "data.table",
 
 \item{col}{name of the column}
 
+\item{expr}{the test expression that will be evaluated}
+
 \item{exists}{shall existence be checked (similar length, class, values)}
 
 \item{failure.exists}{a message that is shown if the variable does not exists (similar the other failure.??? variables)}

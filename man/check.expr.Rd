@@ -13,6 +13,10 @@ check.expr(check.expr, correct.expr,
   tol = .Machine$double.eps^0.5)
 }
 \arguments{
+\item{check.expr}{the expression to be checked}
+
+\item{correct.expr}{the correct expression}
+
 \item{vars}{a variable name or vector of variable names}
 
 \item{exists}{shall existence be checked (similar length, class, values)}

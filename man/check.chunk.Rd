@@ -6,7 +6,8 @@
 \usage{
 check.chunk(chunk.ind, ps = get.ps(), verbose = FALSE,
   stud.code = ps$cdt$stud.code[[chunk.ind]],
-  stud.env = make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE)
+  stud.env = make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE,
+  store.output = TRUE)
 }
 \arguments{
 \item{stud.code}{The code of the student's solution as a string (or vector of strings)}

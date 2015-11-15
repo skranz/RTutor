@@ -3,7 +3,7 @@ chunk.special.output = function(txt, chunk.ind, output=ps$cdt$chunk.opt[[chunk.i
 
   opts = ps$cdt$chunk.opt[[chunk.ind]]
   if (output=="htmlwidget") {
-    res = chunk.output.htmlwidget(txt=txt, chunk.ind=chunk.ind, widget.name=opts$widget, nali=nali,...)
+    res = chunk.output.htmlwidget(txt=txt, widget.name=opts$widget, chunk.ind=chunk.ind, nali=nali,...)
     return(res)
   } else {
     stop(paste0("Unknown chunk output ", output, "."))
@@ -12,7 +12,7 @@ chunk.special.output = function(txt, chunk.ind, output=ps$cdt$chunk.opt[[chunk.i
   
 }
 
-chunk.output.htmlwidget = function(txt, chunk.ind,widget.name, widget.id=paste0("chunkHtmlWidget_",ps$cdt$nali[[chunk.ind]]$name), outputFun = NULL, ps = get.ps(), nali=NULL, app=getApp(), width="100%", height="400px",...) {
+chunk.output.htmlwidget = function(txt, widget.name,chunk.ind=ps$chunk.ind, widget.id=paste0("chunkHtmlWidget_",ps$cdt$nali[[chunk.ind]]$name), outputFun = NULL, ps = get.ps(), nali=NULL, app=getApp(), width="100%", height="400px",...) {
   restore.point("chunk.output.htmlwidget")
 
   txt = paste0("{\n", paste0(txt, collapse="\n"),"\n}")
@@ -26,9 +26,10 @@ chunk.output.htmlwidget = function(txt, chunk.ind,widget.name, widget.id=paste0(
   
   ui = outputFun(widget.id,width=width,height=height)
   stud.env = ps$cdt$stud.env[[chunk.ind]]
-  
+
   app$output[[widget.id]] = app$session$output[[widget.id]] =  htmlwidgets::shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
-  
+
+
   #app$session$output[[widget.id]] = shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
   
   ui
