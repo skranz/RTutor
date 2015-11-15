@@ -41,9 +41,11 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, ...) {
 
-  app = eventsApp()
+  cat("\nInitialize problem set, this may take a while...")
+  app = eventsApp(verbose = verbose)
+
   #browser()
   ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, 
                      load.sav=load.sav, sample.solution=sample.solution,
@@ -395,7 +397,6 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   #all.parent.env(stud.env)
   html ="Evaluation error!"
   
-  cat("knit2html")
   html = try(
     knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
   )

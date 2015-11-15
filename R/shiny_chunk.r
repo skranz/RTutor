@@ -49,16 +49,19 @@ set.nali.names = function(x, nali) {
   x
 }
 
-update.chunk.ui = function(chunk.ind, mode=ps$cdt$mode[chunk.ind], ps=get.ps(), session=ps$session) {
+update.chunk.ui = function(chunk.ind, mode=ps$cdt$mode[chunk.ind], ps=get.ps(), session=ps$session, app=getApp()) {
   restore.point("update.chunk.ui")
   #browser()
-  cat("\nupdate.chunk.ui: ", chunk.ind)
+  
+  if (app$verbose)
+    cat("\nupdate.chunk.ui: ", chunk.ind)
   ps$cdt$mode[chunk.ind] = mode
   ui = get.chunk.ui(chunk.ind, ps=ps)
   nali = ps$cdt$nali[[chunk.ind]]
     
   updateUI(session,nali$chunkUI, ui)
-  cat("\nend update.chunk.ui\n")
+  if (app$verbose)
+    cat("\nend update.chunk.ui\n")
 }
 
 # returns the ui for a chunk based on its current mode 
@@ -168,8 +171,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   ) 
   is.solved = ps$cdt$is.solved[[chunk.ind]]
   mode = ps$cdt$mode[[chunk.ind]]
-  cat("\nbefore if (is.solved) {")
-  cat("code:\n", code)
+  #cat("\nbefore if (is.solved) {")
+  #cat("code:\n", code)
   if (is.solved) {
     code = code
     opts = ps$cdt$chunk.opt[[chunk.ind]]
@@ -186,7 +189,7 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   
   restore.point("make.chunk.output.ui.2")
   
-  cat("\nbefore chunk.fluidRow(")
+  #cat("\nbefore chunk.fluidRow(")
 
   chunk.fluidRow(
     button.row,
