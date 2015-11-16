@@ -1,3 +1,29 @@
+
+# replaces values in dest and returns list of old values
+replace.fields = function(dest, source, empty.obj = "__EmPtYLeEERE___") {
+  restore.point("replace.fields")
+  
+  fields = names(source)
+
+  exist = intersect(fields, names(dest))
+  
+  empty = setdiff(fields,exist)
+  empty.list = replicate(n = length(empty),empty.obj,simplify = FALSE)
+  names(empty.list) = empty
+  
+  
+  old = c(mget(exist,dest), empty.list)
+  for (name in names(source)) {
+    obj = source[[name]]
+    if (identical(obj, empty.obj)) {
+      if (name %in% exist) rm(list=name,envir=dest)  
+    } else {
+      dest[[name]] = obj
+    }
+  }
+  old
+}
+
 copy.into.missing.fields = function(dest, source) {
   restore.point("copy.into.empty.fields")
 

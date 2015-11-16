@@ -1,3 +1,30 @@
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8) {
+  opts = list()
+  restore.point("make.knit.print.opts")
+  
+  if (html.data.frame) {
+    opts[["data.frame"]] = list(
+      fun= function(x,...) {
+        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits,...)  
+      },
+      classes=c("data.frame","matrix")
+    )
+  }  
+  opts
+}
+
+make.knit.print.funs = function(knit.print.opts, parent.env = globalenv()) {
+  env = new.env(parent=parent.env)
+  for (opt in knit.print.opts) {
+    fun.names = paste0("knit_print.",opt$classes)
+    if (!is.null(opt$fun)) {
+      for (fun.name in fun.names)
+        env[[fun.name]] = opt$fun
+    }
+  }
+  as.list(env)
+}
+
 add.htmlwidget.as.shiny <- function(x,
    outputId=paste0("htmlwidget_output",sample.int(100000,1)),
    session = getDefaultReactiveDomain(), app=getApp()) 
@@ -59,14 +86,16 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
         meta = meta)
 }
 
-rtutor.knit_print.data.frame = function(x, inline = FALSE, MAX.ROW=22, ...) {
+rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, signif.digits=8, ...) {
+  restore.point("rtutor.knit_print.data.frame")
+  MAX.ROW = table.max.rows
   if (NROW(x)>MAX.ROW) {
     rows = 1:MAX.ROW
     h1 = RTutor:::html.table(x[rows,],...)
     html = c(h1, as.character(p(paste0("... ", NROW(x)-MAX.ROW, " rows not shown  ..."))))
 
   } else {
-    html = RTutor:::html.table(x,...)
+    html = RTutor:::html.table(x,round.digits=round.digits, signif.digits=signif.digits,...)
   }
   asis_output(html)
 }

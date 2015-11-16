@@ -41,7 +41,10 @@ examples.show.shiny.ps = function() {
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
 #' @param is.solved DEPRECEATED
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, ...) {
+#' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
+#' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
+#' @param round.digits the number of digits that printed data.frames shall be rounded to
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -52,11 +55,18 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
                      run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
                      dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
                      show.solution.btn = show.solution.btn, clear.user=clear.user,
-                     check.whitelist=check.whitelist, wl=wl,...)
+                     check.whitelist=check.whitelist, wl=wl, ...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
   ps$right.margin = right.margin
+  
+  # Replace knit.print.funs in globalenv
+  knit.print.funs = make.knit.print.funs(knit.print.opts)
+  old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+  # restore old functions on exit
+  if (!make.web.app)
+    on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
   
   restore.point("show.shiny.ps")
 
@@ -106,16 +116,18 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
     launch.browser = rstudioapi::viewer
   
   
-  if (disable.graphics.dev)
-   try(png("NUL"),silent=TRUE)
-  
+  if (disable.graphics.dev) {
+    try(png("NUL"),silent=TRUE)
+    on.exit(try(dev.off(),silent=TRUE), add=TRUE)
+  }
+
   runEventsApp(app=app,ui=ui,launch.browser=launch.browser, quiet=FALSE)
   
-  if (disable.graphics.dev)
-    try(dev.off(),silent=TRUE)
 }
 
 show.shiny.ps = show.ps
+
+
 
 
 init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL) {
@@ -129,7 +141,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     user = get.user(user.name = user.name)
   }
   
-  
+
   
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn
@@ -209,6 +221,8 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
   }
   
   show.shiny.awards()
+  
+
   
   set.ps(ps)
   
@@ -396,6 +410,7 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   stud.env = ps$cdt$stud.env[[chunk.ind]]
   #all.parent.env(stud.env)
   html ="Evaluation error!"
+  
   
   html = try(
     knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)

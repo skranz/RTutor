@@ -1,5 +1,5 @@
 
-html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8,...) {
+html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8, signif.digits=8,...) {
   restore.point("html.table")
   n = NROW(df)
 
@@ -21,7 +21,7 @@ html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=
   }
 
   format.vals = function(vals) {
-    if (is.numeric(vals)) return(round(vals, round.digits))
+    if (is.numeric(vals)) return(signif(round(vals, round.digits), signif.digits))
     vals
   }
   
