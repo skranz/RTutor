@@ -1,5 +1,13 @@
 # News for RTutor package
 
+### 2015-11-17 print data.frames as html table in shiny-based RTutor
+
+- In the shiny interface of RTutor data.frames are now printed by
+  default as HTML tables (and only a maximum number of rows are shown).
+  The printing behavior can be modified on a global level in the call
+  to show.ps or on the chunk level. See `DataFramesExample_sol.Rmd`
+  for examples.
+
 ### 2015-11-13: hints at beginning of chunk possible
 
 - You can now add a hint block at the beginning of a chunk,

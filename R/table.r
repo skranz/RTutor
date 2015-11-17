@@ -20,13 +20,12 @@ html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=
     head = ""
   }
 
-  format.vals = function(vals) {
-    if (is.numeric(vals)) return(signif(round(vals, round.digits), signif.digits))
-    vals
+  my.format.vals = function(vals) {
+    format.vals(vals, signif.digits=signif.digits, round.digits=round.digits)
   }
   
   cols = 1:NCOL(df)
-  code = paste0('"<td class=\\"data-frame-td\\" nowrap bgcolor=\\"",row.bgcolor,"\\">", format.vals(df[[',cols,']]),"</td>"', collapse=",")
+  code = paste0('"<td class=\\"data-frame-td\\" nowrap bgcolor=\\"",row.bgcolor,"\\">", my.format.vals(df[[',cols,']]),"</td>"', collapse=",")
   code = paste0('paste0("<tr>",',code,',"</tr>", collapse="\\n")')
   call = parse(text=code)
   main = eval(parse(text=code))

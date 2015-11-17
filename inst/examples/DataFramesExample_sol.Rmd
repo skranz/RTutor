@@ -1,0 +1,67 @@
+# Problemset DataFramesExample
+
+Example of data frame printing in an RTutor Problemset
+
+#### Author:  Sebastian Kranz
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+#< ignore
+```{r "create_ps",include=FALSE , eval=!TRUE}
+library(RTutor)
+#library(restorepoint)
+#setwd("D:/libraries/RTutor/examples")
+setwd("D:/libraries/RTutor/RTutor/inst/examples")
+ps.name = "DataFramesExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c() 
+# Important add the parameter addons="quiz" !
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
+
+# You can set default parameters for showing data frames here
+show.ps(ps.name, user.name="John Does", round.digits=4, table.max.rows=20)
+
+stop()
+```
+
+Load libraries so that knit HTML also works
+```{r}
+library(yaml)
+library(magrittr)
+library(leaflet)
+```
+
+#>
+
+
+## Exercise 1 -- Table outputs
+
+The shiny based inteface of RTutor shows data.frames by default as html tables. This example illustrates how, you can adapt the settings of how data.frames are shown.
+
+Use default settings for printing data.frames, that may have been adapted in the call to `show.ps`.
+```{r "mychunk", optional=TRUE}
+#< task_notest
+T = 40
+data.frame(x=runif(T),y=runif(T)*100000)
+2*2
+#>
+```
+
+You can overwrite the default settings for specific chunks, by specifying chunk options.
+```{r "mychunk2", signif.digits=5, round.digits=3, table.max.rows=30, html.data.frame=FALSE, optional=TRUE}
+#< task_notest
+T = 40
+data.frame(x=runif(T),y=runif(T)*100000, z=runif(T))
+#>
+```
+
+---
+
+## Exercise 2 -- Empty
+
+
+Enter 2*2
+```{r}
+2*2
+```
+
+That's all folks!
