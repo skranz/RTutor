@@ -21,7 +21,7 @@ of the article, into econometric methods and into R programming.
 So this is not the easiest way for writing a thesis, but from those students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
 
 
-## 1. Find an interesting economic article
+## Step 1: Find an interesting economic article
 
 First you need to find an interesting article for which the data (and ideally also the original code) is accessible.
 
@@ -58,7 +58,7 @@ Best find some candidate articles and the talk with me before selecting one.
 Some constraints have to be satisfied, e.g. you should not take some article
 for which already a RTutor problem set has been created.
 
-## 2. Take a look at an existing interactive problem set
+## Step 2: Take a look at an existing interactive problem set
 
 (Note: You can swap steps 2 or 3) 
 On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.com/skranz/RTutor) you find links to several RTutor problem sets that have been created as part of a Bachelor- or Master thesis. Try installing one or more problem sets from their Github page and try them out. This helps you to get an idea, how problems could be structured, which elements you like, and which you like less. Also you can learn a bit more R. For starts, I would recommend:
@@ -67,14 +67,14 @@ On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.c
 
 You can also download the whole Github package as ZIP file and take a look at the source code of the problem set. If the problem set is called `myps`, the source code of the problem set is in the file `myps_sol.rmd` in the folder `/inst/ps/myps/`.
 
-## 3. Work through the article and replicate the code in R
+## Step 3: Work through the article and replicate the code in R
 
 Now work through your article and the code. Then try to replicate most results in R. At this point you don't have yet to think about the design of the problem set, just try to make the analysis run in R. It is a good idea, however, to already use helpful R packages like `dplyr`, `ggplo2`, `reshape2` or `tidyr` at this point to write simpler R code. You learn about their functionality by solving an existing problem set in step 2. If you cannot replicate all results in R, or you find bugs in the Stata code, write down all these points. This will be a useful appendix to your Thesis.
 
 
 Even though your final "product" will be written in R, it can be helpful to run the given code in Stata, in order to better understand it. I can send you a guide for several ways how to use Stata at Ulm University.
 
-## 4. Create the interactive RTutor problem set
+## Step 4: Create the interactive RTutor problem set
 
 Now you can start creating the RTutor problem set. An overview of creating problem sets is given here:
 
@@ -90,9 +90,21 @@ or a solution file from one of the existing problem sets. First try to make the 
 
 Part 2 below gives detailed advice on how the problem set should be structured, and which R packages seem useful. Also drop by regularly to get feedback and discuss problems.
 
-## 5. Host your problem set on Github and shinyapps.io
+## Step 5: Ask your advisor soon for feedback and improve the problem set
 
-If you have finished a first version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on Github. How to do it, is explained in detail here:
+Try to have ready a first version working version of your interactive problem set quite soon and ask your advisor for feedback. This version must not yet contain all exercises, but one should be able to try it out. 
+
+**You should have at least half of the time for your thesis left, when you send a first version of your problem set to your advisor.**
+
+You need the second half of time to improve the problem set.
+
+From my experience, the first working drafts of a problem set, may already have many good ideas, but are still very far away from a nicely polished final product. Most problem sets have been substantially restructured and improved compared to the first version. Typically there will be quite some iterations, where you send a new version of the problem set to your advisor, discuss it together and then improve the problem set. This gradual improvement process takes substantial time, however.
+
+The main reason why a thesis fails below the desired quality is that you send a draft to late to your supervisor and don't have enough time for the multiple rounds of feedback and improvement.
+
+## Step 6: Host your problem set on Github and shinyapps.io
+
+If you have finished a first or later version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on Github. How to do it, is explained in detail here:
 
 [Deploy RTutor problem sets on Github](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
 
@@ -102,7 +114,7 @@ Furthermore, I would recommend to also host your problem set on shinyapps.io. Th
 
 
 
-## 6. Write your Thesis
+## Step 7: Write your Thesis
 
 Your problem set will be the core and main part of your Thesis. Many essential parts a thesis, like discussion of related literature, references, own discussion etc., can also be part of your problem set. (In the problem set, you may want to put some longer literature discussion in a footnote). Still you may add some extra aspects in your written thesis, e.g. discuss how you have designed your problem set and which problems you have encountered.
 
@@ -402,8 +414,13 @@ your R code.
 ### Overall, nicely designed problem set. With good didactical structure of questions
 
     - RTutorTopIncomeTaxation
+    - RTutorSoapOperas
 
-### Interactive footnoes
+### Awards
+
+    - RTutorSoapOperas
+
+### Interactive footnotes
 
     - creditboomsgonebust
 
@@ -415,7 +432,11 @@ your R code.
 
     - creditboomsgonebust 2.1b), 2.2
 
-### Nice motion plots
+### Nice googleVis motion plots
 
-    - RTutorTopIncomeTaxation ??.?
+    - RTutorTopIncomeTaxation
+
+### Explanation of endogeniety problems and ommited variable problem
+
+    - RTutorSoapOperas
 
