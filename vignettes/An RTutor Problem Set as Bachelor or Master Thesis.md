@@ -25,13 +25,13 @@ So this is not the easiest way for writing a thesis, but from those students who
 
 First you need to find an interesting article for which the data (and ideally also the original code) is accessible.
 
-**New**: A  list of selected articles with data from the *Review of Eeconomics and Statistics* can be found here:
+**New**: A  list of selected articles with data from the *Review of Economics and Statistics* can be found here:
 
 [http://econfin.de/rtutor/restat.html](http://econfin.de/rtutor/restat.html)
 
 (I have sorted the beginning of the list according to which articles I found more interesting.)
 
-**Article database**: I have created a searchable database of articles with data from selected journals (AER, AEJ, REStud). It can be found here:
+**Article database**: I also have created a searchable database of articles with data from selected journals (AER, AEJ, REStud). It can be found here:
 
 [http://econfin.de:3838/articles/](http://econfin.de:3838/articles/)
 
@@ -54,7 +54,7 @@ This article has 54 KB of Stata code (in .do files) and 449 KB of Matlab code in
 
 ### Selecting an article
 
-Best find some candidate articles and the talk with me before selecting one.
+Best find some candidate articles and then talk with me before selecting one.
 Some constraints have to be satisfied, e.g. you should not take some article
 for which already a RTutor problem set has been created.
 
@@ -69,7 +69,9 @@ You can also download the whole Github package as ZIP file and take a look at th
 
 ## Step 3: Work through the article and replicate the code in R
 
-Now work through your article and the code. Then try to replicate most results in R. At this point you don't have yet to think about the design of the problem set, just try to make the analysis run in R. It is a good idea, however, to already use helpful R packages like `dplyr`, `ggplo2`, `reshape2` or `tidyr` at this point to write simpler R code. You learn about their functionality by solving an existing problem set in step 2. If you cannot replicate all results in R, or you find bugs in the Stata code, write down all these points. This will be a useful appendix to your Thesis.
+Now work through your article and the code. Then try to replicate most results in R. At this point you don't yet have to think about the design of the problem set, just try to make the analysis run in R. It is a good idea, however, to already use helpful R packages like `dplyr`, `ggplot2`, `reshape2`, `tidyr` or `lfe` to write more elegant and shorter R code. Take a look at the section of recommended packages below! You can learn more about useful functions in these packages, e.g. by solving an existing problem set in Step 2.
+
+If you cannot replicate all results in R, or you find bugs in the Stata code, write down all these points. This will be a useful appendix to your thesis.
 
 
 Even though your final "product" will be written in R, it can be helpful to run the given code in Stata, in order to better understand it. I can send you a guide for several ways how to use Stata at Ulm University.
@@ -100,7 +102,7 @@ You need the second half of time to improve the problem set.
 
 From my experience, the first working drafts of a problem set, may already have many good ideas, but are still very far away from a nicely polished final product. Most problem sets have been substantially restructured and improved compared to the first version. Typically there will be quite some iterations, where you send a new version of the problem set to your advisor, discuss it together and then improve the problem set. This gradual improvement process takes substantial time, however.
 
-The main reason why a thesis fails below the desired quality is that you send a draft to late to your supervisor and don't have enough time for the multiple rounds of feedback and improvement.
+The main reason why a thesis falls below the desired quality is that you send a draft to late to your supervisor and don't have enough time for the multiple rounds of feedback and improvement.
 
 ## Step 6: Host your problem set on Github and shinyapps.io
 
@@ -114,14 +116,14 @@ Furthermore, I would recommend to also host your problem set on shinyapps.io. Th
 
 
 
-## Step 7: Write your Thesis
+## Step 7: Write your thesis
 
-Your problem set will be the core and main part of your Thesis. Many essential parts a thesis, like discussion of related literature, references, own discussion etc., can also be part of your problem set. (In the problem set, you may want to put some longer literature discussion in a footnote). Still you may add some extra aspects in your written thesis, e.g. discuss how you have designed your problem set and which problems you have encountered.
+Your problem set will be the core and main part of your thesis. Many essential parts a thesis, like discussion of related literature, references, own discussion etc., can also be part of your problem set. (In the problem set, you may want to put some longer literature discussion in a footnote). Still you may add some extra aspects in your written thesis, e.g. discuss how you have designed your problem set and which problems you have encountered.
 
 
 Many existing problem sets also contain their thesis in the Github repositories, which can give you some idea, how you can create the thesis from your problem set. 
 
-You can write your Thesis using Word, Latex, Latex via Lyx, or directly in a Markdown format. When you create your interactive problem set with the command `create.ps(...)` a file with the ending `..._output_solution.Rmd` is created in your working directory. It contains a RMarkdown version of your solved problem set, which you can translate from RStudio to Latex or Word in order to easier include your problem set in your thesis.
+You can write your thesis using Word, Latex, Latex via Lyx, or directly in a Markdown format. When you create your interactive problem set with the command `create.ps(...)` a file with the ending `..._output_solution.Rmd` is created in your working directory. It contains a RMarkdown version of your solved problem set, which you can translate from RStudio to Latex or Word in order to easier include your problem set in your thesis.
 
 
 To create a Latex file add the following codes as first lines of the `..._output_solution.Rmd`
@@ -190,7 +192,7 @@ ins_adj | above_insured | Dummy variable; 1 if the account holders total balance
 
 The column `orgvar` is the name of the variable as given in the original data. The column `var` can be an alternative name that is easier to read. Separate words with `_`. Finally, the column `descr` provides a description of the variable, typically one or two sentences.
 
-When calling `create.ps`, provide the file name of this file as argument `var.txt.file`. The variable description will then be shown in the data explorer of the HTML problem sets.
+When calling `create.ps`, provide the file name of this file as argument `var.txt.file`. The variable description will then be shown in the data explorer of the HTML problem sets. Furthermore, the variable description will by default be shown as a tooltip on the column name when you display a data.frame in some code chunk.
 
 You can translate the original variable names to your new variables in a code chunk of your problem set by using the function `translate.var.names` which is part of RTutor. Example:
 ```
