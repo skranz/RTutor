@@ -1,5 +1,5 @@
 
-html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8, signif.digits=8,...) {
+html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8, signif.digits=8,col.tooltips=NULL, ...) {
   restore.point("html.table")
   n = NROW(df)
 
@@ -14,7 +14,16 @@ html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=
 
   if (col.names) {
     colnames = colnames(df)
-    head = paste0('<th class="data-frame-th">',colnames,'</th>', collapse="")
+    
+    
+    if (is.null(col.tooltips)) {
+      inner = colnames
+    } else {
+      inner = paste0('<span title="', col.tooltips,'">', colnames, '<span>')
+      #inner[nchar(col.tooltips)==0] = colnames
+    }
+    
+    head = paste0('<th class="data-frame-th">',inner,'</th>', collapse="")
     head = paste0('<tr>', head, '</tr>')
   } else {
     head = ""
