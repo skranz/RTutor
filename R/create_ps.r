@@ -738,6 +738,11 @@ add.te.addon = function(te,type,args=NULL) {
   rta = ao$rta
   rta$id = paste0("addon__",type,"__",name)
 
+  if (rta$id %in% names(te$addons)) {
+    stop(paste0("You have defined more than once a ", type, " with name ",'"', name,'"', ". Please pick a unique name for every ", type, "."))
+  }
+  
+  
   placeholder = paste0("#! ", rta$id)
   
   
@@ -745,6 +750,7 @@ add.te.addon = function(te,type,args=NULL) {
   te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao,..))
   te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao,..))
 
+  
   te$addons[[rta$id]] = ao
   
   add.te.item(te=te, type="addon", id = rta$id)

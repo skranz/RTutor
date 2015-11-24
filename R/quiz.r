@@ -126,7 +126,11 @@ shinyQuiz = function(id=paste0("quiz_",sample.int(10e10,1)),qu=NULL, yaml,  quiz
 
   if (is.null(qu)) {
     yaml = enc2utf8(yaml)
-    qu = mark_utf8(read.yaml(text=yaml))
+    qu = try(mark_utf8(read.yaml(text=yaml)), silent=TRUE)
+    if (is(qu,"try-error")) {
+      err = paste0("When importing quiz:\n",paste0(yaml, collapse="\n"),"\n\n",as.character(qu))
+      stop(err,call. = FALSE)
+    }
   }
 
   if (is.null(qu[["id"]])) {
