@@ -15,6 +15,7 @@ preknit.rps = function(rps=load.rps(file=file),precomp=TRUE,file=paste0(ps.name,
   # Load all required libraries
   load.ps.libs(rps$libs)
 
+  
 
   # Replace knit.print.funs in globalenv
   knit.print.funs = make.knit.print.funs(knit.print.opts)
@@ -30,10 +31,17 @@ preknit.rps = function(rps=load.rps(file=file),precomp=TRUE,file=paste0(ps.name,
   chunk.sol.html = vector("character", NROW(cdt))
 
 
+
   # Run and knit solution for all chunks
   ps.baseenv = new.env(parent=parent.env(globalenv()))
   chunk.env = new.env(parent=ps.baseenv)
 
+  # load functions from extra.code.file 
+  if (!is.null(rps$extra.code.env)) {
+    copy.into.env(source=rps$extra.code.env, dest = ps.baseenv)
+  }
+
+  
   chunk.ind = 1
   for (chunk.ind in 1:NROW(cdt)) {
     # store the start.env into
