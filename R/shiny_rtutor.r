@@ -9,9 +9,9 @@ examples.show.shiny.ps = function() {
   setwd("D:/libraries/RTutor/examples")
   ps.name = "Example"
   show.ps(ps.name, launch.browser=TRUE, import.rmd=TRUE)
-  
+
   show.shiny.ps(ps.name, user.name="Seb", load.sav=FALSE, sample.solution=FALSE, import.rmd=TRUE, catch.errors=FALSE)
-  
+
   show.shiny.ps(ps.name, user.name="Seb", load.sav=TRUE)
   show.shiny.ps(ps.name, launch.browser=TRUE)
 
@@ -22,7 +22,7 @@ examples.show.shiny.ps = function() {
   show.shiny.ps(ps.name, load.sav=FALSE, launch.browser=TRUE, sample.solution=TRUE, run.solved=TRUE)
 
   show.shiny.ps(ps.name, launch.browser=TRUE)
-  
+
   options(shiny.error=traceback)
   show.shiny.ps(ps.name)
 }
@@ -30,9 +30,9 @@ examples.show.shiny.ps = function() {
 
 
 #' Run a problem set in the webbroser (or in the viewer pane).
-#' 
+#'
 #' ... contains parameters specified in init.shiny.ps. They are explained here.
-#' 
+#'
 #' @param load.sav shall the last saved be loaded?
 #' @param sample.solution shall the sample solution be shown
 #' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)
@@ -44,60 +44,61 @@ examples.show.shiny.ps = function() {
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE,...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
 
   #browser()
-  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file, 
+  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file,
                      load.sav=load.sav, sample.solution=sample.solution,
                      run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
                      dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
                      show.solution.btn = show.solution.btn, clear.user=clear.user,
-                     check.whitelist=check.whitelist, wl=wl, ...)
+                     check.whitelist=check.whitelist, wl=wl,
+                     precomp=precomp, noeval=noeval, ...)
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
   ps$right.margin = right.margin
-  
+
   # Replace knit.print.funs in globalenv
   knit.print.funs = make.knit.print.funs(knit.print.opts)
   old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
   # restore old functions on exit
   if (!make.web.app)
     on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
-  
+
   restore.point("show.shiny.ps")
 
   n = NROW(ps$cdt)
-  
-  
+
+
   ui = make.rtutor.ui()
   ex.inds = 1:NROW(ps$edt)
   for (ex.ind in ex.inds)
     show.ex.ui(ex.ind)
-    
+
   for (chunk.ind in 1:n) {
     make.chunk.handlers(chunk.ind=chunk.ind)
   }
   make.load.save.handlers()
-  
+
   txt = as.character(ui)
   setAppUI(ui, app)
-  
+
   if (make.session.ps) {
     app$initHandler = function(session, input, output,app,...) {
       # make local copy of ps
       ops = get.ps(TRUE)
       ops$running.web.app = TRUE
       ps = copy.ps.for.session(ops)
-    
+
       app$ps = ps
       ps$session = session
       ps$input = input
       ps$output = output
-    } 
+    }
   } else {
     app$initHandler = function(session, input, output,...) {
       ps = get.ps(TRUE)
@@ -105,24 +106,24 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
       ps$session = session
       ps$input = input
       ps$output = output
-    }     
+    }
   }
-  
+
   if (make.web.app) {
     return(app)
   }
-  
+
   if (!isTRUE(launch.browser))
     launch.browser = rstudioapi::viewer
-  
-  
+
+
   if (disable.graphics.dev) {
     try(png("NUL"),silent=TRUE)
     on.exit(try(dev.off(),silent=TRUE), add=TRUE)
   }
 
   runEventsApp(app=app,ui=ui,launch.browser=launch.browser, quiet=FALSE)
-  
+
 }
 
 show.shiny.ps = show.ps
@@ -130,50 +131,51 @@ show.shiny.ps = show.ps
 
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE) {
   restore.point("init.shiny.ps")
   setwd(dir)
-  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl)
-  
+
+  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval)
+
   if (clear.user) {
     user = init.user(user.name = user.name)
   } else {
     user = get.user(user.name = user.name)
   }
-  
 
-  
+
+
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn
 
-  
+
   ps$shiny.ex.inds = ex.inds
-  ps$shiny.dt = ps$rps$shiny.dt 
+  ps$shiny.dt = ps$rps$shiny.dt
   ps$chunk.ind = 0
   #ps$shiny.dt$code
-  
+
   n = NROW(ps$cdt)
   ps$button.counter = list()
   ps$cdt$nali = replicate(n, list(), simplify=FALSE)
   ps$cdt$ui = replicate(n, list(), simplify=FALSE)
-  
+
   ps$cdt$has.output.observer = rep(FALSE,n)
   ps$cdt$has.input.observer = rep(FALSE,n)
   ps$cdt$has.ui.renderer = rep(FALSE,n)
   ps$cdt$server = replicate(n, expression(), simplify=FALSE)
-  
+
   for (chunk.ind in ps$cdt$chunk.ps.ind) {
     id = paste0("r.chunk_",chunk.ind,".ui.mode")
     ps[[id]] = reactiveValues(counter=0)
     # r.chunk.ui.mode = reactiveValues(counter=0)
   }
-  
-  
+
+
   if (sample.solution & !ps$rps$has.sol) {
     warning("I cannot show the sample solution, since the sample solution was not made available for the problem set.")
     sample.solution = FALSE
   }
-  ps$cdt$is.solved = rep(FALSE,n)  
+  ps$cdt$is.solved = rep(FALSE,n)
 
   if (is.null(sav.file)) {
     sav.file = paste0(user.name, "_", ps.name,".sav")
@@ -182,19 +184,19 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
   if (load.sav) {
     if (sample.solution) {
       cat(paste0("Show sample solution instead of saved solution..."))
-      load.sav = FALSE      
+      load.sav = FALSE
     } else if (!file.exists(sav.file)) {
       cat(paste0("Cannot find saved solution '", sav.file, "'.\nShow empty problem set..."))
       load.sav = FALSE
     }
   }
-  
+
   if (load.sav) {
     sav = load.sav(ps$sav.file)
     ps$cdt$mode = sav$mode
     ps$cdt$stud.code = sav$stud.code
     if (run.solved) {
-      ps$cdt$is.solved = sav$is.solved  
+      ps$cdt$is.solved = sav$is.solved
       rerun.solved.chunks(ps)
     }
   } else {
@@ -203,7 +205,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     if (sample.solution) {
       ps$cdt$stud.code = ps$cdt$sol.txt
       if (run.solved) {
-        ps$cdt$is.solved = rep(TRUE,n)   
+        ps$cdt$is.solved = rep(TRUE,n)
         rerun.solved.chunks(ps)
         ps$cdt$mode[1] = "output"
       }
@@ -213,19 +215,14 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
       ps$cdt$stud.code = ps$cdt$task.txt
     }
   }
-  
+
   # init addons for shiny
   for (ao in ps$rps$addons) {
     Addon = ps$rps$Addons[[ao$rta$type]]
     Addon$shiny.init.fun(ao=ao,ps=ps)
   }
-  
   show.shiny.awards()
-  
-
-  
   set.ps(ps)
-  
 }
 
 
@@ -256,7 +253,7 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
   restore.point("rtutor.eval.to.string")
   txt = sep.lines(code)
   ok = FALSE
-  
+
   all.str = tryCatch({
       li <- parse.text.with.source(txt)
       ok <- TRUE
@@ -272,8 +269,8 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
     if (!ok) {
       all.str = res$msg
     }
-  } 
-  
+  }
+
   if (ok) {
     all.str = NULL
     add = function(...) {
@@ -283,19 +280,19 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
     i = 1
     for (i in seq_along(li$expr)) {
       source = "Source was not parsed..."
-      
+
       add("> ",paste0(li$source[[i]], collapse="\n+ "))
       out = tryCatch(capture.output(eval(li$expr[[i]], envir=envir)),
                      error = function(e) {
                        adapt.console.err.message(as.character(e))
-                     })                
+                     })
       if (length(out)>0) {
         add(out)
       }
     }
   }
-  
-  # convert special characters that cause JSON errors when shown in 
+
+  # convert special characters that cause JSON errors when shown in
   # HTML output or in ace console
   if (convert) {
     all.str = iconv(all.str, "LATIN2", "UTF-8")
@@ -346,8 +343,8 @@ rerun.solved.chunks = function(ps = get.ps()) {
     }
     ps$cdt$stud.env[[chunk.ind]] <- ps$stud.env
     code = ps$cdt$stud.code[[chunk.ind]]
-    
-    if (!is.false(ps$catch.errors)) {  
+
+    if (!is.false(ps$catch.errors)) {
       ok = tryCatch({
         out <- rtutor.eval.to.string(code,ps$stud.env)
         TRUE
@@ -356,9 +353,9 @@ rerun.solved.chunks = function(ps = get.ps()) {
         FALSE
       })
     } else {
-      out <- rtutor.eval.to.string(code,ps$stud.env)      
+      out <- rtutor.eval.to.string(code,ps$stud.env)
     }
-    if (!ok) 
+    if (!ok)
       break
     if (is.last.chunk.of.ex(chunk.ind)) {
       ex.ind = ps$cdt$ex.ind[chunk.ind]
@@ -370,19 +367,19 @@ rerun.solved.chunks = function(ps = get.ps()) {
   if (!ok) {
     inds = which((1:NROW(ps$cdt$is.solved))>=chunk.ind)
     ps$cdt$is.solved[inds] = FALSE
-  } 
+  }
 }
- 
+
 
 chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.ind]]$name), ps = get.ps(), eval=TRUE, success.message=isTRUE(ps$cdt$is.solved[[chunk.ind]]), echo=TRUE, nali=NULL, quiet=TRUE) {
   restore.point("chunk.to.html")
   if (is.null(txt))
     return("")
-  
-  
+
+
   if (paste0(txt,collapse="\n") == "")
     txt = "# Press 'edit' to enter your code."
-  
+
   if (isTRUE(ps$cdt$num.e[[chunk.ind]]>0)) {
     if (success.message) {
       txt = c("# Great, solved correctly!",txt)
@@ -390,7 +387,7 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
       txt = c("# Not yet solved...",txt)
       echo = TRUE
     }
-  }  
+  }
   opt = default.out.chunk.options()
   copt = ps$cdt$chunk.opt[[chunk.ind]]
   if (length(copt)>0) {
@@ -398,20 +395,20 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   }
   opt$eval = eval
   opt$echo = echo
-  
+
   header = paste0("```{r '",name,"'",chunk.opt.list.to.string(opt,TRUE),"}")
-  
-  
+
+
   library(knitr)
   library(markdown)
   txt = c(header,sep.lines(txt),"```")
-  
+
   #stop("stop in chunk.to.html")
   stud.env = ps$cdt$stud.env[[chunk.ind]]
   #all.parent.env(stud.env)
   html ="Evaluation error!"
-  
-  
+
+
   html = try(
     knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
   )
@@ -437,23 +434,23 @@ chunk.opt.list.to.string = function(li, add.comma=!TRUE) {
   str
 }
 default.out.chunk.options = function() {
-  list(fig.width=6.5, fig.height=4.5, fig.align='center', "warning"=FALSE, cache=FALSE, collapse=TRUE, comment=NA)  
+  list(fig.width=6.5, fig.height=4.5, fig.align='center', "warning"=FALSE, cache=FALSE, collapse=TRUE, comment=NA)
 }
 
 # Use local version of MathJax so that problem sets really run offline
 mathJaxRTutor <- function(html, ps=get.ps()) {
   restore.point("mathJaxRTutor")
-  
+
   if (isTRUE(ps$offline))
     return(html)
-  
+
   #path =  paste0(system.file('www', package='RTutor'),"/MathJax")
   #if (!file.exists(path))
   path <- '//cdn.mathjax.org/mathjax/latest'
-  
+
   command = paste0(path, '/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
   #path <- 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-  
+
   tagList(
   tags$head(
   singleton(tags$script(src = command, type = 'text/javascript'))
