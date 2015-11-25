@@ -8,7 +8,8 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   ignore.arg = NULL, success.message = NULL, failure.message = NULL,
   no.command.failure.message = NULL, ok.if.same.val = FALSE,
   s3.method = NULL, ps = get.ps(), stud.env = ps$stud.env,
-  part = ps$part, stud.expr.li = ps$stud.expr.li, verbose = FALSE, ...)
+  part = ps$part, stud.expr.li = ps$stud.expr.li, verbose = FALSE,
+  noeval = isTRUE(ps$noeval), ...)
 }
 \arguments{
 \item{call}{the correct function call that shall be checked (not a quoted call)}

@@ -10,7 +10,12 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = TRUE,
   add.enter.code.here = FALSE, add.shiny = TRUE, addons = NULL,
   whitelist.report = FALSE, wl = rtutor.default.whitelist(),
-  use.memoise = FALSE, memoise.funs = rtutor.default.memoise.funs())
+  use.memoise = FALSE, memoise.funs = rtutor.default.memoise.funs(),
+  precomp = FALSE, preknit = FALSE, force.noeval = FALSE,
+  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
+  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
+  = html.data.frame, table.max.rows = table.max.rows, round.digits =
+  round.digits, signif.digits = signif.digits))
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -34,9 +39,15 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{use.memoise}{shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.}
 
 \item{memoise.funs}{character vector of function names that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file.}
+
+\item{precomp}{shall chunk environments be computed from sample solution when problem set is generated? Default = FALSE}
+
+\item{preknit}{shall sample solution of chunks be knitted when problem set is generated. Default = FALSE}
+
+\item{force.noeval}{shall problem set only be shown in noeval mode? (Used as a security against accidentially forgetting to set noeval=TRUE in show.ps, when showing the problem set in a web app.)}
 }
 \description{
-Generates  .rps file, and .rmd files for empty ps , sample solution 
+Generates  .rps file, and .rmd files for empty ps , sample solution
 and output solution
 }
 

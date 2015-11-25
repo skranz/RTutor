@@ -17,7 +17,7 @@ that contains the files
 (replace `username` by your user name)
 
 If you have installed RTools (http://cran.r-project.org/bin/windows/Rtools/) and updated your Windows PATH variable you can also try calling
-`zip.solution()` 
+`zip.solution()`
 to generate the zip file automatically.
 }
 

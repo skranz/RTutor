@@ -12,7 +12,7 @@ name.rmd.chunks(rmd.file = NULL, txt = readLines(rmd.file),
 
 \item{txt}{alternative the code as txt file}
 
-\item{only.empy.chunks}{if FALSE (default) name all chunks. 
+\item{only.empy.chunks}{if FALSE (default) name all chunks.
 Otherwise only empty chunks are overwritten}
 
 \item{keep.option}{if TRUE (default) don't change chunk options;

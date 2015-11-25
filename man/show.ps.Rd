@@ -13,7 +13,12 @@ show.ps(ps.name, user.name = "Seb", sav.file = NULL,
   is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
   save.nothing = FALSE, show.solution.btn = TRUE,
   disable.graphics.dev = TRUE, clear.user = FALSE,
-  check.whitelist = !is.null(wl), wl = NULL, ...)
+  check.whitelist = !is.null(wl), wl = NULL, verbose = FALSE,
+  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
+  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
+  = html.data.frame, table.max.rows = table.max.rows, round.digits =
+  round.digits, signif.digits = signif.digits), precomp = FALSE,
+  noeval = FALSE, ...)
 }
 \arguments{
 \item{load.sav}{shall the last saved be loaded?}
@@ -29,6 +34,12 @@ show.ps(ps.name, user.name = "Seb", sav.file = NULL,
 \item{offline}{(FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.}
 
 \item{is.solved}{DEPRECEATED}
+
+\item{html.data.frame}{shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)}
+
+\item{table.max.rows}{the maximum number of rows that is shown if a data.frame is printed as html.table}
+
+\item{round.digits}{the number of digits that printed data.frames shall be rounded to}
 
 \item{lauch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 }

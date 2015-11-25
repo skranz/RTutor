@@ -10,7 +10,7 @@ check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   ok.if.same.val = TRUE, call.object = NULL, s3.method = NULL,
   ps = get.ps(), stud.env = ps$stud.env, part = ps$part,
   stud.expr.li = ps$stud.expr.li, verbose = FALSE,
-  only.check.assign.exists = FALSE, ...)
+  only.check.assign.exists = FALSE, noeval = isTRUE(ps$noeval), ...)
 }
 \arguments{
 \item{call}{the correct assignment that shall be checked (not a quoted call)}
