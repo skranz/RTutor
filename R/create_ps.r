@@ -745,6 +745,10 @@ add.te.addon = function(te,type,args=NULL) {
   rta = ao$rta
   rta$id = paste0("addon__",type,"__",name)
 
+  if (rta$id %in% names(te$addons)) {
+    stop(paste0("You have defined more than once a ", type, " with name ",'"', name,'"', ". Please pick a unique name for every ", type, "."))
+  }
+  
   placeholder = paste0("#! ", rta$id)
 
 
