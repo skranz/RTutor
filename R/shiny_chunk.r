@@ -203,7 +203,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
     }
   } else {
     if (ps$noeval) {
-      html = "<p> You have not yet solved the chunk <p>"
+      task = ps$cdt$task.txt[[chunk.ind]]
+      html = chunk.to.html(task, chunk.ind, eval=FALSE, nali=nali)
     } else {
       html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
     }

@@ -76,24 +76,36 @@ hint = function(..., ps=get.ps()) {
     }
   }
 
+  
+  if (do.log)
+    log.hint(chunk.ind=chunk.ind, ps=ps)
+  
   #ps$chunk.ind
   #ps$e.ind
-  if (do.log) {
-    log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
-
-    # Update ups statistics
-    if (isTRUE(ps$e.ind>0)) {
-      ups = get.ups()
-
-      if (!ups$tdt$success[ps$tdt.ind]) {
-         ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
-         save.ups()
-      }
-    }
-  }
   invisible("")
 }
 
+
+log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.ind, ps=get.ps()) {
+  log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
+
+  # Update ups statistics
+  if (isTRUE(ps$e.ind>0)) {
+    ups = get.ups()
+    update = !ups$cu$solved[chunk.ind]
+    
+    if (update) {
+      ups$cu$num.hint[chunk.ind] = ups$cu$num.hint[chunk.ind]+1
+      if (!is.null(ups$tdt)) {
+        if (!ups$tdt$success[ps$tdt.ind]) {
+           ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
+           do.save = TRUE
+        }
+      }  
+      update.ups()
+    }
+  }
+}
 
 #' Default hint for a call
 #' @export
@@ -296,7 +308,7 @@ hint.for.assign = function(expr, ps=get.ps(), env = ps$stud.env, stud.expr.li = 
 
 #' Default hint for a compute block
 #' @export
-hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part=ps$part,...) {
+hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part=ps$part,start.char="\n", end.char="\n",...) {
   expr = substitute(expr)
   restore.point("hint.for.compute")
 
@@ -354,7 +366,7 @@ is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
 
-inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,...) {
+inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n",...) {
 
   restore.point("inner.hint.for.call.chain")
 

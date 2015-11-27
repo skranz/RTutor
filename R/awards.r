@@ -126,7 +126,8 @@ get.user.name = function() {
   }
   get(".__rtutor_user.name",.GlobalEnv)  
 }
-clear.user = function(dir = get.ps()$stud.path) {
+
+clear.user = function(dir = get.ps()$user.dir) {
   suppressWarnings(rm(".__rtutor_user.name",envir=.GlobalEnv))
   suppressWarnings(rm(".__rtutor_user",envir=.GlobalEnv))
   file = paste0(dir,"/rtutor_user.RData")

@@ -259,6 +259,9 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
     if (has.error) {
       log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
+      
+      update.ups.chunk.check(passed=FALSE,chunk.ind=chunk.ind, save=TRUE, ps=ps)
+      
       return(FALSE)
     }
   }
@@ -267,7 +270,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   if (verbose) {
     display("run tests...")
   }
-  ups = get.ups()
+  
   ps$success.log = ps$test.log = NULL
   e.ind = 1
 
@@ -301,13 +304,13 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       #update.log.test.result(ret,ups, ck, ps)
 
       if (ret==FALSE) {
-        set.ups(ups)
         log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=e.ind,code=stud.code, ok=FALSE,message=ps$failure.message)
 
         ps$test.log = c(ps$test.log, ps$failure.message)
         # Back to normal graphics device
         #if (isTRUE(ps$use.null.device))
         #  try(dev.off(), silent=TRUE)
+        update.ups.chunk.check(passed=FALSE,chunk.ind=chunk.ind, save=TRUE, ps=ps)
 
         return(FALSE)
       } else if (ret=="warning") {
@@ -336,8 +339,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
 
   log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=TRUE,message="")
+  update.ups.chunk.check(passed=TRUE,chunk.ind=chunk.ind, save=TRUE, ps=ps)
 
-  set.ups(ups)
   if (had.warning) {
     return("warning")
   } else {
@@ -347,20 +350,41 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
 
 update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps=get.ps()) {
-  passed.before = ps$tdt$test.passed[tdt.ind]
-  ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
-
-  if (is.na(ups$tdt$first.call.date[tdt.ind]))
-    ups$tdt$first.call.date[tdt.ind] = Sys.time()
-  if (passed==FALSE) {
-    if (!ups$tdt$success[tdt.ind])
-      ups$tdt$num.failed[tdt.ind] = ups$tdt$num.failed[tdt.ind]+1
-    set.ups(ups)
-    return()
+  if (!is.null(ups$tdt)) {
+    passed.before = ps$tdt$test.passed[tdt.ind]
+    ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
+  
+    if (is.na(ups$tdt$first.call.date[tdt.ind]))
+      ups$tdt$first.call.date[tdt.ind] = Sys.time()
+    if (passed==FALSE) {
+      if (!ups$tdt$success[tdt.ind])
+        ups$tdt$num.failed[tdt.ind] = ups$tdt$num.failed[tdt.ind]+1
+      set.ups(ups)
+      return()
+    }
+    if (is.na(ups$tdt$success.date[tdt.ind])) {
+      ups$tdt$success[tdt.ind] <- TRUE
+      ups$tdt$success.date[tdt.ind] <- Sys.time()
+    }
   }
-  if (is.na(ups$tdt$success.date[tdt.ind])) {
-    ups$tdt$success[tdt.ind] <- TRUE
-    ups$tdt$success.date[tdt.ind] <- Sys.time()
+}
+
+update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(), ps=get.ps(), save=TRUE) {
+  restore.point("update.ups.chunk.check")
+  
+  
+  update = !ups$cu$solved[chunk.ind]
+  if (update) {
+    if (is.na(ups$cu$first.check.date[chunk.ind]))
+      ups$cu$first.check.date[chunk.ind] = Sys.time()
+    
+    if (passed) {
+      ups$cu$solved.date[[chunk.ind]] <- Sys.time()
+      ups$cu$solved[chunk.ind] = TRUE
+    } else {
+      ups$cu$num.fail[chunk.ind] = ups$cu$num.fail[chunk.ind]+1
+    }
+    update.ups(ups)
   }
 }
 
