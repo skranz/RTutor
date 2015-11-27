@@ -91,7 +91,21 @@ can.test.chunk.with.noeval = function(chunk.ind, cdt) {
 create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTRUE(cdt$is.solved[[chunk.ind]]),eval=TRUE, echo=TRUE, quiet=FALSE) {
 
 
+
   txt = cdt$sol.txt[[chunk.ind]]
+  if (cdt$num.e[[chunk.ind]] > cdt$num.e.task[[chunk.ind]]) {
+    add = c("# You successfully solved the chunk!")
+  } else {
+    add = "# You successfully checked the chunk! "
+  }
+  if (cdt$points[[chunk.ind]]==1) {
+    add = paste0(add, " (1 point)")
+  } else if (cdt$points[[chunk.ind]]>0) {
+    add = paste0(add, " (",cdt$points[[chunk.ind]], " points)")
+  }
+  txt = paste0(add,"\n",txt)
+
+  
   name = cdt$chunk.name[[chunk.ind]]
 
   opt = default.out.chunk.options()

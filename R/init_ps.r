@@ -46,7 +46,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE) {
+init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE) {
   restore.point("init.ps")
 
   rps = load.rps(file=rps.file)
@@ -56,6 +56,9 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
 
   ps = new.env()
   set.ps(ps)
+  ps$ups.dir = ups.dir
+  ps$user.dir = user.dir
+  
   ps$name = ps.name
   ps$rps = rps
   load.ps.libs(rps$libs)
@@ -182,7 +185,7 @@ load.ps.libs = function(libs) {
 }
 
 
-get.or.init.ps = function(ps.name,dir, stud.short.file = paste0(ps.name,".Rmd"), reset=FALSE, ps=get.ps()) {
+get.or.init.ps = function(ps.name,dir, stud.short.file = paste0(ps.name,".Rmd"), reset=FALSE, ps=get.ps(), ups.dir = dir, user.dir=ups.dir) {
   restore.point("get.or.init.ps")
 
   # Just take current problem set information
@@ -193,5 +196,5 @@ get.or.init.ps = function(ps.name,dir, stud.short.file = paste0(ps.name,".Rmd"),
   }
 
   # Initialize problem set newly
-  return(init.ps(ps.name,dir,stud.short.file))
+  return(init.ps(ps.name,dir,stud.short.file, ups.dir = ups.dir, user.dir=user.dir))
 }

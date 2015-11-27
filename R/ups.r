@@ -11,7 +11,7 @@
 
 
 # clear.user()
-get.user = function(user.name = NULL, dir = get.ps()$stud.path) {
+get.user = function(user.name = NULL, dir = get.ps()$user.dir) {
   restore.point("get.user")
   if (!exists(".__rtutor_user",.GlobalEnv)) {
     file = paste0(dir,"/current_user.Ruser")
@@ -45,7 +45,7 @@ update.user = function(user=get.user()) {
   save.user(user)
 }
 
-load.user = function(dir = get.ps()$stud.path) {
+load.user = function(dir = get.ps()$user.dir) {
   file = paste0(dir,"/current_user.Ruser")
   load(file=file)
   assign(".__rtutor_user.name",user$name,.GlobalEnv)  
@@ -53,7 +53,7 @@ load.user = function(dir = get.ps()$stud.path) {
   return(invisible(user))
 }
 
-save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$stud.path, ps = get.ps()) {
+save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$user.dir, ps = get.ps()) {
   if (isTRUE(ps$save.nothing))
     return()
   
@@ -68,8 +68,33 @@ save.user = function(user=get.user(user.name), user.name = get.user.name(), dir 
 init.ups = function() {
   ps = get.ps()
   user=get.user()
-  tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
-  ups = as.environment(list(ps.name=ps$name, user.name=user$name, tdt=tdt))
+  
+  
+  ups.tdt = !is.false(ps$ups.tdt)
+  
+  cdt = ps$cdt
+  
+  # Store chunk results
+  cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+  
+  # Store add-on results
+  ao.dt = ps$rps$ao.dt
+  if (NROW(ao.dt)>0) {
+    aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), score=0)
+  } else {
+    aou = NULL
+  }
+  
+  got.award = rep(FALSE, length(ps$rps$awards))
+
+  
+  if (ups.tdt)  {
+    tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
+  } else {
+    tdt = NULL
+  }
+  ups = as.environment(list(ps.name=ps$name, user.name=user$name, cu=cu, aou=aou, got.award = got.award, tdt=tdt))
+
   set.ups(ups)
   save.ups()
   ups
@@ -87,8 +112,18 @@ get.ups = function() {
     if (ups$ps.name != ps$name | ups$user.name != user$name)
       ups = NULL
   }
-  if (is.null(ups))
+  if (is.null(ups)) {
     ups = load.ups()
+    
+    # old version of ups
+    if (is.null(ups$cu)) {
+      new.ups = init.ups()
+      new.ups$tdt = ups$tdt
+      ups = new.ups
+      set.ups(ups)
+    }
+    
+  }
   ups
 }
 
@@ -96,7 +131,7 @@ load.ups = function() {
   ps = get.ps()
   user = get.user()
   
-  dir = get.ps()$stud.path
+  dir = get.ps()$ups.dir
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")
   
   if (!file.exists(file)) {
@@ -113,14 +148,18 @@ set.ups = function(ups) {
   assign(".__rtutor_ups",ups,.GlobalEnv)    
 }
 
-save.ups = function() {
-  ps = get.ps()
+
+update.ups = function(ups = get.ups(), ps = get.ps()) {
+  save.ups(ups=ups, ps=ps)
+}
+
+save.ups = function(ups = get.ups(), ps=get.ps()) {
   if (isTRUE(ps$save.nothing)) return()
   
   user = get.user()
-  dir = get.ps()$stud.path
+  dir = get.ps()$ups.dir
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")
-  ups = get.ups()
+
   suppressWarnings(save(ups,file=file))
   assign(".__rtutor_ups",ups,.GlobalEnv)  
   return(invisible(ups))
@@ -155,10 +194,12 @@ stats = function() {
 
 
 # remove old ups files when new problem set structure is generated 
-remove.ups = function(ps.name = get.ps()$name) {
+remove.ups = function(ps.name = get.ps()$name, dir = get.ps()$ups.dir) {
   set.ups(NULL)
 
-  files = list.files()
+  if (is.null(dir)) dir =getwd()
+  
+  files = list.files(path = dir,full.names = TRUE)
   files = files[str.ends.with(files,paste0("_",ps.name,".ups"))]
   if (length(files)>0) {
     file.remove(files)

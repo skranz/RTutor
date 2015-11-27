@@ -37,9 +37,13 @@ examples.create.ps = function() {
 #' @param preknit shall sample solution of chunks be knitted when problem set is generated. Default = FALSE
 #' @param precomp shall chunk environments be computed from sample solution when problem set is generated? Default = FALSE
 #' @param force.noeval shall problem set only be shown in noeval mode? (Used as a security against accidentially forgetting to set noeval=TRUE in show.ps, when showing the problem set in a web app.)
+#' @param e.points how many points does the user get per required expression in a chunk (expressions in a task do not count). Default=1
+#' @param chunk.points you may also specify fixed points given for solving a chunk that will be added to the points per expression. Default=0
+#' @param min.chunk.points minimal points for checking a chunk even if no none-task expression has to be entered. By default=0.5. I feel there may be a higher motivation to continue a problem set if there are may be some free point chunks farther below. Also it feels nice to get points, even if it is just for pressing the check button.
+#' 
 #'
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits)) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0.5, chunk.points=0) {
   restore.point("create.ps")
 
   CREATE.PS.ENV$fragment.only = fragment.only
@@ -53,6 +57,10 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   te = get.empty.te(Addons=Addons)
   te = parse.sol.rmd(txt=txt, te=te)
 
+  te$e.points = e.points
+  te$chunk.points = chunk.points
+  te$min.chunk.points = min.chunk.points
+  
   te$items.df = rbindlist(te$items[1:te$num.items])
 
   if (!is.null(ps.name))
@@ -198,6 +206,8 @@ te.to.rps = function(te) {
 
     add.chunk = sapply(ex$chunks, function(ck) isTRUE(ck$add))
     num.e = sapply(ex$chunks, function(ck) length(ck$e.li))
+    num.e.task = sapply(ex$chunks, function(ck) ck$num.e.task)
+
     str = sapply(ex$chunks, function(ck) str.trim(paste0(ck$test.txt,collapse="")))
     has.test = nchar(str)>0
 
@@ -229,7 +239,7 @@ te.to.rps = function(te) {
     })
 
 
-    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt, optional=optional, chunk.hint=chunk.hint)
+    dt = data.table(ex.ind = ex.ind, ex.name = names(te$ex)[ex.ind], chunk.ps.ind=0, chunk.ex.ind = seq_along(ex$chunks), chunk.name = names(ex$chunks), chunk.opt=chunk.opt, part=part, num.e = num.e, num.e.task=num.e.task, has.test = has.test, e.li = e.li, e.source.li = e.source.li, test.expr=test.expr, hint.expr=hint.expr, task.txt = task.txt, sol.txt=sol.txt, optional=optional, chunk.hint=chunk.hint)
     # Remove chunks without expressions
     dt = dt[add.chunk,]
     if (NROW(dt)>0)
@@ -244,6 +254,13 @@ te.to.rps = function(te) {
       rep(FALSE, length(et))
     })
   })
+  
+  cdt$points = pmax(
+    te$chunk.points + te$e.points * (cdt$num.e - cdt$num.e.task),
+    # we may give points even for just 'click check' chunks
+    # this may bring a bit of happiness
+    te$min.chunk.points
+  )
 
   items.df = te$items.df
 
@@ -636,6 +653,13 @@ add.te.code = function(te,ck) {
       ck$test.txt = c(ck$test.txt,test.txt)
       ck$hint.txt = c(ck$hint.txt,hint.txt)
       ck$e.li = c(ck$e.li, e.li)
+      ck$num.e = ck$num.e + length(e.li)
+      if (task) {
+        restore.point("jdsnndhfnruenfenrfkerfu84")
+        #stop()
+        ck$num.e.task = ck$num.e.task + length(e.li)
+      }
+      
       ck$e.source.li  = c(ck$e.source.li, e.source.li)
       te$last.e = e.li[[length(e.li)]]
       if (CREATE.PS.ENV$add.enter.code.here) {
@@ -676,6 +700,8 @@ add.te.compute = function(te,ck,var) {
 
   te$counter = te$counter+length(e.li)
   ck$e.li = c(ck$e.li, e.li)
+  ck$num.e = ck$num.e + length(e.li)
+
   ck$e.source.li  = c(ck$e.source.li, e.source.li)
   te$last.e = e.li[[length(e.li)]]
 
@@ -910,6 +936,8 @@ get.empty.chunk = function() {
   ck$sol.txt = NULL
   ck$out.txt = NULL
   ck$expr = NULL
+  ck$num.e = 0
+  ck$num.e.task = 0
   ck
 }
 
