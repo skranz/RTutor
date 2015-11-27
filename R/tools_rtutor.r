@@ -1,3 +1,71 @@
+
+# replaces values in dest and returns list of old values
+replace.fields = function(dest, source, empty.obj = "__EmPtYLeEERE___") {
+  restore.point("replace.fields")
+  
+  fields = names(source)
+
+  exist = intersect(fields, names(dest))
+  
+  empty = setdiff(fields,exist)
+  empty.list = replicate(n = length(empty),empty.obj,simplify = FALSE)
+  names(empty.list) = empty
+  
+  
+  old = c(mget(exist,dest), empty.list)
+  for (name in names(source)) {
+    obj = source[[name]]
+    if (identical(obj, empty.obj)) {
+      if (name %in% exist) rm(list=name,envir=dest)  
+    } else {
+      dest[[name]] = obj
+    }
+  }
+  old
+}
+
+copy.into.missing.fields = function(dest, source) {
+  restore.point("copy.into.empty.fields")
+
+  new.fields = setdiff(names(source), names(dest))
+  dest[new.fields] = source[new.fields]
+  dest
+}
+
+copy.non.null.fields = function(dest, source, fields=names(source)) {
+  restore.point("copy.into.empty.fields")
+  copy.fields = fields[!sapply(source[fields], is.null)]
+  
+  if (is.environment(dest)) {
+    for (field in copy.fields) dest[[field]] = source[[field]]  
+  } else {
+    dest[copy.fields] = source[copy.fields]
+  }
+ 
+  invisible(dest)
+}
+
+
+
+colored.html = function(txt, color="blue") {
+  if (is.null(color)) return(txt)
+  paste0("<font color='",color,"'>",txt,"</font>")
+}
+
+# mark the encoding of character vectors as UTF-8
+mark_utf8 <- function(x) {
+  if (is.character(x)) {
+    Encoding(x) <- 'UTF-8'
+    return(x)
+  }
+  if (!is.list(x)) return(x)
+  attrs <- attributes(x)
+  res <- lapply(x, mark_utf8)
+  attributes(res) <- attrs
+  res
+}
+
+
 # # from and to must be sorted and non-overlapping
 # match.intervals = function(x, from, to) {
 #   from = c(2,5,10.1); to=c(3,8,12)
@@ -118,7 +186,8 @@ view.in.pane = function(html=NULL, markdown=NULL) {
   } else if (!is.null(html)) {
     writeLines(html,htmlFile)
   }
-  rstudio::viewer(htmlFile)
+  if (require(rstudio))
+    rstudioapi::viewer(htmlFile)
 }
 
 
@@ -502,7 +571,7 @@ describe.var.logical= function(v, name=NULL, funs = c("valid.obs","unique.obs","
 
 
 describe.var.internal = function(v, name=NULL, funs = c("valid.obs","unique.obs", "mean","min","max","sd")) {
-  restore.point("describe.var")
+  #restore.point("describe.var")
   vec = lapply(seq_along(funs), function(i) {
     res = tryCatch(
       suppressWarnings(do.call(funs[[i]],list(v, na.rm=TRUE))),
@@ -524,11 +593,24 @@ describe.var.internal = function(v, name=NULL, funs = c("valid.obs","unique.obs"
 get.top.x.obs = function(v, top.x=5, digits=4) {
   restore.point("get.top.x.obs")
   uv = unique(v)
-  shares = (table(v, useNA="ifany") / length(v))
+  
+  qu.df = data_frame(v=v)
+  counts.df = summarise(group_by(qu.df,v), counts = n())
+  
+  shares = counts.df[["counts"]] / length(v)
   shares = sort(shares, decreasing = TRUE)
-  names = as.character(names(shares))
+  names = counts.df[["v"]]
+  
+  #shares = (table(v, useNA="ifany") / length(v))
+  #names = as.character(names(shares))
+  
+  
+  
+  shares = sort(shares, decreasing = TRUE)
   if (is.numeric(v)) {
     names = as.character(signif(as.numeric(names),digits))
+  } else {
+    names = as.character(names)
   }
   names[is.na(names)] = "<NA>"
   top.x = min(top.x, length(shares))
@@ -557,4 +639,125 @@ move.library = function(name, pos=2) {
   ns = paste0("package:",name)
   suppressWarnings(detach(ns,character.only=TRUE, force=TRUE))
   attachNamespace(name,pos=pos)
+}
+
+
+grow.list = function(li) {
+  c(li, vector("list", length(li)))
+}
+
+growlist = function(len=100) {
+  g = new.env()
+  g$size = 0
+  g$li =  vector("list",len)
+  g$len = len
+  g
+}
+growlist.add = function(g, el) {
+  size = g$size+1
+  g$size = size
+  if (g$len< size) {
+    g$li = c(g$li, vector("list", size))
+    g$len = g$len + size
+    cat("increase.size to", g$len," \n")
+  }
+  g$li[[size]] = el 
+  return(NULL)
+}
+
+growlist.to.list = function(g) {
+  g$li[1:g$size]
+}
+
+
+examples.grow.list = function() {
+  
+  
+  growlist.madd = function(gli, ...) {
+    li = list(...)
+    len =  length(li)
+    if (length(gli$li)< gli$size+len)
+      c(gli$li, vector("list", gli$size+len))
+    #gli[(gli$size+1)gli] = 
+    gli$size = gli$size+length(gli)
+  } 
+  
+  # I did not find an elegant solution for quickly growing a list
+  # if its size is not known ex-ante and we do not want to fully unlist it
+  # grow list seems so far the best approach
+  library(microbenchmark)
+  runBenchmark <- function(n) {
+      microbenchmark(times = 3,
+          growlist = {
+            g = growlist(100)
+            for(i in 1:n) {
+              growlist.add(g, list(i=i))
+            }
+          },        
+          grow_list = {
+            li = vector("list",10)
+            for(i in 1:n) {
+              if (length(li)<i) li = grow.list(li)
+              li[[i]] = list(i=i) 
+            }
+          },
+          prelocate = {
+            li = vector("list",n)
+            for(i in 1:n) {
+              li[[i]] = list(i=i) 
+            }
+          },
+          rstack = {
+            s = rstack()
+            for(i in 1:n) {s = insert_top(s,list(i))}
+          },
+           c_ = {
+              a <- list(0)
+              for(i in 1:n) {a = c(a, list(i))}
+          },
+          list_ = {
+              a <- NULL
+              for(i in 1:n) {a <- list(a, list(i=i))}
+              unlist(a)
+          },
+          by_index = {
+              a <- list(0)
+              for(i in 1:n) {a[length(a) + 1] <- i}
+              a
+          }
+       )
+  }
+  runBenchmark(n = 1000)
+  
+  fun = function(g,i) {
+    g$li[[i]]<-list(i=i)
+  }
+  fun2 = function(g,i) {
+    size = g$size+1
+    g$size = size
+    g$li[[g$size]]<-list(i=i)
+    len = length(g$li)
+
+  }
+  
+
+  Rprof(tmp <- tempfile())
+  n = 100000
+  g = growlist(1000)
+  for(i in 1:n) {
+    growlist.add(g, list(i=i))
+  }
+
+  li = vector("list",10)
+  for(i in 1:n) {
+    if (length(li)<i) li = grow.list(li)
+    li[[i]] = list(i=i) 
+  }
+  #growlist.to.list(g)
+  
+  Rprof()
+  summaryRprof(tmp)
+  unlink(tmp)
+    
+
 }

@@ -5,7 +5,7 @@ examples.describe.call = function() {
   describe.call(x[1:4])
 
   df = data.frame(x=1:100)
-  
+
   describe.call(df %.% filter(x>80))
 }
 
@@ -32,13 +32,13 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   restore.point("describe.call")
   call
   na = name.of.call(call)
-  
+
   type = "fun"
   if (na %in% c("+","-","*","/","%*%","(")) {
     type="math"
-  } else if (na == "%.%" | na == "%>%") { 
+  } else if (na == "%.%" | na == "%>%") {
     type="chain"
-  } else if (na == "<-" | na =="=") { 
+  } else if (na == "<-" | na =="=") {
     type="assign"
   } else if (na == "[" | na=="$" | na == "[[") {
     type="subset"
@@ -66,14 +66,14 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
 #       }
 #     }
 #   }
-  
-  args = args.of.call(call) 
+
+  args = args.of.call(call)
   list(name=na,type=type, args = args)
 }
 
 describe.chain.call = function(call.obj, chain.operator=NULL) {
   restore.point("describe.chain.call")
-  
+
   call = call.obj
   # The caller function has determined that we have a chain
   if (is.null(chain.operator)) {
@@ -83,7 +83,7 @@ describe.chain.call = function(call.obj, chain.operator=NULL) {
     return(list(name=na,type="chain", args = args))
   }
   # We have a chain if the call is equal to chain.operator
-  na = name.of.call(call)  
+  na = name.of.call(call)
   if (na==chain.operator) {
     return(describe.chain.call(call.obj, chain.operator=NULL))
   } else {
@@ -91,14 +91,14 @@ describe.chain.call = function(call.obj, chain.operator=NULL) {
     # For simplicity treat it as a chain
     args = list(describe.call(call.obj=call.obj))
     names(args)=na
-    return(list(name=na,type=chain.operator, args = args))    
+    return(list(name=na,type=chain.operator, args = args))
   }
 }
 
-#' Checks whether arguments of stud.call are correct given the specification in check.call 
+#' Checks whether arguments of stud.call are correct given the specification in check.call
 check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, allow.extra.arg=FALSE, ignore.arg=NULL, check.values=NULL) {
   restore.point("compare.call.args")
-   
+
   sarg = args.of.call(stud.call, name.empty.arg=TRUE)
   carg = args.of.call(check.call, name.empty.arg=TRUE)
 
@@ -113,14 +113,14 @@ check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.en
   overlap.arg = setdiff(intersect(names(sarg), names(carg)), ignore.arg)
   if (length(overlap.arg)==0)
     return(TRUE)
-  
+
   differs = sapply(overlap.arg, function(na) !identical(sarg[[na]],carg[[na]]))
   if (sum(differs)==0)
     return(TRUE)
   if (!compare.vals)
     return(FALSE)
   differ.arg = overlap.arg[differs]
-   
+
   if (compare.vals) {
     for (var in differ.arg) {
       stud.val = eval(sarg[[var]],val.env)
@@ -141,15 +141,15 @@ remove.names = function(x) {
     if (!is.null(colnames(x)))
       catnames(x) = NULL
   }, silent=TRUE)
-  x  
+  x
 }
 
 is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE) {
   restore.point("is.same")
-  
+
   if(identical(x,y))
     return(TRUE)
-  
+
   if (length(x)!=length(y))
     return(FALSE)
 
@@ -159,7 +159,7 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
       if (identical(ret,FALSE)) return(FALSE)
     }
   }
-  
+
   if (check.all.equal) {
     if (is.data.frame(x) & is.data.frame(y)) {
       if ((NROW(x) != NROW(y)) | (NCOL(x) != NCOL(y)))
@@ -172,39 +172,66 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
     } else {
       if (isTRUE(all.equal(x,y, tol=tol, check.names=check.names, check.attributes=check.attributes)))
         return(TRUE)
-      
+
     }
   }
   if (is.numeric(x) & is.numeric(y)) {
     if (max(abs(x-y), na.rm=TRUE)>tol )
       return(FALSE)
     if (!identical(is.na(x),is.na(y)))
-      return(FALSE)        
+      return(FALSE)
     return(TRUE)
   }
   return(FALSE)
 }
 
-compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
-  restore.point("compare.call.args")
-  
+#' Compare if two calls are the same
+compare.calls = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
+
   stud.call = match.call.object(stud.call, ...)
   check.call = match.call.object(check.call, ...)
-  
+
+  restore.point("compare.calls")
+
+
+  if (is.symbol(stud.call) & is.symbol(check.call)) {
+    if (identical(stud.call,check.call)) {
+        return(nlist(same=TRUE, same.call=TRUE, descr=""))
+    } else {
+        return(nlist(same=FALSE, same.call=FALSE, descr=""))
+    }
+  } else if (is.symbol(stud.call)  != is.symbol(check.call)) {
+    return(nlist(same=FALSE, same.call=FALSE, descr=""))
+  }
+
+
+  res = compare.call.args(stud.call, check.call, compare.vals=compare.vals, val.env=val.env,...)
+  same = length(res$differ.arg) == 0 & length(res$missing.arg) == 0 & length(res$extra.arg) == 0
+
+  c(list(same=same, same.call=TRUE), res)
+}
+
+
+compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
+  restore.point("compare.call.args")
+
+  stud.call = match.call.object(stud.call, ...)
+  check.call = match.call.object(check.call, ...)
+
   sarg = args.of.call(stud.call, name.empty.arg=TRUE)
   carg = args.of.call(check.call, name.empty.arg=TRUE)
 
   missing.arg = setdiff(names(carg), names(sarg))
   extra.arg = setdiff(names(sarg), names(carg))
   overlap.arg = intersect(names(sarg), names(carg))
-  
+
   if (length(overlap.arg)>0) {
     differs = sapply(overlap.arg, function(na) !identical(sarg[[na]],carg[[na]]))
     differ.arg = overlap.arg[differs]
   } else {
     differ.arg = same.arg = overlap.arg
   }
-  
+
   if (length(differ.arg)>0) {
     if (compare.vals) {
       differ.detail = lapply(differ.arg, function(var) {
@@ -222,9 +249,9 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
     }
   } else {
     differ.detail = NULL
-  }  
+  }
   same.arg = setdiff(overlap.arg, differ.arg)
-  
+
   # Make a description that is used by hint functions.
   s = NULL
   if (length(differ.arg)>0) {
@@ -237,23 +264,23 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
     s = c(s,paste0("You don't use the argument ", missing.arg))
   }
 
-  
-  nlist(differ.arg,differ.detail,missing.arg,extra.arg,same.arg, overlap.arg, stud.arg=sarg, check.arg=carg, descr=s)  
+
+  nlist(differ.arg,differ.detail,missing.arg,extra.arg,same.arg, overlap.arg, stud.arg=sarg, check.arg=carg, descr=s)
 }
 
 
 compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, groups=TRUE, tol=1e-12, details = TRUE, check.all.equal=TRUE) {
   wrong = NULL
-  
+
   if (is.same(var.stud, var.sol))
     return(NULL)
-  
+
   if (class != FALSE) {
     class.stud = class(var.stud)[1]
     class.sol = class(var.sol)[1]
     if (class.stud == "integer") class.stud = "numeric"
     if (class.sol == "integer") class.sol = "numeric"
-    
+
     if (class.stud != class.sol) {
       if (details) {
         wrong = c(wrong,paste0("class (is ", class.stud, " but shall be ", class.sol,")"))
@@ -261,10 +288,10 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
         wrong = c(wrong,"class")
       }
     }
-  }  
+  }
   if (!is.null(wrong))
     return(wrong)
-  
+
   if (length != FALSE) {
     if (!length(var.stud)==length(var.sol)) {
       wrong = c(wrong,"length")
@@ -276,7 +303,7 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
     if (!identical(dim(var.stud),dim(var.sol))) {
       wrong = c(wrong,"dim")
     }
-  }  
+  }
   if (!is.null(wrong))
     return(wrong)
 
@@ -301,14 +328,14 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
   }
   if (!is.null(wrong))
     return(wrong)
-  
+
   if (names != FALSE) {
     if (!identical(names(var.stud),names(var.sol))) {
       wrong = c(wrong,"names")
     }
-  }  
-  
-  
+  }
+
+
   if (values != FALSE) {
     if (is.list(var.sol) | is.environment(var.sol)) {
       if (!identical(var.sol, var.stud, ignore.environment=TRUE)) {
@@ -319,7 +346,7 @@ compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, n
         wrong = c(wrong,"values")
       } else if (!identical(is.na(var.stud),is.na(var.sol))) {
         wrong = c(wrong,"values")
-      }        
+      }
     } else {
         wrong = c(wrong,"values")
     }
@@ -347,11 +374,11 @@ match.call.object = function(call, envir=parent.frame(), s3.method=NULL) {
   ret = call
   env = new.env(parent=envir)
   env$call = call
-  
+
   if (!is.null(s3.method)) {
       s3.method = substitute(s3.method)
       #restore.point("match.call.object2")
-      match.expr = substitute(match.call(fun, call=call), list(fun=s3.method))    
+      match.expr = substitute(match.call(fun, call=call), list(fun=s3.method))
   } else {
     match.expr = substitute(match.call(fun, call=call), list(fun=call[[1]]))
   }
@@ -362,7 +389,7 @@ match.call.object = function(call, envir=parent.frame(), s3.method=NULL) {
 name.of.call = function(call) {
   if (is.symbol(call))
     return(as.character(call))
-  as.character(call[[1]])  
+  as.character(call[[1]])
 }
 
 
@@ -381,7 +408,7 @@ recursive.args.of.call = function(call,expand.names=NULL) {
 examples.args.of.call = function() {
   args.of.call(quote(t.test(extra ~ group, data=sleep)))
   match.call.object(quote(t.test(extra ~ group, data=sleep)))
-  
+
 }
 
 args.of.call = function(call, name.empty.arg = FALSE, prefix="") {
@@ -395,7 +422,7 @@ args.of.call = function(call, name.empty.arg = FALSE, prefix="") {
     } else {
       is.empty = which(names(li)=="")
     }
-    names(li)[is.empty] <- paste0(prefix,is.empty) 
+    names(li)[is.empty] <- paste0(prefix,is.empty)
   }
   li
 }
@@ -408,33 +435,33 @@ examples.code.has.call = function() {
   x[['a']]
   "
   call.str = "plot(x=5,y=3,main='Hi')"
-  
+
   call.str = 'x[["a"]]'
-  
+
   find.matching.calls(code.str, call.str)
 }
 
 
 find.matching.calls = function(code.str, call.str, call = parse(text=call.str, srcfile=NULL)[[1]]) {
-  
+
   code.li = as.list(base::parse(text=code.str, srcfile=NULL))
-  call = 
+  call =
 
   code.names = sapply(code.li, name.of.call)
   call.name = name.of.call(call)
-  
+
   ind = which(code.names %in% call.name)
   if (length(ind)==0) {
     return(NULL)
   }
   return(code.li[ind])
-  
+
   as.list(code)
-  
+
   co = code[[3]]
   co
   co = match.call.object(co)
-  
+
   names(co)
   as.character(co[[1]])
   co[[2]]
@@ -442,10 +469,10 @@ find.matching.calls = function(code.str, call.str, call = parse(text=call.str, s
   class(co[[1]])
   call. = co
   f()
-  
-  
+
+
   names(co)
-  
+
   args(co)
   call_tree(co)
   standardise_call(co)

@@ -1,0 +1,67 @@
+# Problemset Example
+
+Example of an RTutor interactive Problemset
+
+#### Author:  Sebastian Kranz
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+#< ignore
+```{r "create_ps",include=FALSE , eval=!TRUE}
+library(RTutor)
+#library(restorepoint)
+#setwd("D:/libraries/RTutor/examples")
+setwd("D:/libraries/RTutor/RTutor/inst/examples")
+ps.name = "LeafletExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c("leaflet","magrittr") 
+# Important add the parameter addons="quiz" !
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE, addons="quiz")
+
+show.ps(ps.name, user.name="John Does")
+
+stop()
+```
+
+Load libraries so that knit HTML also works
+```{r}
+library(yaml)
+library(magrittr)
+library(leaflet)
+```
+
+#>
+
+
+## Exercise 1 --Leaflet
+
+
+Check to see an interactive leaflet centered on the department of Mathematics and Economics at Ulm University. The place where RTutor has been created.
+```{r results='asis', output="htmlwidget", widget="leaflet"}
+#< task_notest
+SFmap <- leaflet() %>% 
+  addTiles() %>% 
+  setView(9.9620289,48.4251394, zoom = 11) %>% 
+  addMarkers(9.963614702355699,48.42517242865929, popup = 'RTutor was created here at Ulm University')
+SFmap
+#>
+```
+
+Here you can see what else you can do with the great leaflet packages:
+
+http://rstudio.github.io/leaflet/
+
+Here is a list of some other htmlwidgets, which now can also be used with RTutor:
+
+http://www.htmlwidgets.org/
+
+---
+
+## Exercise 2 -- Empty
+
+
+Enter 2*2
+```{r}
+2*2
+```
+
+That's all folks!

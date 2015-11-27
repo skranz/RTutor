@@ -1,0 +1,115 @@
+# Problemset Example
+
+Example of an RTutor interactive Problemset
+
+#### Author:  Sebastian Kranz
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+#< ignore
+```{r "create_ps",include=TRUE , eval=TRUE}
+library(RTutor)
+library(yaml)
+#library(restorepoint)
+#setwd("D:/libraries/RTutor/examples")
+setwd("D:/libraries/RTutor/RTutor/inst/examples")
+ps.name = "QuizExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c("yaml") 
+# Important add the parameter addons="quiz" !
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE, addons="quiz")
+
+show.ps(ps.name, user.name="John Does")
+
+stop()
+```
+#>
+
+## Exercise 1 -- Quiz
+
+### A single choice quiz
+
+#< quiz "single"
+question: What is 20*20?
+sc:
+    - 100
+    - 200
+    - 400*
+    - 500
+success: Great, your answer is correct!
+failure: Try again.
+#>
+
+### A multiple choice quiz
+
+#< quiz "multi"
+question: Check all prime numbers
+mc:
+    - 2*
+    - 3*
+    - 4
+    - 5*
+    - 6
+    - 7*
+    - 8
+success: Great, all answers are correct!
+failure: Not all answers correct. Try again.
+#>
+
+
+### An open question
+
+#< quiz "music"
+question: Johann ???? Bach
+answer: Sebastian
+#>
+
+### An open question with a numeric answer
+
+#< quiz "pi"
+question: 2. State pi up to 2 digits
+answer: 3.14
+roundto: 0.01
+#>
+
+
+### A quiz consisting of several questions (and a single check button)
+
+#< quiz "parts"
+parts:
+  - question: 1. What is 20*20?
+    choices:
+        - 100
+        - 200
+        - 400*
+        - 500
+    multiple: FALSE
+    success: Great, your answer is correct!
+    failure: Try again.
+  - question: 2. State pi up to 2 digits
+    answer: 3.14
+    roundto: 0.01
+#>
+
+
+#< award "Quiz master"
+You solved the quiz!
+#>
+
+
+Enter 2*2
+```{r}
+2*2
+```
+
+
+---
+
+## Exercise 2 -- Empty
+
+
+Enter 2*2
+```{r}
+2*2
+```
+
+That's all folks!

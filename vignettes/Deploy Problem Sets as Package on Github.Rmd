@@ -90,13 +90,16 @@ Also take a look at the /inst/ps/problemset_name folder. It should contain at le
 If you want to avoid that students can easily access the solution, you have to remove the _sol.rmd file from the /inst/ps/problemset_name folder. The drawback is that then the problem set cannot be changed or rebuild from source by other researchers. Also make sure that you set the argument `rps.has.sol = FALSE` in your call to `create.ps`, since otherwise a sample solution can be created from the .rps file.
 
 
-### Step 4 update DESCRIPTION and README.MD
+### Step 4 Update DESCRIPTION and README.MD and choose licence
 
 Edit the file "DESCRIPTION"
 	- generate or update the problem set description / title
 	- check the DATE and possibly update it
 	- check and correct your name and email in the AUTHOR and MAINTAINER fields
 	- check whether you agree with the licences and possibly adapt them
+	- Here is an overview of different types of Creative Commons licenses:
+	
+	  [https://creativecommons.org/licenses/](https://creativecommons.org/licenses/)
 
 Edit the file "README.MD"
 	- Add a brief description (2-3 lines) of the problem set.

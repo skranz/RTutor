@@ -1,10 +1,10 @@
 #' Grade your problem set and make submission file
 #' 
-#' The command will rerun and check all chunks of your problem set and grade it, i.e. it determines which tests are passed or not. The results are stored in a grading file: psname___username.grd, which will be part of the submitted solution. The function works similarly than check.problem.set, but makes sure that all exercies are checked.
+#' The command will rerun and check all chunks of your problem set and grade it, i.e. it determines which tests are passed or not. The results are stored in a submission file: psname___username.sub, which will be part of the submitted solution. The function works similarly than check.problem.set, but makes sure that all exercies are checked.
 #'@export
-make.submission = grade.ps = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
+make.submission = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
 
-  restore.point("grade.ps")
+  restore.point("make.submission")
 
   
   if (from.knitr) {
@@ -54,11 +54,14 @@ make.submission = grade.ps = function(ps=get.ps(), user.name=get.user()$name,  p
     ret <- FALSE
     display("Grade exercise ", ex.name)
     
-    
     if (!is.false(ps$catch.errors)) {
-      ret = tryCatch(check.exercise(ex.ind=i, verbose=verbose, check.all=TRUE),
-                   error = function(e) {ps$failure.message <- as.character(e)
-                                        return(FALSE)})
+      ret = tryCatch(
+        check.exercise(ex.ind=i, verbose=verbose, check.all=TRUE),
+        error = function(e) {
+          ps$failure.message <- as.character(e)
+          return(FALSE)
+        }
+      )
     } else {
       ret = check.exercise(ex.ind=i, verbose=verbose, check.all=TRUE)
     }
@@ -82,11 +85,11 @@ make.submission = grade.ps = function(ps=get.ps(), user.name=get.user()$name,  p
 
   ups = get.ups()
   
-  grd = as.list(ups)
-  grd$tdt = as.data.frame(grd$tdt)
-  grd$rmd.code = rmd.code  
-  grd$grade.time = Sys.time()
-  grd$rtutor.version = packageVersion("RTutor")
+  sub = as.list(ups)
+  sub$tdt = as.data.frame(sub$tdt)
+  sub$rmd.code = rmd.code  
+  sub$grade.time = Sys.time()
+  sub$rtutor.version = packageVersion("RTutor")
   
   sum.fun = function(df) {
     summarise(df,
@@ -96,31 +99,35 @@ make.submission = grade.ps = function(ps=get.ps(), user.name=get.user()$name,  p
       num.success = sum(success),
       share.solved=round(sum(success)/num.test*100),
       num.hints = sum(num.hint),
-      finished.time = max(success.date, na.rm=TRUE),
-      grade.time = grd$grade.time
+      finished.time = max(success.date),
+      grade.time = sub$grade.time
     )
   }
-  grd$total = sum.fun(grd$tdt)
-  grd$by.chunk = sum.fun(group_by(grd$tdt,chunk.ps.ind))
-  grd$by.ex = sum.fun(group_by(grd$tdt,ex.ind))
+  sub$total = sum.fun(sub$tdt)
+  sub$by.chunk = sum.fun(group_by(sub$tdt,chunk.ps.ind))
+  sub$by.ex = sum.fun(group_by(sub$tdt,ex.ind))
   
   
-  grd$hash = digest::digest(list(grd$user.name,grd$ps.name,grd$grade.time,grd$total))
+  sub$hash = digest::digest(list(sub$user.name,sub$ps.name,sub$grade.time,sub$total))
   
-  try(grd$log.txt <- readLines(ps$log.file))
-  try(grd$log.df <- import.log(txt=grd$log.txt))
-  #object.size(grd)
+  try(sub$log.txt <- readLines(ps$log.file))
+  try(sub$log.df <- import.log(txt=sub$log.txt))
+  #object.size(sub)
   
-  grd.file = paste0(grd$ps.name,"_",grd$user.name,".sub")
-  grd = as.environment(grd)
-  save(grd,file=grd.file)
+  sub.file = paste0(sub$ps.name,"__",sub$user.name,".sub")
+  sub = as.environment(sub)
+  save(sub,file=sub.file)
  
-  invisible(grd) 
+  stats()
+  
+  cat(paste0("\nI created the submission file '", sub.file,"'"))
+  
+  invisible(sub) 
 }
 
 
-load.grd = function(file) {
+load.submission = function(file) {
   load(file)
-  return(grd)
+  return(sub)
 }
 

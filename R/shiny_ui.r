@@ -9,10 +9,29 @@ make.view.ui = function(view.ind, ps=get.ps()) {
     rows = which(shiny.dt$view.ind == view.ind)      
   }
   ui.li = lapply(rows, function(i) {
+    #restore.point("hdkgkdhighoifhg")
     if (shiny.dt$type[i]=="chunk") {
       chunk.ind = which(cdt$chunk.name==shiny.dt$chunk.name[i])
       ui=make.initial.chunk.ui(chunk.ind)
+      
+      award.name = cdt$award.name[chunk.ind]
+      if (!is.na(award.name)) {
+        award.ui.id = get.award.ui.id(award.name)
+        return(list(ps$cdt$ui[[chunk.ind]],uiOutput(award.ui.id)))
+      }
       return(ps$cdt$ui[[chunk.ind]])
+    } else if (shiny.dt$type[i]=="addon") {
+      ao = ps$rps$addons[[ shiny.dt$addon.id[i] ]]
+      Addon = ps$rps$Addons[[ao$rta$type]]
+      html = Addon$shiny.ui.fun(ao)
+      
+      row = which(ps$rps$ao.dt$id == ao$rta$id)
+      award.name = ps$rps$ao.dt$award.name[row]
+      if (!is.na(award.name)) {
+        award.ui.id = get.award.ui.id(award.name)
+        return(list(mathJaxRTutor(html),uiOutput(award.ui.id)))
+      }
+      return(mathJaxRTutor(html))      
     } else {
       #return(shiny.dt$html[[i]])
 

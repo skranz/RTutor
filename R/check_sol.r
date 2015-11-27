@@ -170,7 +170,7 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
 #' @param ex.name The name of the exercise
 #' @param stud.code The code of the student's solution as a string (or vector of strings)
 #' @export
-check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE) {
+check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE, store.output=TRUE, noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp)) {
   restore.point("check.chunk")
 
   ck = ps$cdt[chunk.ind,]
@@ -194,7 +194,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       return(FALSE)
     }
   }
-  display("Check chunk ", chunk.name," ...")
+  if (verbose)
+    display("Check chunk ", chunk.name," ...")
 
   ps$failure.message  = "No failure message recorded"
   ps$warning.messages = list()
@@ -218,6 +219,17 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     return(FALSE)
 
 
+  if (isTRUE(ps$check.whitelist)) {
+    if (verbose)
+      display("check whitelist")
+    res = rtutor.check.whitelist(ps$stud.expr.li,ps=ps)
+    if (!res$ok) {
+      ps$failure.message=paste0("security error: ",res$msg)
+      return(FALSE)
+    }
+  }
+
+
   if (verbose) {
     display("make.chunk.stud.env...")
   }
@@ -237,20 +249,19 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   #eval(ps$stud.expr.li, ps$stud.env)
   ps$e.ind = 0
 
+  # run student code in
+  if (!isTRUE(ps$noeval)) {
+    # We may not store output for speed reasons
+    # storing output slows down checking of chunk if large
+    # data frame is shown
+    if (!store.output) ps$chunk.console.out=""
+    has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env, store.output=store.output)
 
-  has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env)
-#   tryCatch( eval(ps$stud.expr.li, stud.env),
-#     error = function(e) {
-#       # Evaluate expressions line by line and generate failure message
-#       stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env)
-#       has.error <<- TRUE
-#     }
-#   )
-  if (has.error) {
-    log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
-    return(FALSE)
+    if (has.error) {
+      log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
+      return(FALSE)
+    }
   }
-
 
   had.warning = FALSE
   if (verbose) {
@@ -263,8 +274,13 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1
 
   # Turn graphics device off
-  if (isTRUE(ps$use.null.device))
+
+  if (isTRUE(ps$use.null.device)) {
     try(png("NUL"), silent=TRUE)
+    on.exit(try(dev.off(), silent=TRUE),add = TRUE)
+  }
+  # Back to normal graphics device
+
 
   for (e.ind in seq_along(ck$e.li[[1]])) {
     ps$e.ind = e.ind
@@ -279,7 +295,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       if (verbose) {
         display("  Test #", test.ind, ": ",deparse1(test))
       }
-      ret = eval(test,ps$stud.env)
+      ret = eval(test,ps$ps.basenv)
       ps$tdt$test.passed[tdt.ind] = ret
       update.ups.test.result(passed=ret,ps=ps)
       #update.log.test.result(ret,ups, ck, ps)
@@ -290,8 +306,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
         ps$test.log = c(ps$test.log, ps$failure.message)
         # Back to normal graphics device
-        if (isTRUE(ps$use.null.device))
-          try(dev.off(), silent=TRUE)
+        #if (isTRUE(ps$use.null.device))
+        #  try(dev.off(), silent=TRUE)
 
         return(FALSE)
       } else if (ret=="warning") {
@@ -308,15 +324,15 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
 
   # Back to normal graphics device
-  if (isTRUE(ps$use.null.device))
-    try(dev.off(), silent=TRUE)
+  #if (isTRUE(ps$use.null.device))
+  #  try(dev.off(), silent=TRUE)
 
   ps$cdt$is.solved[[chunk.ind]] = TRUE
 
   if (!is.na(ck$award.name)) {
     give.award(ck$award.name, ps=ps)
-    #if (isTRUE(ps$is.shiny))
-    #  update.chunk.ui(chunk.ind = chunk.ind)
+    if (isTRUE(ps$is.shiny))
+      show.shiny.award(ck$award.name)
   }
 
   log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=TRUE,message="")
@@ -354,6 +370,19 @@ update.log.test.result = function(...) {
 
 make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
   restore.point("make.chunk.stud.env")
+
+  # return emptyenv if no student code
+  # shall ever be evaluated
+  if (isTRUE(ps$noeval)) {
+    return(emptyenv())
+  }
+
+
+  # return precomputed chunkenv
+  if (isTRUE(ps$precompute))
+    return(ps$cdt$chunk.env[[chunk.ind]])
+
+
   ck = ps$cdt[chunk.ind,]
 
   cdt = ps$cdt

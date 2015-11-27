@@ -73,13 +73,13 @@ read.var.txt = function(txt.file) {
   dt
 }
 
-get.var.descr.dt = function(vars=colnames(dat),dat=NULL, var.dt = get.ps()$rps$var.dt) {
+get.var.descr.dt = function(vars=colnames(dat),dat=NULL, var.dt = get.ps()$rps$var.dt, no.descr = "- no description -") {
   restore.point("get.var.descr.dt")
   if (is.null(var.dt))
     return(NULL)
   tab = data.frame(var=vars, stringsAsFactors =FALSE)
   res = left_join(tab, as.data.frame(var.dt), by="var")
-  res$descr[is.na(res$descr)] = "- no description -"
+  res$descr[is.na(res$descr)] = no.descr
   res
 }
 
