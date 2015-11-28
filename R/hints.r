@@ -78,7 +78,7 @@ hint = function(..., ps=get.ps()) {
 
   
   if (do.log)
-    log.hint(chunk.ind=chunk.ind, ps=ps)
+    log.hint(chunk.ind=ps$chunk.ind, ps=ps)
   
   #ps$chunk.ind
   #ps$e.ind

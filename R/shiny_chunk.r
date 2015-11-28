@@ -467,10 +467,10 @@ save.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
   save.sav()
   nali = ps$cdt$nali[[chunk.ind]]
 
-  createAlert(session,inputId = nali$alertOut,
+  createAlert(session, nali$alertOut,
     title = paste0("Saved as ", ps$sav.file),
-    message= "",
-    type = "info", append=FALSE
+    content = "",
+    style = "info", append=FALSE
   )
 }
 
