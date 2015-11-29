@@ -27,10 +27,18 @@ rtutor.addon.quiz = function() {
     parse.fun = rtutor.quiz.block.parse,
     shiny.init.fun = rtutor.quiz.init.shiny,
     shiny.ui.fun = rtutor.quiz.shiny.ui,
-    task.txt.fun = function(...) "-- Ommited Quiz---",
-    sol.txt.fun = function(...) "-- Ommited Quiz---",
-    out.txt.fun = function(...) "-- Ommited Quiz---"
+    task.txt.fun = rtutor.quiz.task.txt.fun,
+    sol.txt.fun = rtutor.quiz.sol.txt.fun,
+    out.txt.fun = rtutor.quiz.sol.txt.fun
   )
+}
+
+rtutor.quiz.task.txt.fun = function(ao,...) {
+  quiz.md(ao,solution = FALSE)
+} 
+
+rtutor.quiz.sol.txt.fun = function(ao,...) {
+  quiz.md(ao,solution = TRUE)
 }
 
 rtutor.quiz.shiny.ui = function(ao, ...) {
@@ -277,6 +285,40 @@ quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnI
     button = NULL
   }
   list(head,answer,uiOutput(part$resultId),button)
+}
+
+quiz.md = function(qu, solution=FALSE) {
+  restore.point("quiz.md")
+  li = lapply(seq_along(qu$parts), function(i) {
+    part = qu$parts[[i]]
+    quiz.part.md(part, solution=TRUE)
+  })
+  paste0(li, collapse="\n")
+}
+
+
+quiz.part.md = function(part, solution=FALSE) {
+  restore.point("quiz.part.md")
+  
+  head = paste0("\nQuiz: ",part$question,"\n")
+  if (solution) {
+    if (part$type=="numeric" | part$type == "text") {
+      answer = paste0("Answer: ", part$answer)
+    } else if (part$type=="mc" | part$type=="sc") {
+      ans = part$choices
+      mark = rep("[ ]", length(ans))
+      mark[ans %in% part$answer] =  "[x]"
+      answer = paste0("- ", ans, " ", mark,"\n", collapse="\n")
+    }
+  } else {
+    if (part$type=="numeric" | part$type == "text") {
+      answer = "Answer: "
+    } else if (part$type=="mc" | part$type=="sc") {
+      ans = part$choices
+      answer = paste0("- ", ans, "[   ]\n", collapse="\n")
+    }
+  }
+  paste0(head,"\n", answer)
 }
 
 
