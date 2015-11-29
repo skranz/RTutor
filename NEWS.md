@@ -1,5 +1,19 @@
 # News for RTutor package
 
+### 2015-11-29 preknit and show in noeval mode
+
+- When creating the problem set, we can now already knit for each
+  chunk the sample solution.
+- A preknitted shiny based problem set can be shown with the parameter
+  `noeval=TRUE`. Then user code is then only parsed but not evaluated.
+  Tests and hints only compare the parsed expression with the parsed
+  sample solution. The noeval mode can be useful for hosting problem sets
+  on an own webserver, where evaluation of user code is a high 
+  security risk or the user shall have no direct access to the data.
+  The cost is less flexibility in testing the user code,
+  e.g. in noeval mode,  `x=1+2` will not be seen as correct if the
+  sample solution is `x=2+1`.
+
 ### 2015-11-17 print data.frames as html table in shiny-based RTutor
 
 - In the shiny interface of RTutor data.frames are now printed by
