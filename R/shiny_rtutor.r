@@ -44,19 +44,26 @@ examples.show.shiny.ps = function() {
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE,...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"),...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
 
   #browser()
-  ps = init.shiny.ps(ps.name=ps.name, user.name=user.name,sav.file=sav.file,
-                     load.sav=load.sav, sample.solution=sample.solution,
-                     run.solved = run.solved,import.rmd=import.rmd, rmd.file=rmd.file,
-                     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
-                     show.solution.btn = show.solution.btn, clear.user=clear.user,
-                     check.whitelist=check.whitelist, wl=wl,
-                     precomp=precomp, noeval=noeval, ...)
+  ps = init.shiny.ps(
+    ps.name=ps.name, user.name=user.name,sav.file=sav.file,
+    load.sav=load.sav, sample.solution=sample.solution,
+    run.solved = run.solved,import.rmd=import.rmd,
+    rmd.file=rmd.file,
+    dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
+    show.solution.btn = show.solution.btn, clear.user=clear.user,
+    check.whitelist=check.whitelist, wl=wl,
+    precomp=precomp, noeval=noeval, ...
+  )
+  
+  ps$need.login = need.login
+  ps$login.dir = login.dir
+  
   ps$catch.errors = catch.errors
   ps$offline=offline
   ps$left.margin = left.margin
@@ -74,8 +81,11 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   n = NROW(ps$cdt)
 
 
+  ps$view.in.container = FALSE
   ui = make.rtutor.ui()
+  
   ex.inds = 1:NROW(ps$edt)
+  #ex.inds = 1:2
   for (ex.ind in ex.inds)
     show.ex.ui(ex.ind)
 

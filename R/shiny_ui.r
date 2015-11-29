@@ -62,7 +62,7 @@ make.view.ui.li = function(view.inds = NULL,ps=get.ps()) {
   invisible(view.ui.li)  
 }
 
-make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
+make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session, view.in.container=isTRUE(ps$view.in.container)) {
   restore.point("make.ex.ui")
   shiny.dt = ps$shiny.dt
   cdt = ps$cdt  
@@ -74,10 +74,15 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session) {
   }
   view.inds = unique(shiny.dt$view.ind[rows])
   ex.name = ps$edt$ex.name[ex.ind]
-  li = lapply(view.inds, function(view.ind) {
-    outputName = paste0("viewUI",view.ind)
-    uiOutput(outputName)
-  })
+  
+  if (view.in.container) {
+    li = lapply(view.inds, function(view.ind) {
+      outputName = paste0("viewUI",view.ind)
+      uiOutput(outputName)
+    })
+  } else {
+    li = ps$view.ui.li[view.inds]
+  }
   
   
   # Button for next exercise
@@ -188,6 +193,18 @@ show.view.ui = function(view.ind, ps = get.ps(), session=ps$session) {
   updateUI(session,id, ui)
 }
 
+get.view.ui.of.ex = function(ex.ind, ps=get.ps()) {
+  restore.point("get.view.ui.of.ex")
+  
+  if (ex.ind==1) {
+    rows = which(ps$shiny.dt$ex.ind == ex.ind | ps$shiny.dt$ex.ind == 0)
+  } else {
+    rows = which(ps$shiny.dt$ex.ind == ex.ind)      
+  }
+  view.inds = setdiff(unique(ps$shiny.dt$view.ind[rows]),0)
+  ps$view.ui.li[view.inds]
+}
+
 show.view.ui.of.ex = function(ex.ind, ps = get.ps()) {
   restore.point("show.view.ui.of.ex")
   
@@ -201,9 +218,10 @@ show.view.ui.of.ex = function(ex.ind, ps = get.ps()) {
     show.view.ui(view.ind, ps)
 }
 
-show.ex.ui = function(ex.ind, ps=get.ps()) {
+show.ex.ui = function(ex.ind, ps=get.ps(), view.in.container=isTRUE(ps$view.in.container)) {
   restore.point("show.ex.ui")
-  show.view.ui.of.ex(ex.ind)
+  if (!view.in.container)
+    show.view.ui.of.ex(ex.ind)
   chunk.inds = which(ps$cdt$ex.ind == ex.ind)
   for (chunk.ind in chunk.inds) {
     update.chunk.ui(chunk.ind)
