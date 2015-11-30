@@ -5,7 +5,7 @@
 #'
 #' The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.
 #'@export
-check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE) {
+check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, set.warning.1=TRUE, user.name="GUEST", do.check=interactive(), verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE, just.init=FALSE) {
 
   restore.point("check.problem.set", deep.copy=FALSE)
 
@@ -84,6 +84,9 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   }
 
   ps$cdt = cdt
+  
+  if (just.init) return(invisible())
+  
   # Check exercises
   i = 1
   # i = 8
@@ -384,8 +387,9 @@ update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(
     } else {
       ups$cu$num.fail[chunk.ind] = ups$cu$num.fail[chunk.ind]+1
     }
-    update.ups(ups)
   }
+  update.ups(ups)
+
 }
 
 update.log.test.result = function(...) {
