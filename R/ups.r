@@ -156,6 +156,10 @@ update.ups = function(ups = get.ups(), ps = get.ps()) {
 save.ups = function(ups = get.ups(), ps=get.ps()) {
   if (isTRUE(ps$save.nothing)) return()
   
+  ups$chunk.ind = ps$chunk.ind
+  
+  #cat("\nups saved with chunk.ind = ", ups$chunk.ind)
+  
   user = get.user()
   dir = get.ps()$ups.dir
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")

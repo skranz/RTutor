@@ -143,8 +143,29 @@ make.ex.ui.li = function(ex.inds = NULL, ps = get.ps()) {
   invisible(ps$ex.ui.li)
 }
 
+make.rtutor.page.ui = function(inner, ps = get.ps(), title="RTutor") {
+  
+  # WARNING: If highlightjs cannot be loaded, whole problem set
+  # fails to work (very hard to detect bug)
+  # Link to local highlightjs version
+  dir = paste0(system.file('www', package='RTutor'),"/highlightjs")
+  addResourcePath('highlightjs', paste0(system.file('www', package='RTutor'),"/highlightjs"))
 
-make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
+  ret = navbarPage(title, header=
+    tags$head(
+      tags$script(src = 'highlightjs/highlight.min.js',
+                  type = 'text/javascript'),
+      tags$script(src = 'highlightjs/languages/r.min.js',
+                  type = 'text/javascript'),
+      tags$link(rel = 'stylesheet', type = 'text/css',
+                href = 'highlightjs/styles/github.min.css')
+    ),
+    tabPanel(ps$name, mathJaxRTutor(inner))
+  )
+  
+}
+
+make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps(), just.inner=FALSE) {
   restore.point("make.rtutor.ui")
   
   view.ui.li = make.view.ui.li(ps=ps)
@@ -159,25 +180,11 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps()) {
       list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
   ))
 
-
-  # WARNING: If highlightjs cannot be loaded, whole problem set
-  # fails to work (very hard to detect bug)
-  # Link to local highlightjs version
-  dir = paste0(system.file('www', package='RTutor'),"/highlightjs")
-  addResourcePath('highlightjs', paste0(system.file('www', package='RTutor'),"/highlightjs"))
-
-  ret = navbarPage("RTutor", header=
-    tags$head(
-      tags$script(src = 'highlightjs/highlight.min.js',
-                  type = 'text/javascript'),
-      tags$script(src = 'highlightjs/languages/r.min.js',
-                  type = 'text/javascript'),
-      tags$link(rel = 'stylesheet', type = 'text/css',
-                href = 'highlightjs/styles/github.min.css')
-    ),
-    tabPanel(ps$name, mathJaxRTutor(doc))
-  )
-
+  inner = doc 
+  if (just.inner) return(inner)
+  
+  ret = make.rtutor.page.ui(inner,ps=ps)
+  
   return(ret)
 }
 
