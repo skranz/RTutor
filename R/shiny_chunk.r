@@ -86,7 +86,7 @@ get.chunk.ui = function(chunk.ind, ps=get.ps(),... ) {
 }
 
 
-make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.lines=NULL, fontSize=20, console.height=height, ps = get.ps()) {
+make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.lines=NULL, fontSize=12, console.height=height, ps = get.ps()) {
   restore.point("make.chunk.input.ui")
 
   nali = ps$cdt$nali[[chunk.ind]]
@@ -96,11 +96,11 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     code.lines = length(sep.lines(code))+1
 
   if (is.null(height)) {
-    height = max((fontSize * 1.5) * code.lines,30)
+    height = max((fontSize * 1.25) * code.lines,30)+35
   }
   if (is.null(console.height)) {
     console.code.lines = min(code.lines,10)
-    console.height = (fontSize * 1.5) * console.code.lines
+    console.height = (fontSize * 1.25) * console.code.lines + 35
   }
 
   cat(paste0("\n",nali$name, " height = ", height))

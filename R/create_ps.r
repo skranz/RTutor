@@ -53,7 +53,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   setwd(dir)
   txt = readLines(sol.file)
   txt =  name.rmd.chunks(txt=txt)
-
+  txt = mark_utf8(txt)
+  
   te = get.empty.te(Addons=Addons)
   te = parse.sol.rmd(txt=txt, te=te)
 
@@ -1052,6 +1053,8 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
   i = 2
   counter = 1
 
+  used.chunk.names = NULL
+    
   str = "```{r 'out_chunk_2_1_b', fig.width=5, fig.height=5, eval=FALSE, echo=TRUE}"
   for (i in 1:length(txt)) {
     str = txt[i]
@@ -1068,6 +1071,14 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
         chunk.name = paste0(ex.name,' ',part.name, counter.str)
 
         chunk.name = str.to.valid.chunk.name(chunk.name)
+        
+        if (chunk.name %in% used.chunk.names) {
+          str = paste0("I generated the chunk name ", chunk.name, " twice. Make sure that you have unique exercise names and don't duplicate exerice parts like a) b) a).")
+          warning(str)
+          chunk.name = paste0(chunk.name, "___", sample.int(10000000,1))
+        }
+        used.chunk.names = c(used.chunk.names, chunk.name)
+        
         txt[i] = paste0('```{r "',chunk.name,'"', rhs.str,"}")
       }
       counter = counter+1
@@ -1208,6 +1219,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
       dt$chunk.ind[i] = chunk.ind
       code = txt[(df$start[i]+1):(df$end[i]-1)]
       dt$code[[i]] = paste0(code, collapse="\n")
+      #dt$code[[i]] = mark_utf8(paste0(code, collapse="\n"))
       #shiny.dt$html[[i]] = editChunkUI(chunk.name=chunk.name,code=code)
     } else if (dt$type[i]=="task") {
       code = txt[df$start[i]:df$end[i]]
@@ -1239,8 +1251,17 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
     }
   }
 
-
+  
+  
   dt = dt[keep.row,]
+  
+  # Mark as UTF8 to deal with special characters like
+  # German Umlaute
+  # dt$html = lapply(dt$html, function(html) {
+  #   txt = mark_utf8(as.character(html))
+  #   HTML(txt)
+  # })
+  # 
   dt
 }
 
