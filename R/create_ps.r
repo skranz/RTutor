@@ -69,8 +69,6 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   write.sample.solution(te=te, header=header,footer=footer,
                         user.name=sol.user.name, ps.dir=dir)
-  write.output.solution(te=te, header=header,footer=footer,
-                        user.name=sol.user.name, ps.dir=dir)
 
 
   task.txt = write.empty.ps(te=te,  header=header,footer=footer,
@@ -115,6 +113,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     rps = preknit.rps(rps=rps, precomp=precomp, knit.print.opts=knit.print.opts)
   }
 
+  write.output.solution(te=te,rps=rps)
+
+  
   save.rps(rps)
   remove.ups(ps.name=rps$ps.name)
   if (stop.when.finished) {
@@ -125,6 +126,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 source.rps.extra.code = function(extra.code.file, rps) {
   restore.point("source.rps.extra.code")
   # Source extra.code
+  rps$extra.code.file = extra.code.file
   if (!is.null(extra.code.file)) {
     rps$extra.code.env = new.env()
     source(extra.code.file, local = rps$extra.code.env)
@@ -167,15 +169,38 @@ parse.sol.rmd = function(sol.file=NULL, txt=NULL, te = get.empty.te()) {
 write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), sol.txt=te$sol.txt,ps.name=te$ps.name, te,...) {
   restore.point("write.sample.solution")
   sol.txt = include.ps.extra.lines(sol.txt, ps.file=file, ps.name=ps.name,te=te,...)
-  writeLines(sol.txt, file)
+  writeLines(sol.txt, file, useBytes=TRUE)
 }
 
 
-write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te,...) {
+write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps,...) {
   restore.point("write.output.solution")
-  out.txt = include.ps.extra.lines(out.txt, ps.file=file, ps.name=ps.name,te=te,...)
+
+  libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
+  source.txt = if (!is.null(rps$extra.code.file)) paste0('source(',rps$extra.code.file,')') else ""
+  
+  header = paste0(
+'
+---
+title: Problem Set ', rps$ps.name,'
+output: 
+  html_document: 
+    keep_md: yes
+    toc: yes
+---
+
+```{r include=FALSE, echo=FALSE}
+# Load libraries and source extra code
+',libs,'
+',source.txt,'
+```
+'
+)
+  
+  out.txt = c(header, out.txt)
   out.txt = name.rmd.chunks(txt = out.txt,only.empty.chunks = FALSE,keep.options = TRUE,valid.file.name = TRUE)
-  writeLines(out.txt, file)
+  out.txt = mark_utf8(out.txt)
+  writeLines(out.txt, file, useBytes=TRUE)
 }
 
 
@@ -183,7 +208,7 @@ write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt
 
 
   task.txt = include.ps.extra.lines(task.txt, ps.file=file, ps.name=ps.name,te=te,...)
-  writeLines(task.txt, file)
+  writeLines(task.txt, file, useBytes=TRUE)
   invisible(task.txt)
 }
 
@@ -1070,8 +1095,8 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
         }
         chunk.name = paste0(ex.name,' ',part.name, counter.str)
 
-        chunk.name = str.to.valid.chunk.name(chunk.name)
-        
+        chunk.name = str.to.valid.chunk.name(str.trim(chunk.name))
+          
         if (chunk.name %in% used.chunk.names) {
           str = paste0("I generated the chunk name ", chunk.name, " twice. Make sure that you have unique exercise names and don't duplicate exerice parts like a) b) a).")
           warning(str)
@@ -1090,7 +1115,7 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
         counter = 1
       part.name = ""
     } else if (!is.na(temp.part <- str_extract(str,"^([a-z]|[ivx]*)\\)")[1]  )) {
-      part.name = temp.part
+      part.name = gsub(")","",temp.part, fixed=TRUE)
       if (!valid.file.name)
         counter = 1
     }
