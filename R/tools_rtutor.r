@@ -11,8 +11,11 @@ replace.fields = function(dest, source, empty.obj = "__EmPtYLeEERE___") {
   empty.list = replicate(n = length(empty),empty.obj,simplify = FALSE)
   names(empty.list) = empty
   
-  
-  old = c(mget(exist,dest), empty.list)
+  if (length(exist)>0) {
+    old = c(mget(exist,dest), empty.list)
+  } else {
+    old = empty.list
+  }
   for (name in names(source)) {
     obj = source[[name]]
     if (identical(obj, empty.obj)) {
