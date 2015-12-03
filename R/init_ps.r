@@ -58,7 +58,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   set.ps(ps)
   ps$ups.dir = ups.dir
   ps$user.dir = user.dir
-  
+
   ps$name = ps.name
   ps$rps = rps
   load.ps.libs(rps$libs)
@@ -135,7 +135,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$cdt = rps$cdt = cdt
   ps$tdt = rps$tdt
 
-  edt = rps$edt
+  edt = as_data_frame(rps$edt)
   edt$ex.solved = FALSE
   #env.li  = replicate(NROW(edt),new.env(parent=ps$ps.baseenv), simplify=FALSE)
 
@@ -144,7 +144,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
     edt$ex.final.env = env.li
   }
 
-  ps$edt = edt
+  ps$edt = as.data.table(edt)
 
 
   ps$num.ex = NROW(ps$edt)

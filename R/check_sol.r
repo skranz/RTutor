@@ -84,9 +84,9 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   }
 
   ps$cdt = cdt
-  
+
   if (just.init) return(invisible())
-  
+
   # Check exercises
   i = 1
   # i = 8
@@ -164,7 +164,12 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
       return(FALSE)
     }
   }
-  ps$edt$ex.final.env[[ex.ind]] = copy(ps$stud.env)
+  if (NROW(ps$edt)==1) {
+    # otherwise data.table throws strange error
+    ps$edt$ex.final.env[[ex.ind]] = list(copy(ps$stud.env))
+  } else {
+    ps$edt$ex.final.env[[ex.ind]] = copy(ps$stud.env)
+  }
   return(TRUE)
 }
 
@@ -262,9 +267,9 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
     if (has.error) {
       log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
-      
+
       update.ups.chunk.check(passed=FALSE,chunk.ind=chunk.ind, save=TRUE, ps=ps)
-      
+
       return(FALSE)
     }
   }
@@ -273,7 +278,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   if (verbose) {
     display("run tests...")
   }
-  
+
   ps$success.log = ps$test.log = NULL
   e.ind = 1
 
@@ -356,7 +361,7 @@ update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps
   if (!is.null(ups$tdt)) {
     passed.before = ps$tdt$test.passed[tdt.ind]
     ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
-  
+
     if (is.na(ups$tdt$first.call.date[tdt.ind]))
       ups$tdt$first.call.date[tdt.ind] = Sys.time()
     if (passed==FALSE) {
@@ -374,13 +379,13 @@ update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps
 
 update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(), ps=get.ps(), save=TRUE) {
   restore.point("update.ups.chunk.check")
-  
-  
+
+
   update = !ups$cu$solved[chunk.ind]
   if (update) {
     if (is.na(ups$cu$first.check.date[chunk.ind]))
       ups$cu$first.check.date[chunk.ind] = Sys.time()
-    
+
     if (passed) {
       ups$cu$solved.date[[chunk.ind]] <- Sys.time()
       ups$cu$solved[chunk.ind] = TRUE
