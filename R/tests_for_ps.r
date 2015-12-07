@@ -195,7 +195,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
       }, error = function(e){})
     }
     if (ok) {
-      success.message = paste0("Great,",part.str," you correctly (I guess) called the command: ",deparse1(se))
+      success.message = paste0("Great,",part.str," you correctly called the command: ",deparse1(se))
       add.success(success.message)
       return(TRUE)
     }
