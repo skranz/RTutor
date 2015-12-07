@@ -41,7 +41,7 @@ check.function({
 #' @export
 check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE, part = NULL) {
 
-  test.calls = eval(substitute(alist(...)))
+  test.calls = eval(substitute(alist(...)), stud.env)
 
   code = substitute(code)
 
@@ -195,7 +195,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
       }, error = function(e){})
     }
     if (ok) {
-      success.message = paste0("Great,",part.str," you correctly (I guess) called the command: ",deparse1(se))
+      success.message = paste0("Great,",part.str," you correctly called the command: ",deparse1(se))
       add.success(success.message)
       return(TRUE)
     }
@@ -977,6 +977,7 @@ test.normality = function(vec,short.message,warning.message,failure.message,ps=g
 #' @export
 holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",part=NULL,ps=get.ps(),stud.env = ps$stud.env, cond.str=NULL,...) {
 
+  
   if (is.null(cond.str)) {
     cond = substitute(cond)
     cond.str = deparse1(cond)
