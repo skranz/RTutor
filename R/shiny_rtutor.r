@@ -44,7 +44,7 @@ examples.show.shiny.ps = function() {
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"),...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), use.secure.eval = FALSE,...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -58,7 +58,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
     show.solution.btn = show.solution.btn, clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
-    precomp=precomp, noeval=noeval, ...
+    precomp=precomp, noeval=noeval, use.secure.eval=use.secure.eval, ...
   )
   
   ps$need.login = need.login
@@ -152,7 +152,6 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
   } else {
     user = get.user(user.name = user.name)
   }
-
 
 
   ps$is.shiny = TRUE
@@ -265,7 +264,7 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
   ok = FALSE
 
   all.str = tryCatch({
-      li <- parse.text.with.source(txt)
+      expr.li <- parse.text.with.source(txt)
       ok <- TRUE
     },
     error = function(e) {
@@ -274,7 +273,7 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
   )
 
   if (ok & check.whitelist) {
-    res = rtutor.check.whitelist(li,ps=ps)
+    res = rtutor.check.whitelist(expr.li,ps=ps)
     ok = res$ok
     if (!ok) {
       all.str = res$msg
@@ -282,23 +281,10 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
   }
 
   if (ok) {
-    all.str = NULL
-    add = function(...) {
-      str = paste0(..., collapse="\n")
-      all.str <<- paste0(all.str,str, sep="\n")
-    }
-    i = 1
-    for (i in seq_along(li$expr)) {
-      source = "Source was not parsed..."
-
-      add("> ",paste0(li$source[[i]], collapse="\n+ "))
-      out = tryCatch(capture.output(eval(li$expr[[i]], envir=envir)),
-                     error = function(e) {
-                       adapt.console.err.message(as.character(e))
-                     })
-      if (length(out)>0) {
-        add(out)
-      }
+    if (isTRUE(ps$use.secure.eval)) {
+      all.str = rtutor.eval.secure(inner.rtutor.eval.to.string(expr.li, envir=envir), ps=ps)
+    } else {
+      all.str = inner.rtutor.eval.to.string(expr.li, envir=envir)
     }
   }
 
@@ -311,6 +297,30 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
   }
   all.str
 }
+
+# this function performs evals and may be called inside eval.secure
+inner.rtutor.eval.to.string = function(expr.li, envir) {
+  all.str = NULL
+  add = function(...) {
+    str = paste0(..., collapse="\n")
+    all.str <<- paste0(all.str,str, sep="\n")
+  }
+  i = 1
+  for (i in seq_along(expr.li$expr)) {
+    source = "Source was not parsed..."
+
+    add("> ",paste0(expr.li$source[[i]], collapse="\n+ "))
+    out = tryCatch(capture.output(eval(expr.li$expr[[i]], envir=envir)),
+                   error = function(e) {
+                     adapt.console.err.message(as.character(e))
+                   })
+    if (length(out)>0) {
+      add(out)
+    }
+  }
+  all.str    
+}
+
 
 eval.in.ace.console = function(code,envir=parent.frame(), consoleId, session) {
   restore.point("eval.in.ace.console")
@@ -419,9 +429,21 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   html ="Evaluation error!"
 
 
-  html = try(
-    knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
-  )
+  if (isTRUE(ps$use.secure.eval)) {
+    html = try(
+      RTutor::rtutor.eval.secure(quote(
+        knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
+      ), envir=environment())
+    )
+  } else {
+    html = try(
+      knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
+    )
+  }
+  
+  if (is(html, "try-error")) {
+    html = as.character(html)
+  }
   restore.point("chunk.to.html.knit2html")
 
   # Add syntax highlightning

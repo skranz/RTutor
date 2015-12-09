@@ -293,13 +293,19 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
 
-  if (!is.false(ps$catch.errors)) {
-    ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output),
-         error = function(e) {ps$failure.message <- as.character(e)
-          return(FALSE)})
+  
+  if (isTRUE(ps$use.secure.eval)) {
+    ret = secure.check.chunk(chunk.ind=chunk.ind,store.output=store.output)
   } else {
-    ret = check.chunk(chunk.ind=chunk.ind,store.output=store.output)
+    if (!is.false(ps$catch.errors)) {
+      ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output), error = function(e) {ps$failure.message <- as.character(e);return(FALSE)})
+    } else {
+      ret = check.chunk(chunk.ind=chunk.ind,store.output=store.output)
+    }
   }
+  
+  ps$prev.check.chunk.ind = chunk.ind
+  
   if (!ret) {
     txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
     updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
@@ -358,7 +364,10 @@ hint.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
   envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
   restore.point("hint.shiny.chunk")
 
-  check.shiny.chunk(chunk.ind, internal=TRUE)
+  # If the current chunk has not been checked. Check it again
+  if (!identical(chunk.ind,ps$prev.check.chunk.ind))
+    check.shiny.chunk(chunk.ind, internal=TRUE)
+  
   txt = tryCatch(merge.lines(capture.output(hint(ps=ps))),
          error = function(e) {merge.lines(as.character(e))})
   txt = paste0("Hint: ", txt)

@@ -20,8 +20,10 @@ log.event = function(type,ok=TRUE, ..., user.name=get.user.name(),ps=get.ps()) {
   if (!require(jsonlite))
     return()
   
-  if (is.false(ps$log.events))
+  if (isTRUE(ps$in.secure.eval)) {
+    ps$should.log = TRUE
     return()
+  }
   
   args = list(...)
   
@@ -35,6 +37,11 @@ log.event = function(type,ok=TRUE, ..., user.name=get.user.name(),ps=get.ps()) {
       umph = as.numeric(time),
       ok=ok
     ),args)
+  
+  if (isTRUE(ps$in.secure.eval)) {
+    ps$log.list = c(ps$log.list, list(li))
+    return()
+  }
   
   log.file = ps$log.file
   

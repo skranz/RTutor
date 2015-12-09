@@ -40,10 +40,18 @@ hint = function(..., ps=get.ps()) {
 
   do.log = TRUE
 
+  if (isTRUE(ps$use.secure.eval)) {
+    eval.fun = function(..., env=parent.env()) {
+      RTutor::rtutor.eval.secure(chunk.hint, envir=env, ps=ps)
+    }
+  } else {
+    eval.fun = base::eval
+  }
+  
   # No expression set
   if (ps$e.ind == 0) {
     if (!is.null(chunk.hint)) {
-      eval(chunk.hint)
+      eval.fun(chunk.hint)
       log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
       if (ps$cdt$num.e[[ps$chunk.ind]]>0) {
         cat("\nI can't give you a more specific hint, since I can't run your code, due to an error.")
@@ -62,14 +70,14 @@ hint = function(..., ps=get.ps()) {
     hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
     if (length(hint.expr)==0) {
       if (!is.null(chunk.hint)) {
-        eval(hint.expr)
+        eval.fun(hint.expr)
         log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
       } else {
         do.log = FALSE
         cat("Sorry, but there is no hint for your current problem.")
       }
     } else {
-      eval(hint.expr)
+      eval.fun(hint.expr)
       if (!is.null(chunk.hint)) {
         eval(chunk.hint)
       }
