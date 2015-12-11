@@ -202,12 +202,21 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
       }
     }
   } else {
-    if (ps$noeval) {
-      task = ps$cdt$task.txt[[chunk.ind]]
-      html = chunk.to.html(task, chunk.ind, eval=FALSE, nali=nali)
+    
+    if ((identical(code, ps$cdt$task.txt[[chunk.ind]]) | isTRUE(ps$noeval)) & !is.null(ps$cdt$task.html)) {
+      # just show precompiled task
+      html = ps$cdt$task.html[[chunk.ind]]
     } else {
-      html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
+      # compile no solution again
+      if (ps$noeval) {
+        task = ps$cdt$task.txt[[chunk.ind]]
+        html = chunk.to.html(task, chunk.ind, eval=FALSE, nali=nali)
+      } else {
+        html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
+      }
+      
     }
+    
     html = HTML(html)
   }
 
@@ -296,6 +305,10 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   
   if (isTRUE(ps$use.secure.eval)) {
     ret = secure.check.chunk(chunk.ind=chunk.ind,store.output=store.output)
+    cat("\nps:")
+    print(ps)
+    cat("\n",ps$failure.message)
+    #ps = get.ps()
   } else {
     if (!is.false(ps$catch.errors)) {
       ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output), error = function(e) {ps$failure.message <- as.character(e);return(FALSE)})
@@ -304,26 +317,30 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
     }
   }
   
+
   ps$prev.check.chunk.ind = chunk.ind
   
-  if (!ret) {
-    txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
-    updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
+  if (!ret)
     ps$cdt$is.solved[chunk.ind] = FALSE
-  } else {
-    #restore.point("success test shiny chunk")
-
-    if (NROW(ps$chunk.console.out)>max.lines) {
-      txt = merge.lines(
-        c("You successfully solved the chunk!",
-           ps$chunk.console.out[1:max.lines],
-          paste0("\n...", NROW(ps$chunk.console.out)-max.lines," lines ommited...")))
+  
+  if (!internal) {
+    if (!ret) {
+      txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
+      updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
+      ps$cdt$is.solved[chunk.ind] = FALSE
     } else {
-      txt = merge.lines(c("You successfully solved the chunk!",
-                        ps$chunk.console.out))
-    }
-    updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
-    if (!internal) {
+      #restore.point("success test shiny chunk")
+      
+      if (NROW(ps$chunk.console.out)>max.lines) {
+        txt = merge.lines(
+          c("You successfully solved the chunk!",
+            ps$chunk.console.out[1:max.lines],
+            paste0("\n...", NROW(ps$chunk.console.out)-max.lines," lines ommited...")))
+      } else {
+        txt = merge.lines(c("You successfully solved the chunk!",
+                            ps$chunk.console.out))
+      }
+      updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
       proceed.with.successfuly.checked.chunk(chunk.ind)
     }
   }
@@ -360,12 +377,13 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
 
 
 hint.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
-  set.shiny.chunk(chunk.ind)
-  envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
   restore.point("hint.shiny.chunk")
-
+  set.shiny.chunk(chunk.ind, ps=ps)
+  envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
+  
   # If the current chunk has not been checked. Check it again
-  if (!identical(chunk.ind,ps$prev.check.chunk.ind))
+  #if (!identical(chunk.ind,ps$prev.check.chunk.ind))
+  if (!isTRUE(ps$hint.noeval))
     check.shiny.chunk(chunk.ind, internal=TRUE)
   
   txt = tryCatch(merge.lines(capture.output(hint(ps=ps))),

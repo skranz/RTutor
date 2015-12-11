@@ -1,4 +1,8 @@
-
+substitute.call = function (x, env=parent.frame()) 
+{
+  call <- substitute(substitute(x, env), list(x = x))
+  eval(call)
+}
 # replaces values in dest and returns list of old values
 replace.fields = function(dest, source, empty.obj = "__EmPtYLeEERE___") {
   restore.point("replace.fields")

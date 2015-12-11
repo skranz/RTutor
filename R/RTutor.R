@@ -19,7 +19,13 @@ add.hint = function(hint.name, code,cond=NULL, ex=get.ex()) {
 }
 
 print.Problemset = function(ps) {
-  print(as.list(ps))
+  omit = c("output","shiny.dt","cdt","tdt", "view.ui.li")
+  omit = c("output")
+  fields = setdiff(ls(ps),omit)
+  print(str(as.list(ps)[fields], max.level=1, give.attr=FALSE))
+  
+  
+  cat("\n Ommited: ", paste0(omit, collapse="\n"))
 }
 
 reset.ps = function(ps=get.ps()) {

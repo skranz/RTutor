@@ -15,7 +15,7 @@
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=TRUE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=!noeval, secure.eval.timeout = 10, secure.eval.profile=NULL, ...) {
+RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=TRUE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=!noeval, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -31,6 +31,7 @@ RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solv
     ...
   )
   
+  ps$hint.noeval = hint.noeval
   ps$use.secure.eval = use.secure.eval
   ps$secure.eval.timeout = secure.eval.timeout
   ps$secure.eval.profile = secure.eval.profile
@@ -170,7 +171,10 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
     cdt$stud.code[rows] = cdt$task.txt[rows]
     
   } else {
-    stop("Apps without precomp or noeval are not yet implemented!")
+    cdt$is.solved = FALSE
+    cdt$stud.code = cdt$task.txt
+    ups$chunk.ind = 1
+    #stop("Apps without precomp or noeval are not yet implemented!")
   }
   
   ps$cdt = cdt

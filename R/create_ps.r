@@ -86,8 +86,10 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
   rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
 
-  if (add.shiny)
+  if (add.shiny) {
     rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
+    rps$cdt$task.html = create.cdt.task.html(rps$cdt)
+  }
 
   source.rps.extra.code(extra.code.file, rps)
   if (!is.null(var.txt.file)) {

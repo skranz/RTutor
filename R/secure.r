@@ -1,32 +1,33 @@
 secure.base.env = function(ps=get.ps()) {
   env = new.env(parent=globalenv())
   env$get.ps = function(...) {
-    cat("\ninner.get.ps")
     ps
   }
   env
 }
 
 # Run check.chunk within RAppArmor eval.secure
-secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE, store.output=TRUE, noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp), ..., ps = get.ps(), secure=!TRUE) {
+secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE, store.output=TRUE, noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp), ..., ps = get.ps()) {
 
   restore.point("secure.check.chunk")
-  
-  
   
   ck = ps$cdt[chunk.ind,]
   chunk.name = ck$chunk.name
 
+  ps$cdt$stud.code[chunk.ind] = stud.code
   ps$cdt$old.stud.code[chunk.ind] = stud.code
   ps$cdt$is.solved[chunk.ind] = FALSE
   
   ps$ex.ind = ck$ex.ind
   ps$chunk.ind = chunk.ind
   ps$chunk.name = chunk.name
-
+  ps$chunk.console.out = ""
+  
   if (verbose)
     display("securely check chunk ", chunk.name," ...")
 
+  ps$success.log = NULL
+  ps$success.message = ""
   ps$failure.message  = "No failure message recorded"
   ps$warning.messages = list()
   ps$check.date = Sys.time()
@@ -66,24 +67,29 @@ secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.cod
   ps$stud.seed = as.integer(Sys.time())
   set.seed(ps$stud.seed)
 
-  
-  if (!secure)
-    ps = as.environment(as.list(ps))
-  
-  env = secure.base.env(ps=ps)
-  
-  call = quote(
-    inner.secure.check.chunk(chunk.ind=chunk.ind, verbose=verbose,stud.code=stud.code,  noeval = noeval, ps=ps, ...)
-  )
+  call = quote(inner.secure.check.chunk())
   
   ps$in.secure.eval = TRUE
-  if (!secure) {
-    res = base::eval(call)
-  } else {
-    res = RTutor::rtutor.eval.secure(call, ps=ps)
+  set.ps(ps)
+  ps = get.ps()
+  #inner.secure.check.chunk(chunk.ind=chunk.ind, verbose=verbose,stud.code=stud.code,  noeval = noeval, ps=ps)
+  
+  # securely eval all tests using RAppArmor
+  #res1 = eval(call)
+  #res2 = eval(call)
+  res = try(RTutor::rtutor.eval.secure(call))
+  
+  if (is(res,"try-error")) {
+    res = list(ok=FALSE, ps.fields=list(failure.message=as.character(res), success.message="", success.log=NULL, e.ind=0, tdt.ind=0, stud.env=ps$stud.env, chunk.console.out=as.character(res)))
   }
   
+  
   fields = res$ps.fields
+
+  ps$chunk.console.out = as.character(fields$chunk.console.out)
+  
+  
+  
   ps$failure.message = as.character(fields$failure.message)
   ps$success.message = as.character(fields$ps$success.message)
   ps$success.log = sapply(fields$success.log, as.character)
@@ -92,7 +98,12 @@ secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.cod
   ps$tdt.ind = as.integer(fields$tdt.ind)
   
   ps$cdt$is.solved[[chunk.ind]] = isTRUE(res$ok)
+  # copy stud.env
+  copy.into.env(dest=ps$stud.env, source=fields$stud.env)
+  
   ck = ps$cdt[chunk.ind,]
+  
+  set.ps(ps)
   
   if (!is.na(ck$award.name)) {
     give.award(ck$award.name, ps=ps)
@@ -110,12 +121,30 @@ secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.cod
 
 # The eval part of secure.check chunk
 # will be called with eval.secure
-inner.secure.check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp)) {
+inner.secure.check.chunk = function(chunk.ind=ps$chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp)) {
   restore.point("inner.secure.check.chunk")
+
+#   all.txt = NULL
+#   
+#   cat = function(...) {
+#     txt = paste0(..., sep="\n")
+#     all.txt <<- c(all.txt, txt)
+#     writeLines(all.txt, "debug.txt")
+#   }
+#   print = function(x,...) {
+#     txt = capture.output(base::print(x,...))
+#     all.txt <<- c(all.txt, txt)
+#     writeLines(all.txt, "debug.txt")
+#     
+#   }  
+#   cat("\n\n******************************************")
+#     
+#   cat("\ninner.secure.check.chunk\n chunk.ind:", chunk.ind,"\n")
 
   stud.env = ps$stud.env
   ck = ps$cdt[chunk.ind,]
 
+  
   #stop("analyse below")
   test.li = ck$test.expr[[1]]
 
@@ -142,13 +171,11 @@ inner.secure.check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.co
     display("run tests...")
   }
 
-  ps$success.log = ps$test.log = NULL
   e.ind = 1
 
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1
 
   # Turn graphics device off
-
   if (isTRUE(ps$use.null.device)) {
     try(png("NUL"), silent=TRUE)
     on.exit(try(dev.off(), silent=TRUE),add = TRUE)
@@ -165,10 +192,10 @@ inner.secure.check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.co
       ps$tdt.ind = tdt.ind
       test = tests[[test.ind]]
       ps$success.message = NULL
-       if (verbose) {
+      if (verbose) {
         display("  Test #", test.ind, ": ",deparse1(test))
       }
-      ret = eval(test,ps$ps.basenv)
+      ret = eval(test,ps$ps.baseenv)
       if (ret==FALSE) {
         return(inner.secure.check.chunk.return(FALSE))
       } else if (ret=="warning") {
@@ -191,15 +218,17 @@ inner.secure.check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.co
 inner.secure.check.chunk.return = function(ok, ps = get.ps()) {
   list(ok=ok,
     ps.fields = list(
-      success.message=ps$success.message, failure.message=ps$failure.message, success.log=ps$success.log, e.ind = ps$e.ind, tdt.ind = ps$tdt.ind
+      success.message=ps$success.message, failure.message=ps$failure.message, success.log=ps$success.log, e.ind = ps$e.ind, tdt.ind = ps$tdt.ind, stud.env=ps$stud.env, chunk.console.out = ps$chunk.console.out, chunk.ind = ps$chunk.ind
     )
   )
 }
 
 
-rtutor.eval.secure = function(..., timeout = ps$secure.eval.timeout, profile=ps$secure.eval.profile, ps=get.ps()) {
-   if (!RAppArmor::aa_is_enabled())
-    stop("AppArmor is not enabled.")
+rtutor.eval.secure = function(..., envir=parent.frame(), timeout = ps$secure.eval.timeout, profile=ps$secure.eval.profile, ps=get.ps(), silent.check=FALSE) {
 
-  RAppArrmor::eval.secure(..., timeout=timeout, profile=profile)
+  if (!RAppArmor::aa_is_enabled(verbose=!silent.check))
+    stop("AppArmor is not enabled.")
+  #restore.point("rtutor.eval.secure")
+  RAppArmor::eval.secure(...,envir=envir, timeout=timeout, profile=profile)
 }
+

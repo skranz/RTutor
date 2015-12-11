@@ -40,9 +40,12 @@ hint = function(..., ps=get.ps()) {
 
   do.log = TRUE
 
-  if (isTRUE(ps$use.secure.eval)) {
-    eval.fun = function(..., env=parent.env()) {
-      RTutor::rtutor.eval.secure(chunk.hint, envir=env, ps=ps)
+  if (isTRUE(ps$use.secure.eval) & !isTRUE(ps$hint.noeval)) {
+    eval.fun = function(call, envir=parent.frame(),...) {
+      if (is.expression(call)) call = call[[1]]
+      new.call = substitute(capture.output(call), list(call=call))
+      txt = RTutor::rtutor.eval.secure(new.call, envir=envir, silent.check=TRUE)
+      cat(paste0(txt, collapse="\n"))
     }
   } else {
     eval.fun = base::eval
@@ -79,7 +82,7 @@ hint = function(..., ps=get.ps()) {
     } else {
       eval.fun(hint.expr)
       if (!is.null(chunk.hint)) {
-        eval(chunk.hint)
+        eval.fun(chunk.hint)
       }
     }
   }
@@ -92,6 +95,8 @@ hint = function(..., ps=get.ps()) {
   #ps$e.ind
   invisible("")
 }
+
+
 
 
 log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.ind, ps=get.ps()) {
@@ -121,7 +126,7 @@ hint.for.function = function(code, ..., ps = get.ps()) {
   code = substitute(code)
   restore.point("hint.for.function")
 
-  if (isTRUE(ps$noeval)) {
+  if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
     display("Sorry, the default hint for your function requires to evaluate your code, but this is forbidden for security reasons on this server.")
     return()
   }
@@ -211,7 +216,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
 
     # Environment in which argument values shall be evaluated. Is a data frame
     # if the function is a dplyer function like mutate(dat,...)
-    if (isTRUE(ps$noeval)) {
+    if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
       val.env = NULL
     } else {
       val.env = env
@@ -251,7 +256,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,", and compare it with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
 
   } else if (cde$type == "chain") {
-    return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps))
+    return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))
   }  else if (cde$type == "math") {
     restore.point("math.fail")
     hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
@@ -320,7 +325,7 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
   expr = substitute(expr)
   restore.point("hint.for.compute")
 
-  if (isTRUE(ps$noeval)) {
+  if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
     display("Sorry, the default hint requires to evaluate your code, but this is forbidden for security reasons on this server. I show you the solution instead:")
     sol.txt = ps$cdt$sol.txt[[ps$chunk.ind]]
     display(sol.txt)
@@ -374,12 +379,12 @@ is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
 
-inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n",...) {
+inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n", env=ps$stud.env,...) {
 
   restore.point("inner.hint.for.call.chain")
 
 
-  compare.vals = !isTRUE(ps$noeval)
+  compare.vals = ! (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval))
 
   # if (isTRUE(ps$noeval)) {
   #   display("Sorry, the default hint requires to evaluate your code, but this is forbidden for security reasons on this server. I show you the complete solution instead:")

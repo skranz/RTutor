@@ -282,7 +282,9 @@ rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check
 
   if (ok) {
     if (isTRUE(ps$use.secure.eval)) {
-      all.str = rtutor.eval.secure(inner.rtutor.eval.to.string(expr.li, envir=envir), ps=ps)
+      all.str = try(rtutor.eval.secure(inner.rtutor.eval.to.string(expr.li, envir=envir), ps=ps))
+      if (is(all.str,"try-error"))
+        all.str = as.character(all.str)
     } else {
       all.str = inner.rtutor.eval.to.string(expr.li, envir=envir)
     }
