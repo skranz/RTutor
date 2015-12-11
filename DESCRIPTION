@@ -20,13 +20,10 @@ Depends:
     shinyAce,
     shinyBS (>= 0.61),
     hwriter,
-    texreg,
-    lmtest,
     restorepoint,
     RCurl,
     knitr,
     jsonlite,
     DT,
-    DescTools,
     memoise
 RoxygenNote: 5.0.0
