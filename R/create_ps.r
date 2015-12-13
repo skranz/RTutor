@@ -179,7 +179,7 @@ write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), 
   restore.point("write.output.solution")
 
   libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
-  source.txt = if (!is.null(rps$extra.code.file)) paste0('source(',rps$extra.code.file,')') else ""
+  source.txt = if (!is.null(rps$extra.code.file)) paste0('source("',rps$extra.code.file,'")') else ""
   
   header = paste0(
 '
