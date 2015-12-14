@@ -94,7 +94,7 @@ create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTR
 
   txt = cdt$sol.txt[[chunk.ind]]
   if (cdt$num.e[[chunk.ind]] > cdt$num.e.task[[chunk.ind]]) {
-    add = c("# You successfully solved the chunk!")
+    add = c("# Great, solved correctly!")
   } else {
     add = "# You successfully checked the chunk! "
   }

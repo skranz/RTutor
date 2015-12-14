@@ -307,6 +307,7 @@ te.to.rps = function(te) {
   ao.dt$item.pos = items.df$item.pos[rows]
   ao.dt$ex.name = items.df$ex.name[rows]
 
+
   rps$ao.dt = ao.dt
   rps$Addons = te$Addons
   rps$addons = te$addons

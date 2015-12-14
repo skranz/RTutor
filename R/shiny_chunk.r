@@ -119,6 +119,12 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   } else {
     solutionBtn  = NULL
   }
+  if (isTRUE(ps$show.data.exp)) {
+    dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
+  } else {
+    dataBtn  = NULL
+  }
+
   saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
 
   if (!ps$noeval) {
@@ -126,7 +132,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
       bsButton(nali$checkBtn, "check",size="extra-small"),
       bsButton(nali$hintBtn, "hint", size="extra-small"),
       bsButton(nali$runBtn, "run chunk",size="extra-small"),
-      bsButton(nali$dataBtn, "data", size="extra-small"),
+      dataBtn,
       saveBtn,
       solutionBtn
     )
@@ -165,10 +171,17 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
 
   saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
 
+  if (isTRUE(ps$show.data.exp)) {
+    dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
+  } else {
+    dataBtn  = NULL
+  }
+
+  
   if (!ps$noeval) {
     button.row = chunk.fluidRow(
       bsButton(nali$editBtn, "edit",size="extra-small"),
-      bsButton(nali$dataBtn, "data", size="extra-small"),
+      dataBtn,
       saveBtn
     )
   } else {
@@ -250,8 +263,8 @@ make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=ge
   if (!ps$noeval) {
     buttonHandler(nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
-    buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
-
+    if (isTRUE(ps$show.data.exp))
+      buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
   }

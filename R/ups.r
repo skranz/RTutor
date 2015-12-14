@@ -171,7 +171,72 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
 
 #' Shows your progress
 #' @export
-stats = function() {
+stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display) {
+
+  ps = get.ps()
+  if (is.null(ps)) {
+    display("No problem set specified. You must check a problem before you can see your stats.")
+    return(invisible())
+  }
+
+  if (use.old.stats)
+    return(old.stats())
+    
+  user = get.user()
+  ups = get.ups()
+
+
+  # Results of addons like quizes
+  aou = as_data_frame(cbind(ups$aou, select(ps$rps$ao.dt, max.points, ex.name)))
+  aou$ex.ind = match(ao.dt$ex.name, ps$edt$ex.name)
+  aou$points = aou$solved * aou$max.points
+    
+  # Results of chunks
+  cu = as_data_frame(cbind(ups$cu, select(ps$cdt,ex.ind, points)))
+  cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
+  
+  idf = rbind(
+    select(aou,ex.ind,solved, num.hint, points, max.points),
+    select(cu,ex.ind, solved, num.hint, points, max.points)
+  )
+  
+  # Aggregate on exercise level
+  res = group_by(idf, ex.ind) %>%
+    summarise(
+      points = sum(points),
+      max.points = sum(max.points),
+      percentage = round(points/max.points*100),
+      hints = -sum(num.hint)
+    )
+  res$ex.name = ps$edt$ex.name[res$ex.ind]
+  all.res = idf %>%
+    summarise(
+      ex.ind = 0,
+      points = sum(points),
+      max.points = sum(max.points),
+      percentage = round(points/max.points*100),
+      hints = -sum(num.hint),
+      ex.name = "Total"
+    )
+  res = rbind(res, all.res)
+  
+  
+  if (do.display) {
+    sr = dplyr::select(res,ex.name,percentage, points, max.points, hints)
+    
+    colnames(sr) = c("Ex","Solved (%)","Points", "Max. Points", "hints")
+    rownames(sr) = NULL
+    display(user$name, "'s stats for problem set ",ps$name,":\n")
+    print(as.data.frame(sr))  
+    return(invisible(res))
+  }
+  res
+}
+
+
+#' Shows your progress
+#' @export
+old.stats = function(do.display) {
   ps = get.ps()
   if (is.null(ps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
@@ -189,11 +254,15 @@ stats = function() {
   )
   res$completed = ifelse(is.na(res$end.time), "",strftime(res$end.time, format="%H:%M %d.%m."))
   res$ex.name = ps$edt$ex.name[res$ex.ind]
-  sr = dplyr::select(res,ex.name,percentage.solved,hints, completed)
-  colnames(sr) = c("Ex","solved (%)","hints","completed")
-  rownames(sr) = NULL
-  display(user$name, "'s stats for problem set ",ps$name,":\n")
-  print(as.data.frame(sr))  
+  if (do.display) {
+    sr = dplyr::select(res,ex.name,percentage.solved,hints, completed)
+    colnames(sr) = c("Ex","solved (%)","hints","completed")
+    rownames(sr) = NULL
+    display(user$name, "'s stats for problem set ",ps$name,":\n")
+    print(as.data.frame(sr)) 
+    return(invisible(res))
+  }
+  return(res)
 }
 
 

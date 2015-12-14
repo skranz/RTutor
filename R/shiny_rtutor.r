@@ -44,7 +44,7 @@ examples.show.shiny.ps = function() {
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp=TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), show.points=TRUE, ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -56,11 +56,13 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
     run.solved = run.solved,import.rmd=import.rmd,
     rmd.file=rmd.file,
     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
-    show.solution.btn = show.solution.btn, clear.user=clear.user,
+    show.solution.btn = show.solution.btn, , show.data.exp=show.data.exp,
+    clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval, ...
   )
   
+  ps$show.points = show.points
   ps$need.login = need.login
   ps$login.dir = login.dir
   
@@ -141,7 +143,7 @@ show.shiny.ps = show.ps
 
 
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE) {
   restore.point("init.shiny.ps")
   setwd(dir)
 
@@ -156,6 +158,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
 
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn
+  ps$show.data.exp = show.data.exp
 
 
   ps$shiny.ex.inds = ex.inds
@@ -404,7 +407,16 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
 
   if (isTRUE(ps$cdt$num.e[[chunk.ind]]>0)) {
     if (success.message) {
-      txt = c("# Great, solved correctly!",txt)
+      add = c("# Great, solved correctly!")
+      if (!is.null(ps$cdt$points) & isTRUE(ps$show.points)) {
+        points = ps$cdt$points[[chunk.ind]]
+        if (points==1) {
+          add = paste0(add, " (1 point)")
+        } else if (points>0) {
+          add = paste0(add, " (",points, " points)")
+        }
+      }
+      txt = c(add,txt)
     } else {
       txt = c("# Not yet solved...",txt)
       echo = TRUE
