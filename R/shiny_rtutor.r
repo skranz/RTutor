@@ -134,6 +134,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
     on.exit(try(dev.off(),silent=TRUE), add=TRUE)
   }
 
+  
   runEventsApp(app=app,ui=ui,launch.browser=launch.browser, quiet=FALSE)
 
 }
@@ -234,9 +235,17 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     Addon$shiny.init.fun(ao=ao,ps=ps)
   }
   show.shiny.awards()
+  
+  changeHandler("exTabsetPanel",rtutor.ex.tab.change)
+
   set.ps(ps)
 }
 
+rtutor.ex.tab.change = function(value,...) {
+  if (identical(value,"statsPanel")) {
+    rtutor.update.stats.panel()
+  }
+}
 
 
 observe.nextExBtns = function(session, ps=get.ps()) {

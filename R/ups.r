@@ -173,6 +173,8 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
 #' @export
 stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display) {
 
+  restore.point("stats")
+  
   ps = get.ps()
   if (is.null(ps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
@@ -186,19 +188,27 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
   ups = get.ups()
 
 
-  # Results of addons like quizes
-  aou = as_data_frame(cbind(ups$aou, select(ps$rps$ao.dt, max.points, ex.name)))
-  aou$ex.ind = match(ao.dt$ex.name, ps$edt$ex.name)
-  aou$points = aou$solved * aou$max.points
     
   # Results of chunks
-  cu = as_data_frame(cbind(ups$cu, select(ps$cdt,ex.ind, points)))
+  cu = as_data_frame(cbind(ups$cu, dplyr::select(ps$cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
+
+    # Results of addons like quizes
   
-  idf = rbind(
-    select(aou,ex.ind,solved, num.hint, points, max.points),
-    select(cu,ex.ind, solved, num.hint, points, max.points)
-  )
+  if (NROW(ups$aou)>0) {
+    aou = as_data_frame(cbind(ups$aou, dplyr::select(ps$rps$ao.dt, max.points, ex.name)))
+    aou$ex.ind = match(ao.dt$ex.name, ps$edt$ex.name)
+    aou$points = aou$solved * aou$max.points
+    idf = rbind(
+      dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),
+      dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
+    )
+    
+  } else {
+    idf = dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
+  }
+
+    
   
   # Aggregate on exercise level
   res = group_by(idf, ex.ind) %>%
@@ -215,22 +225,21 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
       points = sum(points),
       max.points = sum(max.points),
       percentage = round(points/max.points*100),
-      hints = -sum(num.hint),
+      hints = sum(num.hint),
       ex.name = "Total"
     )
   res = rbind(res, all.res)
+  sr = dplyr::select(res,ex.name,percentage, points, max.points, hints)
+  colnames(sr) = c("Excercise","Solved (%)","Points", "Max. Points", "Hints")
+  rownames(sr) = NULL
   
   
   if (do.display) {
-    sr = dplyr::select(res,ex.name,percentage, points, max.points, hints)
-    
-    colnames(sr) = c("Ex","Solved (%)","Points", "Max. Points", "hints")
-    rownames(sr) = NULL
     display(user$name, "'s stats for problem set ",ps$name,":\n")
     print(as.data.frame(sr))  
-    return(invisible(res))
+    return(invisible(sr))
   }
-  res
+  sr
 }
 
 
