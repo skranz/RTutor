@@ -28,7 +28,7 @@ get.user = function(user.name = NULL, dir = get.ps()$user.dir) {
   user = get(".__rtutor_user",.GlobalEnv)
   if (!identical(user$name, user.name) & !is.null(user.name)) {
     user = init.user(user.name)
-    save.user()    
+    save.user()
   }
   return(user)
 }
@@ -36,7 +36,7 @@ get.user = function(user.name = NULL, dir = get.ps()$user.dir) {
 
 init.user = function(user.name="GUEST") {
   user = as.environment(list(name=user.name, awards = list()))
-  assign(".__rtutor_user.name",user.name,.GlobalEnv)  
+  assign(".__rtutor_user.name",user.name,.GlobalEnv)
   assign(".__rtutor_user",user,.GlobalEnv)
   user
 }
@@ -48,15 +48,15 @@ update.user = function(user=get.user()) {
 load.user = function(dir = get.ps()$user.dir) {
   file = paste0(dir,"/current_user.Ruser")
   load(file=file)
-  assign(".__rtutor_user.name",user$name,.GlobalEnv)  
-  assign(".__rtutor_user",user,.GlobalEnv)  
+  assign(".__rtutor_user.name",user$name,.GlobalEnv)
+  assign(".__rtutor_user",user,.GlobalEnv)
   return(invisible(user))
 }
 
 save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$user.dir, ps = get.ps()) {
   if (isTRUE(ps$save.nothing))
     return()
-  
+
   file = paste0(dir,"/current_user.Ruser")
   save(user, file=file)
   # Backup
@@ -68,26 +68,26 @@ save.user = function(user=get.user(user.name), user.name = get.user.name(), dir 
 init.ups = function() {
   ps = get.ps()
   user=get.user()
-  
-  
+
+
   ups.tdt = !is.false(ps$ups.tdt)
-  
+
   cdt = ps$cdt
-  
+
   # Store chunk results
   cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
-  
+
   # Store add-on results
   ao.dt = ps$rps$ao.dt
   if (NROW(ao.dt)>0) {
-    aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), score=0)
+    aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
   } else {
     aou = NULL
   }
-  
+
   got.award = rep(FALSE, length(ps$rps$awards))
 
-  
+
   if (ups.tdt)  {
     tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
   } else {
@@ -105,7 +105,7 @@ get.ups = function() {
   if (is.null(ps))
     return(NULL)
   user=get.user()
-  
+
   ups <- NULL
   try(ups<-get(".__rtutor_ups",.GlobalEnv), silent=TRUE)
   if (!is.null(ups)) {
@@ -114,7 +114,7 @@ get.ups = function() {
   }
   if (is.null(ups)) {
     ups = load.ups()
-    
+
     # old version of ups
     if (is.null(ups$cu)) {
       new.ups = init.ups()
@@ -122,7 +122,7 @@ get.ups = function() {
       ups = new.ups
       set.ups(ups)
     }
-    
+
   }
   ups
 }
@@ -130,22 +130,22 @@ get.ups = function() {
 load.ups = function() {
   ps = get.ps()
   user = get.user()
-  
+
   dir = get.ps()$ups.dir
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")
-  
+
   if (!file.exists(file)) {
     ups = init.ups()
     save.ups()
   } else {
     load(file=file)
-    assign(".__rtutor_ups",ups,.GlobalEnv)  
+    assign(".__rtutor_ups",ups,.GlobalEnv)
   }
   return(invisible(ups))
 }
 
 set.ups = function(ups) {
-  assign(".__rtutor_ups",ups,.GlobalEnv)    
+  assign(".__rtutor_ups",ups,.GlobalEnv)
 }
 
 
@@ -155,26 +155,27 @@ update.ups = function(ups = get.ups(), ps = get.ps()) {
 
 save.ups = function(ups = get.ups(), ps=get.ps()) {
   if (isTRUE(ps$save.nothing)) return()
-  
+
   ups$chunk.ind = ps$chunk.ind
-  
+
   #cat("\nups saved with chunk.ind = ", ups$chunk.ind)
-  
+
   user = get.user()
   dir = get.ps()$ups.dir
   file = paste0(dir,"/",user$name,"_",ps$name,".ups")
 
   suppressWarnings(save(ups,file=file))
-  assign(".__rtutor_ups",ups,.GlobalEnv)  
+  assign(".__rtutor_ups",ups,.GlobalEnv)
   return(invisible(ups))
 }
 
 #' Shows your progress
 #' @export
-stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display) {
+stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display,  user = get.user(), ups = get.ups()
+) {
 
   restore.point("stats")
-  
+
   ps = get.ps()
   if (is.null(ps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
@@ -183,33 +184,30 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
 
   if (use.old.stats)
     return(old.stats())
-    
-  user = get.user()
-  ups = get.ups()
 
 
-    
+
+
   # Results of chunks
   cu = as_data_frame(cbind(ups$cu, dplyr::select(ps$cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
 
-    # Results of addons like quizes
-  
+  # Results of addons like quizes
+
   if (NROW(ups$aou)>0) {
     aou = as_data_frame(cbind(ups$aou, dplyr::select(ps$rps$ao.dt, max.points, ex.name)))
-    aou$ex.ind = match(ao.dt$ex.name, ps$edt$ex.name)
-    aou$points = aou$solved * aou$max.points
+    aou$ex.ind = match(ps$rps$ao.dt$ex.name, ps$edt$ex.name)
     idf = rbind(
       dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),
       dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
     )
-    
+
   } else {
     idf = dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
   }
 
-    
-  
+
+
   # Aggregate on exercise level
   res = group_by(idf, ex.ind) %>%
     summarise(
@@ -232,11 +230,11 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
   sr = dplyr::select(res,ex.name,percentage, points, max.points, hints)
   colnames(sr) = c("Excercise","Solved (%)","Points", "Max. Points", "Hints")
   rownames(sr) = NULL
-  
-  
+
+
   if (do.display) {
     display(user$name, "'s stats for problem set ",ps$name,":\n")
-    print(as.data.frame(sr))  
+    print(as.data.frame(sr))
     return(invisible(sr))
   }
   sr
@@ -245,16 +243,16 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
 
 #' Shows your progress
 #' @export
-old.stats = function(do.display) {
+old.stats = function(do.display=TRUE) {
   ps = get.ps()
   if (is.null(ps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
     return(invisible())
   }
-    
+
   user = get.user()
   ups = get.ups()
-  
+
   res = summarise(group_by(as.data.frame(ups$tdt),ex.ind),
     num.test = length(test.e.ind),
     percentage.solved=round(sum(success)/num.test*100),
@@ -268,19 +266,19 @@ old.stats = function(do.display) {
     colnames(sr) = c("Ex","solved (%)","hints","completed")
     rownames(sr) = NULL
     display(user$name, "'s stats for problem set ",ps$name,":\n")
-    print(as.data.frame(sr)) 
+    print(as.data.frame(sr))
     return(invisible(res))
   }
   return(res)
 }
 
 
-# remove old ups files when new problem set structure is generated 
+# remove old ups files when new problem set structure is generated
 remove.ups = function(ps.name = get.ps()$name, dir = get.ps()$ups.dir) {
   set.ups(NULL)
 
   if (is.null(dir)) dir =getwd()
-  
+
   files = list.files(path = dir,full.names = TRUE)
   files = files[str.ends.with(files,paste0("_",ps.name,".ups"))]
   if (length(files)>0) {

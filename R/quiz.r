@@ -54,7 +54,7 @@ rtutor.quiz.block.parse = function(txt,type="quiz",name="",id=paste0("addon__",t
   qu = shinyQuiz(id = id,yaml = merge.lines(txt),add.handler = FALSE)
 
   rta = as.environment(list(
-    id=id,type=type,optional=TRUE, changes.env=FALSE, max.points=length(qu$parts),
+    id=id,type=type,optional=TRUE, changes.env=FALSE, max.points=qu$max.points,
     solved=FALSE, points=0, was.solved=FALSE, had.points=0
   ))
   qu$rta = rta
@@ -108,14 +108,18 @@ quizDefaults = function(lang="en") {
       success = "Richtig!",
       failure= "Leider noch nicht richtig.",
       success_color = "black",
-      failure_color = "red"
+      failure_color = "red",
+      points_txt = "Punkte",
+      point_txt = "Punkt"
     )
   } else {
     list(
       success = "Great, you answered correctly!",
       failure= "Sorry, not yet correct.",
       success_color = "black",
-      failure_color = "red"
+      failure_color = "red",
+      points_txt = "points",
+      point_txt = "point"
     )
   }
 }
@@ -156,6 +160,9 @@ shinyQuiz = function(id=paste0("quiz_",sample.int(10e10,1)),qu=NULL, yaml,  quiz
 
   qu$parts = lapply(seq_along(qu$parts), function(ind) init.quiz.part(qu$parts[[ind]],ind,qu))
   np = length(qu$parts)
+  
+  qu$max.points = sum(sapply(qu$parts, function(part) part$points))
+  
   qu$state = as.environment(list(part.solved=rep(FALSE,np), solved=FALSE))
 
   qu$ui = quiz.ui(qu)
@@ -207,6 +214,14 @@ init.quiz.part = function(part=qu$parts[[part.ind]], part.ind=1, qu, has.check.b
   }
 
 
+  txt = part$success
+  if (!is.null(part$points)) {
+    if (part$points==1) {
+      txt = paste0(txt," (", part$points, " ", defaults$point_txt,")")
+    } else if (part$points > 0 ) {
+      txt = paste0(txt," (", part$points, " ", defaults$points_txt,")")
+    }
+  }
   txt = colored.html(part$success, part$success_color)
   part$success =  markdownToHTML(text=txt,encoding = "UTF-8", fragment.only=TRUE)
 
@@ -224,6 +239,10 @@ init.quiz.part = function(part=qu$parts[[part.ind]], part.ind=1, qu, has.check.b
   part$ui = quiz.part.ui(part)
   part$solved = FALSE
 
+  if (is.null(part$points)) {
+    part$points = 1
+  }
+  
   part
 }
 
