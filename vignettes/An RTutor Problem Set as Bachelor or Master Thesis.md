@@ -267,19 +267,6 @@ You may want to write some own functions that simplify some steps of the analysi
 You can also ask the user a question about the data or regression results in form of a quiz. There is now an addon that allows to include multiple choice and other quizes in a nice format in shiny based problem sets. It is not yet well documented, but the file `QuizExample_sol.Rmd` in the folder `/inst/examples` contains an example, how this quiz addon can be used. The examples, are hopefully self explanatory. Important is that you set the parameter `addons="quiz"` in your call to `create.ps`.
 
 
-Alternatively, you can include quizes as part of a normal R code chunk. Here is an example, how you can implement a quiz chunk:
-
-```
-    c) Look at the different plots to answer the following questions (replace '???' with the right answer):
-    ```{r "2.1 c)"}
-    #< task_notest
-    # Do you see a particular effect in open-end fund starts and net flows during Regime 2 compared to the other periods??
-    # sol31 = "???" Assign "yes" or "no" to sol31 and remove the comment
-    #>
-    sol31 = "no"
-    ```
-```
-
 ### Make life easy for the user: give code examples
 
 If the user shall write some code that is a bit more complicated, try to give an example in a task plot first that he can adapt. Remember that the target user does not want to figure out complicated commands on his own but wants to see quick results.
@@ -332,7 +319,7 @@ That function `showreg` in my package `regtools` is a wrapper to `texreg` or `st
 
 The base R functions `lm` and `glm` allow linear regressions and generalized linear models, including Tobit and probit regressions. But there are many specialized functions and packages for other sorts of regressions, e.g.
 
-  - `lfe`: for estimating large panel data sets with fixed effects, also allows IV estimation.
+  - `lfe`: for estimating large panel data sets with fixed effects, also allows IV estimation and clustered standard errors. `lfe` is a real useful package.
   - `mlogit`: discrete choice data
   
 For other models search the internet.
@@ -415,12 +402,18 @@ your R code.
 
 ### Overall, nicely designed problem set. With good didactical structure of questions
 
+    - RTutorPublicProcurement
     - RTutorTopIncomeTaxation
     - RTutorSoapOperas
+
+### Quizes
+    
+    - RTutorPublicProcurement
 
 ### Awards
 
     - RTutorSoapOperas
+    - RTutorPublicProcurement
 
 ### Interactive footnotes
 
@@ -442,3 +435,11 @@ your R code.
 
     - RTutorSoapOperas
 
+### Good explanation of theoretical models
+
+    - RTutorPublicProcurement
+    - RTutorTopIncomeTaxation
+
+### Interactive Leaflet Maps
+
+    - RTutorPublicProcurement

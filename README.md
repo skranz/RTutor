@@ -10,13 +10,17 @@ RTutor is an R package that allows to develop interactive R exercises. Problem s
 
 For the web-based interface, several students at Ulm University have created very nice problem sets that allow to interactively replicate the main insights of interesting economic articles and to learn a bit about R and econometrics. Before developing your own problem sets, you may want to try out some of these examples:
 
-### On the optimal taxation of top incomes (by Jonas Send)
-  - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
-  - shinyapps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
+### Public Procurement Auctions: Design, Outcomes and Adaption Costs (by Frederik Collin)
+  - Github: https://github.com/Fcolli/RTutorProcurementAuction
+  - shinyapps.io: https://fcolli.shinyapps.io/RTutorProcurementAuction
 
 ### How soap operas reduced fertility in Brazil (by Clara Ulmer)
   - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
   - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
+
+### On the optimal taxation of top incomes (by Jonas Send)
+  - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
+  - shinyapps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
 
 ### A macroeconomic study of credit booms and busts (by Thomas Clausing)
   - Github: https://github.com/tcl89/creditboomsgonebust
@@ -25,8 +29,6 @@ For the web-based interface, several students at Ulm University have created ver
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
   
-
-
 
 ## Installing the newest version of RTutor
 
@@ -46,9 +48,10 @@ If you only want to update the RTutor package (and have the other packages alrea
 devtools::install_github("skranz/RTutor")
 ```
 (You may have to restart your R session / RStudio for the update to work.)
+
 ## Create your own problem sets
 
-Take a look at the .md files in the vignette folder for documentation of how to create own problem sets.
+Take a look at the files in the vignette folder for documentation of how to create own problem sets.
 
 ## Suggestions & Feedback
 
