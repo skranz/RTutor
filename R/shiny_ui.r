@@ -172,12 +172,16 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps(), just.i
   ex.ui.li = make.ex.ui.li(ps=ps)
   #show.html(view.ui.li[[3]])
   
-  dataExplorerPanel = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
-  loadSavePanel = tabPanel("File",value="loadSaveTabPanel", load.save.ui())
+  li = list()
+  if (isTRUE(ps$show.data.exp)) {
+    li[[length(li)+1]] = tabPanel("Data Explorer",value="dataExplorerTabPanel", data.explorer.ui())
+  }
+  li[[length(li)+1]] = tabPanel(" ",value="statsPanel", uiOutput("uiProblemSetStats"), icon=icon(name="tasks", lib="font-awesome"))
 
-  
+  li[[length(li)+1]] = tabPanel("",value="loadSaveTabPanel", load.save.ui(), icon=icon(name="folder-open", lib="font-awesome"))
+
   doc=  do.call("tabsetPanel", c(
-      list(id="exTabsetPanel"),ex.ui.li,list(dataExplorerPanel,loadSavePanel)
+      list(id="exTabsetPanel"),ex.ui.li,li
   ))
 
   inner = doc 

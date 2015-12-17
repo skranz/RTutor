@@ -94,7 +94,7 @@ create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTR
 
   txt = cdt$sol.txt[[chunk.ind]]
   if (cdt$num.e[[chunk.ind]] > cdt$num.e.task[[chunk.ind]]) {
-    add = c("# You successfully solved the chunk!")
+    add = c("# Great, solved correctly!")
   } else {
     add = "# You successfully checked the chunk! "
   }
@@ -136,4 +136,40 @@ create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTR
 
   html
 }
+
+
+create.cdt.task.html = function(cdt) {
+  restore.point("create.cdt.task.html")
+  task.html = sapply(1:NROW(cdt), create.task.chunk.html, cdt=cdt)
+  task.html
+}
+
+create.task.chunk.html = function(chunk.ind,cdt, eval=FALSE, echo=TRUE, quiet=TRUE) {
+  restore.point("create.task.chunk.html")
+  
+  txt = paste0("# Not yet solved...\n# Press 'edit' to enter your code.\n\n",cdt$task.txt[[chunk.ind]])
+  name = cdt$chunk.name[[chunk.ind]]
+  opt = default.out.chunk.options()
+  opt$eval = eval
+  opt$echo = echo
+  header = paste0("```{r '",name,"'",chunk.opt.list.to.string(opt,TRUE),"}")
+  
+  txt = c(header,sep.lines(txt),"```")
+  html ="Evaluation error!"
+  html = try(
+    knitr::knit2html(text=txt,fragment.only = TRUE,quiet = quiet)
+  )
+  
+  nali = make.chunk.nali(chunk.name = name, chunk.ind = chunk.ind, ps=NULL)
+  chunkUI = nali$chunkUI
+  html = paste0(html,collapse="\n")
+  # Add syntax highlightning
+  if (!is.null(chunkUI)) {
+    html = paste0(html,"\n",
+                  "<script>$('#",chunkUI," pre code').each(function(i, e) {hljs.highlightBlock(e)});</script>")
+  }
+  
+  html
+}
+
 

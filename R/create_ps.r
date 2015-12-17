@@ -43,7 +43,7 @@ examples.create.ps = function() {
 #' 
 #'
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0.5, chunk.points=0) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0) {
   restore.point("create.ps")
 
   CREATE.PS.ENV$fragment.only = fragment.only
@@ -86,8 +86,10 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
   rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
 
-  if (add.shiny)
+  if (add.shiny) {
     rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
+    rps$cdt$task.html = create.cdt.task.html(rps$cdt)
+  }
 
   source.rps.extra.code(extra.code.file, rps)
   if (!is.null(var.txt.file)) {
@@ -177,7 +179,7 @@ write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), 
   restore.point("write.output.solution")
 
   libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
-  source.txt = if (!is.null(rps$extra.code.file)) paste0('source(',rps$extra.code.file,')') else ""
+  source.txt = if (!is.null(rps$extra.code.file)) paste0('source("',rps$extra.code.file,'")') else ""
   
   header = paste0(
 '
@@ -304,6 +306,7 @@ te.to.rps = function(te) {
   ao.dt$award.name = items.df$award.name[rows]
   ao.dt$item.pos = items.df$item.pos[rows]
   ao.dt$ex.name = items.df$ex.name[rows]
+
 
   rps$ao.dt = ao.dt
   rps$Addons = te$Addons

@@ -205,6 +205,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   if (verbose)
     display("Check chunk ", chunk.name," ...")
 
+  ps$success.log = ps$test.log = NULL
   ps$failure.message  = "No failure message recorded"
   ps$warning.messages = list()
   ps$check.date = Sys.time()
@@ -279,7 +280,6 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     display("run tests...")
   }
 
-  ps$success.log = ps$test.log = NULL
   e.ind = 1
 
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1

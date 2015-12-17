@@ -119,6 +119,12 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   } else {
     solutionBtn  = NULL
   }
+  if (isTRUE(ps$show.data.exp)) {
+    dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
+  } else {
+    dataBtn  = NULL
+  }
+
   saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
 
   if (!ps$noeval) {
@@ -126,7 +132,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
       bsButton(nali$checkBtn, "check",size="extra-small"),
       bsButton(nali$hintBtn, "hint", size="extra-small"),
       bsButton(nali$runBtn, "run chunk",size="extra-small"),
-      bsButton(nali$dataBtn, "data", size="extra-small"),
+      dataBtn,
       saveBtn,
       solutionBtn
     )
@@ -165,10 +171,17 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
 
   saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
 
+  if (isTRUE(ps$show.data.exp)) {
+    dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
+  } else {
+    dataBtn  = NULL
+  }
+
+  
   if (!ps$noeval) {
     button.row = chunk.fluidRow(
       bsButton(nali$editBtn, "edit",size="extra-small"),
-      bsButton(nali$dataBtn, "data", size="extra-small"),
+      dataBtn,
       saveBtn
     )
   } else {
@@ -202,12 +215,21 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
       }
     }
   } else {
-    if (ps$noeval) {
-      task = ps$cdt$task.txt[[chunk.ind]]
-      html = chunk.to.html(task, chunk.ind, eval=FALSE, nali=nali)
+    
+    if ((identical(code, ps$cdt$task.txt[[chunk.ind]]) | isTRUE(ps$noeval)) & !is.null(ps$cdt$task.html)) {
+      # just show precompiled task
+      html = ps$cdt$task.html[[chunk.ind]]
     } else {
-      html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
+      # compile no solution again
+      if (ps$noeval) {
+        task = ps$cdt$task.txt[[chunk.ind]]
+        html = chunk.to.html(task, chunk.ind, eval=FALSE, nali=nali)
+      } else {
+        html = chunk.to.html(code, chunk.ind, eval=FALSE, nali=nali)
+      }
+      
     }
+    
     html = HTML(html)
   }
 
@@ -241,8 +263,8 @@ make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=ge
   if (!ps$noeval) {
     buttonHandler(nali$runBtn, run.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$runKey, run.shiny.chunk, chunk.ind=chunk.ind)
-    buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
-
+    if (isTRUE(ps$show.data.exp))
+      buttonHandler(nali$dataBtn, data.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$runLineKey, run.line.shiny.chunk, chunk.ind=chunk.ind)
     aceHotkeyHandler(nali$helpKey, help.shiny.chunk, chunk.ind=chunk.ind)
   }
@@ -293,31 +315,45 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
 
-  if (!is.false(ps$catch.errors)) {
-    ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output),
-         error = function(e) {ps$failure.message <- as.character(e)
-          return(FALSE)})
+  
+  if (isTRUE(ps$use.secure.eval)) {
+    ret = secure.check.chunk(chunk.ind=chunk.ind,store.output=store.output)
+    cat("\nps:")
+    print(ps)
+    cat("\n",ps$failure.message)
+    #ps = get.ps()
   } else {
-    ret = check.chunk(chunk.ind=chunk.ind,store.output=store.output)
-  }
-  if (!ret) {
-    txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
-    updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
-    ps$cdt$is.solved[chunk.ind] = FALSE
-  } else {
-    #restore.point("success test shiny chunk")
-
-    if (NROW(ps$chunk.console.out)>max.lines) {
-      txt = merge.lines(
-        c("You successfully solved the chunk!",
-           ps$chunk.console.out[1:max.lines],
-          paste0("\n...", NROW(ps$chunk.console.out)-max.lines," lines ommited...")))
+    if (!is.false(ps$catch.errors)) {
+      ret = tryCatch(check.chunk(chunk.ind=chunk.ind, store.output=store.output), error = function(e) {ps$failure.message <- as.character(e);return(FALSE)})
     } else {
-      txt = merge.lines(c("You successfully solved the chunk!",
-                        ps$chunk.console.out))
+      ret = check.chunk(chunk.ind=chunk.ind,store.output=store.output)
     }
-    updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
-    if (!internal) {
+  }
+  
+
+  ps$prev.check.chunk.ind = chunk.ind
+  
+  if (!ret)
+    ps$cdt$is.solved[chunk.ind] = FALSE
+  
+  if (!internal) {
+    if (!ret) {
+      txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
+      updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
+      ps$cdt$is.solved[chunk.ind] = FALSE
+    } else {
+      #restore.point("success test shiny chunk")
+      
+      if (NROW(ps$chunk.console.out)>max.lines) {
+        txt = merge.lines(
+          c("You successfully solved the chunk!",
+            ps$chunk.console.out[1:max.lines],
+            paste0("\n...", NROW(ps$chunk.console.out)-max.lines," lines ommited...")))
+      } else {
+        txt = merge.lines(c("You successfully solved the chunk!",
+                            ps$chunk.console.out))
+      }
+      updateAceEditor(ps$session, ps$nali$console, value=txt,mode="r")
       proceed.with.successfuly.checked.chunk(chunk.ind)
     }
   }
@@ -354,11 +390,15 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
 
 
 hint.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
-  set.shiny.chunk(chunk.ind)
-  envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
   restore.point("hint.shiny.chunk")
-
-  check.shiny.chunk(chunk.ind, internal=TRUE)
+  set.shiny.chunk(chunk.ind, ps=ps)
+  envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
+  
+  # If the current chunk has not been checked. Check it again
+  #if (!identical(chunk.ind,ps$prev.check.chunk.ind))
+  if (!isTRUE(ps$hint.noeval))
+    check.shiny.chunk(chunk.ind, internal=TRUE)
+  
   txt = tryCatch(merge.lines(capture.output(hint(ps=ps))),
          error = function(e) {merge.lines(as.character(e))})
   txt = paste0("Hint: ", txt)
