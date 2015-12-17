@@ -161,7 +161,7 @@ shinyQuiz = function(id=paste0("quiz_",sample.int(10e10,1)),qu=NULL, yaml,  quiz
   qu$parts = lapply(seq_along(qu$parts), function(ind) init.quiz.part(qu$parts[[ind]],ind,qu))
   np = length(qu$parts)
   
-  qu$max.points = sum(sapply(qu$parts, function(part) part$points))
+  qu$max.points = sum(sapply(qu$parts, function(part) part[["points"]]))
   
   qu$state = as.environment(list(part.solved=rep(FALSE,np), solved=FALSE))
 
@@ -213,16 +213,18 @@ init.quiz.part = function(part=qu$parts[[part.ind]], part.ind=1, qu, has.check.b
     stop(paste0("The quiz with question ", part$question, " has neither defined the field 'answer' nor the field 'choices'."))
   }
 
+  if (is.null(part[["points"]])) {
+    part$points = 1
+  }
 
   txt = part$success
-  if (!is.null(part$points)) {
-    if (part$points==1) {
-      txt = paste0(txt," (", part$points, " ", defaults$point_txt,")")
-    } else if (part$points > 0 ) {
-      txt = paste0(txt," (", part$points, " ", defaults$points_txt,")")
-    }
+  
+  if (part$points==1) {
+    txt = paste0(txt," (", part$points, " ", defaults$point_txt,")")
+  } else if (part$points > 0 ) {
+    txt = paste0(txt," (", part$points, " ", defaults$points_txt,")")
   }
-  txt = colored.html(part$success, part$success_color)
+  txt = colored.html(txt, part$success_color)
   part$success =  markdownToHTML(text=txt,encoding = "UTF-8", fragment.only=TRUE)
 
   txt = colored.html(part$failure, part$failure_color)

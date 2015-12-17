@@ -43,7 +43,7 @@ examples.create.ps = function() {
 #' 
 #'
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0.5, chunk.points=0) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0) {
   restore.point("create.ps")
 
   CREATE.PS.ENV$fragment.only = fragment.only
