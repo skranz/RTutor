@@ -141,21 +141,15 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 
 show.shiny.ps = show.ps
 
-
-
-
 init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE) {
   restore.point("init.shiny.ps")
   setwd(dir)
 
-  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval)
+  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval)
 
   if (clear.user) {
-    user = init.user(user.name = user.name)
-  } else {
-    user = get.user(user.name = user.name)
+    ps$ups = init.ups(user.name = user.name, ps=ps)    
   }
-
 
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn

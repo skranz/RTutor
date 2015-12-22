@@ -13,8 +13,6 @@ examples.create.ps = function() {
   #name.rmd.chunks(sol.file) # set auto chunk names in this file
   create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, whitelist.report = TRUE)
   show.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, run.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
-
-  ps = init.ps(ps.name)
 }
 
 

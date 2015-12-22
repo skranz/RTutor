@@ -14,7 +14,7 @@ check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, se
     # Allows knitting to HTML even when there are errors
     knitr::opts_chunk$set(error = TRUE)
     ps = NULL
-    try(ps <- get.or.init.ps(ps.name,stud.path, stud.short.file, reset), silent=TRUE)
+    try(ps <- get.or.init.ps(ps.name,user.name, stud.path, stud.short.file, reset), silent=TRUE)
 
     # Copy extra code into globalenv
     if (!is.null(ps$rps$extra.code.env)) {
@@ -54,14 +54,13 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   if (verbose)
     display("get.or.init.ps...")
 
-  ps = get.or.init.ps(ps.name,stud.path, stud.short.file, reset)
+  ps = get.or.init.ps(ps.name,user.name,stud.path, stud.short.file, reset)
   ps$catch.errors = catch.errors
   ps$use.null.device = use.null.device
 
   set.ps(ps)
   ps$warning.messages = list()
 
-  user = get.user(user.name)
   cdt = ps$cdt
   edt = ps$edt
 

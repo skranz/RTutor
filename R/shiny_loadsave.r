@@ -29,7 +29,7 @@ load.save.ui = function(ps=get.ps()) {
     chunk.fluidRow(
       bsActionButton("exportBtn","Export to Rmd"),
       bsActionButton("importBtn","Import from Rmd"),
-      textInput('exportFileInput',"",value=paste0("exported_",get.user()$name,"_",ps$name,".Rmd")),
+      textInput('exportFileInput',"",value=paste0("exported_",get.user.name(),"_",ps$name,".Rmd")),
       helpText(paste0('(file name must end with ".Rmd")')),
       bsAlert("exportAlert")
     )
@@ -118,7 +118,7 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
 
 
 
-save.sav = function(file=ps$sav.file, user.name=get.user()$name,ps=get.ps(), copy.into.global=TRUE) {
+save.sav = function(file=ps$sav.file, user.name=get.user.name(),ps=get.ps(), copy.into.global=TRUE) {
   restore.point("save.sav")
 
   if (isTRUE(ps$save.nothing)) return()
@@ -177,7 +177,7 @@ compare.sav.with.ps = function(sav, ps) {
 
 
 
-export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),user.name=get.user()$name, ps=get.ps(), copy.into.global=TRUE,...) {
+export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),user.name=get.user.name(), ps=get.ps(), copy.into.global=TRUE,...) {
   restore.point("export.solution")
 
   export.to.rmd(rmd.file)
@@ -188,7 +188,7 @@ export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd")
 
 
 
-export.to.rmd = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),dir = getwd(), ps=get.ps(), user.name=get.user()$name) {
+export.to.rmd = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),dir = getwd(), ps=get.ps(), user.name=get.user.name()) {
   restore.point("export.to.rmd")
   cdt = ps$cdt
   rps = ps$rps

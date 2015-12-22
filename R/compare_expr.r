@@ -387,9 +387,11 @@ match.call.object = function(call, envir=parent.frame(), s3.method=NULL) {
 }
 
 name.of.call = function(call) {
-  if (is.na(call)) return("NA")
-  if (is.symbol(call))
-    return(as.character(call))
+  if (is.symbol(call)) {
+    name = as.character(call)
+    if (is.na(name)) return("NA")
+    return(name)
+  }
   as.character(call[[1]])
 }
 

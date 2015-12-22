@@ -153,8 +153,7 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
   
   cat(user.name)
   
-  user = get.user(user.name)
-  ups = load.ups()
+  ups = load.ups(user.name=user.name,ps = ps)
   if (is.null(ups$ex.ind)) ups$ex.ind = 1
   if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
   

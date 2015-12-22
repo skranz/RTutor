@@ -2,7 +2,7 @@
 #' 
 #' The command will rerun and check all chunks of your problem set and grade it, i.e. it determines which tests are passed or not. The results are stored in a submission file: psname___username.sub, which will be part of the submitted solution. The function works similarly than check.problem.set, but makes sure that all exercies are checked.
 #'@export
-make.submission = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE, ups.dir = ps$ups.dir) {
+make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$name,stud.path=ps$stud.path, stud.short.file=ps$stud.short.file, reset=TRUE, set.warning.1=TRUE, verbose=FALSE, catch.errors=TRUE, from.knitr=!interactive(), use.null.device=TRUE, ups.dir = ps$ups.dir) {
 
   restore.point("make.submission")
 
@@ -28,14 +28,13 @@ make.submission = function(ps=get.ps(), user.name=get.user()$name,  ps.name=ps$n
   setwd(stud.path)
   log.event(type="grade_ps")
   
-  ps = get.or.init.ps(ps.name,stud.path, stud.short.file, reset)
+  ps = get.or.init.ps(ps.name,user.name,stud.path, stud.short.file, reset)
   ps$catch.errors = catch.errors
   ps$use.null.device = use.null.device
   
   set.ps(ps)
   ps$warning.messages = list()
   
-  user = get.user(user.name)  
   cdt = ps$cdt
   edt = ps$edt
   
