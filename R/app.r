@@ -218,18 +218,24 @@ shiny.set.ex.chunk = function(ex.ind=NULL, chunk.ind=NULL,to.top = is.null(chunk
 }
 
 
-RTutorLoginApp = function(db.dir = paste0(getwd(),"/db"), sessions.dir = getwd(), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE) {
+
+
+RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header()) {
   restore.point("RTutorLoginApp")
   
+  
+  library(shinyjs)
   library(loginPart)
   library(RSQLite)
   
   app = eventsApp()
 
+  psapps = lapply(psapps, rtutor.login.init.psa)
+  
+  app$global$psapps = psapps
   
   login.fun = function(app=getApp(),userid,...) {
-    ui = h4(paste0("Successfully logged in as ", userid))
-    setUI("mainUI", ui)
+    show.rtutor.login.main(userid=userid)
   }
 
   if (is.null(check.email.fun)) {
@@ -256,8 +262,90 @@ RTutorLoginApp = function(db.dir = paste0(getwd(),"/db"), sessions.dir = getwd()
     initLoginDispatch(lop)
   })
 
-  app$ui = fluidPage(uiOutput("mainUI"))
+  jsCode <- "shinyjs.openLink = function(url){window.open(url,'_blank');}"
+  app$ui = tagList(
+    useShinyjs(),
+    extendShinyjs(text = jsCode),
+    fluidPage(
+      uiOutput("mainUI")
+    )
+  )
   app$lop = lop
   app
 }
 
+rtutor.login.init.psa = function(psa) {
+  psa = copy.into.missing.fields(psa, source=list(
+    sessions.dir = paste0(psa$dir,"/sessions"),
+    ups.dir = paste0(psa$dir,"/ups")
+  ))
+}
+
+rtutor.login.main.default.header = function() {
+"
+<h3>Welcome {{userid}}</h3>
+<br>
+<p>Choose your problem set...</p>
+<br>
+"
+}
+
+
+show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, app = getApp()) {
+  restore.point("show.rtutor.login.main")
+  
+  psapps = lapply(psapps, function(psa) {
+    psa$session.key = paste(sample(c(0:9, letters, LETTERS),100, replace=TRUE),collapse="")
+    psa
+  })
+
+  
+  psh = lapply(seq_along(psapps), function(i) {
+    psa = psapps[[i]]
+    url = paste0(psa$url,'?key=',psa$session.keys)
+    html = paste0('<a href="', url,'" class="button" target="_blank">',psa$label,'</a>')
+    link = HTML(html)
+    
+    btnId = paste0("openPSAppBtn__",i)
+    linkUIId = paste0("openPSAppLinkUI__",i)
+    buttonHandler(id=btnId,rtutor.open.psapp.click, i=i, psa=psa, url=url, userid=userid)
+    
+    list(
+      bsButton(btnId,psa$label),
+      uiOutput(linkUIId),
+      hr()
+    )
+  })
+
+  header = replace.whisker(header, list(userid=userid))
+  ui = fluidRow(column(offset = 2, width=8,
+    h3("Welcome ", userid),
+    br(),
+    p("Choose your problem set..."),
+    br(),
+    psh
+  ))  
+  setUI("mainUI", ui)
+} 
+
+
+rtutor.open.psapp.click = function(i,psa,url,userid, ...) {
+  restore.point("rtutor.open.psapp.click")
+  
+  rtutor.write.session.file(userid=userid, session.key = psa$session.key, session.dir=psa$session.dir)
+  
+  #js$openLink(url)
+
+  linkUIId = paste0("openPSAppLinkUI__",i)
+  
+  
+  html = paste0('<a href="', url,'" class="button" target="_blank">Click here if problem set does not open automatically.</a>')
+  setUI(linkUIId,HTML(html))
+}
+
+rtutor.write.session.file = function(userid, session.key, session.dir) {
+  restore.point("rtutor.write.session.file")
+  
+  txt = c(userid, as.numeric(Sys.time()))
+  writeLines(txt, paste0(session.key, ".ses"))
+}
