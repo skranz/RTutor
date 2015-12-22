@@ -83,8 +83,9 @@ shiny.award.ui = function(award.name, ps=get.ps(), ups = get.ups()) {
 #' Show all your awards
 #' @export
 awards = function(ups = get.ups(), as.html=FALSE, details=TRUE, ps = get.ps()) {
+  restore.point("awards")
   
-  awards = ps$awards[names(ups$awards)]
+  awards = ps$rps$awards[names(ups$awards)]
   if (!as.html) {
     cat(paste0("Hi ",ups$user.name,", you have earned ", length(ups$awards)," awards:\n"))
     if (!details) {
