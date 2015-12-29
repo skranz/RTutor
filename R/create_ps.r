@@ -859,7 +859,6 @@ examples.test.code.for.e = function() {
 
 get.expr.test.args = function(e) {
   restore.point("get.expr.test.args")
-  e = quote(ggplot(aes(x=hp,y=mpg, color=year),data=scat) + geom_point() + geom_point(shape=1) + geom_smooth())
 
   funs = find.funs(e)
 
