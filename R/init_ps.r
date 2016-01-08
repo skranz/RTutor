@@ -40,7 +40,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE) {
+init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE,replace.with.sample.sol = FALSE, preknit=FALSE) {
   restore.point("init.ps")
 
   rps = load.rps(file=rps.file)
@@ -60,18 +60,34 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   load.ps.libs(rps$libs)
   ps$save.nothing = save.nothing
 
-  ps$precomp = precomp & isTRUE(rps$precomp)
-  ps$preknit = isTRUE(rps$preknit)
+  
+  ps$precomp = precomp
+  ps$preknit = preknit
   ps$noeval = noeval & ps$preknit
+  if (precomp & !isTRUE(rps$precomp))
+    stop("Cannot init.ps with preknit=TRUE, since rps was not preknitted.")
   if (precomp & !isTRUE(rps$precomp))
     stop("Cannot init.ps with precomp=TRUE, since rps was not precomputed.")
   if (noeval & !ps$preknit)
-    stop("Cannot init.ps with noeval=TRUE, since rps was not preknitted.")
+    stop("Cannot init.ps with noeval=TRUE and preknit=FALSE.")
   if (noeval & precomp)
     stop("Cannot init.ps with both noeval=TRUE and precomp=TRUE.")
+  
+  ps$replace.with.sample.sol = replace.with.sample.sol
+  if ((replace.with.sample.sol | noeval) & !ps$rps$has.sol) {
+    stop("rps has no sample solution. So we need noeval=FALSE and replace.with.sample.sol = FALSE.")
+  }
 
+  
+  
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
 
+  if (ps$precomp) {
+    for (row in 1:NROW(rps$cdt)) {
+      parent.env(rps$cdt$stud.env[[row]]) <- ps$ps.baseenv
+    }
+  }
+  
   if (isTRUE(rps$use.memoise)) {
     copy.into.env(dest=ps$ps.baseenv, source=rps$memoise.fun.li)
   }
@@ -123,7 +139,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
     cdt$stud.env =lapply(1:NROW(cdt), function(chunk.ind) {
       new.stud.env(chunk.ind)
     })
-  }
+  } 
   cdt$old.stud.code = cdt$task.txt
 
   cdt = as.data.table(cdt)

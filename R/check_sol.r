@@ -243,7 +243,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
   has.error = FALSE
   ps$stud.env = stud.env
-  ps$cdt$stud.env[[chunk.ind]] = stud.env
+  if (!isTRUE(ps$precomp))
+    ps$cdt$stud.env[[chunk.ind]] = stud.env
 
 
   has.error = FALSE
@@ -411,8 +412,10 @@ make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
 
 
   # return precomputed chunkenv
-  if (isTRUE(ps$precompute))
-    return(ps$cdt$chunk.env[[chunk.ind]])
+  if (isTRUE(ps$precomp)) {
+    stud.env = copy.stud.env(ps$cdt$stud.env[[chunk.ind]], chunk.ind)
+    return(stud.env)
+  }
 
 
   ck = ps$cdt[chunk.ind,]

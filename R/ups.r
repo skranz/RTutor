@@ -43,6 +43,47 @@ init.ups = function(user.name=ps$user.name, ps = get.ps()) {
   ups
 }
 
+ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.with.sample.sol = isTRUE(ps$replace.with.sample.sol)) {
+  restore.point("init.shiny.ps.from.ups")
+  
+  if (NROW(ps$cdt)==0) return()
+
+  is.solved = rep(FALSE, NROW(ps$cdt))
+  ps$cdt$mode = "output"
+  ps$cdt$mode[1] = "input"
+  
+  if (!sample.solution) {
+    if (!is.null(ups$stud.code) & !sample.solution) {
+      ps$cdt$stud.code = ups$stud.code
+    } else if (!sample.solution) {
+      ps$cdt$stud.code = ps$cdt$task.txt
+    }
+    if (!is.null(ups$cu$solved)) {
+      is.solved = ups$cu$solved
+    } else {
+      is.solved =  rep(FALSE, NROW(ps$cdt))
+    }
+  } else {
+    ps$cdt$stud.code = ps$cdt$sol.txt
+    is.solved = rep(TRUE, NROW(ps$cdt))
+  }
+
+  if (rerun) {
+    ps$cdt$is.solved = is.solved
+    rerun.solved.chunks(ps)
+    ps$cdt$mode[1] = "output"
+  } else if (precomp) {
+    ps$cdt$is.solved = is.solved
+  } else {
+    ps$cdt$is.solved = rep(FALSE, NROW(ps$cdt))
+  }
+
+  if (replace.with.sample.sol) {
+    ps$cdt$stud.code[ps$cdt$is.solved] = ps$cdt$sol.txt[ps$cdt$is.solved]
+  }
+  
+}
+
 get.ups = function() {
   ps = get.ps()
   ps[["ups"]]

@@ -109,8 +109,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   if (use.memoise)
     rps$memoise.fun.li = memoise.fun.li(memoise.funs)
 
-  if (preknit) {
-    rps = preknit.rps(rps=rps, precomp=precomp, knit.print.opts=knit.print.opts)
+  if (preknit | precomp) {
+    rps = preknit.rps(rps=rps,precomp=precomp, knit.print.opts=knit.print.opts)
   }
 
   write.output.solution(te=te,rps=rps)

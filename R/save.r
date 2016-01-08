@@ -14,6 +14,28 @@
 #   current.chunk = FALSE
 # )
 
+#' Specify which information will be automatically saved in ups
+autosave.options = function(
+    num.hint = TRUE,
+    num.failure = TRUE,
+    solved = TRUE,
+    awards = TRUE,
+    addons = TRUE,
+    code = FALSE | all,
+    current.chunk = FALSE | all,
+    all = FALSE
+) {
+  nlist(
+    num.hint,
+    num.failure,
+    solved,
+    awards,
+    addons,
+    code,
+    current.chunk
+  )
+}
+
 
 load.save.ui = function(ps=get.ps()) {
   restore.point("load.save.ui")
@@ -132,22 +154,12 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
   })  
 }
 
-
-
-save.sav = function(file=ps$sav.file, user.name=get.user.name(),ps=get.ps(), copy.into.global=TRUE) {
+save.sav = function(file=ps$sav.file, ps=get.ps(), copy.into.global=TRUE) {
   restore.point("save.sav")
 
   if (isTRUE(ps$save.nothing)) return()
-  sav = list(
-    ps.name = ps$name,
-    user.name = user.name,
-    stud.code = ps$cdt$stud.code,
-    mode = ps$cdt$mode,
-    is.solved = ps$cdt$is.solved
-  )
+  sav = get.ups()
   save(sav, file=file)
-  
-  copy.into.env(source=ps$stud.env, dest=globalenv())
 }
 
 # load a sav file and set the current problem set to it
@@ -161,13 +173,11 @@ load.and.set.sav = function(file=ps$sav.file, ps=get.ps()) {
     ps$failure.message = res$msg
     return(FALSE)
   }
+  save.ups(ups=sav)
+  set.ups(sav)
   
-  ps$sav.file = file
-  ps$cdt$mode = sav$mode
-  ps$cdt$stud.code = sav$stud.code
-  ps$cdt$is.solved = sav$is.solved  
-  rerun.solved.chunks(ps)
-  
+  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution)  
+
   return(TRUE)
 }
 

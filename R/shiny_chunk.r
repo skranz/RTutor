@@ -197,7 +197,7 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   if (is.solved) {
     code = code
     opts = ps$cdt$chunk.opt[[chunk.ind]]
-    if (ps$preknit) {
+    if (ps$preknit & (ps$noeval | is.null(opts[["output"]]))) {
       if (!is.null(opts[["output"]])) {
         html = HTML("<p> SPECIAL OUTPUT HERE <p>")
       } else {
@@ -366,9 +366,17 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
   restore.point("proceed.with.successfuly.checked.chunk")
 
   ps$cdt$is.solved[chunk.ind] = TRUE
+  
+  # If we have precompilation, we may replace with
+  # sample solution in 
+  if (isTRUE(ps$replace.with.sample.sol)) {
+    ps$cdt$stud.code[chunk.ind] = ps$cdt$sol.txt[chunk.ind]
+  }
+  
   if (is.last.chunk.of.ex(chunk.ind)) {
     ex.ind = ps$cdt$ex.ind[chunk.ind]
-    ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
+    if (!isTRUE(ps$precomp))
+      ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
   }
   r.chunk.ui.mode = paste0("r.chunk_",chunk.ind,".ui.mode")
   ps$cdt$mode[[chunk.ind]]="output"
