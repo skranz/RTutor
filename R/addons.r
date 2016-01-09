@@ -27,7 +27,7 @@ process.checked.addon = function(rta, ps = get.ps(), ups=get.ups()) {
         if (!is.na(rta$score))
           ups$aou$score[row] = max(c(ups$aou$score[row], rta$score), na.rm=TRUE)
       }
-      update.ups(ups)
+      update.ups(ups, addon=row)
     }
   }
   if (rta$points>rta$had.points) rta$had.points=rta$points

@@ -15,7 +15,7 @@ give.award = function(award.name, award = ps$rps$awards[[award.name]] , ups = ge
 PS: awards() shows all your awards
 '))
   ups$awards[[award.name]] = list(award.name=award.name) 
-  update.ups()
+  update.ups(award=award.name)
   show.award(award)
   return(TRUE)
 }

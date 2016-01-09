@@ -308,7 +308,6 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       }
       ret = eval(test,ps$ps.basenv)
       ps$tdt$test.passed[tdt.ind] = ret
-      update.ups.test.result(passed=ret,ps=ps)
       #update.log.test.result(ret,ups, ck, ps)
 
       if (ret==FALSE) {
@@ -357,31 +356,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 }
 
 
-update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps=get.ps()) {
-  if (!is.null(ups$tdt)) {
-    passed.before = ps$tdt$test.passed[tdt.ind]
-    ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
-
-    if (is.na(ups$tdt$first.call.date[tdt.ind]))
-      ups$tdt$first.call.date[tdt.ind] = Sys.time()
-    if (passed==FALSE) {
-      if (!ups$tdt$success[tdt.ind])
-        ups$tdt$num.failed[tdt.ind] = ups$tdt$num.failed[tdt.ind]+1
-      set.ups(ups)
-      return()
-    }
-    if (is.na(ups$tdt$success.date[tdt.ind])) {
-      ups$tdt$success[tdt.ind] <- TRUE
-      ups$tdt$success.date[tdt.ind] <- Sys.time()
-    }
-  }
-}
-
 update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(), ps=get.ps(), save=TRUE) {
   restore.point("update.ups.chunk.check")
 
-
   update = !ups$cu$solved[chunk.ind]
+
   if (update) {
     if (is.na(ups$cu$first.check.date[chunk.ind]))
       ups$cu$first.check.date[chunk.ind] = Sys.time()
@@ -393,8 +372,25 @@ update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(
       ups$cu$num.fail[chunk.ind] = ups$cu$num.fail[chunk.ind]+1
     }
   }
-  update.ups(ups)
-
+  update.code = isTRUE(ps$ups.save$code)
+  if (update.code) {
+    ups$cu$stud.code[[chunk.ind]] = ps$cdt$stud.code[[chunk.ind]]
+  }
+  if (passed) {
+    ups.chunk.ind = chunk.ind +1
+    if (ups.chunk.ind > NROW(ps$cdt)) ups.chunk.ind = 1
+  } else {
+    ups.chunk.ind = chunk.ind
+  }
+  
+  if (update | update.code | isTRUE(ps$ups.save$chunk.ind)) {
+    update.ups(ups, 
+      chunk = if (update) chunk.ind else NULL,
+      code  = if (update.code) chunk.ind else NULL,
+      chunk.ind = ups.chunk.ind
+    )
+  }
+  
 }
 
 update.log.test.result = function(...) {

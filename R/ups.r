@@ -9,51 +9,77 @@
 
 # clear.user()
 
+
+#' Specify which information will be automatically saved in ups
+default.ups.save = function(
+    chunks = TRUE,
+    awards = TRUE,
+    addons = TRUE,
+    code = FALSE | all,
+    chunk.ind = FALSE | all,
+    all = FALSE
+) {
+  nlist(
+    chunks,
+    awards,
+    addons,
+    code,
+    chunk.ind
+  )
+}
+
+
 get.user.name = function(ps=get.ps()) {
   ps$user.name
 }
 
-init.ups = function(user.name=ps$user.name, ps = get.ps()) {
+init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save) {
   restore.point("init.ups")
-  
-  ups.tdt = !is.false(ps$ups.tdt)
 
   cdt = ps$cdt
-
-  # Store chunk results
-  cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+  if (isTRUE(ups.save$chunks)) {
+    # Store chunk results
+    cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+  } else {
+    cu = NULL
+  }
 
   # Store add-on results
   ao.dt = ps$rps$ao.dt
-  if (NROW(ao.dt)>0) {
+  if (NROW(ao.dt)>0 & isTRUE(ups.save$addons)) {
     aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
   } else {
     aou = NULL
   }
 
-  if (ups.tdt)  {
-    tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
+  if (ups.save$chunk.ind) {
+    chunk.ind = 1
   } else {
-    tdt = NULL
+    chunk.ind = NULL
   }
   awards = list()
-  ups = as.environment(list(ps.name=ps$name, user.name=user.name, cu=cu, aou=aou, tdt=tdt, awards = awards))
+  ups = as.environment(list(ps.name=ps$name, user.name=user.name, chunk.ind = chunk.ind, cu=cu, aou=aou, awards = awards))
 
   save.ups(ups=ups,ps=ps)
   ups
 }
 
-ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.with.sample.sol = isTRUE(ps$replace.with.sample.sol)) {
+ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.with.sample.sol = isTRUE(ps$replace.with.sample.sol), ups.save=ps$ups.save) {
   restore.point("init.shiny.ps.from.ups")
   
   if (NROW(ps$cdt)==0) return()
 
+  chunk.ind = ups$chunk.ind
+  if (is.null(chunk.ind)) {
+    chunk.ind = 1
+  }
+  
   is.solved = rep(FALSE, NROW(ps$cdt))
   ps$cdt$mode = "output"
-  ps$cdt$mode[1] = "input"
+  ps$cdt$mode[chunk.ind] = "input"
   
   if (!sample.solution) {
-    if (!is.null(ups$stud.code) & !sample.solution) {
+    if (!is.null(ups$cu$stud.code) & !sample.solution) {
       ps$cdt$stud.code = ups$stud.code
     } else if (!sample.solution) {
       ps$cdt$stud.code = ps$cdt$task.txt
@@ -67,7 +93,10 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.sol
     ps$cdt$stud.code = ps$cdt$sol.txt
     is.solved = rep(TRUE, NROW(ps$cdt))
   }
-
+  if (ups.save$code & is.null(ups$cu$stud.code)) {
+    ups$cu$stud.code = ps$cdt$stud.code
+  }
+  
   if (rerun) {
     ps$cdt$is.solved = is.solved
     rerun.solved.chunks(ps)
@@ -95,7 +124,7 @@ set.ups = function(ups) {
 }
 
 
-load.ups = function(user.name, ps.name = ps$name, ps = get.ps()) {
+load.ups = function(user.name, ps.name = ps$name, ps = get.ps(),...) {
   restore.point("load.ups")
   
   dir = get.ps()$ups.dir
@@ -106,14 +135,26 @@ load.ups = function(user.name, ps.name = ps$name, ps = get.ps()) {
   
   
   if (!file.exists(file)) {
-    ups = init.ups(user.name = user.name, ps=ps)
+    ups = init.ups(user.name = user.name, ps=ps,...)
   } else {
     load(file=file)
   }
   return(ups)
 }
 
-update.ups = function(ups = get.ups(), ps=get.ps()) {
+update.ups = function(ups = get.ups(), ps=get.ps(), addon=NULL, award=NULL,chunk=NULL, hint=NULL, code=NULL, chunk.ind=NULL, ups.save = ps$ups.save) {
+  restore.point("update.ups")
+  
+  if (!is.null(chunk.ind)) {
+    ups$chunk.ind = chunk.ind
+  } else if (!is.null(chunk)) {
+    ups$chunk.ind = chunk
+  } else if (!is.null(hint)) {
+    ups$chunk.ind = hint
+  } else {
+    ups$chunk.ind = ps$chunk.ind
+  }
+
   save.ups(ups=ups,ps=ps)
 }
 
@@ -122,7 +163,9 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
   
   if (isTRUE(ps$save.nothing)) return()
 
-  ups$chunk.ind = ps$chunk.ind
+  if (is.null(ups$chunk.ind))
+    ups$chunk.ind = ps$chunk.ind
+  
   dir = ps$ups.dir
   file = paste0(dir,"/",ups$user.name,"_",ps$name,".ups")
 
@@ -131,7 +174,7 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
 
 #' Shows your progress
 #' @export
-stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display, ups = get.ups()) {
+stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups()) {
 
   restore.point("stats")
 

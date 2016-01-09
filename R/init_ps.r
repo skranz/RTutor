@@ -40,7 +40,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE,replace.with.sample.sol = FALSE, preknit=FALSE) {
+init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE,replace.with.sample.sol = FALSE, preknit=FALSE, ups.save=default.ups.save()) {
   restore.point("init.ps")
 
   rps = load.rps(file=rps.file)
@@ -72,6 +72,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
     stop("Cannot init.ps with noeval=TRUE and preknit=FALSE.")
   if (noeval & precomp)
     stop("Cannot init.ps with both noeval=TRUE and precomp=TRUE.")
+  
   
   ps$replace.with.sample.sol = replace.with.sample.sol
   if ((replace.with.sample.sol | noeval) & !ps$rps$has.sol) {
@@ -177,7 +178,8 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   if (isTRUE(ps$check.whitelist))
     library(whitelistcalls)
 
-  ps$ups = load.ups(user.name = user.name,ps.name = ps.name, ps=ps)
+  ps$ups.save = ups.save
+  ps$ups = load.ups(user.name = user.name,ps.name = ps.name, ps=ps, ups.save=ups.save)
   log.event(type="init_ps")
 
   

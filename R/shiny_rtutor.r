@@ -141,22 +141,19 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 
 show.shiny.ps = show.ps
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE, replace.with.sample.sol=precomp, preknit=FALSE) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, ups.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE, replace.with.sample.sol=precomp, preknit=FALSE, ups.save = default.ups.save()) {
   restore.point("init.shiny.ps")
   setwd(dir)
 
-  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.with.sample.sol=replace.with.sample.sol, preknit=preknit)
+  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.with.sample.sol=replace.with.sample.sol, preknit=preknit, ups.save=ups.save)
 
   if (clear.user) {
     ps$ups = init.ups(user.name = user.name, ps=ps)    
   }
 
-
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn
   ps$show.data.exp = show.data.exp
-
-
 
   ps$shiny.ex.inds = ex.inds
   ps$shiny.dt = ps$rps$shiny.dt
@@ -191,9 +188,8 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     Addon$shiny.init.fun(ao=ao,ps=ps)
   }
 
-  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution)  
+  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution, ups.save=ups.save)  
   
-
   show.shiny.awards()
   
   changeHandler("exTabsetPanel",rtutor.ex.tab.change)

@@ -15,7 +15,7 @@
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.with.sample.sol=precomp, ...) {
+RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, ups.dir=paste0(dir,"/ups"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.with.sample.sol=precomp, ups.save = default.ups.save(chunk.ind=TRUE, code=!(replace.with.sample.sol | noeval)), ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -25,12 +25,13 @@ RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solv
   ps = init.shiny.ps(
     ps.name=ps.name, user.name=user.name, sample.solution=sample.solution,
     import.rmd=import.rmd, rmd.file=rmd.file,
-    dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
+    dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing,
     show.solution.btn = show.solution.btn, show.data.exp=show.data.exp,
     clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval,
     replace.with.sample.sol=replace.with.sample.sol,
+    ups.save = ups.save,
     ...
   )
   
@@ -156,11 +157,9 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
   cat(user.name)
   
   ups = load.ups(user.name=user.name,ps = ps)
-  if (is.null(ups$ex.ind)) ups$ex.ind = 1
-  if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
-  
-
   cdt = ps$cdt
+  if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
+
   if (ps$noeval | isTRUE(ps$precomp)) {
     changed = ups$cu$solved != ps$cdt$is.solved
     changed[unique(c(ps$chunk.ind,ups$chunk.ind))] = TRUE

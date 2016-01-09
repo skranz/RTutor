@@ -14,28 +14,6 @@
 #   current.chunk = FALSE
 # )
 
-#' Specify which information will be automatically saved in ups
-autosave.options = function(
-    num.hint = TRUE,
-    num.failure = TRUE,
-    solved = TRUE,
-    awards = TRUE,
-    addons = TRUE,
-    code = FALSE | all,
-    current.chunk = FALSE | all,
-    all = FALSE
-) {
-  nlist(
-    num.hint,
-    num.failure,
-    solved,
-    awards,
-    addons,
-    code,
-    current.chunk
-  )
-}
-
 
 load.save.ui = function(ps=get.ps()) {
   restore.point("load.save.ui")
