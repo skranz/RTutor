@@ -174,12 +174,11 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
 
 #' Shows your progress
 #' @export
-stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups()) {
+stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get.ps(), rps=ps$rps) {
 
   restore.point("stats")
 
-  ps = get.ps()
-  if (is.null(ps)) {
+  if (is.null(rps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
     return(invisible())
   }
@@ -191,14 +190,14 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups()) {
 
 
   # Results of chunks
-  cu = as_data_frame(cbind(ups$cu, dplyr::select(ps$cdt,ex.ind, points)))
+  cu = as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
 
   # Results of addons like quizes
 
   if (NROW(ups$aou)>0) {
-    aou = as_data_frame(cbind(ups$aou, dplyr::select(ps$rps$ao.dt, max.points, ex.name)))
-    aou$ex.ind = match(ps$rps$ao.dt$ex.name, ps$edt$ex.name)
+    aou = as_data_frame(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
+    aou$ex.ind = match(rps$ao.dt$ex.name, rps$edt$ex.name)
     idf = rbind(
       dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),
       dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
@@ -218,7 +217,7 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups()) {
       percentage = round(points/max.points*100),
       hints = -sum(num.hint)
     )
-  res$ex.name = ps$edt$ex.name[res$ex.ind]
+  res$ex.name = rps$edt$ex.name[res$ex.ind]
   all.res = idf %>%
     summarise(
       ex.ind = 0,
@@ -235,7 +234,7 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups()) {
 
 
   if (do.display) {
-    display(ups$user.name, "'s stats for problem set ",ps$name,":\n")
+    display(ups$user.name, "'s stats for problem set ",rps$ps.name,":\n")
     print(as.data.frame(sr))
     return(invisible(sr))
   }
