@@ -1,5 +1,5 @@
 
-RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), init.userid="", init.password="", app.url="", app.title="RTutor Teacher Center") {
+RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), data.dir = paste0(getwd(),"/data"), init.userid="", init.password="", app.url="", app.title="RTutor Teacher Center") {
   restore.point("RTutorTeacherApp")
   
   library(shinyjs)
@@ -7,8 +7,10 @@ RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), ini
   library(RSQLite)
   
   app = eventsApp()
+  
 
   psapps = lapply(psapps, rtutor.login.init.psa)
+  app$glob$app.title = app.title
   app$glob$psapps = psapps
   app$glob$teachers = teachers
   
@@ -21,6 +23,7 @@ RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), ini
       )))
       return()
     }
+    rtutor.teacher.handlers()
     show.rtutor.teacher.main()
   }
 
@@ -73,46 +76,73 @@ import.psa.stats = function(psa) {
   df
 }
 
-show.rtutor.teacher.main = function(app=getApp(), import.stats = TRUE) {
-  restore.point("show.rtutor.login.main")
+update.teacher.stat = function(app=getApp()) {
+  restore.point("update.teacher.stat")
   
   psapps = app$glob$psapps
-  if (import.stats) {
-    app$stats = stats = import.psapps.stats(psapps)
-    app$pustats = pustats = app$stats %>% 
-      group_by(ps.name, user.name) %>%
-      summarise(points=sum(points), max.points=sum(max.points)) %>%
-      mutate(share=points / max.points) %>%
-      group_by(ps.name) %>%
-      arrange(-points)
-    library(tidyr)
-    
-    app$ps.max.points = (group_by(pustats, ps.name) %>% summarise(max.points=mean(max.points)))$max.points
-    app$max.points = sum(max.points)
-    
-    upoints = spread(select(pustats, user.name, ps.name, points),key=ps.name, value=points)
-    
-    
-    mat = as.matrix(upoints[,-1])
-    total = rowSums(mat)
-    app$ustats = ustats = data.frame(user.name=upoints$user.name,total.perc = round(100*(total/app$max.points),1), total = total, max.points=app$max.points, upoints[,-1]) %>% arrange(-total)
-    
-    ushow =  data.frame(
-      "Student"= upoints$user.name,
-      "Total %" = round(100*(total/app$max.points),1),
-      "Total Points" = total,
-      "Max. Points"= app$max.points,
-      paste0(upoints[,-1]," / ",app$ps.max.points)
-    )
-    colnames(ushow) = c("Student","Total %","Total Points","Max. Points", colnames(ustats)[-(1:4)])
-    app$ushow = ushow[order(-ushow[,2]),]
-    
-  }
+
+  app$stats = stats = import.psapps.stats(psapps)
+  app$pustats = pustats = app$stats %>% 
+    group_by(ps.name, user.name) %>%
+    summarise(points=sum(points), max.points=sum(max.points)) %>%
+    mutate(share=points / max.points) %>%
+    group_by(ps.name) %>%
+    arrange(-points)
+  library(tidyr)
+  
+  app$ps.max.points = (group_by(pustats, ps.name) %>% summarise(max.points=mean(max.points)))$max.points
+  app$max.points = sum(app$ps.max.points)
+  
+  upoints = spread(select(pustats, user.name, ps.name, points),key=ps.name, value=points)
+  
+  
+  mat = as.matrix(upoints[,-1])
+  total = rowSums(mat,na.rm = TRUE)
+  
+  app$ustats = ustats = data.frame(user.name=upoints$user.name,total.perc = round(100*(total/app$max.points),1), total = total, max.points=app$max.points, upoints[,-1]) %>% arrange(-total)
+  
+  ushow =  data.frame(
+    upoints$user.name,
+    round(100*(total/app$max.points),1),
+    total,
+    app$max.points,
+    paste0(upoints[,-1]," of ",app$ps.max.points)
+  )
+  colnames(ushow) = c("Student","Total %","Total Points","Max. Points", colnames(ustats)[-(1:4)])
+  app$ushow = ushow[order(-ushow[,2]),]
+}
+
+show.rtutor.teacher.main = function(app=getApp(),...) {
+  restore.point("show.rtutor.login.main")
+  
+  update.teacher.stat()
+
   html = html.table(app$ushow)
   ui = fluidRow(column(offset = 1, width=10,
-    h3("Results of problem sets..."),
-    br(),
+    h4(app$glob$app.title),
+    actionButton("refreshTeacherStatsBtn","Refresh"),
+    downloadButton('downloadOverview', 'Download Overview'),
+    downloadButton('downloadDetails', 'Download Details'),
+    h4("Results of problem sets..."),
     HTML(html)
   ))  
   setUI("teacherMainUI", ui)
 } 
+
+rtutor.teacher.handlers = function(app=getApp(), session=app$session) {
+  buttonHandler("refreshTeacherStatsBtn",show.rtutor.teacher.main)
+
+  setDownloadHandler("downloadOverview",
+    filename = 'overview.csv',
+    content = function(file) {
+      write.csv(getApp()$ushow, file,row.names = FALSE)
+    }
+  ) 
+  setDownloadHandler("downloadDetails",
+    filename = 'details.csv',
+    content = function(file) {
+      write.csv(getApp()$stats, file,row.names = FALSE)
+    }
+  )  
+
+}
