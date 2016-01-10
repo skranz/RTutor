@@ -125,8 +125,11 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     dataBtn  = NULL
   }
 
-  saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
-
+  if (isTRUE(ps$show.save.btn)) {
+    saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
+  } else {
+    saveBtn = NULL
+  }
   if (!ps$noeval) {
     button.row = chunk.fluidRow(
       bsButton(nali$checkBtn, "check",size="extra-small"),
@@ -169,8 +172,11 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
 
-  saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
-
+  if (isTRUE(ps$show.save.btn)) {
+    saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
+  } else {
+    saveBtn = NULL
+  }
   if (isTRUE(ps$show.data.exp)) {
     dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
   } else {

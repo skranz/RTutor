@@ -56,6 +56,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   te = get.empty.te(Addons=Addons)
   te = parse.sol.rmd(txt=txt, te=te)
 
+  te$knit.print.params = nlist(html.data.frame,table.max.rows, round.digits, signif.digits) 
   te$e.points = e.points
   te$chunk.points = chunk.points
   te$min.chunk.points = min.chunk.points
@@ -78,11 +79,14 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   # Store information about empty problem set in order to easily export
   # an html problem set into it
   task.txt = sep.lines(task.txt)
-  rps$empty.rmd.txt = task.txt
-  rps$empty.rmd.chunk.lines = get.chunk.lines(task.txt)
-  rps$empty.rmd.user.name.line = which(str.starts.with(task.txt,"user.name = '"))[1]
-  rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
-  rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
+  
+  rmd.header = output.solution.header(rps=rps, te=te)
+  rmd.txt = c(rmd.header,sep.lines(te$task.txt))
+  rps$empty.rmd.txt = rmd.txt
+  rps$empty.rmd.chunk.lines = get.chunk.lines(rmd.txt)
+  #rps$empty.rmd.user.name.line = which(str.starts.with(task.txt,"user.name = '"))[1]
+  #rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
+  #rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
 
   if (add.shiny) {
     rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
@@ -172,13 +176,11 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
   writeLines(sol.txt, file, useBytes=TRUE)
 }
 
-
-write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps,...) {
-  restore.point("write.output.solution")
-
+output.solution.header = function(rps, te, ps.name=te$ps.name) {
   libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
   source.txt = if (!is.null(rps$extra.code.file)) paste0('source("',rps$extra.code.file,'")') else ""
   
+  knit.opts =  paste0(names(te$knit.print.params), " = ", te$knit.print.params, collapse=", ")
   header = paste0(
 '
 ---
@@ -189,13 +191,26 @@ output:
     toc: yes
 ---
 
-```{r include=FALSE, echo=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
 # Load libraries and source extra code
 ',libs,'
 ',source.txt,'
+
+# render data frames similar to the RTutor browser
+RTutor::set.knit.print.opts(',knit.opts,')
+
+# continue knitting even if there is an error
+knitr::opts_chunk$set(error = TRUE) 
 ```
 '
 )
+  header  
+}
+
+write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps,...) {
+  restore.point("write.output.solution")
+
+  header = output.solution.header(rps=rps, te=te, ps.name=ps.name)
   
   out.txt = c(header, out.txt)
   out.txt = name.rmd.chunks(txt = out.txt,only.empty.chunks = FALSE,keep.options = TRUE,valid.file.name = TRUE)
