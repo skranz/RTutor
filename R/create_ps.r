@@ -824,8 +824,8 @@ add.te.addon = function(te,type,args=NULL) {
 
 
   te$task.txt = c(te$task.txt,placeholder)
-  te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao,..))
-  te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao,..))
+  te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao))
+  te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao))
 
   te$addons[[rta$id]] = ao
 

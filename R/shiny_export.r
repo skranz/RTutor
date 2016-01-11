@@ -13,7 +13,7 @@ export.ui = function(ps=get.ps()) {
   list(
     br(),
     downloadButton("downloadRmdBtn","Download as RMarkdown"),
-    helpText("You can download the problem set with your current solution as an RMarkdown text file. You can open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution."),
+    helpText("You can download the problem set with your current solution as an RMarkdown text file. Save it in a directory and open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution. (Note: If you directly open the file with RStudio without saving it first, the file is probably stored in a directory to which you have no write access and RStudio gives the error 'Access denied' if you want to knit the file.)"),
     br(),
     zip.ui
   )
@@ -56,9 +56,28 @@ shiny.to.rmd.txt = function(ps=get.ps(), user.name=get.user.name()) {
   clear.lines = do.call("c",lapply(cl.ind, function(i) int.seq(cl$start.line[i]+1,cl$end.line[i]-1)))
   
   txt[start.lines] = paste0(txt[start.lines],"\n",stud.code)
+  
+  addon.lines = which(str.starts.with(txt,"#! addon__"))
+  txt[addon.lines] = sapply(txt[addon.lines],make.rmd.addon.txt,ps=ps)
+  
   if (length(clear.lines)>0)
     txt = txt[-clear.lines]
   
   txt
 
+}
+
+make.rmd.addon.txt = function(str, ps=get.ps(), ups=get.ups()) {
+  restore.point("make.rmd.addon.txt")
+  id = str.right.of(str, "#! ")
+  str = str.right.of(str,"#! addon__")
+  type = str.left.of(str,"__")
+  name = str.right.of(str,"__")
+  
+  Addon = ps$rps$Addons[[type]]
+  ao = ps$rps$addons[[id]]
+  rta = ao$rta
+
+  res = Addon$out.txt.fun(ao,solved=isTRUE(rta$was.solved))
+  paste0(res, collapse="\n")
 }

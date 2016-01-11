@@ -100,7 +100,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   }
   if (is.null(console.height)) {
     console.code.lines = min(code.lines,10)
-    console.height = (fontSize * 1.25) * console.code.lines + 35
+    console.height = (fontSize * 1.25) * console.code.lines + 50
   }
 
   cat(paste0("\n",nali$name, " height = ", height))
@@ -375,7 +375,7 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
   
   # If we have precompilation, we may replace with
   # sample solution in 
-  if (isTRUE(ps$replace.with.sample.sol)) {
+  if (isTRUE(ps$replace.sol)) {
     ps$cdt$stud.code[chunk.ind] = ps$cdt$sol.txt[chunk.ind]
   }
   
@@ -431,7 +431,11 @@ help.shiny.chunk = function(chunk.ind, cursor=NULL, selection="",...,session=ps$
   } else {
     txt = ps$selection
   }
-
+  if (is.null(txt) | isTRUE(nchar(txt)==0)) {
+    updateAceEditor(ps$session, ps$nali$console, value="No R command selected to show help for.", mode="text")
+    return()
+  }
+  
   help = get.help.txt(txt)
   # To do: replace special characters in a better manner
   help = iconv(help, to='ASCII//TRANSLIT')

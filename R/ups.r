@@ -64,7 +64,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   ups
 }
 
-ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.with.sample.sol = isTRUE(ps$replace.with.sample.sol), ups.save=ps$ups.save) {
+ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.sol = isTRUE(ps$replace.sol), ups.save=ps$ups.save) {
   restore.point("init.shiny.ps.from.ups")
   
   if (NROW(ps$cdt)==0) return()
@@ -107,7 +107,7 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.sol
     ps$cdt$is.solved = rep(FALSE, NROW(ps$cdt))
   }
 
-  if (replace.with.sample.sol) {
+  if (replace.sol) {
     ps$cdt$stud.code[ps$cdt$is.solved] = ps$cdt$sol.txt[ps$cdt$is.solved]
   }
   
@@ -215,7 +215,7 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get
       points = sum(points),
       max.points = sum(max.points),
       percentage = round(points/max.points*100),
-      hints = -sum(num.hint)
+      hints = sum(num.hint)
     )
   res$ex.name = rps$edt$ex.name[res$ex.ind]
   all.res = idf %>%
