@@ -203,7 +203,14 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   if (is.solved) {
     code = code
     opts = ps$cdt$chunk.opt[[chunk.ind]]
-    if (ps$preknit & (ps$noeval | is.null(opts[["output"]]))) {
+    
+    preknit = 
+        # noeval will always be preknit
+        ps$noeval | 
+        # don't preknit special output or if chunk option replace.sol=FALSE
+        (ps$preknit & !(!is.null(opts[["output"]]) | is.false(opts$replace.sol)))
+    
+    if (preknit) {
       if (!is.null(opts[["output"]])) {
         html = HTML("<p> SPECIAL OUTPUT HERE <p>")
       } else {
@@ -211,7 +218,6 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
         html = HTML(html)
       }
     } else {
-
       # not preknitted (default)
       if (!is.null(opts[["output"]])) {
         html = chunk.special.output(code, chunk.ind, nali=nali, output=opts[["output"]], ps=ps)
@@ -220,6 +226,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
         html = HTML(html)
       }
     }
+    
+    
   } else {
     
     if ((identical(code, ps$cdt$task.txt[[chunk.ind]]) | isTRUE(ps$noeval)) & !is.null(ps$cdt$task.html)) {
@@ -373,9 +381,16 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
 
   ps$cdt$is.solved[chunk.ind] = TRUE
   
-  # If we have precompilation, we may replace with
-  # sample solution in 
-  if (isTRUE(ps$replace.sol)) {
+  # If we have precomp=TRUE, it is often sensible to replace 
+  # user solution with sample solution 
+  # A replace.sol chunk option takes precedence over global problem set option
+  if (!is.null(ps$cdt$chunk.opt[[chunk.ind]][["replace.sol"]])) {
+    replace.sol = ps$cdt$chunk.opt[[chunk.ind]][["replace.sol"]]
+  } else {
+    replace.sol = isTRUE(ps$replace.sol)
+  }
+  
+  if (isTRUE(replace.sol)) {
     ps$cdt$stud.code[chunk.ind] = ps$cdt$sol.txt[chunk.ind]
   }
   

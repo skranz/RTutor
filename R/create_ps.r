@@ -255,7 +255,14 @@ te.to.rps = function(te) {
     chunk.opt = lapply(ex$chunks, function(ck) ck$chunk.opt)
 
     optional = sapply(ex$chunks, function(ck) isTRUE(ck$chunk.opt$optional))
-
+#     replace.sol = sapply(ex$chunks, function(ck) {
+#       if (!is.null(ck$chunk.opt[["replace.sol"]])) {
+#         return(ck$chunk.opt$replace.sol)    
+#       } else {
+#         return(NA)
+#       }
+#     })
+    
 
     test.expr = lapply(ex$chunks, function(ck) {
       lapply(ck$test.txt, parse.text)
@@ -453,7 +460,7 @@ parse.chunk.starts = function(row,str,txt, te) {
   } else if (te$in.block | te$in.chunk) {
     stop(paste0("in row ", row, " you start a chunk without having closed the chunk before."), call.=FALSE)
   } else {
-    opt = chunk.opt.string.to.list(str, with.name=TRUE)
+    opt = chunk.opt.string.to.list(str, keep.name=TRUE)
     chunk.name = opt[[1]]
     te$chunk.head = str
     te$chunk.opt = opt[-1]
@@ -1103,7 +1110,9 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
     if (str.starts.with(str, "```{r")) {
       if ((!only.empty.chunks) | str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
         counter.str = ifelse(counter==1,"", paste0(" ",counter))
-        if (has.substr(str,",")) {
+        
+        # preserve chunk options
+        if (has.substr(str,"=")) {
           rhs.str = paste0(",",chunk.opt.list.to.string(chunk.opt.string.to.list(str)))
         } else {
           rhs.str = ""
@@ -1160,7 +1169,7 @@ get.chunk.lines = function(txt) {
   chunk.end = remove.verbatim.end.chunks(chunk.start,chunk.end)
 
   header = txt[chunk.start]
-  chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, with.name=TRUE)[[1]])
+  chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, keep.name=TRUE)[[1]])
 
   quick.df(chunk.name=chunk.name, start.line=chunk.start, end.line=chunk.end)
 }
@@ -1248,7 +1257,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   for (i in 1:n) {
     if (dt$type[i]=="chunk") {
       header = txt[df$start[i]]
-      opt = chunk.opt.string.to.list(header, with.name=TRUE)
+      opt = chunk.opt.string.to.list(header, keep.name=TRUE)
       chunk.name = opt[[1]]
       chunk.ind = which(rps$cdt$chunk.name == chunk.name)[1]
       if (is.na(chunk.ind)){
@@ -1322,7 +1331,7 @@ remove.verbatim.end.chunks = function(chunk.start, chunk.end) {
 }
 
 
-chunk.opt.string.to.list = function(str, with.name=FALSE) {
+chunk.opt.string.to.list = function(str, keep.name=FALSE) {
   restore.point("chunk.opt.string.to.list")
   #str = "```{r 'out_chunk_2_1_b', fig.width=5, fig.height=5, eval=FALSE, echo=TRUE}"
 
@@ -1331,8 +1340,16 @@ chunk.opt.string.to.list = function(str, with.name=FALSE) {
   code = paste0("list(",str,")")
   li = eval(base::parse(text=code,srcfile=NULL))
 
-  if (!with.name) {
-    li = li[-1]
+  if (keep.name) return(li)
+  if (length(li)==0) return(li)
+
+  #if ("replace.sol" %in% names(li))
+  #  stop("nbfbfurb")
+  # remove chunk.name
+  if (is.null(names(li))) {
+    return(li[-1])
+  } else if (nchar(names(li)[1]) == 0) {
+    return(li[-1])
   }
   li
 }
