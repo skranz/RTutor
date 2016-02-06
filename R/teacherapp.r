@@ -100,14 +100,21 @@ update.teacher.stat = function(app=getApp()) {
   total = rowSums(mat,na.rm = TRUE)
   
   app$ustats = ustats = data.frame(user.name=upoints$user.name,total.perc = round(100*(total/app$max.points),1), total = total, max.points=app$max.points, upoints[,-1]) %>% arrange(-total)
+
   
-  ushow =  data.frame(
+  of.df = as.data.frame(lapply(1:(NCOL(upoints)-1),function(ps.ind) {
+    paste0(upoints[,ps.ind+1]," of ",app$ps.max.points[[ps.ind]])  
+  }))
+    
+
+    
+  ushow =  cbind(data_frame(
     upoints$user.name,
     round(100*(total/app$max.points),1),
     total,
-    app$max.points,
-    paste0(upoints[,-1]," of ",app$ps.max.points)
-  )
+    app$max.points
+  ), of.df)
+  
   colnames(ushow) = c("Student","Total %","Total Points","Max. Points", colnames(ustats)[-(1:4)])
   app$ushow = ushow[order(-ushow[,2]),]
 }
