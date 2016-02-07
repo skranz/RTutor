@@ -226,8 +226,16 @@ inner.secure.check.chunk.return = function(ok, ps = get.ps()) {
 
 rtutor.eval.secure = function(..., envir=parent.frame(), timeout = ps$secure.eval.timeout, profile=ps$secure.eval.profile, ps=get.ps(), silent.check=FALSE) {
 
-  if (!RAppArmor::aa_is_enabled(verbose=!silent.check))
-    stop("AppArmor is not enabled.")
+  # check if AppArmor is running. Otherwise don't eval 
+  con =  try(aa_getcon(), silent = TRUE)
+  check = is(con,"try-error")
+  if (!check) check = !identical(con$mode,"enforce")
+  if (check) {
+    if (!RAppArmor::aa_is_enabled(verbose=!silent.check))
+      stop("AppArmor is not enabled. User input is not evaluated.")
+  }
+   
+   
   #restore.point("rtutor.eval.secure")
   RAppArmor::eval.secure(...,envir=envir, timeout=timeout, profile=profile)
 }
