@@ -321,10 +321,10 @@ run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,sessi
 }
 
 check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE, max.lines=300, store.output=FALSE) {
-  cat("\n check.shiny.chunk1")
+  #cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
-  cat("\n check.shiny.chunk2")
+  #cat("\n check.shiny.chunk2")
   #browser()
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
@@ -332,9 +332,9 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   
   if (isTRUE(ps$use.secure.eval)) {
     ret = secure.check.chunk(chunk.ind=chunk.ind,store.output=store.output)
-    cat("\nps:")
-    print(ps)
-    cat("\n",ps$failure.message)
+    #cat("\nps:")
+    #print(ps)
+    #cat("\n",ps$failure.message)
     #ps = get.ps()
   } else {
     if (!is.false(ps$catch.errors)) {
@@ -372,7 +372,7 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
     }
   }
 
-  cat("\nend check.shiny.chunk.ui\n")
+  #cat("\nend check.shiny.chunk.ui\n")
   return(ret)
 }
 
