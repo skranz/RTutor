@@ -1,13 +1,32 @@
-make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE) {
+set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, env=.GlobalEnv,...) {
+  restore.point("set.knit.print.opts")
+  cat(output)
+  if (is(output,"try-error")) output="html"
+  if (is.null(output)) output = "html"
+  opts = make.knit.print.opts(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips = FALSE, output=output)
+ 
+  for (opt in opts) {
+    fun.names = paste0("knit_print.",opt$classes)
+    if (!is.null(opt$fun)) {
+      for (fun.name in fun.names)
+        env[[fun.name]] = opt$fun
+    }
+  }
+
+}
+
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE,output="html") {
   opts = list()
   restore.point("make.knit.print.opts")
+  
+  #attr(opts,"knit.params") = nlist(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips)
   
   if (html.data.frame) {
     opts[["data.frame"]] = list(
       fun= function(x, options=NULL, ...) {
         restore.point("ndnfhdubfdbfbfbh")
         
-        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options,...)  
+        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options,output=output,...)  
       },
       classes=c("data.frame","matrix")
     )
@@ -88,7 +107,7 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
         meta = meta)
 }
 
-rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, signif.digits=8, html.data.frame=TRUE, show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL, ...) {
+rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, signif.digits=8, html.data.frame=TRUE, show.col.tooltips=TRUE, col.tooltips=NULL, output="html", options=NULL, ...) {
   restore.point("rtutor.knit_print.data.frame")
   
   # chunk options have precedent over passed arguments
@@ -113,8 +132,14 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, si
     rows = 1:MAX.ROW
     
     if (html.data.frame) {
-      h1 = RTutor:::html.table(x[rows,],round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
-      html = c(h1, as.character(p(paste0("... only ", MAX.ROW ," of ", NROW(x), " rows  shown  ..."))))
+      missing.txt = paste0("... only ", MAX.ROW ," of ", NROW(x), " rows  shown  ...")
+      if (output=="html") {
+        h1 = RTutor:::html.table(x[rows,],round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
+        html = c(h1, as.character(p(missing.txt)))
+      } else {
+        dat = format.data.frame(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
+        html = paste0(c(kable(dat),missing.txt),collapse="\n")
+      }
     } else {
       dat = format.data.frame(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
       txt = capture.output(print(dat))

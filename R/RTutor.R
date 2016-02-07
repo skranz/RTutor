@@ -29,7 +29,7 @@ print.Problemset = function(ps) {
 }
 
 reset.ps = function(ps=get.ps()) {
-  init.ps(ps$name,ps$stud.path,ps$stud.short.file)
+  init.ps(ps$name,ps$user.name, ps$stud.path,ps$stud.short.file)
 }
 
 #' Get the current problem set
@@ -90,7 +90,7 @@ examples = function() {
 #' 
 #' Only works after you have once checked your problem set!
 #' @export
-zip.solution = function(ps = get.ps(), user.name=get.user()$name, dir = ps$stud.path, ask=TRUE) {
+zip.solution = function(ps = get.ps(), user.name=get.user.name(), dir = ps$stud.path, ask=TRUE) {
   restore.point("zip.solution")
   
   if (is.null(ps)) {

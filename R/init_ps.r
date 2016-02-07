@@ -14,12 +14,6 @@ examples.list.ps = function() {
   list.ps()
 }
 
-examples.init.ps = function() {
-  setwd("D:/libraries/RTutor/RTutor/vignettes/problemsets")
-  ps = init.ps("Example2")
-  ps$cdt
-}
-
 #' Makes a local copy of a problem set for a new shiny session
 copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
   if (!empty.stud.env)
@@ -46,7 +40,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
 #' @param dir the path in which the stud has stored his file
 #' @param stud.hort.file the file name (without path) of the .rmd problem set file
 #' @export
-init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE) {
+init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE,replace.sol = FALSE, preknit=FALSE, ups.save=default.ups.save()) {
   restore.point("init.ps")
 
   rps = load.rps(file=rps.file)
@@ -58,24 +52,43 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   set.ps(ps)
   ps$ups.dir = ups.dir
   ps$user.dir = user.dir
-
+  
+  ps$user.name = user.name
+  
   ps$name = ps.name
   ps$rps = rps
   load.ps.libs(rps$libs)
   ps$save.nothing = save.nothing
 
-  ps$precomp = precomp & isTRUE(rps$precomp)
-  ps$preknit = isTRUE(rps$preknit)
+  
+  ps$precomp = precomp
+  ps$preknit = preknit
   ps$noeval = noeval & ps$preknit
+  if (precomp & !isTRUE(rps$precomp))
+    stop("Cannot init.ps with preknit=TRUE, since rps was not preknitted.")
   if (precomp & !isTRUE(rps$precomp))
     stop("Cannot init.ps with precomp=TRUE, since rps was not precomputed.")
   if (noeval & !ps$preknit)
-    stop("Cannot init.ps with noeval=TRUE, since rps was not preknitted.")
+    stop("Cannot init.ps with noeval=TRUE and preknit=FALSE.")
   if (noeval & precomp)
     stop("Cannot init.ps with both noeval=TRUE and precomp=TRUE.")
+  
+  
+  ps$replace.sol = replace.sol
+  if ((replace.sol | noeval) & !ps$rps$has.sol) {
+    stop("rps has no sample solution. So we need noeval=FALSE and replace.sol = FALSE.")
+  }
 
+  
+  
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
 
+  if (ps$precomp) {
+    for (row in 1:NROW(rps$cdt)) {
+      parent.env(rps$cdt$stud.env[[row]]) <- ps$ps.baseenv
+    }
+  }
+  
   if (isTRUE(rps$use.memoise)) {
     copy.into.env(dest=ps$ps.baseenv, source=rps$memoise.fun.li)
   }
@@ -127,7 +140,7 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
     cdt$stud.env =lapply(1:NROW(cdt), function(chunk.ind) {
       new.stud.env(chunk.ind)
     })
-  }
+  } 
   cdt$old.stud.code = cdt$task.txt
 
   cdt = as.data.table(cdt)
@@ -159,13 +172,17 @@ init.ps = function(ps.name,dir=getwd(), stud.short.file = paste0(ps.name,".Rmd")
   ps$log.file = log.file
   class(ps) = c("Problemset","environment")
 
-  log.event(type="init_ps")
 
   ps$check.whitelist = check.whitelist
   ps$wl = wl
   if (isTRUE(ps$check.whitelist))
     library(whitelistcalls)
 
+  ps$ups.save = ups.save
+  ps$ups = load.ups(user.name = user.name,ps.name = ps.name, ps=ps, ups.save=ups.save)
+  log.event(type="init_ps")
+
+  
   return(ps)
 }
 
@@ -185,16 +202,16 @@ load.ps.libs = function(libs) {
 }
 
 
-get.or.init.ps = function(ps.name,dir, stud.short.file = paste0(ps.name,".Rmd"), reset=FALSE, ps=get.ps(), ups.dir = dir, user.dir=ups.dir) {
+get.or.init.ps = function(ps.name, user.name, dir, stud.short.file = paste0(ps.name,".Rmd"), reset=FALSE, ps=get.ps(), ups.dir = dir, user.dir=ups.dir) {
   restore.point("get.or.init.ps")
 
   # Just take current problem set information
   if (!is.null(ps) & !reset) {
-    if (isTRUE(ps$name == ps.name & ps$stud.path==dir & ps$stud.short.file == stud.short.file)) {
+    if (isTRUE(ps$name == ps.name & ps$stud.path==dir & ps$stud.short.file == stud.short.file & ps$user.name == user.name)) {
       return(ps)
     }
   }
 
   # Initialize problem set newly
-  return(init.ps(ps.name,dir,stud.short.file, ups.dir = ups.dir, user.dir=user.dir))
+  return(init.ps(ps.name,user.name,dir,stud.short.file, ups.dir = ups.dir, user.dir=user.dir))
 }

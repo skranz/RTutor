@@ -29,13 +29,27 @@ Just hosting RTutor problem sets in the web is no problem with shiny server. The
 
 ## Overview of Main Components for Securing Web Apps
 
-### 1. Use RAppArmor to restrict file access
+Note: These security mechanisms are neccessary if you want to host RTutor problem sets on your own server. They are not neccesary if you just distribute the problem sets to your students who solve them on their own computer.
 
-It is absolutely important that you only run an RTutor shiny app that uses RAppArmor to limit file access to the minimum that is required to run your problem set and save a user's progress. Even if you believe that some other security mechanisms of RTutor, like the noeval mode, may perhaps be sufficient to prevent malicious attacks, you should always use RAppArmor as an extra layer to prevent undesired access to your server.
+### 1. Start RAppArmor in global.R to restrict file access
 
-To repeat: Never put an RTutor shiny app on your server without approbriate RAppArmor protection!
+As an outer shell for security, it is strictly recommended to use RAppArmor to limit file access to the minimum that is required to run your problem set and save a user's progress. You should call RAppArmor in your `global.R` file for your file and set a profile that prevents file access beyond what is neccessary to run the problem set. 
 
-How to implement RAppArmor will be explained in detail further below.
+```{r eval=FALSE}
+
+# Example code in global.R to set a restricted profile in RAppArmor
+library(RAppArmor)
+aa_getcon()
+if (!aa_is_enabled())
+  stop("AppArmor is not enabled.")
+
+# Set profile with limited file access
+aa_change_profile("outer-armor-myapp")
+```
+
+Even if you believe that some other security mechanisms of RTutor, like the noeval mode, may perhaps be sufficient to prevent malicious attacks, you should always use RAppArmor as an extra layer to prevent undesired access to your server. I cannot rule out that there are bugs in RTutor that create loopholes for malicious access.
+
+To repeat: Never put an RTutor shiny app on your server without an outer layer of approbriate RAppArmor protection!
 
 ### 2. Separate LoginApp from PSApp
 
@@ -71,7 +85,7 @@ If the problem set is shown in noeval mode, no user code is evaluated. This requ
 
 The code is only parsed and the unevaluated calls are compared to the sample solution. Also automatic hints do not evaluate the code, but try to give a hint based on the unevaluated studen't expression. If the user's input passes the tests, the preknitted sample solution is shown as output.
 
-#### 3.2 secure eval (not yet implemented)
+#### 3.2 secure eval
 
 #### 3.3 check whitelist (not yet implemented)
 

@@ -33,12 +33,12 @@ rtutor.addon.quiz = function() {
   )
 }
 
-rtutor.quiz.task.txt.fun = function(ao,...) {
-  quiz.md(ao,solution = FALSE)
+rtutor.quiz.task.txt.fun = function(ao,solved=FALSE,...) {
+  quiz.md(ao,solution = solved)
 } 
 
-rtutor.quiz.sol.txt.fun = function(ao,...) {
-  quiz.md(ao,solution = TRUE)
+rtutor.quiz.sol.txt.fun = function(ao,solved=TRUE,...) {
+  quiz.md(ao,solution = solved)
 }
 
 rtutor.quiz.shiny.ui = function(ao, ...) {
@@ -312,7 +312,7 @@ quiz.md = function(qu, solution=FALSE) {
   restore.point("quiz.md")
   li = lapply(seq_along(qu$parts), function(i) {
     part = qu$parts[[i]]
-    quiz.part.md(part, solution=TRUE)
+    quiz.part.md(part, solution=solution)
   })
   paste0(li, collapse="\n")
 }

@@ -44,7 +44,7 @@ examples.show.shiny.ps = function() {
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp=TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), show.points=TRUE, ...) {
+show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp=TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), show.points=TRUE,  ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -56,7 +56,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
     run.solved = run.solved,import.rmd=import.rmd,
     rmd.file=rmd.file,
     dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
-    show.solution.btn = show.solution.btn, , show.data.exp=show.data.exp,
+    show.solution.btn = show.solution.btn, show.data.exp=show.data.exp,
     clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval, ...
@@ -141,26 +141,23 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 
 show.shiny.ps = show.ps
 
-
-
-
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, ups.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE, replace.sol=precomp, preknit=FALSE, ups.save = default.ups.save(), show.load.save.panel=FALSE, show.export.panel=TRUE, show.save.btn=FALSE, ...) {
   restore.point("init.shiny.ps")
   setwd(dir)
 
-  ps = init.ps(ps.name,dir=dir, rps.dir=rps.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval)
+  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.sol=replace.sol, preknit=preknit, ups.save=ups.save)
 
   if (clear.user) {
-    user = init.user(user.name = user.name)
-  } else {
-    user = get.user(user.name = user.name)
+    ps$ups = init.ups(user.name = user.name, ps=ps)    
   }
 
-
+  ps$show.load.save.panel=show.load.save.panel
+  ps$show.export.panel=show.export.panel
+  ps$show.save.btn = show.save.btn
+  
   ps$is.shiny = TRUE
   ps$show.solution.btn = show.solution.btn
   ps$show.data.exp = show.data.exp
-
 
   ps$shiny.ex.inds = ex.inds
   ps$shiny.dt = ps$rps$shiny.dt
@@ -188,52 +185,15 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, l
     warning("I cannot show the sample solution, since the sample solution was not made available for the problem set.")
     sample.solution = FALSE
   }
-  ps$cdt$is.solved = rep(FALSE,n)
-
-  if (is.null(sav.file)) {
-    sav.file = paste0(user.name, "_", ps.name,".sav")
-  }
-  ps$sav.file = sav.file
-  if (load.sav) {
-    if (sample.solution) {
-      cat(paste0("Show sample solution instead of saved solution..."))
-      load.sav = FALSE
-    } else if (!file.exists(sav.file)) {
-      cat(paste0("Cannot find saved solution '", sav.file, "'.\nShow empty problem set..."))
-      load.sav = FALSE
-    }
-  }
-
-  if (load.sav) {
-    sav = load.sav(ps$sav.file)
-    ps$cdt$mode = sav$mode
-    ps$cdt$stud.code = sav$stud.code
-    if (run.solved) {
-      ps$cdt$is.solved = sav$is.solved
-      rerun.solved.chunks(ps)
-    }
-  } else {
-    ps$cdt$mode = "output"
-    ps$cdt$mode[1] = "input"
-    if (sample.solution) {
-      ps$cdt$stud.code = ps$cdt$sol.txt
-      if (run.solved) {
-        ps$cdt$is.solved = rep(TRUE,n)
-        rerun.solved.chunks(ps)
-        ps$cdt$mode[1] = "output"
-      }
-    } else if (import.rmd) {
-      ps$cdt$stud.code = import.stud.code.from.rmd(rmd.file, ps = ps)
-    } else {
-      ps$cdt$stud.code = ps$cdt$task.txt
-    }
-  }
 
   # init addons for shiny
   for (ao in ps$rps$addons) {
     Addon = ps$rps$Addons[[ao$rta$type]]
     Addon$shiny.init.fun(ao=ao,ps=ps)
   }
+
+  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution, ups.save=ups.save)  
+  
   show.shiny.awards()
   
   changeHandler("exTabsetPanel",rtutor.ex.tab.change)

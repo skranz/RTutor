@@ -10,174 +10,175 @@
 # clear.user()
 
 
-# clear.user()
-get.user = function(user.name = NULL, dir = get.ps()$user.dir) {
-  restore.point("get.user")
-  if (!exists(".__rtutor_user",.GlobalEnv)) {
-    file = paste0(dir,"/current_user.Ruser")
-    if (file.exists(file)) {
-      user = load.user(dir)
-      if (is.null(user.name) | identical(user$name, user.name))
-        return(user)
-    }
-    if (is.null(user.name))
-      user.name = "GUEST"
-    init.user(user.name)
-    save.user()
-  }
-  user = get(".__rtutor_user",.GlobalEnv)
-  if (!identical(user$name, user.name) & !is.null(user.name)) {
-    user = init.user(user.name)
-    save.user()
-  }
-  return(user)
+#' Specify which information will be automatically saved in ups
+default.ups.save = function(
+    chunks = TRUE,
+    awards = TRUE,
+    addons = TRUE,
+    code = FALSE | all,
+    chunk.ind = FALSE | all,
+    all = FALSE
+) {
+  nlist(
+    chunks,
+    awards,
+    addons,
+    code,
+    chunk.ind
+  )
 }
 
 
-init.user = function(user.name="GUEST") {
-  user = as.environment(list(name=user.name, awards = list()))
-  assign(".__rtutor_user.name",user.name,.GlobalEnv)
-  assign(".__rtutor_user",user,.GlobalEnv)
-  user
+get.user.name = function(ps=get.ps()) {
+  ps$user.name
 }
 
-update.user = function(user=get.user()) {
-  save.user(user)
-}
-
-load.user = function(dir = get.ps()$user.dir) {
-  file = paste0(dir,"/current_user.Ruser")
-  load(file=file)
-  assign(".__rtutor_user.name",user$name,.GlobalEnv)
-  assign(".__rtutor_user",user,.GlobalEnv)
-  return(invisible(user))
-}
-
-save.user = function(user=get.user(user.name), user.name = get.user.name(), dir = get.ps()$user.dir, ps = get.ps()) {
-  if (isTRUE(ps$save.nothing))
-    return()
-
-  file = paste0(dir,"/current_user.Ruser")
-  save(user, file=file)
-  # Backup
-  file = paste0(dir,"/user_",user.name,".Ruser")
-  save(user, file=file)
-}
-
-
-init.ups = function() {
-  ps = get.ps()
-  user=get.user()
-
-
-  ups.tdt = !is.false(ps$ups.tdt)
+init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save) {
+  restore.point("init.ups")
 
   cdt = ps$cdt
-
-  # Store chunk results
-  cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+  if (isTRUE(ups.save$chunks)) {
+    # Store chunk results
+    cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+  } else {
+    cu = NULL
+  }
 
   # Store add-on results
   ao.dt = ps$rps$ao.dt
-  if (NROW(ao.dt)>0) {
+  if (NROW(ao.dt)>0 & isTRUE(ups.save$addons)) {
     aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
   } else {
     aou = NULL
   }
 
-  got.award = rep(FALSE, length(ps$rps$awards))
-
-
-  if (ups.tdt)  {
-    tdt = mutate(as.data.frame(ps$tdt), first.call.date=as.POSIXct(NA), num.failed=0, num.hint=0, success=FALSE, success.date=as.POSIXct(NA))
+  if (ups.save$chunk.ind) {
+    chunk.ind = 1
   } else {
-    tdt = NULL
+    chunk.ind = NULL
   }
-  ups = as.environment(list(ps.name=ps$name, user.name=user$name, cu=cu, aou=aou, got.award = got.award, tdt=tdt))
+  awards = list()
+  ups = as.environment(list(ps.name=ps$name, user.name=user.name, chunk.ind = chunk.ind, cu=cu, aou=aou, awards = awards))
 
-  set.ups(ups)
-  save.ups()
+  save.ups(ups=ups,ps=ps)
   ups
+}
+
+ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.sol = isTRUE(ps$replace.sol), ups.save=ps$ups.save) {
+  restore.point("init.shiny.ps.from.ups")
+  
+  if (NROW(ps$cdt)==0) return()
+
+  chunk.ind = ups$chunk.ind
+  if (is.null(chunk.ind)) {
+    chunk.ind = 1
+  }
+  
+  is.solved = rep(FALSE, NROW(ps$cdt))
+  ps$cdt$mode = "output"
+  ps$cdt$mode[chunk.ind] = "input"
+  
+  if (!sample.solution) {
+    if (!is.null(ups$cu$stud.code) & !sample.solution) {
+      ps$cdt$stud.code = ups$stud.code
+    } else if (!sample.solution) {
+      ps$cdt$stud.code = ps$cdt$task.txt
+    }
+    if (!is.null(ups$cu$solved)) {
+      is.solved = ups$cu$solved
+    } else {
+      is.solved =  rep(FALSE, NROW(ps$cdt))
+    }
+  } else {
+    ps$cdt$stud.code = ps$cdt$sol.txt
+    is.solved = rep(TRUE, NROW(ps$cdt))
+  }
+  if (ups.save$code & is.null(ups$cu$stud.code)) {
+    ups$cu$stud.code = ps$cdt$stud.code
+  }
+  
+  if (rerun) {
+    ps$cdt$is.solved = is.solved
+    rerun.solved.chunks(ps)
+    ps$cdt$mode[1] = "output"
+  } else if (precomp) {
+    ps$cdt$is.solved = is.solved
+  } else {
+    ps$cdt$is.solved = rep(FALSE, NROW(ps$cdt))
+  }
+
+  if (replace.sol) {
+    ps$cdt$stud.code[ps$cdt$is.solved] = ps$cdt$sol.txt[ps$cdt$is.solved]
+  }
+  
 }
 
 get.ups = function() {
-  ps =get.ps()
-  if (is.null(ps))
-    return(NULL)
-  user=get.user()
-
-  ups <- NULL
-  try(ups<-get(".__rtutor_ups",.GlobalEnv), silent=TRUE)
-  if (!is.null(ups)) {
-    if (ups$ps.name != ps$name | ups$user.name != user$name)
-      ups = NULL
-  }
-  if (is.null(ups)) {
-    ups = load.ups()
-
-    # old version of ups
-    if (is.null(ups$cu)) {
-      new.ups = init.ups()
-      new.ups$tdt = ups$tdt
-      ups = new.ups
-      set.ups(ups)
-    }
-
-  }
-  ups
-}
-
-load.ups = function() {
   ps = get.ps()
-  user = get.user()
-
-  dir = get.ps()$ups.dir
-  file = paste0(dir,"/",user$name,"_",ps$name,".ups")
-
-  if (!file.exists(file)) {
-    ups = init.ups()
-    save.ups()
-  } else {
-    load(file=file)
-    assign(".__rtutor_ups",ups,.GlobalEnv)
-  }
-  return(invisible(ups))
+  ps[["ups"]]
 }
 
 set.ups = function(ups) {
-  assign(".__rtutor_ups",ups,.GlobalEnv)
+  ps = get.ps()
+  ps[["ups"]] = ups
 }
 
 
-update.ups = function(ups = get.ups(), ps = get.ps()) {
-  save.ups(ups=ups, ps=ps)
+load.ups = function(user.name, ps.name = ps$name, ps = get.ps(),...) {
+  restore.point("load.ups")
+  
+  dir = get.ps()$ups.dir
+  file = paste0(dir,"/",user.name,"_",ps$name,".ups")
+  
+  if (nchar(user.name)==0)
+    return(NULL)
+  
+  
+  if (!file.exists(file)) {
+    ups = init.ups(user.name = user.name, ps=ps,...)
+  } else {
+    load(file=file)
+  }
+  return(ups)
+}
+
+update.ups = function(ups = get.ups(), ps=get.ps(), addon=NULL, award=NULL,chunk=NULL, hint=NULL, code=NULL, chunk.ind=NULL, ups.save = ps$ups.save) {
+  restore.point("update.ups")
+  
+  if (!is.null(chunk.ind)) {
+    ups$chunk.ind = chunk.ind
+  } else if (!is.null(chunk)) {
+    ups$chunk.ind = chunk
+  } else if (!is.null(hint)) {
+    ups$chunk.ind = hint
+  } else {
+    ups$chunk.ind = ps$chunk.ind
+  }
+
+  save.ups(ups=ups,ps=ps)
 }
 
 save.ups = function(ups = get.ups(), ps=get.ps()) {
+  restore.point("save.ups")
+  
   if (isTRUE(ps$save.nothing)) return()
 
-  ups$chunk.ind = ps$chunk.ind
-
-  #cat("\nups saved with chunk.ind = ", ups$chunk.ind)
-
-  user = get.user()
-  dir = get.ps()$ups.dir
-  file = paste0(dir,"/",user$name,"_",ps$name,".ups")
+  if (is.null(ups$chunk.ind))
+    ups$chunk.ind = ps$chunk.ind
+  
+  dir = ps$ups.dir
+  file = paste0(dir,"/",ups$user.name,"_",ps$name,".ups")
 
   suppressWarnings(save(ups,file=file))
-  assign(".__rtutor_ups",ups,.GlobalEnv)
-  return(invisible(ups))
 }
 
 #' Shows your progress
 #' @export
-stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display,  user = get.user(), ups = get.ups()
-) {
+stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get.ps(), rps=ps$rps) {
 
   restore.point("stats")
 
-  ps = get.ps()
-  if (is.null(ps)) {
+  if (is.null(rps)) {
     display("No problem set specified. You must check a problem before you can see your stats.")
     return(invisible())
   }
@@ -189,14 +190,14 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
 
 
   # Results of chunks
-  cu = as_data_frame(cbind(ups$cu, dplyr::select(ps$cdt,ex.ind, points)))
+  cu = as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
 
   # Results of addons like quizes
 
   if (NROW(ups$aou)>0) {
-    aou = as_data_frame(cbind(ups$aou, dplyr::select(ps$rps$ao.dt, max.points, ex.name)))
-    aou$ex.ind = match(ps$rps$ao.dt$ex.name, ps$edt$ex.name)
+    aou = as_data_frame(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
+    aou$ex.ind = match(rps$ao.dt$ex.name, rps$edt$ex.name)
     idf = rbind(
       dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),
       dplyr::select(cu,ex.ind, solved, num.hint, points, max.points)
@@ -214,9 +215,9 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
       points = sum(points),
       max.points = sum(max.points),
       percentage = round(points/max.points*100),
-      hints = -sum(num.hint)
+      hints = sum(num.hint)
     )
-  res$ex.name = ps$edt$ex.name[res$ex.ind]
+  res$ex.name = rps$edt$ex.name[res$ex.ind]
   all.res = idf %>%
     summarise(
       ex.ind = 0,
@@ -233,7 +234,7 @@ stats = function(do.display = TRUE, use.old.stats=!is.null(ups$tdt) & do.display
 
 
   if (do.display) {
-    display(user$name, "'s stats for problem set ",ps$name,":\n")
+    display(ups$user.name, "'s stats for problem set ",rps$ps.name,":\n")
     print(as.data.frame(sr))
     return(invisible(sr))
   }
@@ -250,7 +251,6 @@ old.stats = function(do.display=TRUE) {
     return(invisible())
   }
 
-  user = get.user()
   ups = get.ups()
 
   res = summarise(group_by(as.data.frame(ups$tdt),ex.ind),
@@ -265,7 +265,7 @@ old.stats = function(do.display=TRUE) {
     sr = dplyr::select(res,ex.name,percentage.solved,hints, completed)
     colnames(sr) = c("Ex","solved (%)","hints","completed")
     rownames(sr) = NULL
-    display(user$name, "'s stats for problem set ",ps$name,":\n")
+    display(ups$user.name, "'s stats for problem set ",ps$name,":\n")
     print(as.data.frame(sr))
     return(invisible(res))
   }
@@ -284,6 +284,5 @@ remove.ups = function(ps.name = get.ps()$name, dir = get.ps()$ups.dir) {
   if (length(files)>0) {
     file.remove(files)
   }
-  set.ups(NULL)
 }
 

@@ -178,8 +178,14 @@ make.rtutor.ui = function(shiny.dt = ps$shiny.dt,cdt=ps$cdt, ps=get.ps(), just.i
   }
   li[[length(li)+1]] = tabPanel(" ",value="statsPanel", uiOutput("uiProblemSetStats"), icon=icon(name="tasks", lib="font-awesome"))
 
-  li[[length(li)+1]] = tabPanel("",value="loadSaveTabPanel", load.save.ui(), icon=icon(name="folder-open", lib="font-awesome"))
+  if (isTRUE(ps$show.load.savel.panel)) {
+    li[[length(li)+1]] = tabPanel("",value="loadSaveTabPanel", load.save.ui(), icon=icon(name="folder-open", lib="font-awesome"))
+  }
+  if (isTRUE(ps$show.export.panel)) {
+    li[[length(li)+1]] = tabPanel("",value="exportTabPanel", export.ui(), icon=icon(name="download", lib="font-awesome"))
+  }
 
+  
   doc=  do.call("tabsetPanel", c(
       list(id="exTabsetPanel"),ex.ui.li,li
   ))

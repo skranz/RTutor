@@ -1,3 +1,19 @@
+# What can we save?
+
+# - number of hints, number of failures, solved
+# - code
+# - current chunk
+
+# autosave = list(
+#   num.hint = TRUE,
+#   num.failure = TRUE,
+#   solved = TRUE,
+#   award = TRUE,
+#   addon = TRUE,
+#   code = TRUE,
+#   current.chunk = FALSE
+# )
+
 
 load.save.ui = function(ps=get.ps()) {
   restore.point("load.save.ui")
@@ -29,7 +45,7 @@ load.save.ui = function(ps=get.ps()) {
     chunk.fluidRow(
       bsActionButton("exportBtn","Export to Rmd"),
       bsActionButton("importBtn","Import from Rmd"),
-      textInput('exportFileInput',"",value=paste0("exported_",get.user()$name,"_",ps$name,".Rmd")),
+      textInput('exportFileInput',"",value=paste0("exported_",get.user.name(),"_",ps$name,".Rmd")),
       helpText(paste0('(file name must end with ".Rmd")')),
       bsAlert("exportAlert")
     )
@@ -116,22 +132,12 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
   })  
 }
 
-
-
-save.sav = function(file=ps$sav.file, user.name=get.user()$name,ps=get.ps(), copy.into.global=TRUE) {
+save.sav = function(file=ps$sav.file, ps=get.ps(), copy.into.global=TRUE) {
   restore.point("save.sav")
 
   if (isTRUE(ps$save.nothing)) return()
-  sav = list(
-    ps.name = ps$name,
-    user.name = user.name,
-    stud.code = ps$cdt$stud.code,
-    mode = ps$cdt$mode,
-    is.solved = ps$cdt$is.solved
-  )
+  sav = get.ups()
   save(sav, file=file)
-  
-  copy.into.env(source=ps$stud.env, dest=globalenv())
 }
 
 # load a sav file and set the current problem set to it
@@ -145,13 +151,11 @@ load.and.set.sav = function(file=ps$sav.file, ps=get.ps()) {
     ps$failure.message = res$msg
     return(FALSE)
   }
+  save.ups(ups=sav)
+  set.ups(sav)
   
-  ps$sav.file = file
-  ps$cdt$mode = sav$mode
-  ps$cdt$stud.code = sav$stud.code
-  ps$cdt$is.solved = sav$is.solved  
-  rerun.solved.chunks(ps)
-  
+  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution)  
+
   return(TRUE)
 }
 
@@ -177,7 +181,7 @@ compare.sav.with.ps = function(sav, ps) {
 
 
 
-export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),user.name=get.user()$name, ps=get.ps(), copy.into.global=TRUE,...) {
+export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),user.name=get.user.name(), ps=get.ps(), copy.into.global=TRUE,...) {
   restore.point("export.solution")
 
   export.to.rmd(rmd.file)
@@ -188,7 +192,7 @@ export.solution = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd")
 
 
 
-export.to.rmd = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),dir = getwd(), ps=get.ps(), user.name=get.user()$name) {
+export.to.rmd = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),dir = getwd(), ps=get.ps(), user.name=get.user.name()) {
   restore.point("export.to.rmd")
   cdt = ps$cdt
   rps = ps$rps

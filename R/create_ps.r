@@ -13,8 +13,6 @@ examples.create.ps = function() {
   #name.rmd.chunks(sol.file) # set auto chunk names in this file
   create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, whitelist.report = TRUE)
   show.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, run.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
-
-  ps = init.ps(ps.name)
 }
 
 
@@ -58,6 +56,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   te = get.empty.te(Addons=Addons)
   te = parse.sol.rmd(txt=txt, te=te)
 
+  te$knit.print.params = nlist(html.data.frame,table.max.rows, round.digits, signif.digits) 
   te$e.points = e.points
   te$chunk.points = chunk.points
   te$min.chunk.points = min.chunk.points
@@ -80,11 +79,14 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   # Store information about empty problem set in order to easily export
   # an html problem set into it
   task.txt = sep.lines(task.txt)
-  rps$empty.rmd.txt = task.txt
-  rps$empty.rmd.chunk.lines = get.chunk.lines(task.txt)
-  rps$empty.rmd.user.name.line = which(str.starts.with(task.txt,"user.name = '"))[1]
-  rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
-  rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
+  
+  rmd.header = output.solution.header(rps=rps, te=te)
+  rmd.txt = c(rmd.header,sep.lines(te$task.txt))
+  rps$empty.rmd.txt = rmd.txt
+  rps$empty.rmd.chunk.lines = get.chunk.lines(rmd.txt)
+  #rps$empty.rmd.user.name.line = which(str.starts.with(task.txt,"user.name = '"))[1]
+  #rps$empty.rmd.ps.dir.line = which(str.starts.with(task.txt,"ps.dir =  '"))[1]
+  #rps$empty.rmd.ps.file.line = which(str.starts.with(task.txt,"ps.file = '"))[1]
 
   if (add.shiny) {
     rps$shiny.dt = make.shiny.dt(rps=rps, txt=task.txt)
@@ -111,8 +113,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   if (use.memoise)
     rps$memoise.fun.li = memoise.fun.li(memoise.funs)
 
-  if (preknit) {
-    rps = preknit.rps(rps=rps, precomp=precomp, knit.print.opts=knit.print.opts)
+  if (preknit | precomp) {
+    rps = preknit.rps(rps=rps,precomp=precomp, knit.print.opts=knit.print.opts)
   }
 
   write.output.solution(te=te,rps=rps)
@@ -174,13 +176,11 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
   writeLines(sol.txt, file, useBytes=TRUE)
 }
 
-
-write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps,...) {
-  restore.point("write.output.solution")
-
+output.solution.header = function(rps, te, ps.name=te$ps.name) {
   libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
   source.txt = if (!is.null(rps$extra.code.file)) paste0('source("',rps$extra.code.file,'")') else ""
   
+  knit.opts =  paste0(names(te$knit.print.params), " = ", te$knit.print.params, collapse=", ")
   header = paste0(
 '
 ---
@@ -191,13 +191,26 @@ output:
     toc: yes
 ---
 
-```{r include=FALSE, echo=FALSE}
+```{r setup, include=FALSE, echo=FALSE}
 # Load libraries and source extra code
 ',libs,'
 ',source.txt,'
+
+# render data frames similar to the RTutor browser
+RTutor::set.knit.print.opts(',knit.opts,')
+
+# continue knitting even if there is an error
+knitr::opts_chunk$set(error = TRUE) 
 ```
 '
 )
+  header  
+}
+
+write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps,...) {
+  restore.point("write.output.solution")
+
+  header = output.solution.header(rps=rps, te=te, ps.name=ps.name)
   
   out.txt = c(header, out.txt)
   out.txt = name.rmd.chunks(txt = out.txt,only.empty.chunks = FALSE,keep.options = TRUE,valid.file.name = TRUE)
@@ -242,7 +255,14 @@ te.to.rps = function(te) {
     chunk.opt = lapply(ex$chunks, function(ck) ck$chunk.opt)
 
     optional = sapply(ex$chunks, function(ck) isTRUE(ck$chunk.opt$optional))
-
+#     replace.sol = sapply(ex$chunks, function(ck) {
+#       if (!is.null(ck$chunk.opt[["replace.sol"]])) {
+#         return(ck$chunk.opt$replace.sol)    
+#       } else {
+#         return(NA)
+#       }
+#     })
+    
 
     test.expr = lapply(ex$chunks, function(ck) {
       lapply(ck$test.txt, parse.text)
@@ -440,7 +460,7 @@ parse.chunk.starts = function(row,str,txt, te) {
   } else if (te$in.block | te$in.chunk) {
     stop(paste0("in row ", row, " you start a chunk without having closed the chunk before."), call.=FALSE)
   } else {
-    opt = chunk.opt.string.to.list(str, with.name=TRUE)
+    opt = chunk.opt.string.to.list(str, keep.name=TRUE)
     chunk.name = opt[[1]]
     te$chunk.head = str
     te$chunk.opt = opt[-1]
@@ -811,8 +831,8 @@ add.te.addon = function(te,type,args=NULL) {
 
 
   te$task.txt = c(te$task.txt,placeholder)
-  te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao,..))
-  te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao,..))
+  te$sol.txt = c(te$sol.txt, Addon$sol.txt.fun(ao))
+  te$out.txt = c(te$out.txt, Addon$out.txt.fun(ao))
 
   te$addons[[rta$id]] = ao
 
@@ -861,7 +881,6 @@ examples.test.code.for.e = function() {
 
 get.expr.test.args = function(e) {
   restore.point("get.expr.test.args")
-  e = quote(ggplot(aes(x=hp,y=mpg, color=year),data=scat) + geom_point() + geom_point(shape=1) + geom_smooth())
 
   funs = find.funs(e)
 
@@ -1091,7 +1110,9 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
     if (str.starts.with(str, "```{r")) {
       if ((!only.empty.chunks) | str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
         counter.str = ifelse(counter==1,"", paste0(" ",counter))
-        if (has.substr(str,",")) {
+        
+        # preserve chunk options
+        if (has.substr(str,"=")) {
           rhs.str = paste0(",",chunk.opt.list.to.string(chunk.opt.string.to.list(str)))
         } else {
           rhs.str = ""
@@ -1148,7 +1169,7 @@ get.chunk.lines = function(txt) {
   chunk.end = remove.verbatim.end.chunks(chunk.start,chunk.end)
 
   header = txt[chunk.start]
-  chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, with.name=TRUE)[[1]])
+  chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, keep.name=TRUE)[[1]])
 
   quick.df(chunk.name=chunk.name, start.line=chunk.start, end.line=chunk.end)
 }
@@ -1236,7 +1257,7 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
   for (i in 1:n) {
     if (dt$type[i]=="chunk") {
       header = txt[df$start[i]]
-      opt = chunk.opt.string.to.list(header, with.name=TRUE)
+      opt = chunk.opt.string.to.list(header, keep.name=TRUE)
       chunk.name = opt[[1]]
       chunk.ind = which(rps$cdt$chunk.name == chunk.name)[1]
       if (is.na(chunk.ind)){
@@ -1310,7 +1331,7 @@ remove.verbatim.end.chunks = function(chunk.start, chunk.end) {
 }
 
 
-chunk.opt.string.to.list = function(str, with.name=FALSE) {
+chunk.opt.string.to.list = function(str, keep.name=FALSE) {
   restore.point("chunk.opt.string.to.list")
   #str = "```{r 'out_chunk_2_1_b', fig.width=5, fig.height=5, eval=FALSE, echo=TRUE}"
 
@@ -1319,8 +1340,16 @@ chunk.opt.string.to.list = function(str, with.name=FALSE) {
   code = paste0("list(",str,")")
   li = eval(base::parse(text=code,srcfile=NULL))
 
-  if (!with.name) {
-    li = li[-1]
+  if (keep.name) return(li)
+  if (length(li)==0) return(li)
+
+  #if ("replace.sol" %in% names(li))
+  #  stop("nbfbfurb")
+  # remove chunk.name
+  if (is.null(names(li))) {
+    return(li[-1])
+  } else if (nchar(names(li)[1]) == 0) {
+    return(li[-1])
   }
   li
 }

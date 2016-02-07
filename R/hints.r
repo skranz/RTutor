@@ -109,13 +109,7 @@ log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.i
     
     if (update) {
       ups$cu$num.hint[chunk.ind] = ups$cu$num.hint[chunk.ind]+1
-      if (!is.null(ups$tdt)) {
-        if (!ups$tdt$success[ps$tdt.ind]) {
-           ups$tdt$num.hint[ps$tdt.ind] = ups$tdt$num.hint[ps$tdt.ind]+1
-           do.save = TRUE
-        }
-      }  
-      update.ups()
+      update.ups(hint=chunk.ind)
     }
   }
 }

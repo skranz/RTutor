@@ -468,6 +468,8 @@ parse.text.with.source = function(text) {
 
 
 parse.text = function(text) {
+  restore.point("parse.text")
+  
   if (is.null(text))
     return(NULL)
   parse(text=text,srcfile=NULL)

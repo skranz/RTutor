@@ -14,7 +14,7 @@ check.problem.set = function(ps.name,stud.path, stud.short.file, reset=FALSE, se
     # Allows knitting to HTML even when there are errors
     knitr::opts_chunk$set(error = TRUE)
     ps = NULL
-    try(ps <- get.or.init.ps(ps.name,stud.path, stud.short.file, reset), silent=TRUE)
+    try(ps <- get.or.init.ps(ps.name,user.name, stud.path, stud.short.file, reset), silent=TRUE)
 
     # Copy extra code into globalenv
     if (!is.null(ps$rps$extra.code.env)) {
@@ -54,14 +54,13 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   if (verbose)
     display("get.or.init.ps...")
 
-  ps = get.or.init.ps(ps.name,stud.path, stud.short.file, reset)
+  ps = get.or.init.ps(ps.name,user.name,stud.path, stud.short.file, reset)
   ps$catch.errors = catch.errors
   ps$use.null.device = use.null.device
 
   set.ps(ps)
   ps$warning.messages = list()
 
-  user = get.user(user.name)
   cdt = ps$cdt
   edt = ps$edt
 
@@ -244,7 +243,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
   has.error = FALSE
   ps$stud.env = stud.env
-  ps$cdt$stud.env[[chunk.ind]] = stud.env
+  if (!isTRUE(ps$precomp))
+    ps$cdt$stud.env[[chunk.ind]] = stud.env
 
 
   has.error = FALSE
@@ -308,7 +308,6 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
       }
       ret = eval(test,ps$ps.basenv)
       ps$tdt$test.passed[tdt.ind] = ret
-      update.ups.test.result(passed=ret,ps=ps)
       #update.log.test.result(ret,ups, ck, ps)
 
       if (ret==FALSE) {
@@ -357,31 +356,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 }
 
 
-update.ups.test.result = function(passed, tdt.ind = ps$tdt.ind, ups=get.ups(),ps=get.ps()) {
-  if (!is.null(ups$tdt)) {
-    passed.before = ps$tdt$test.passed[tdt.ind]
-    ups$tdt$test.passed[tdt.ind] = ps$tdt$test.passed[tdt.ind]
-
-    if (is.na(ups$tdt$first.call.date[tdt.ind]))
-      ups$tdt$first.call.date[tdt.ind] = Sys.time()
-    if (passed==FALSE) {
-      if (!ups$tdt$success[tdt.ind])
-        ups$tdt$num.failed[tdt.ind] = ups$tdt$num.failed[tdt.ind]+1
-      set.ups(ups)
-      return()
-    }
-    if (is.na(ups$tdt$success.date[tdt.ind])) {
-      ups$tdt$success[tdt.ind] <- TRUE
-      ups$tdt$success.date[tdt.ind] <- Sys.time()
-    }
-  }
-}
-
 update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(), ps=get.ps(), save=TRUE) {
   restore.point("update.ups.chunk.check")
 
-
   update = !ups$cu$solved[chunk.ind]
+
   if (update) {
     if (is.na(ups$cu$first.check.date[chunk.ind]))
       ups$cu$first.check.date[chunk.ind] = Sys.time()
@@ -393,8 +372,25 @@ update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(
       ups$cu$num.fail[chunk.ind] = ups$cu$num.fail[chunk.ind]+1
     }
   }
-  update.ups(ups)
-
+  update.code = isTRUE(ps$ups.save$code)
+  if (update.code) {
+    ups$cu$stud.code[[chunk.ind]] = ps$cdt$stud.code[[chunk.ind]]
+  }
+  if (passed) {
+    ups.chunk.ind = chunk.ind +1
+    if (ups.chunk.ind > NROW(ps$cdt)) ups.chunk.ind = 1
+  } else {
+    ups.chunk.ind = chunk.ind
+  }
+  
+  if (update | update.code | isTRUE(ps$ups.save$chunk.ind)) {
+    update.ups(ups, 
+      chunk = if (update) chunk.ind else NULL,
+      code  = if (update.code) chunk.ind else NULL,
+      chunk.ind = ups.chunk.ind
+    )
+  }
+  
 }
 
 update.log.test.result = function(...) {
@@ -412,8 +408,10 @@ make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
 
 
   # return precomputed chunkenv
-  if (isTRUE(ps$precompute))
-    return(ps$cdt$chunk.env[[chunk.ind]])
+  if (isTRUE(ps$precomp)) {
+    stud.env = copy.stud.env(ps$cdt$stud.env[[chunk.ind]], chunk.ind)
+    return(stud.env)
+  }
 
 
   ck = ps$cdt[chunk.ind,]

@@ -100,7 +100,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   }
   if (is.null(console.height)) {
     console.code.lines = min(code.lines,10)
-    console.height = (fontSize * 1.25) * console.code.lines + 35
+    console.height = (fontSize * 1.25) * console.code.lines + 50
   }
 
   cat(paste0("\n",nali$name, " height = ", height))
@@ -125,8 +125,11 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     dataBtn  = NULL
   }
 
-  saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
-
+  if (isTRUE(ps$show.save.btn)) {
+    saveBtn = bsButton(nali$saveBtn, "save",size="extra-small")
+  } else {
+    saveBtn = NULL
+  }
   if (!ps$noeval) {
     button.row = chunk.fluidRow(
       bsButton(nali$checkBtn, "check",size="extra-small"),
@@ -169,8 +172,11 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
 
-  saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
-
+  if (isTRUE(ps$show.save.btn)) {
+    saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
+  } else {
+    saveBtn = NULL
+  }
   if (isTRUE(ps$show.data.exp)) {
     dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
   } else {
@@ -197,7 +203,14 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   if (is.solved) {
     code = code
     opts = ps$cdt$chunk.opt[[chunk.ind]]
-    if (ps$preknit) {
+    
+    preknit = 
+        # noeval will always be preknit
+        ps$noeval | 
+        # don't preknit special output or if chunk option replace.sol=FALSE
+        (ps$preknit & !(!is.null(opts[["output"]]) | is.false(opts$replace.sol)))
+    
+    if (preknit) {
       if (!is.null(opts[["output"]])) {
         html = HTML("<p> SPECIAL OUTPUT HERE <p>")
       } else {
@@ -205,7 +218,6 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
         html = HTML(html)
       }
     } else {
-
       # not preknitted (default)
       if (!is.null(opts[["output"]])) {
         html = chunk.special.output(code, chunk.ind, nali=nali, output=opts[["output"]], ps=ps)
@@ -214,6 +226,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
         html = HTML(html)
       }
     }
+    
+    
   } else {
     
     if ((identical(code, ps$cdt$task.txt[[chunk.ind]]) | isTRUE(ps$noeval)) & !is.null(ps$cdt$task.html)) {
@@ -366,9 +380,24 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
   restore.point("proceed.with.successfuly.checked.chunk")
 
   ps$cdt$is.solved[chunk.ind] = TRUE
+  
+  # If we have precomp=TRUE, it is often sensible to replace 
+  # user solution with sample solution 
+  # A replace.sol chunk option takes precedence over global problem set option
+  if (!is.null(ps$cdt$chunk.opt[[chunk.ind]][["replace.sol"]])) {
+    replace.sol = ps$cdt$chunk.opt[[chunk.ind]][["replace.sol"]]
+  } else {
+    replace.sol = isTRUE(ps$replace.sol)
+  }
+  
+  if (isTRUE(replace.sol)) {
+    ps$cdt$stud.code[chunk.ind] = ps$cdt$sol.txt[chunk.ind]
+  }
+  
   if (is.last.chunk.of.ex(chunk.ind)) {
     ex.ind = ps$cdt$ex.ind[chunk.ind]
-    ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
+    if (!isTRUE(ps$precomp))
+      ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
   }
   r.chunk.ui.mode = paste0("r.chunk_",chunk.ind,".ui.mode")
   ps$cdt$mode[[chunk.ind]]="output"
@@ -417,7 +446,11 @@ help.shiny.chunk = function(chunk.ind, cursor=NULL, selection="",...,session=ps$
   } else {
     txt = ps$selection
   }
-
+  if (is.null(txt) | isTRUE(nchar(txt)==0)) {
+    updateAceEditor(ps$session, ps$nali$console, value="No R command selected to show help for.", mode="text")
+    return()
+  }
+  
   help = get.help.txt(txt)
   # To do: replace special characters in a better manner
   help = iconv(help, to='ASCII//TRANSLIT')

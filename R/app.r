@@ -15,20 +15,23 @@
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=TRUE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=!noeval, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, ...) {
+RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, ups.dir=paste0(dir,"/ups"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.sol=precomp, ups.save = default.ups.save(chunk.ind=TRUE, code=!(replace.sol | noeval)), ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
 
+   
   #browser()
   ps = init.shiny.ps(
     ps.name=ps.name, user.name=user.name, sample.solution=sample.solution,
     import.rmd=import.rmd, rmd.file=rmd.file,
-    dir=dir, rps.dir=rps.dir, save.nothing=save.nothing,
+    dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing,
     show.solution.btn = show.solution.btn, show.data.exp=show.data.exp,
     clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval,
+    replace.sol=replace.sol,
+    ups.save = ups.save,
     ...
   )
   
@@ -153,13 +156,10 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
   
   cat(user.name)
   
-  user = get.user(user.name)
-  ups = load.ups()
-  if (is.null(ups$ex.ind)) ups$ex.ind = 1
-  if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
-  
-
+  ups = load.ups(user.name=user.name,ps = ps)
   cdt = ps$cdt
+  if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
+
   if (ps$noeval | isTRUE(ps$precomp)) {
     changed = ups$cu$solved != ps$cdt$is.solved
     changed[unique(c(ps$chunk.ind,ups$chunk.ind))] = TRUE
@@ -218,18 +218,24 @@ shiny.set.ex.chunk = function(ex.ind=NULL, chunk.ind=NULL,to.top = is.null(chunk
 }
 
 
-RTutorLoginApp = function(db.dir = paste0(getwd(),"/db"), sessions.dir = getwd(), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE) {
+
+
+RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header()) {
   restore.point("RTutorLoginApp")
   
+  
+  library(shinyjs)
   library(loginPart)
   library(RSQLite)
   
   app = eventsApp()
 
+  psapps = lapply(psapps, rtutor.login.init.psa)
+  
+  app$global$psapps = psapps
   
   login.fun = function(app=getApp(),userid,...) {
-    ui = h4(paste0("Successfully logged in as ", userid))
-    setUI("mainUI", ui)
+    show.rtutor.login.main(userid=userid, header=main.header)
   }
 
   if (is.null(check.email.fun)) {
@@ -256,8 +262,94 @@ RTutorLoginApp = function(db.dir = paste0(getwd(),"/db"), sessions.dir = getwd()
     initLoginDispatch(lop)
   })
 
-  app$ui = fluidPage(uiOutput("mainUI"))
+  jsCode <- "shinyjs.openLink = function(url){window.open(url,'_blank');}"
+  app$ui = tagList(
+    useShinyjs(),
+    extendShinyjs(text = jsCode),
+    fluidPage(
+      uiOutput("mainUI")
+    )
+  )
   app$lop = lop
   app
 }
 
+rtutor.login.init.psa = function(psa) {
+  restore.point("rtutor.login.init.psa")
+  
+  psa = copy.into.missing.fields(psa, source=list(
+    sessions.dir = paste0(psa$appdir,"/sessions"),
+    ups.dir = paste0(psa$appdir,"/ups")
+  ))
+  psa
+}
+
+rtutor.login.main.default.header = function() {
+"
+<h3>Welcome {{userid}}</h3>
+<br>
+<p>Choose your problem set...</p>
+<br>
+"
+}
+
+
+show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, app = getApp(), header = "") {
+  restore.point("show.rtutor.login.main")
+  
+  psapps = lapply(psapps, function(psa) {
+    psa$session.key = paste(sample(c(0:9, letters, LETTERS),60, replace=TRUE),collapse="")
+    psa
+  })
+
+  
+  psh = lapply(seq_along(psapps), function(i) {
+    psa = psapps[[i]]
+    url = paste0(psa$url,'?key=',psa$session.key)
+    html = paste0('<a href="', url,'" class="button" target="_blank">',psa$label,'</a>')
+    link = HTML(html)
+    
+    btnId = paste0("openPSAppBtn__",i)
+    linkUIId = paste0("openPSAppLinkUI__",i)
+    buttonHandler(id=btnId,rtutor.open.psapp.click, i=i, psa=psa, url=url, userid=userid)
+    
+    list(
+      bsButton(btnId,psa$label),
+      uiOutput(linkUIId),
+      hr()
+    )
+  })
+
+  header = replace.whisker(header, list(userid=userid))
+  ui = fluidRow(column(offset = 2, width=8,
+    h3("Welcome ", userid),
+    br(),
+    p("Choose your problem set..."),
+    br(),
+    psh
+  ))  
+  setUI("mainUI", ui)
+} 
+
+
+rtutor.open.psapp.click = function(i,psa,url,userid, ...) {
+  restore.point("rtutor.open.psapp.click")
+  
+  rtutor.write.session.file(userid=userid, session.key = psa$session.key, sessions.dir=psa$sessions.dir)
+  
+  js$openLink(url)
+
+  linkUIId = paste0("openPSAppLinkUI__",i)
+  
+  
+  html = paste0('<a href="', url,'" class="button" target="_blank">Click here if problem set does not open automatically.</a>')
+  setUI(linkUIId,HTML(html))
+}
+
+rtutor.write.session.file = function(userid, session.key, sessions.dir) {
+  restore.point("rtutor.write.session.file")
+  
+  txt = c(userid, as.numeric(Sys.time()))
+  file = paste0(sessions.dir, "/", session.key, ".ses")
+  writeLines(txt, file)
+}
