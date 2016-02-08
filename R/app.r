@@ -227,7 +227,7 @@ shiny.set.ex.chunk = function(ex.ind=NULL, chunk.ind=NULL,to.top = is.null(chunk
 
 
 
-RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header()) {
+RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header(), smtp = NULL) {
   restore.point("RTutorLoginApp")
   
   
@@ -263,7 +263,9 @@ RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid=""
   set.lop(lop)
   lop.connect.db(lop=lop)
   lop$login$ui = lop.login.ui(lop)
-  lop$smtp = lop.get.smtp()
+  
+  if (is.null(smtp)) smtp = lop.get.smtp()
+  lop$smtp = smtp
 
   appInitHandler(function(session,...) {
     initLoginDispatch(lop)
