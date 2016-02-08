@@ -130,6 +130,8 @@ load.ups = function(user.name, ps.name = ps$name, ps = get.ps(),...) {
   dir = get.ps()$ups.dir
   file = paste0(dir,"/",user.name,"_",ps$name,".ups")
   
+  if (is.null(user.name)) stop("user.name is NULL. This is not allowed")
+
   if (nchar(user.name)==0)
     return(NULL)
   

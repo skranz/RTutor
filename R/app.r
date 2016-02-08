@@ -154,7 +154,7 @@ rtutor.dispatch.html.query = function(query, app=getApp(), ps = get.ps(), sessio
     return()
   }
   
-  rtutor.show.user.session(user.name=ses$user.name, ps=ps)
+  rtutor.show.user.session(user.name=ses$userid, ps=ps)
 
 }
 
