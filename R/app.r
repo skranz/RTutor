@@ -164,6 +164,8 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
   cat(user.name)
   
   ups = load.ups(user.name=user.name,ps = ps)
+  ps$ups = ups
+  ps$user.name = user.name
   cdt = ps$cdt
   if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
 
@@ -194,8 +196,6 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
   for (chunk.ind in chunk.inds) {
     update.chunk.ui(chunk.ind)
   }
-  
-
   
   setUI("psMainUI", ps$ps.ui)
 }
