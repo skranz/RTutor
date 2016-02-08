@@ -103,7 +103,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     console.height = (fontSize * 1.25) * console.code.lines + 50
   }
 
-  cat(paste0("\n",nali$name, " height = ", height))
+  #cat(paste0("\n",nali$name, " height = ", height))
 
 
 
@@ -409,7 +409,7 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
     if (ps$cdt$ex.ind[chunk.ind] == ps$cdt$ex.ind[chunk.ind+1] &
        !ps$cdt$is.solved[chunk.ind+1]) {
 
-      cat("update next chunk...")
+      #cat("update next chunk...")
       ps$cdt$mode[chunk.ind+1] = "input"
       update.chunk.ui(chunk.ind+1)
     }
@@ -553,7 +553,7 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
                            ps=get.ps(),reload.env=FALSE, from.data.btn = FALSE) {
   restore.point("set.shiny.chunk")
   #browser()
-  cat("start set.shiny.chunk\n")
+  #cat("start set.shiny.chunk\n")
 
   ps$selection = selection
   ps$cursor = cursor
