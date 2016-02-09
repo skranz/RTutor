@@ -239,7 +239,8 @@ RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid=""
 
   psapps = lapply(psapps, rtutor.login.init.psa)
   
-  app$global$psapps = psapps
+  app$glob$psapps = psapps
+  app$glob$cur.inst = rep(NA_integer_, length(psapps))
   
   login.fun = function(app=getApp(),userid,...) {
     show.rtutor.login.main(userid=userid, header=main.header)
@@ -303,18 +304,18 @@ rtutor.login.main.default.header = function() {
 }
 
 
-show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, app = getApp(), header = "") {
+show.rtutor.login.main = function(userid="guest", psapps = app$glob$psapps, app = getApp(), header = "") {
   restore.point("show.rtutor.login.main")
   
   psapps = lapply(psapps, function(psa) {
-    psa$session.key = paste(sample(c(0:9, letters, LETTERS),60, replace=TRUE),collapse="")
+    psa$session.key = paste(sample(c(0:9, letters, LETTERS),40, replace=TRUE),collapse="")
     psa
   })
 
   
   psh = lapply(seq_along(psapps), function(i) {
     psa = psapps[[i]]
-    url = paste0(psa$url,'?key=',psa$session.key)
+    url = psa$url
     html = paste0('<a href="', url,'" class="button" target="_blank">',psa$label,'</a>')
     link = HTML(html)
     
@@ -341,9 +342,19 @@ show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, ap
 } 
 
 
-rtutor.open.psapp.click = function(i,psa,url,userid, ...) {
+rtutor.open.psapp.click = function(i,psa,url,userid,app=getApp(), ...) {
   restore.point("rtutor.open.psapp.click")
+  glob = app$glob
   
+  if (isTRUE(psa$instances>0)) {
+    if (is.na(glob$cur.inst[[i]])) {
+      glob$cur.inst[[i]] = sample.int(psa$instances,1)
+    } else {
+      glob$cur.inst[[i]] = ((glob$cur.inst[[i]]+1) %% psa$instances)+1
+    }
+    url = paste0(url,"_inst/i",glob$cur.inst[[i]],"/")
+  }
+  url = paste0(url,'?key=',psa$session.key)
   rtutor.write.session.file(userid=userid, session.key = psa$session.key, sessions.dir=psa$sessions.dir)
   
   js$openLink(url)
