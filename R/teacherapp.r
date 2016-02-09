@@ -105,7 +105,7 @@ update.teacher.stat = function(app=getApp()) {
 
   
   of.df = as.data.frame(lapply(1:(NCOL(upoints)-1),function(ps.ind) {
-    paste0(upoints[,ps.ind+1]," of ",app$ps.max.points[[ps.ind]])  
+    paste0(unlist(upoints[,ps.ind+1])," of ",app$ps.max.points[[ps.ind]])  
   }))
     
 
