@@ -85,9 +85,17 @@ If the problem set is shown in noeval mode, no user code is evaluated. This requ
 
 The code is only parsed and the unevaluated calls are compared to the sample solution. Also automatic hints do not evaluate the code, but try to give a hint based on the unevaluated studen't expression. If the user's input passes the tests, the preknitted sample solution is shown as output.
 
-#### 3.2 secure eval
+#### 3.2 secure.eval with RAppArmor
 
-#### 3.3 check whitelist (not yet implemented)
+# 4. Common problems
+
+## Your app runs when starting from RStudio on the server but greys out when accessing from the website
+
+Make sure that you have set all required read and write permissions for the files that the user "shiny" needs to access. I am speaking here of the normal Linux file permissions, not the permissions in the RAppArmor profile. Typically you will run RStudio on the server with a different user, who may have more permissions that the shiny server user.
+
+It seems that you also need to set write permissions to directories. For example, my login app showed a grey screen once when there was no write permission to the `/db` directory.
+
+
 
 
 
