@@ -220,9 +220,9 @@ observe.nextExBtns = function(session, ps=get.ps()) {
   for (ex.ind in setdiff(ex.inds,max(ex.inds))) {
     btn = paste0(paste0("nextExBtn", ex.ind))
     observe({
-      cat("observe ", btn)
+      #cat("observe ", btn)
       if (has.counter.increased(btn, session$input[[btn]])) {
-        cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
+        #cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
         updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
       }
     })
@@ -310,7 +310,7 @@ eval.in.ace.console = function(code,envir=parent.frame(), consoleId, session) {
   tryCatch(updateAceEditor(session, consoleId, value=out,mode="r"),
            error = function(e) {message(e)}
   )
-  cat("\n ace console was successfuly updated!")
+  #cat("\n ace console was successfuly updated!")
 }
 
 
@@ -329,7 +329,7 @@ rerun.solved.chunks = function(ps = get.ps()) {
   inds = which(ps$cdt$is.solved)
   ok = TRUE
   for (chunk.ind in inds) {
-    cat("\n rerun chunk", chunk.ind)
+    #cat("\n rerun chunk", chunk.ind)
     ps$chunk.ind = chunk.ind
     ps$stud.env = make.chunk.stud.env(chunk.ind, ps)
     if (is.null(ps$stud.env)) {

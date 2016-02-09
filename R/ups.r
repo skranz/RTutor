@@ -170,7 +170,7 @@ save.ups = function(ups = get.ups(), ps=get.ps()) {
   
   dir = ps$ups.dir
   file = paste0(dir,"/",ups$user.name,"_",ps$name,".ups")
-  cat("save ups to file: ", file)
+  #cat("save ups to file: ", file)
   
   suppressWarnings(save(ups,file=file))
 }

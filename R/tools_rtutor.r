@@ -668,7 +668,7 @@ growlist.add = function(g, el) {
   if (g$len< size) {
     g$li = c(g$li, vector("list", size))
     g$len = g$len + size
-    cat("increase.size to", g$len," \n")
+    #cat("increase.size to", g$len," \n")
   }
   g$li[[size]] = el 
   return(NULL)

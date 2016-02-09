@@ -1,6 +1,6 @@
 set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, env=.GlobalEnv,...) {
   restore.point("set.knit.print.opts")
-  cat(output)
+  #cat(output)
   if (is(output,"try-error")) output="html"
   if (is.null(output)) output = "html"
   opts = make.knit.print.opts(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips = FALSE, output=output)
