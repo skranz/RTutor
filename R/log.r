@@ -21,7 +21,6 @@ log.event = function(type,ok=TRUE, ..., user.name=get.user.name(),ps=get.ps()) {
     return()
   
   if (isTRUE(ps$in.secure.eval)) {
-    ps$should.log = TRUE
     return()
   }
   

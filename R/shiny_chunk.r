@@ -103,7 +103,7 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     console.height = (fontSize * 1.25) * console.code.lines + 50
   }
 
-  cat(paste0("\n",nali$name, " height = ", height))
+  #cat(paste0("\n",nali$name, " height = ", height))
 
 
 
@@ -321,10 +321,10 @@ run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,sessi
 }
 
 check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE, max.lines=300, store.output=FALSE) {
-  cat("\n check.shiny.chunk1")
+  #cat("\n check.shiny.chunk1")
   if (!internal)
     set.shiny.chunk(chunk.ind)
-  cat("\n check.shiny.chunk2")
+  #cat("\n check.shiny.chunk2")
   #browser()
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
@@ -332,9 +332,9 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   
   if (isTRUE(ps$use.secure.eval)) {
     ret = secure.check.chunk(chunk.ind=chunk.ind,store.output=store.output)
-    cat("\nps:")
-    print(ps)
-    cat("\n",ps$failure.message)
+    #cat("\nps:")
+    #print(ps)
+    #cat("\n",ps$failure.message)
     #ps = get.ps()
   } else {
     if (!is.false(ps$catch.errors)) {
@@ -372,7 +372,7 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
     }
   }
 
-  cat("\nend check.shiny.chunk.ui\n")
+  #cat("\nend check.shiny.chunk.ui\n")
   return(ret)
 }
 
@@ -409,7 +409,7 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
     if (ps$cdt$ex.ind[chunk.ind] == ps$cdt$ex.ind[chunk.ind+1] &
        !ps$cdt$is.solved[chunk.ind+1]) {
 
-      cat("update next chunk...")
+      #cat("update next chunk...")
       ps$cdt$mode[chunk.ind+1] = "input"
       update.chunk.ui(chunk.ind+1)
     }
@@ -553,7 +553,7 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
                            ps=get.ps(),reload.env=FALSE, from.data.btn = FALSE) {
   restore.point("set.shiny.chunk")
   #browser()
-  cat("start set.shiny.chunk\n")
+  #cat("start set.shiny.chunk\n")
 
   ps$selection = selection
   ps$cursor = cursor

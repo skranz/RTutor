@@ -1,5 +1,5 @@
 
-RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), data.dir = paste0(getwd(),"/data"), init.userid="", init.password="", app.url="", app.title="RTutor Teacher Center") {
+RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), data.dir = paste0(getwd(),"/data"), init.userid="", init.password="", app.url="", app.title="RTutor Teacher Center", smtp = NULL) {
   restore.point("RTutorTeacherApp")
   
   library(shinyjs)
@@ -33,7 +33,9 @@ RTutorTeacherApp = function(psapps, teachers,db.dir = paste0(getwd(),"/db"), dat
   set.lop(lop)
   lop.connect.db(lop=lop)
   lop$login$ui = lop.login.ui(lop)
-  lop$smtp = lop.get.smtp()
+  
+  if (is.null(smtp)) smtp = lop.get.smtp()
+  lop$smtp = smtp  
 
   appInitHandler(function(session,...) {
     initLoginDispatch(lop)
@@ -103,7 +105,7 @@ update.teacher.stat = function(app=getApp()) {
 
   
   of.df = as.data.frame(lapply(1:(NCOL(upoints)-1),function(ps.ind) {
-    paste0(upoints[,ps.ind+1]," of ",app$ps.max.points[[ps.ind]])  
+    paste0(unlist(upoints[,ps.ind+1])," of ",app$ps.max.points[[ps.ind]])  
   }))
     
 

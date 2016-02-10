@@ -141,11 +141,11 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
 
 show.shiny.ps = show.ps
 
-init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, ups.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE, replace.sol=precomp, preknit=FALSE, ups.save = default.ups.save(), show.load.save.panel=FALSE, show.export.panel=TRUE, show.save.btn=FALSE, ...) {
+init.shiny.ps = function(ps.name,dir=getwd(), user.name="Seb",  sav.file=NULL, load.sav = !is.null(sav.file), ex.inds =NULL, sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), rps.dir=dir, ups.dir=dir, save.nothing=FALSE, show.solution.btn=TRUE, show.data.exp=TRUE, clear.user = FALSE, check.whitelist=!is.null(wl), wl=NULL, precomp=FALSE, noeval=FALSE, replace.sol=precomp, preknit=FALSE, ups.save = default.ups.save(), show.load.save.panel=FALSE, show.export.panel=TRUE, show.save.btn=FALSE,log.file = paste0(dir,"/",ps.name,".log"), ...) {
   restore.point("init.shiny.ps")
   setwd(dir)
 
-  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.sol=replace.sol, preknit=preknit, ups.save=ups.save)
+  ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.sol=replace.sol, preknit=preknit, ups.save=ups.save, log.file=log.file)
 
   if (clear.user) {
     ps$ups = init.ups(user.name = user.name, ps=ps)    
@@ -220,9 +220,9 @@ observe.nextExBtns = function(session, ps=get.ps()) {
   for (ex.ind in setdiff(ex.inds,max(ex.inds))) {
     btn = paste0(paste0("nextExBtn", ex.ind))
     observe({
-      cat("observe ", btn)
+      #cat("observe ", btn)
       if (has.counter.increased(btn, session$input[[btn]])) {
-        cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
+        #cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
         updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
       }
     })
@@ -310,7 +310,7 @@ eval.in.ace.console = function(code,envir=parent.frame(), consoleId, session) {
   tryCatch(updateAceEditor(session, consoleId, value=out,mode="r"),
            error = function(e) {message(e)}
   )
-  cat("\n ace console was successfuly updated!")
+  #cat("\n ace console was successfuly updated!")
 }
 
 
@@ -329,7 +329,7 @@ rerun.solved.chunks = function(ps = get.ps()) {
   inds = which(ps$cdt$is.solved)
   ok = TRUE
   for (chunk.ind in inds) {
-    cat("\n rerun chunk", chunk.ind)
+    #cat("\n rerun chunk", chunk.ind)
     ps$chunk.ind = chunk.ind
     ps$stud.env = make.chunk.stud.env(chunk.ind, ps)
     if (is.null(ps$stud.env)) {

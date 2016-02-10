@@ -55,7 +55,7 @@ load.save.ui = function(ps=get.ps()) {
 make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
   buttonHandler("loadBtn", function(session,..., ps=get.ps()) {
     file = isolate(session$input$loadFileInput)
-    cat("\nload file ", file)            
+    #cat("\nload file ", file)            
     ok = load.and.set.sav(file, ps=ps)
     if (ok) {
       update.all.chunk.ui()

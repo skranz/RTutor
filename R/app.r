@@ -15,7 +15,7 @@
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, ups.dir=paste0(dir,"/ups"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.sol=precomp, ups.save = default.ups.save(chunk.ind=TRUE, code=!(replace.sol | noeval)), ...) {
+RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, ups.dir=paste0(dir,"/ups"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.sol=precomp, ups.save = default.ups.save(chunk.ind=TRUE, code=!(replace.sol | noeval)), log.file = paste0(dir,"/log/",ps.name,".log"), session.timeout.sec=300,  ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -31,7 +31,7 @@ RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solv
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval,
     replace.sol=replace.sol,
-    ups.save = ups.save,
+    ups.save = ups.save, log.file=log.file,
     ...
   )
   
@@ -92,7 +92,7 @@ RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solv
     ps$input = input
     ps$output = output
     
-    rtutor.observe.html.query(app=app, ps=ps)
+    rtutor.observe.html.query(app=app, ps=ps, session.timeout.sec=session.timeout.sec)
   }
 
   if (disable.graphics.dev) {
@@ -111,7 +111,7 @@ RTutorPSApp = function(ps.name, user.name="Seb", sample.solution=FALSE, run.solv
 
 
 #' This function must be called in the initHandler of the app
-rtutor.observe.html.query = function(app=getApp(), ps = get.ps()) {
+rtutor.observe.html.query = function(app=getApp(), ps = get.ps(), session.timeout.sec=300) {
   restore.point("rtutor.login.dispatch")
   session = app$session
   observe(priority = -100,x = {
@@ -119,11 +119,11 @@ rtutor.observe.html.query = function(app=getApp(), ps = get.ps()) {
     if (is.null(query$key)) {
       query$key = ps$session.key
     }
-    rtutor.dispatch.html.query(query)
+    rtutor.dispatch.html.query(query, session.timeout.sec=session.timeout.sec)
   })
 }
 
-rtutor.dispatch.html.query = function(query, app=getApp(), ps = get.ps()) {
+rtutor.dispatch.html.query = function(query, app=getApp(), ps = get.ps(), session.timeout.sec=300) {
   restore.point("rtutor.dispatch.html.query")
   
   if (!isTRUE(ps$need.login)) {
@@ -138,25 +138,34 @@ rtutor.dispatch.html.query = function(query, app=getApp(), ps = get.ps()) {
     return()
   }
 
+  # check if session file exists
   file = paste0(ps$sessions.dir,"/",key,".ses")
   if (!file.exists(file)) {
     setUI("psMainUI", failed.ui)
     return()
   }
-  
 
   # load ses
-  load(file)
-  rtutor.show.user.session(user.name=ses$user.name, ps=ps)
+  ses = readRDS(file=file)
+  now = as.numeric(Sys.time())
+  if (isTRUE(now > as.numeric(ses$time)+session.timeout.sec)) {
+    html="<h2>Timout. Your session is not active anymore. Please login again.</h2>"
+    setUI("psMainUI", HTML(html))
+    return()
+  }
+  
+  rtutor.show.user.session(user.name=ses$userid, ps=ps)
 
 }
 
 rtutor.show.user.session = function(user.name, ps=get.ps()) {
-  restore.point("rtutor.show.user.sesssion")
+  restore.point("rtutor.show.user.session")
   
   cat(user.name)
   
   ups = load.ups(user.name=user.name,ps = ps)
+  ps$ups = ups
+  ps$user.name = user.name
   cdt = ps$cdt
   if (is.null(ups$chunk.ind)) ups$chunk.ind = 1
 
@@ -188,8 +197,6 @@ rtutor.show.user.session = function(user.name, ps=get.ps()) {
     update.chunk.ui(chunk.ind)
   }
   
-
-  
   setUI("psMainUI", ps$ps.ui)
 }
 
@@ -220,7 +227,7 @@ shiny.set.ex.chunk = function(ex.ind=NULL, chunk.ind=NULL,to.top = is.null(chunk
 
 
 
-RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header()) {
+RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid="", init.password="",loginapp.url, psapp.url, app.title="RTutor Login", email.domain = NULL, check.email.fun = NULL, email.text.fun=default.email.text.fun, use.db=TRUE, main.header=rtutor.login.main.default.header(), smtp = NULL) {
   restore.point("RTutorLoginApp")
   
   
@@ -232,7 +239,8 @@ RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid=""
 
   psapps = lapply(psapps, rtutor.login.init.psa)
   
-  app$global$psapps = psapps
+  app$glob$psapps = psapps
+  app$glob$cur.inst = rep(NA_integer_, length(psapps))
   
   login.fun = function(app=getApp(),userid,...) {
     show.rtutor.login.main(userid=userid, header=main.header)
@@ -256,7 +264,9 @@ RTutorLoginApp = function(psapps, db.dir = paste0(getwd(),"/db"), init.userid=""
   set.lop(lop)
   lop.connect.db(lop=lop)
   lop$login$ui = lop.login.ui(lop)
-  lop$smtp = lop.get.smtp()
+  
+  if (is.null(smtp)) smtp = lop.get.smtp()
+  lop$smtp = smtp
 
   appInitHandler(function(session,...) {
     initLoginDispatch(lop)
@@ -294,18 +304,18 @@ rtutor.login.main.default.header = function() {
 }
 
 
-show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, app = getApp(), header = "") {
+show.rtutor.login.main = function(userid="guest", psapps = app$glob$psapps, app = getApp(), header = "") {
   restore.point("show.rtutor.login.main")
   
   psapps = lapply(psapps, function(psa) {
-    psa$session.key = paste(sample(c(0:9, letters, LETTERS),60, replace=TRUE),collapse="")
+    psa$session.key = paste(sample(c(0:9, letters, LETTERS),40, replace=TRUE),collapse="")
     psa
   })
 
   
   psh = lapply(seq_along(psapps), function(i) {
     psa = psapps[[i]]
-    url = paste0(psa$url,'?key=',psa$session.key)
+    url = psa$url
     html = paste0('<a href="', url,'" class="button" target="_blank">',psa$label,'</a>')
     link = HTML(html)
     
@@ -332,9 +342,19 @@ show.rtutor.login.main = function(userid="guest", psapps = app$global$psapps, ap
 } 
 
 
-rtutor.open.psapp.click = function(i,psa,url,userid, ...) {
+rtutor.open.psapp.click = function(i,psa,url,userid,app=getApp(), ...) {
   restore.point("rtutor.open.psapp.click")
+  glob = app$glob
   
+  if (isTRUE(psa$instances>0)) {
+    if (is.na(glob$cur.inst[[i]])) {
+      glob$cur.inst[[i]] = sample.int(psa$instances,1)
+    } else {
+      glob$cur.inst[[i]] = ((glob$cur.inst[[i]]+1) %% psa$instances)+1
+    }
+    url = paste0(url,"_inst/i",glob$cur.inst[[i]],"/")
+  }
+  url = paste0(url,'?key=',psa$session.key)
   rtutor.write.session.file(userid=userid, session.key = psa$session.key, sessions.dir=psa$sessions.dir)
   
   js$openLink(url)
@@ -349,7 +369,7 @@ rtutor.open.psapp.click = function(i,psa,url,userid, ...) {
 rtutor.write.session.file = function(userid, session.key, sessions.dir) {
   restore.point("rtutor.write.session.file")
   
-  txt = c(userid, as.numeric(Sys.time()))
+  ses = nlist(userid, time = Sys.time())
   file = paste0(sessions.dir, "/", session.key, ".ses")
-  writeLines(txt, file)
+  saveRDS(ses, file=file)
 }
