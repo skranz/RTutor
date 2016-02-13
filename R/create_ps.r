@@ -427,7 +427,7 @@ parse.no.change.line = function(row,str,txt, te) {
     } else {
       part.rows = which(grepl("#'[ ]?([a-z]|[ivx]*)\\)",str))
       if (length(part.rows)>0)
-        te$part = str.right.of(str.left.of(str,")"),"#' ")
+        te$part = str.right.of(str.left.of(str,")"),"#' ",not.found = NA)
     }
 
   # Normal line of code without beeing in a block
@@ -562,7 +562,7 @@ parse.command.line = function(row,str,txt, te) {
   }
 
   str = str.trim(str.right.of(str,"#!"))
-  com = stringtools::str.left.of(str," ")
+  com = str.left.of(str," ")
   if (com == "start_note" | com == "end_note") {
     te$task.txt = c(te$task.txt, paste0("#! ", str))
   } else {
