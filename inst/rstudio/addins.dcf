@@ -1,0 +1,4 @@
+Name: Check Problemset
+Description: Check your solution of the RTutor problem set
+Binding: check.ps.addin
+Interactive: false

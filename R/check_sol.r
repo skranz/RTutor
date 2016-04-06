@@ -46,7 +46,7 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   setwd(stud.path)
 
   if (user.name=="ENTER A USER NAME HERE") {
-    stop('You have not picked a user name. Change the variable "user.name" in your problem set file from "ENTER A USER NAME HERE" to some user.name that you can freely pick.',call. = FALSE)
+    stop('You have not picked a user name. Change the variable "user.name" in the first chunk of your your problem set file from "ENTER A USER NAME HERE" to some user.name that you can freely pick.',call. = FALSE)
   }
 
   log.event(type="check_ps")

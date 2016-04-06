@@ -16,7 +16,7 @@ examples.frame.ps = function() {
   
 }
 
-rtutor.make.frame.ps.te = function(txt,addons="quiz",...) {
+rtutor.make.frame.ps.te = function(txt,addons="quiz",filter.fun = NULL,...) {
   restore.point("rtutor.make.frame.ps.te")
 
   te = new.env()
