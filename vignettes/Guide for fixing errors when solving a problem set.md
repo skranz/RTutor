@@ -13,9 +13,15 @@ output:
 
 Here is some advice how to proceed if you get an error when solving your interactive problem set that you don't know how to solve. Please follow the seven steps in this order if you encounter an error that you cannot solve.
 
-## 1. Check you solution with Ctrl+S & Ctrl+Alt+R
+## 1. Check you solution with the Addin "Check Problemset"
 
-The whole idea of RTutor is to provide some help in automatically checking your solution. Save your .Rmd file by pressing Ctrl+S and then evaluate your code by pressing Ctrl+Alt+R (running all chunks.) This has the effect that the function `check.problem.set` at the beginning of your code is run, which tries to automatically check your solution.
+The whole idea of RTutor is to provide some help in automatically checking your solution. In the symbol panel on the top you see the "Addins". Click on it and then click on "Check Problemset".
+
+If you don't see the "Addins" menu in the symbol panel, please install the newest RStudio version from here:
+
+[https://www.rstudio.com/products/rstudio/download/](https://www.rstudio.com/products/rstudio/download/)
+
+If you don't see the "Check Problemset" Addin after pressing on Addins, please install the newest RTutor version. (see point 4 below)
 
 ## 2. Check out for a hint
 
@@ -110,43 +116,8 @@ I don't know a better solution than installing again a previous release of R ins
 
 http://cran.r-project.org/bin/windows/base/old/
 
-## 4. zip.solution() does not work
 
-The function `zip.solution` only works under Windows if you have installed some extra software manually. You can either install the software manually or generate the zip files manually.
-
-#### Installing software to make zip.solution work
-
-If zip.solution() doesn't work and you have made sure that your code is otherwise prepared (Path and Username set correctly, RTutor has checked your file [CTRL+ALT+R]), please try the following (assuming you have a Windows PC):
-
-1. Install http://gnuwin32.sourceforge.net/packages/zip.htm
-
-2. Check whether the WINDOWS-Path includes the directory of the zip.exe file. If it doesn't correct this.
-
-  a) You can do this either directly (see: http://www.computerhope.com/issues/ch000549.htm) or
-
-  b) Use a freeware Tool with a nicer handling (e.g. http://eveditor.com/ -> "Path")
-
-[In theory it should suffice to install Rtools (http://cran.r-project.org/bin/windows/Rtools/), but this didn't do it for me]
-
-If you do not have a Windows PC, but a Mac or a Unix System, you should have a built-in command line zip program. This means everything should work from the start. If it doesn't, please make an appointment with me and I will have a look into it.
-
-#### Manually generate a zip file with your solution
-
-Make sure that your code is otherwise prepared (Path and Username set correctly) and that RTutor has checked your file [CTRL+ALT+R]). The file name of your zip file shall have the structure:
-
-solution_pssetname_by_username.zip
-
-For example, for the first problem set and username = "Sebastian" it would be
-
-solution_r_intro_by_Sebastian.zip
-
-Please include the following three files in the zip file:
-
-r_intro.rmd
-r_intro.log
-username_r_intro.ups
-
-## 5. Strange errors of RTutor -- Remove file .Rdata from your problem set directory
+## 4. Strange errors of RTutor -- Remove file .Rdata from your problem set directory
 
 We had the case of very cryptic RTutor errors that looked similar as follows when checking your solution:
 
