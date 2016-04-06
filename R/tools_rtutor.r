@@ -323,27 +323,6 @@ examples.str.left.of = function() {
 
 }
 
-str.left.of = function(str,pattern,..., not.found="NA") {
-  pos = str.locate.first(str, pattern,...)
-  res = substring(str,1,pos[,1]-1)
-  if (not.found=="all") {
-    res[is.na(res)] = str[is.na(res)]
-  }
-  res
-}
-
-
-str.right.of = function(str,pattern,..., not.found="NA") {
-  pos = str.locate.first(str, pattern,...)
-  res = substring(str,pos[,2]+1,)
-  if (not.found=="all") {
-    res[is.na(res)] = str[is.na(res)]
-  }
-  res
-
-}
-
-
 print.example = function(code) {
   cat(paste0("\n",code,"\n"))
   print(eval(parse(text=code,srcfile=NULL)))
