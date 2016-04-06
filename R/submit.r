@@ -84,8 +84,15 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
 
   ups = get.ups()
   
+  
+  
   sub = as.list(ups)
-  sub$tdt = as.data.frame(sub$tdt)
+  rps = ps$rps
+  # Results of chunks
+  cu = as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
+  cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
+  
+  #sub$cu = as.data.frame(cu)
   sub$rmd.code = rmd.code  
   sub$grade.time = Sys.time()
   sub$rtutor.version = packageVersion("RTutor")
@@ -94,17 +101,17 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
     summarise(df,
       ps.name = ps.name,
       user.name = user.name,
-      num.test = length(test.e.ind),
-      num.success = sum(success),
-      share.solved=round(sum(success)/num.test*100),
+      points = sum(points),
+      max.points = sum(max.points),
+      share.solved=round( (sum(points)/sum(max.points))*100),
       num.hints = sum(num.hint),
-      finished.time = max(success.date),
+      finished.time = max(solved.date),
       grade.time = sub$grade.time
     )
   }
-  sub$total = sum.fun(sub$tdt)
-  sub$by.chunk = sum.fun(group_by(sub$tdt,chunk.ps.ind))
-  sub$by.ex = sum.fun(group_by(sub$tdt,ex.ind))
+  sub$total = sum.fun(cu)
+  sub$by.chunk = group_by(cu, chunk.ps.ind) %>% filter(is.true(max.points>0)) %>% sum.fun()
+  sub$by.ex = sum.fun(group_by(cu,ex.ind))
   
   
   sub$hash = digest::digest(list(sub$user.name,sub$ps.name,sub$grade.time,sub$total))

@@ -1036,16 +1036,14 @@ include.ps.extra.lines = function(txt, ps.file, ps.name=te$ps.name,te=NULL,...) 
 ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(ps.name,".Rmd"), header="", user.name="ENTER A USER NAME HERE",...) {
 
   str = paste0("
-```{r include=FALSE}
+```{r 'check_ps', include=FALSE}
 ",header,"
-ps.dir =  '",ps.dir,"' # set to the folder in which this file is stored
-ps.file = '",ps.file,"' # set to the name of this file
 user.name = '",user.name,"' # set to your user name
 
 library(RTutor)
 check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 
-# To check your solution in RStudio save (Ctrl-S) and then run all chunks (Ctrl-Alt-R)
+# Run the Addin 'Check Problemset' to save and check your solution
 ```
 ")
   str
