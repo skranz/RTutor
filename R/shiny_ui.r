@@ -158,7 +158,8 @@ make.rtutor.page.ui = function(inner, ps = get.ps(), title="RTutor") {
       tags$script(src = 'highlightjs/languages/r.min.js',
                   type = 'text/javascript'),
       tags$link(rel = 'stylesheet', type = 'text/css',
-                href = 'highlightjs/styles/github.min.css')
+                href = 'highlightjs/styles/github.min.css'),
+      tags$script(HTML(autocomp.js()))
     ),
     tabPanel(ps$name, mathJaxRTutor(inner))
   )

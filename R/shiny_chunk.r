@@ -153,10 +153,11 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   keys = set.nali.names(keys, nali)
 
   edit.row = chunk.fluidRow(
-    aceEditor(nali$editor, code, mode="r",theme=theme, height=height, fontSize=13,hotkeys = keys, wordWrap=TRUE, debounce=10),
+    aceEditor(nali$editor, code, mode="r",theme=theme, height=height, fontSize=13,hotkeys = keys, wordWrap=TRUE, debounce=10,autoComplete = "enabled"),
     aceEditor(nali$console, "", mode="r",theme="clouds", height=console.height, fontSize=13,hotkeys = NULL, wordWrap=TRUE, debounce=10, showLineNumbers=FALSE,highlightActiveLine=FALSE)
   )
 
+  set.chunk.autocomp.observer(inputId = nali$editor, chunk.ind = chunk.ind)
   #aceAutocomplete(nali$editor)
 
   chunk.fluidRow(
@@ -172,6 +173,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
 
+  suspend.chunk.autocomp.observer(chunk.ind)
+  
   if (isTRUE(ps$show.save.btn)) {
     saveBtn = bsButton(nali$saveBtn, "save", size="extra-small")
   } else {
@@ -498,6 +501,7 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
   #browser()
   if (can.chunk.be.edited(chunk.ind)) {
     update.chunk.ui(chunk.ind, mode="input")
+
     set.shiny.chunk(chunk.ind)
     session = ps$session
   } else {

@@ -110,6 +110,9 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
       ps$session = session
       ps$input = input
       ps$output = output
+      # autocomplete in first open chunk
+      set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+
     }
   } else {
     app$initHandler = function(session, input, output,...) {
@@ -118,6 +121,10 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
       ps$session = session
       ps$input = input
       ps$output = output
+      
+      # autocomplete in first open chunk
+      set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+
     }
   }
 
