@@ -89,6 +89,9 @@ get.chunk.ui = function(chunk.ind, ps=get.ps(),... ) {
 make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.lines=NULL, fontSize=12, console.height=height, ps = get.ps()) {
   restore.point("make.chunk.input.ui")
 
+  if (!identical(chunk.ind,ps$chunk.ind))
+    set.shiny.chunk(chunk.ind)
+  
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
 
