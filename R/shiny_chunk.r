@@ -89,8 +89,6 @@ get.chunk.ui = function(chunk.ind, ps=get.ps(),... ) {
 make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.lines=NULL, fontSize=12, console.height=height, ps = get.ps()) {
   restore.point("make.chunk.input.ui")
 
-  if (!identical(chunk.ind,ps$chunk.ind))
-    set.shiny.chunk(chunk.ind)
   
   nali = ps$cdt$nali[[chunk.ind]]
   code = ps$cdt$stud.code[[chunk.ind]]
@@ -159,6 +157,9 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
     aceEditor(nali$editor, code, mode="r",theme=theme, height=height, fontSize=13,hotkeys = keys, wordWrap=TRUE, debounce=10,autoComplete = "enabled"),
     aceEditor(nali$console, "", mode="r",theme="clouds", height=console.height, fontSize=13,hotkeys = NULL, wordWrap=TRUE, debounce=10, showLineNumbers=FALSE,highlightActiveLine=FALSE)
   )
+
+  if (!identical(chunk.ind,ps$chunk.ind))
+    set.shiny.chunk(chunk.ind)
 
   set.chunk.autocomp.observer(inputId = nali$editor, chunk.ind = chunk.ind)
   #aceAutocomplete(nali$editor)
@@ -606,6 +607,7 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
   }
   return(TRUE)
 }
+
 
 
 
