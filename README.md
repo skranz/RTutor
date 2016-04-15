@@ -26,6 +26,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/tcl89/creditboomsgonebust
   - shinyapps.io: https://tcl89.shinyapps.io/creditboomsgonebust 
 
+### Technological Progress and Fuel Economy of Cars (by Marius Breitmayer)
+  - Github: https://github.com/MariusBreitmayer/RTutorAttributeTradeOffs
+  - shinyapps.io: https://mariusbreitmayer.shinyapps.io/RTutorAttributeTradeOffs
+  
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
   
