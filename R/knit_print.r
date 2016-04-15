@@ -137,11 +137,11 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, si
         h1 = RTutor:::html.table(x[rows,],round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
         html = c(h1, as.character(p(missing.txt)))
       } else {
-        dat = format.data.frame(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
+        dat = pretty.df(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
         html = paste0(c(kable(dat),missing.txt),collapse="\n")
       }
     } else {
-      dat = format.data.frame(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
+      dat = pretty.df(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
       txt = capture.output(print(dat))
       txt = c(paste0(txt,collapse="\n"),paste0("... only ", MAX.ROW ," of ", NROW(x), " rows shown ..."))
       
@@ -154,7 +154,7 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, si
     } else {
       restore.point("ndjhdbfdub")
       
-      dat = format.data.frame(x,signif.digits = signif.digits, round.digits = round.digits) 
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = paste0(capture.output(print(dat)), collapse="\n")
       return(txt)
     }
@@ -177,6 +177,6 @@ format.vals = function(vals, signif.digits=NULL, round.digits=NULL) {
   vals
 }
 
-format.data.frame = function(x, signif.digits=NULL, round.digits=NULL) {
+pretty.df = function(x, signif.digits=NULL, round.digits=NULL) {
   as.data.frame(lapply(x, format.vals, signif.digits=signif.digits, round.digits=round.digits))
 }
