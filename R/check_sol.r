@@ -110,9 +110,10 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
     if (ret==FALSE) {
       edt$ex.solved[i] = FALSE
       if (cdt$code.is.task[ps$chunk.ind]) {
-        message = paste0("You have not yet started with chunk ", cdt$chunk.name[ps$chunk.ind],"\nIf you have no clue how to start, try hint().")
-        #cat(message)
-        stop.without.error(message)
+        message = paste0("\nYou have not yet started with chunk ", cdt$chunk.name[ps$chunk.ind],"\nIf you have no clue how to start, try hint().")
+        cat(message)
+        return()
+        #stop.without.error(message)
       }
 
       message = ps$failure.message
@@ -131,8 +132,10 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   if (all(edt$ex.solved)) {
     display("\n****************************************************")
     stats()
-    msg = "You solved the problem set. Congrats!"
-    stop.without.error(msg)
+    msg = "\nYou solved the problem set. Congrats!"
+    cat(msg)
+    return()
+    #stop.without.error(msg)
   }
   stop("There were still errors in your solution.")
 }

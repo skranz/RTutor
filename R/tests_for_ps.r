@@ -131,7 +131,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   }
 
   success.message = paste0("Great, I good not find an error in your function ", fun.name, "!")
-  add.success(success.message,...)
+  add.success(success.message)
   return(TRUE)
 }
 
@@ -977,7 +977,7 @@ test.normality = function(vec,short.message,warning.message,failure.message,ps=g
 #' @export
 holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",part=NULL,ps=get.ps(),stud.env = ps$stud.env, cond.str=NULL,...) {
 
-  
+
   if (is.null(cond.str)) {
     cond = substitute(cond)
     cond.str = deparse1(cond)

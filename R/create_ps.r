@@ -1132,7 +1132,9 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.ch
     } else if (str.starts.with(str,"## Exercise ")) {
       ex.name = str.right.of(str,"## Exercise ")
       ex.name = gsub("#","", ex.name, fixed=TRUE)
-      ex.name = str.left.of(ex.name," --", not.found="all")
+      #ex.name = str.left.of(ex.name," --", not.found="all")
+      ex.name = str.left.of(ex.name," --", not.found=ex.name)
+      ex.name = substring(str.to.valid.chunk.name(ex.name),1,20)
       if (!valid.file.name)
         counter = 1
       part.name = ""
