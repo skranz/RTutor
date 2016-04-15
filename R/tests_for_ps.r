@@ -836,7 +836,7 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
     return(FALSE)
   }
 
-  add.success(success.message,test_name=test.name,p_value=p.value,...)
+  add.success(success.message,test_name=test.name,p_value=p.value)
 
   if (p.value > alpha.warning & check.warning) {
     add.warning(warning.message,test_name=test.name,p_value=p.value)
