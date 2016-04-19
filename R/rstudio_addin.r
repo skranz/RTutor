@@ -1,3 +1,23 @@
+rmd.to.latex.addin = function(...) {
+  library(rstudioapi)
+  library(RTutor)
+  doc = rstudioapi::getActiveDocumentContext()
+  restore.point("rmd.to.latex.addin")
+  file = basename(doc$path)
+  dir = dirname(doc$path)
+  setwd(dir)
+
+  ext = tools::file_ext(file)
+  if (tolower(ext) == "rmd") {
+    rmd.to.latex(input=doc$path)
+  } else if (tolower(ext) == "md") {
+    md.to.latex(input=doc$path)
+  } else {
+    cat("\nYou must select an .Rmd or an .md file...")
+    return()
+  }
+}
+
 check.ps.addin = function(...) {
   library(rstudioapi)
   library(RTutor)
