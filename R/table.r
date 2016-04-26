@@ -19,6 +19,7 @@ html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=
     if (is.null(col.tooltips)) {
       inner = colnames
     } else {
+      col.tooltips = gsub('"',"'",col.tooltips, fixed=TRUE)
       inner = paste0('<span title="', col.tooltips,'">', colnames, '<span>')
       #inner[nchar(col.tooltips)==0] = colnames
     }

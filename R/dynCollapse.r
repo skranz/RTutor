@@ -31,7 +31,7 @@ dynCollapse = function(id, labels, values=labels, panel.fun, block=TRUE,...) {
     #btn = shinyBS:::addClass(btn,"text-left")
 
     #btn = as.character(btn)
-    changeHandler(btnid, dynCollapse.click,  collapseId=id, collapseValue=values[[i]], substitute.fun=FALSE, panel.fun=panel.fun, ui.id=ui.id,...)
+    changeHandler(btnid, dynCollapse.click,  collapseId=id, collapseValue=values[[i]], substitute.fun=FALSE, panel.fun=panel.fun, ui.id=ui.id,if.handler.exists = "replace",...)
     list(btn, uiOutput(ui.id))
   })
   do.call("c",li)
@@ -42,11 +42,15 @@ dynCollapse = function(id, labels, values=labels, panel.fun, block=TRUE,...) {
 dynCollapse.click = function(panel.fun,ui.id,value,...) {
   args = list(...)
   restore.point("dynCollapse.click")
-  cat("\nToogle value: ", value)
-  if (value) {
-    ui = panel.fun(ui.id=ui.id,...)
-  } else {
-    ui = HTML("")
-  }
-  setUI(ui.id,ui)
+  #cat("\nToogle value: ", value)
+  #ui = panel.fun(ui.id=ui.id,...)
+  
+  try({
+    if (value) {
+       ui = panel.fun(ui.id=ui.id,...)
+    } else {
+       ui = HTML("")
+    }
+    setUI(ui.id,ui)
+  })
 }
