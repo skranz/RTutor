@@ -161,6 +161,7 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
   chunks = min.chunk:max(which(ck.rows))
   chunk.ind = chunks[1]
   for (chunk.ind in chunks) {
+    cat(paste0("Check chunk ",ps$cdt$chunk.name[[chunk.ind]],"..."))
     ret = check.chunk(chunk.ind,ps=ps, verbose=verbose)
     if (ret==FALSE) {
       return(FALSE)

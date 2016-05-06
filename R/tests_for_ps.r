@@ -41,8 +41,7 @@ check.function({
 #' @export
 check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, check.args.order=TRUE, allow.extra.arg = TRUE, ps=get.ps(),stud.env = ps$stud.env, verbose=FALSE, part = NULL) {
 
-  test.calls = eval(substitute(alist(...)), stud.env)
-
+ 
   code = substitute(code)
 
 
@@ -52,6 +51,11 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
 
   env = new.env(parent=stud.env)
   eval(code,env)
+  test.calls = try(eval(substitute(alist(...)), env))
+
+  #restore.point("check.function2")
+  
+  
   fun.name = ls(env)[1]
   sol.fun = get(fun.name,env)
 
@@ -111,11 +115,12 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
     failure.message = ""
     stud.res = tryCatch(eval(test.calls[[i]], stud.tenv),
                         error = function(e) {
-                          failure.message <<- as.character(e)
+                          call.str = deparse1(test.calls[[i]], collapse="\n")
+                          failure.message <<- paste0("I get an error, when I try to check your function ", fun.name, " with my test call:\n ", call.str,"\n\n", as.character(e))
                           ok <<- FALSE
                         })
     if (!ok) {
-      add.failure(failure.message,...)
+      add.failure(failure.message)
       return(FALSE)
     }
 
@@ -123,7 +128,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
     if (length(res)>0) {
       call.str = deparse1(test.calls[[i]], collapse="\n")
       failure.message = paste0("Your function ",fun.name, " seems not ok. I test it with the call\n\n", call.str, "\n\n and your returned object differs from my solution, it has wrong ", paste0(res, collapse=","),".\n\n I stored in the variables 'test.sol.res' and 'test.your.res' the return values of the correct function and your function. You can take a look at them.")
-      add.failure(failure.message,...)
+      add.failure(failure.message)
       assign(paste0("test.sol.res"),sol.res,.GlobalEnv)
       assign(paste0("test.your.res"),stud.res,.GlobalEnv)
       return(FALSE)
@@ -213,7 +218,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
 
     if (is.null(failure.message))
       failure.message = paste0("You have not yet entered all correct commands", part.str,".")
-    add.failure(failure.message,...)
+    add.failure(failure.message)
     return(FALSE)
   }
 }
@@ -349,7 +354,7 @@ check.assign = function(
   if (length(stud.expr.li) == 0) {
     if (is.null(failure.message))
       failure.message = paste0("You have not yet made an assignment to ", var, part.str,".")
-    add.failure(failure.message,...)
+    add.failure(failure.message)
     return(FALSE)
   }
 
