@@ -34,12 +34,12 @@ if (FALSE) {
   # You must adapt the following lines to your account as explained in
   #  http://shiny.rstudio.com/articles/shinyapps.html 
 
-  shinyapps::setAccountInfo(
+  rsconnect::setAccountInfo(
   	      name='<SHINYAPPS_USERNAME>',
   		  token='<TOKEN>',
 		  secret='<SECRET>')
 
-  library(shinyapps)
+  library(rsconnect)
   
   # Set app directory as working directory
   setwd("APP_PATH/app")
