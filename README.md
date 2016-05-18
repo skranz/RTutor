@@ -14,6 +14,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/Fcolli/RTutorProcurementAuction
   - shinyapps.io: https://fcolli.shinyapps.io/RTutorProcurementAuction
 
+### Assessing Free-Trade Agreements (by Tobias Fischer)
+  - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
+  - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
+
 ### How soap operas reduced fertility in Brazil (by Clara Ulmer)
   - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
   - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
