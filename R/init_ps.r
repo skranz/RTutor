@@ -119,7 +119,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
 
   # in noeval mode not all tests can be run
   # show sample solution for non-testable chunks
-  if (noeval & !is.null(cdt$can.noeval.test)) {
+  if (noeval & "can.noeval.test" %in% names(cdt)) {
     for (row in which(!cdt$can.noeval.test)) {
       if (cdt$task.txt[[row]] != cdt$sol.txt[[row]]) {
         if (cdt$num.e[[row]] >0) {

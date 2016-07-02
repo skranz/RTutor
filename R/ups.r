@@ -93,7 +93,7 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.sol
     ps$cdt$stud.code = ps$cdt$sol.txt
     is.solved = rep(TRUE, NROW(ps$cdt))
   }
-  if (ups.save$code & is.null(ups$cu$stud.code)) {
+  if (ups.save$code & "stud.code" %in% names(ups$cu)) {
     ups$cu$stud.code = ps$cdt$stud.code
   }
   
