@@ -79,7 +79,7 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.sol
   ps$cdt$mode[chunk.ind] = "input"
   
   if (!sample.solution) {
-    if (!is.null(ups$cu$stud.code) & !sample.solution) {
+    if ("stud.code" %in% names(ups$cu) & !sample.solution) {
       ps$cdt$stud.code = ups$stud.code
     } else if (!sample.solution) {
       ps$cdt$stud.code = ps$cdt$task.txt

@@ -373,7 +373,7 @@ update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(
       ups$cu$solved.date[[chunk.ind]] <- Sys.time()
       ups$cu$solved[chunk.ind] = TRUE
     } else {
-      ups$cu$num.fail[chunk.ind] = ups$cu$num.fail[chunk.ind]+1
+      ups$cu$num.failed[chunk.ind] = ups$cu$num.failed[chunk.ind]+1
     }
   }
   update.code = isTRUE(ps$ups.save$code)
