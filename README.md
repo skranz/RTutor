@@ -53,7 +53,7 @@ library(RTutor)
 If you only want to update the RTutor package (and have the other packages already installed). You can just type:
 
 ```s
-devtools::install_github("skranz/RTutor")
+devtools::install_github("skranz/RTutor", upgrade_dependencies=FALSE)
 ```
 (You may have to restart your R session / RStudio for the update to work.)
 

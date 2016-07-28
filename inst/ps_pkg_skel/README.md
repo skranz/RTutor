@@ -10,8 +10,8 @@ if (!require(devtools))
   install.packages("devtools")
 source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4")
 install.rtutor(update.github=TRUE)
-  
-install_github("GITHUB_USERNAME/PACKAGE_NAME")
+
+devtools::install_github("GITHUB_USERNAME/PACKAGE_NAME", upgrade_dependencies=FALSE)
 ```
 
 ## 2. Show and work on the problem set
