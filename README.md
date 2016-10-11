@@ -26,6 +26,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
   - shinyapps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
 
+### Air pollution and house prices (by Moritz Sporer)
+  - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
+  - shinyapps.io: [https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/](https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/)
+
 ### A macroeconomic study of credit booms and busts (by Thomas Clausing)
   - Github: https://github.com/tcl89/creditboomsgonebust
   - shinyapps.io: https://tcl89.shinyapps.io/creditboomsgonebust 
@@ -40,7 +44,16 @@ For the web-based interface, several students at Ulm University have created ver
 
 ## Installing the newest version of RTutor
 
-To install RTutor with all required additional packages, just run in R
+Since RTutor uses a lot of packages from Github that are not on CRAN, I have written a small install function, that can be found in this gist:
+
+[gist.github.com/skranz/fad6062e5462c9d0efe4](gist.github.com/skranz/fad6062e5462c9d0efe4)
+
+Copy the code in the link into your R console and then run:
+```r
+install.rtutor(update.github=TRUE)
+```
+
+Depending on your devtools version, also the following code may work directly (yet source_gist is buggy in some devtools versions):
 ```s
 if (!require(devtools)) 
   install.packages("devtools")

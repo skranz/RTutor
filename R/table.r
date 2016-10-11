@@ -1,5 +1,5 @@
 
-html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8, signif.digits=8,col.tooltips=NULL, ...) {
+html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=TRUE, bg.color =c("#dddddd","#ffffff"), font.size="80%", round.digits=8, signif.digits=8,col.tooltips=NULL,  ...) {
   restore.point("html.table")
   n = NROW(df)
 
