@@ -46,7 +46,7 @@ For the web-based interface, several students at Ulm University have created ver
 
 Since RTutor uses a lot of packages from Github that are not on CRAN, I have written a small install function, that can be found in this gist:
 
-[gist.github.com/skranz/fad6062e5462c9d0efe4](gist.github.com/skranz/fad6062e5462c9d0efe4)
+[https://gist.github.com/skranz/fad6062e5462c9d0efe4](https://gist.github.com/skranz/fad6062e5462c9d0efe4)
 
 Copy the code in the link into your R console and then run:
 ```r
