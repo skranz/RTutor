@@ -22,6 +22,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
   - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
 
+### CO2 Trading and Risk of Firm Relocation
+  - Github: https://github.com/b-lux/RTutorCarbonLeakage
+  - shinyapps.io: https://b-lux.shinyapps.io/RTutorCarbonLeakage/
+
 ### On the optimal taxation of top incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
   - shinyapps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
