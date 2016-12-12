@@ -14,6 +14,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/Fcolli/RTutorProcurementAuction
   - shinyapps.io: https://fcolli.shinyapps.io/RTutorProcurementAuction
 
+### Poverty Reduction and Deforestation (by Katharina Kaufmann)
+  - Github: https://github.com/KathKaufmann/RTutorEcologicalFootprintOfPovertyAlleviation
+  - shinyapps.io: https://kathkaufmann.shinyapps.io/RTutorEcologicalFootprintOfPovertyAlleviation/
+
 ### Assessing Free Trade Agreements (by Tobias Fischer)
   - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
   - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
