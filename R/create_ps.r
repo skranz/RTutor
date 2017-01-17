@@ -849,6 +849,12 @@ add.te.award = function(te) {
   str = te$block.head
   name = str.between(str, '"','"')
 
+  # Duplicated award names lead to 
+  # hard to debug errors
+  if (name %in% names(te$awards)) {
+    stop(paste0("Your problem set has twice an award with the name '", name, "'. Each award needs a unique name!"))
+  }
+  
   txt = te$block.txt
   txt = c(paste0("### Award: ",name,"\n"), txt)
   ktxt = knit(text=txt)
@@ -865,8 +871,11 @@ add.te.award = function(te) {
   award = list(award.name=name, html=paste0(html,collapse="\n"), txt=paste0(te$block.txt, collapse="\n"))
   te$out.txt = c(te$out.txt,"\n***\n", paste0("### Award: ", name),te$block.txt,"\n***\n")
 
+  
   te$awards[[name]] = award
 
+  
+  
 }
 
 
