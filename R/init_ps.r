@@ -110,7 +110,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   }
 
 
-  cdt = as_data_frame(rps$cdt)
+  cdt = dplyr::as_data_frame(rps$cdt)
 
 
 
@@ -148,7 +148,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   ps$cdt = rps$cdt = cdt
   ps$tdt = rps$tdt
 
-  edt = as_data_frame(rps$edt)
+  edt = dplyr::as_data_frame(rps$edt)
   edt$ex.solved = FALSE
   #env.li  = replicate(NROW(edt),new.env(parent=ps$ps.baseenv), simplify=FALSE)
 

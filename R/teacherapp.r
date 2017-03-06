@@ -71,7 +71,7 @@ import.psa.stats = function(psa) {
     #colnames(df) = c("Excercise","Solved (%)","Points", "Max. Points", "Hints")
     colnames(df) = c("ex","share","points", "max.points", "hints")
 
-    cbind(data_frame(ps.name=rep(psa$psname,NROW(df)),user.name=rep(ups$user.name,NROW(df))),df)
+    cbind(dplyr::data_frame(ps.name=rep(psa$psname,NROW(df)),user.name=rep(ups$user.name,NROW(df))),df)
   })
   df = bind_rows(li)
   df = filter(df, ex != "Total")
@@ -110,7 +110,7 @@ update.teacher.stat = function(app=getApp()) {
     
 
     
-  ushow =  cbind(data_frame(
+  ushow =  cbind(dplyr::data_frame(
     upoints$user.name,
     round(100*(total/app$max.points),1),
     total,

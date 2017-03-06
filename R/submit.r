@@ -89,7 +89,7 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
   sub = as.list(ups)
   rps = ps$rps
   # Results of chunks
-  cu = as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
+  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
   
   #sub$cu = as.data.frame(cu)

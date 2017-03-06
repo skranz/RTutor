@@ -320,7 +320,7 @@ te.to.rps = function(te) {
     list(id=rta$id,type=rta$type,optional=rta$optional,changes.env=rta$changes.env, max.points=rta$max.points, solved=rta$solved, points=rta$points)
   })
 
-  ao.dt = as_data_frame(rbindlist(li))
+  ao.dt = dplyr::as_data_frame(rbindlist(li))
 
   rows =  items.df$type == "addon"
   ao.dt$award.name = items.df$award.name[rows]

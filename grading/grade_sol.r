@@ -183,7 +183,7 @@ unpack.sub.zips = function(as, as.dir = paste0(base.dir,"/stud/",as), base.dir, 
 
     rdf = unzip(paste0(zips.dir,"/",zip), list=TRUE)
   
-    fdf = data_frame(as=as,stud.id=sub.df$stud.id[i], stud.name=sub.df$stud.name[i],ext =tolower(file_ext(rdf$Name)), file=rdf$Name, size=rdf$Length, date = rdf$Date)
+    fdf = dplyr::data_frame(as=as,stud.id=sub.df$stud.id[i], stud.name=sub.df$stud.name[i],ext =tolower(file_ext(rdf$Name)), file=rdf$Name, size=rdf$Length, date = rdf$Date)
     fdf
     
     

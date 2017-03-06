@@ -39,7 +39,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   cdt = ps$cdt
   if (isTRUE(ups.save$chunks)) {
     # Store chunk results
-    cu = data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+    cu = dplyr::data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
   } else {
     cu = NULL
   }
@@ -47,7 +47,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   # Store add-on results
   ao.dt = ps$rps$ao.dt
   if (NROW(ao.dt)>0 & isTRUE(ups.save$addons)) {
-    aou = data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
+    aou = dplyr::data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
   } else {
     aou = NULL
   }
@@ -193,13 +193,13 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get
 
 
   # Results of chunks
-  cu = as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,ex.ind, points)))
+  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
 
   # Results of addons like quizes
 
   if (NROW(ups$aou)>0) {
-    aou = as_data_frame(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
+    aou = dplyr::as_data_frame(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
     aou$ex.ind = match(rps$ao.dt$ex.name, rps$edt$ex.name)
     idf = rbind(
       dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),

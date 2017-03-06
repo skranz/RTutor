@@ -5,6 +5,8 @@ grade.log = as.environment(list(current=NULL, all=NULL, file="grade_log.txt"))
 examples.grade.sol = function() {
   base.dir = "D:/lehre/energieoekonomik/rtutor/sub2015"
   base.dir = "D:/lehre/empIOUlm/ps2016"
+  base.dir = "D:/lehre/energieoekonomik/rtutorWS1617/abgaben"
+  
   setwd(base.dir)
   grade.sol()
 }
@@ -83,6 +85,30 @@ grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades")) {
   })
   sub.df = bind_rows(li)
   sub.df$user.name = correct.stud.names(sub.df$user.name)
+  
+  # check for duplicated and missing submissions
+  dupl = which(duplicated(sub.df[,c("ps.name","user.name")]))
+  if (length(dupl)>0) {
+    msg = paste0("\n\n*****************************\nProblem sets that have been handed in multiple times (probably mixed up with another submission):\n\n",
+      paste0("\t",sub.df$user.name[dupl]," :", sub.df$ps.name[dupl],collapse="\n"))
+    write.grade.log(msg)
+    
+    sub.df = sub.df[-dupl,,drop=FALSE]
+  }
+  
+  
+  missing = left_join(
+    tidyr::expand(sub.df,user.name, ps.name),
+    select(sub.df,user.name, ps.name, points)
+  ) %>% 
+    filter(is.na(points))
+    
+  if (NROW(missing)>0) {
+    msg = paste0("\n\n*****************************\nProblem sets that have not (not correctly) been submitted):\n\n",
+      paste0("\t",missing$user.name," :", missing$ps.name,collapse="\n"))
+    write.grade.log(msg)
+  }  
+
   
   
   sub.df = mutate(group_by(sub.df, ps.name),
