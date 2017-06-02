@@ -467,24 +467,30 @@ mathJaxRTutor <- function(html, ps=get.ps()) {
   if (isTRUE(ps$offline))
     return(html)
 
+  return(withMathJax(html))
+  
+  # NOTE https://www.shinyapps.io/admin/#/login
+  # does not work anymore!
+  # 
   #path =  paste0(system.file('www', package='RTutor'),"/MathJax")
   #if (!file.exists(path))
-  path <- '//cdn.mathjax.org/mathjax/latest'
+  #path <- '//cdn.mathjax.org/mathjax/latest'
 
-  command = paste0(path, '/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
+  #command = paste0(path, '/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
   #path <- 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
-  tagList(
-  tags$head(
-  singleton(tags$script(src = command, type = 'text/javascript'))
-  ),
-  html,
-  tags$script(HTML('MathJax.Hub.Queue(["Typeset", MathJax.Hub]);'))
-  )
+  # tagList(
+  # tags$head(
+  # singleton(tags$script(src = command, type = 'text/javascript'))
+  # ),
+  # html,
+  # tags$script(HTML('MathJax.Hub.Queue(["Typeset", MathJax.Hub]);'))
+  # )
 }
 
 can.connect.to.MathJax = function() {
-  library(RCurl)
-  url.exists("http://cdn.mathjax.org/mathjax/latest/MathJax.js")
+  return(TRUE)
+  #library(RCurl)
+  #url.exists("http://cdn.mathjax.org/mathjax/latest/MathJax.js")
  # url.exists("http://www.mathjax.org/")
 }
