@@ -8,7 +8,7 @@ app =  show.ps(user.name = "Guest",
 	           offline=FALSE,sample.solution = FALSE)
 
 app$verbose = FALSE
-app$is.running = TRUE
+appReadyToRun(app)
 
 #shinyApp(ui = app$ui, server = app$server)
 #runEventsApp(app)
