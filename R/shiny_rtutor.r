@@ -49,6 +49,7 @@ show.ps = function(ps.name, user.name="Seb", sav.file=NULL, load.sav = !is.null(
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
 
+  shiny::addResourcePath("figure",dir)
   #browser()
   ps = init.shiny.ps(
     ps.name=ps.name, user.name=user.name,sav.file=sav.file,

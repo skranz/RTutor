@@ -119,6 +119,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   write.output.solution(te=te,rps=rps)
 
+  #rps$knit.print.opts = knit.print.opts
   
   save.rps(rps)
   remove.ups(ps.name=rps$ps.name)
