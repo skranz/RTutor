@@ -26,13 +26,17 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
   - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
 
-### CO2 Trading and Risk of Firm Relocation
+### CO2 Trading and Risk of Firm Relocation (by Benjamin Lux)
   - Github: https://github.com/b-lux/RTutorCarbonLeakage
   - shinyapps.io: https://b-lux.shinyapps.io/RTutorCarbonLeakage/
 
 ### On the optimal taxation of top incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
   - shinyapps.io: https://jonassend.shinyapps.io/RTutorTopIncomeTaxation/
+
+### The effect of the TseTse fly on African Development (by Vanessa Schöller)
+  - Github: https://github.com/vanessaschoeller/RTutorTseTse
+  - shinyapps.io: https://vanessaschoeller.shinyapps.io/RTutorTseTse/
 
 ### Air pollution and house prices (by Moritz Sporer)
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
@@ -42,9 +46,21 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/tcl89/creditboomsgonebust
   - shinyapps.io: https://tcl89.shinyapps.io/creditboomsgonebust 
 
+### The impact of emmission trading on green innovation (by Arthur Schäfer)
+  - Github: https://github.com/ArthurS90/RTutorEmissionTrading
+  - shinyapps.io: https://arthurs90.shinyapps.io/RTutorEmissionTrading/
+
+### Building Codes and Energy Efficiency (2 versions, by Simon Hertle and Lisa Eilts)
+  - Github (Simon Hertle): https://github.com/simonhertle/RTutorBuildingCodes
+  - shinyapps.io (Simon Hertle): https://shertle.shinyapps.io/RTutorBuildingCodes/
+  - Github (Lisa Eilts): https://github.com/LEilts/RTutorBuildingCodes
+
 ### Technological Progress and Fuel Economy of Cars (by Marius Breitmayer)
   - Github: https://github.com/MariusBreitmayer/RTutorAttributeTradeOffs
   - shinyapps.io: https://mariusbreitmayer.shinyapps.io/RTutorAttributeTradeOffs
+
+### How can Scandinavians tax so much? (by David Hertle)
+  - Github: https://github.com/dhertle/RTutorTaxationScandinavia
   
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
