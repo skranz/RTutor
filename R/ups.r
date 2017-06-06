@@ -64,7 +64,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   ups
 }
 
-ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=FALSE, sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.sol = isTRUE(ps$replace.sol), ups.save=ps$ups.save) {
+ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=isTRUE(ps$run.solved), sample.solution=FALSE, precomp=isTRUE(ps$precomp), replace.sol = isTRUE(ps$replace.sol), ups.save=ps$ups.save) {
   restore.point("init.shiny.ps.from.ups")
   
   if (NROW(ps$cdt)==0) return()

@@ -156,8 +156,10 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
 
   ps = init.ps(ps.name,user.name, dir=dir, rps.dir=rps.dir, ups.dir=ups.dir, save.nothing=save.nothing, check.whitelist=check.whitelist, wl=wl, precomp=precomp, noeval=noeval, replace.sol=replace.sol, preknit=preknit, ups.save=ups.save, log.file=log.file)
 
+  ps$run.solved = run.solved
+  
   if (clear.user) {
-    ps$ups = init.ups(user.name = user.name, ps=ps)    
+    ps$ups = init.ups(user.name = user.name, ps=ps)
   }
 
   ps$show.load.save.panel=show.load.save.panel
@@ -201,7 +203,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
     Addon$shiny.init.fun(ao=ao,ps=ps)
   }
 
-  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution, ups.save=ups.save)  
+  ups.init.shiny.ps(ps=ps, ups=ps$ups, sample.solution=sample.solution, ups.save=ups.save, rerun = isTRUE(ps$run.solved))  
   
   show.shiny.awards()
   
