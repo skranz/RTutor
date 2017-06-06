@@ -24,8 +24,10 @@ make.export.handlers = function(session=ps$session,ps=get.ps(), app=getApp()) {
   setDownloadHandler("downloadRmdBtn", 
     filename = paste0(ps$name, ".Rmd"),
     content = function(file) {
+      restore.point("downLoadAsRmdHandler")
       txt = shiny.to.rmd.txt()
-      writeLines(txt, file)
+      Encoding(txt) <- "UTF-8"
+      writeLines(txt, file,useBytes = TRUE)
     },
     contentType = "text/Rmd"
   )
@@ -58,12 +60,13 @@ shiny.to.rmd.txt = function(ps=get.ps(), user.name=get.user.name()) {
   txt[start.lines] = paste0(txt[start.lines],"\n",stud.code)
   
   addon.lines = which(str.starts.with(txt,"#! addon__"))
-  txt[addon.lines] = sapply(txt[addon.lines],make.rmd.addon.txt,ps=ps)
+  if (length(addon.lines)>0)
+    txt[addon.lines] = sapply(txt[addon.lines],make.rmd.addon.txt,ps=ps)
   
   if (length(clear.lines)>0)
     txt = txt[-clear.lines]
   
-  txt
+  unlist(txt)
 
 }
 

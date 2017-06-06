@@ -59,7 +59,7 @@ is.ps.deployed = function(dir,material.dir) {
 examples.run.ps = function() {
   setwd("D:/libraries/RTutor/work")
   library(RTutorTopIncomeTaxation)
-  run.ps(user.name="Seb")
+  run.ps(user.name="default_user")
   detach("package:RTutorShroudedFees", unload=TRUE)  
   
 }
