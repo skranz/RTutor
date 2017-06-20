@@ -247,6 +247,7 @@ te.to.rps = function(te) {
       return(NULL)
 
     add.chunk = sapply(ex$chunks, function(ck) isTRUE(ck$add))
+    names(add.chunk) = NULL # important to fix bug
     num.e = sapply(ex$chunks, function(ck) length(ck$e.li))
     num.e.task = sapply(ex$chunks, function(ck) ck$num.e.task)
 
