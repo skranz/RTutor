@@ -1,11 +1,13 @@
 ---
-title: Developing Interactive R Problem Sets with RTutor
-author: Sebastian Kranz, Ulm University
-date: 'Version from 2015-05-26'
+title: "Developing Interactive R Problem Sets with RTutor"
+author: "Sebastian Kranz, Ulm University"
+date: "Version from 2015-05-26"
 output:
   pdf_document:
+    number_sections: yes
     toc: yes
-    number_sections: yes    
+  html_document:
+    toc: yes
 ---
 
 
@@ -666,5 +668,16 @@ and
 
 will be shown in a note.  Chunks inside the note can be solved by users. They should have `optional=TRUE` in the chunk header. Beware that RTutor is not (yet) very good in giving sensible failure messages, if you make mistakes, like forgetting the `#! end_note` line. 
 
+# Commonly occuring errors
 
+- Problem: When I run `create.ps` I get the following error message:
+  ```
+  Error in nchar(paste0(code, collapse = "\n")) :
+    invalid multibyte string, element 1
+  ```
+  + Answer: This is a nasty error that has to do with the *encoding* of your text file. Try the following with your _sol.Rmd file. In RStudio choose the menu `File -> Reopen with encoding`. Then pick the Encoding `UTF-8` and press ok. Now make some small changes in your file, save it and try again to run `create.ps`. Hopefully it now works...
+
+
+- Problem: I change my _sol.Rmd file run `create.ps` and `show.ps`, the browser opens but the changes do not appear in the shown problem set.
+  + Answer: Make sure that you have correctly set the working directory with `setwd` to the folder in which your _sol.Rmd file is stored.
 
