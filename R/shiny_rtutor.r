@@ -176,15 +176,21 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
   #ps$shiny.dt$code
 
   n = NROW(ps$cdt)
+  
   ps$button.counter = list()
-  ps$cdt$nali = replicate(n, list(), simplify=FALSE)
-  ps$cdt$ui = replicate(n, list(), simplify=FALSE)
+  
+  cdt =as_data_frame(ps$cdt)
+  
+  cdt$nali = replicate(n, list(), simplify=FALSE)
+  cdt$ui = replicate(n, list(), simplify=FALSE)
 
-  ps$cdt$has.output.observer = rep(FALSE,n)
-  ps$cdt$has.input.observer = rep(FALSE,n)
-  ps$cdt$has.ui.renderer = rep(FALSE,n)
-  ps$cdt$server = replicate(n, expression(), simplify=FALSE)
+  cdt$has.output.observer = rep(FALSE,n)
+  cdt$has.input.observer = rep(FALSE,n)
+  cdt$has.ui.renderer = rep(FALSE,n)
+  cdt$server = replicate(n, expression(), simplify=FALSE)
 
+  ps$cdt = as.data.table(cdt)
+  
   for (chunk.ind in ps$cdt$chunk.ps.ind) {
     id = paste0("r.chunk_",chunk.ind,".ui.mode")
     ps[[id]] = reactiveValues(counter=0)
@@ -346,7 +352,7 @@ rerun.solved.chunks = function(ps = get.ps()) {
     if (is.null(ps$stud.env)) {
       stop(ps$failure.message)
     }
-    ps$cdt$stud.env[[chunk.ind]] <- ps$stud.env
+    ps$cdt[["stud.env"]][[chunk.ind]] <- ps$stud.env
     code = ps$cdt$stud.code[[chunk.ind]]
 
     if (!is.false(ps$catch.errors)) {
@@ -418,7 +424,7 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   txt = c(header,sep.lines(txt),"```")
 
   #stop("stop in chunk.to.html")
-  stud.env = ps$cdt$stud.env[[chunk.ind]]
+  stud.env = ps$cdt[["stud.env"]][[chunk.ind]]
   #all.parent.env(stud.env)
   html ="Evaluation error!"
 

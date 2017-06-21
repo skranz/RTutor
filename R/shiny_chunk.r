@@ -14,8 +14,8 @@ make.initial.chunk.ui = function(chunk.ind, ps=get.ps()) {
   ui = chunk.fluidRow(
     uiOutput(nali$chunkUI)
   )
-  ps$cdt$nali[[chunk.ind]] = nali
-  ps$cdt$ui[[chunk.ind]] = ui
+  ps$cdt[["nali"]][[chunk.ind]] = nali
+  ps$cdt[["ui"]][[chunk.ind]] = ui
   invisible(ui)
 }
 
@@ -598,12 +598,12 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
       stud.env <- make.chunk.stud.env(chunk.ind, ps)
     }
     if (!is.null(stud.env)) {
-      ps$cdt$stud.env[[ps$chunk.ind]] <- stud.env
+      ps$cdt[["stud.env"]][[ps$chunk.ind]] <- stud.env
     }
     if (is.null(stud.env)) {
       return(FALSE)
     }
-    ps$stud.env = ps$cdt$stud.env[[ps$chunk.ind]]
+    ps$stud.env = ps$cdt[["stud.env"]][[ps$chunk.ind]]
   }
   return(TRUE)
 }

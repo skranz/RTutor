@@ -248,7 +248,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   has.error = FALSE
   ps$stud.env = stud.env
   if (!isTRUE(ps$precomp))
-    ps$cdt$stud.env[[chunk.ind]] = stud.env
+    ps$cdt[["stud.env"]][[chunk.ind]] = stud.env
 
 
   has.error = FALSE
@@ -413,7 +413,7 @@ make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
 
   # return precomputed chunkenv
   if (isTRUE(ps$precomp)) {
-    stud.env = copy.stud.env(ps$cdt$stud.env[[chunk.ind]], chunk.ind)
+    stud.env = copy.stud.env(ps$cdt[["stud.env"]][[chunk.ind]], chunk.ind)
     return(stud.env)
   }
 
@@ -442,7 +442,7 @@ make.chunk.stud.env = function(chunk.ind, ps = get.ps()) {
 
   } else {
     # Later chunk in an exercise: simply copy previous stud.env
-    stud.env = copy.stud.env(ps$cdt$stud.env[[parent.ind]], chunk.ind)
+    stud.env = copy.stud.env(ps$cdt[["stud.env"]][[parent.ind]], chunk.ind)
   }
   stud.env
 }

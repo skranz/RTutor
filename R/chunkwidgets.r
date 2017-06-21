@@ -25,7 +25,7 @@ chunk.output.htmlwidget = function(txt, widget.name,chunk.ind=ps$chunk.ind, widg
   }
   
   ui = outputFun(widget.id,width=width,height=height)
-  stud.env = ps$cdt$stud.env[[chunk.ind]]
+  stud.env = ps$cdt[["stud.env"]][[chunk.ind]]
 
   app$output[[widget.id]] = app$session$output[[widget.id]] =  htmlwidgets::shinyRenderWidget(expr=expr, outputFunction=outputFun, env=stud.env, quoted=TRUE)
 

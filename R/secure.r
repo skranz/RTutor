@@ -68,7 +68,7 @@ secure.check.chunk = function(chunk.ind, verbose=FALSE,stud.code=ps$cdt$stud.cod
   }
 
   ps$stud.env = stud.env
-  ps$cdt$stud.env[[chunk.ind]] = stud.env
+  ps$cdt[["stud.env"]][[chunk.ind]] = stud.env
 
   ps$stud.seed = as.integer(Sys.time())
   set.seed(ps$stud.seed)

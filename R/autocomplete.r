@@ -24,7 +24,7 @@ set.chunk.autocomp.observer = function(inputId, chunk.ind, app=getApp(), ps=get.
   ps$chunk.autcomp.observers[[chunk.ind]] = shiny::observe({
     ps = get.ps()
     stud.env = ps$stud.env
-    if (is.null(stud.env)) stud.env = ps$cdt$stud.env[[chunk.ind]]
+    if (is.null(stud.env)) stud.env = ps$cdt[["stud.env"]][[chunk.ind]]
     
     value <- session$input[[paste0("shinyAce_", inputId, "_hint")]]
     #cat("\n*******************************\nchunk autcomp observer called...", round(runif(1)*1000))

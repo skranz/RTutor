@@ -63,7 +63,7 @@ preknit.rps = function(rps=load.rps(file=file),precomp=TRUE,file=paste0(ps.name,
   cdt$can.noeval.test = sapply(1:NROW(cdt), can.test.chunk.with.noeval,cdt=cdt)
 
   if (precomp) {
-    cdt$stud.env = chunk.envs
+    cdt[["stud.env"]] = chunk.envs
   }
 
   rps$cdt = cdt

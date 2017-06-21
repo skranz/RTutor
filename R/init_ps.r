@@ -27,7 +27,7 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
   ps$edt = copy(ops$edt)
 
   cdt = ps$cdt; edt = ps$edt
-  cdt$stud.env = lapply(1:NROW(cdt), function(chunk.ind) {
+  cdt[["stud.env"]] = lapply(1:NROW(cdt), function(chunk.ind) {
     new.stud.env(chunk.ind)
   })
   env.li  = replicate(NROW(edt),new.stud.env(chunk.ind=0), simplify=FALSE)
@@ -137,7 +137,7 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   }
 
   if (!ps$precomp) {
-    cdt$stud.env =lapply(1:NROW(cdt), function(chunk.ind) {
+    cdt[["stud.env"]] =lapply(1:NROW(cdt), function(chunk.ind) {
       new.stud.env(chunk.ind)
     })
   } 
