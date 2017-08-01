@@ -110,6 +110,9 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
 rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, signif.digits=8, html.data.frame=TRUE, show.col.tooltips=TRUE, col.tooltips=NULL, output="html", options=NULL, ...) {
   restore.point("rtutor.knit_print.data.frame")
   
+  if (is.matrix(x))
+    x = as.data.frame(x)
+  
   # chunk options have precedent over passed arguments
   copy.non.null.fields(dest=environment(), source=options, fields=c("table.max.rows","round.digits","signif.digits","html.data.frame","show.col.tooltips"))
   
