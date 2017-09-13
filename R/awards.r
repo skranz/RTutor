@@ -65,18 +65,24 @@ shiny.award.ui = function(award.name, ps=get.ps(), ups = get.ups()) {
   award.ind = which(names(ups$awards) == award.name)[1] 
   
   collapseId = paste0("collapse_award_",award.ind)
-  collapsePanelId = paste0("collapse_panel_award_",award.ind) 
-  ahtml = bsCollapse(open = NULL, id = collapseId,
-    bsCollapsePanel(paste0("Award: ",award.name),value=collapsePanelId, HTML(html) )
+  panel = div(class="award-div",style="padding-top: 1em;",
+    slimCollapsePanel(heading.style="background-color: #DFC463;box-shadow: 2px 2px 2px #888888; padding-top: 1em; pading-bottom: 1em;",paste0("Award: ",award.name),value=collapseId, HTML(html)  
+    )
   )
-  # GOLD: #DFC463
-  txt = gsub(
-    '<div class="panel-heading"',
-    '<div class="panel-heading" style="background-color: #DFC463;box-shadow: 2px 2px 2px #888888;"',
-    as.character(ahtml), fixed=TRUE
-  )
-  return(HTML(txt))  
-  ahtml
+  return(panel)
+  
+  # collapsePanelId = paste0("collapse_panel_award_",award.ind) 
+  # ahtml = bsCollapse(open = NULL, id = collapseId,
+  #   bsCollapsePanel(paste0("Award: ",award.name),value=collapsePanelId, HTML(html) )
+  # )
+  # # GOLD: #DFC463
+  # txt = gsub(
+  #   '<div class="panel-heading"',
+  #   '<div class="panel-heading" style="background-color: #DFC463;box-shadow: 2px 2px 2px #888888;"',
+  #   as.character(ahtml), fixed=TRUE
+  # )
+  # return(HTML(txt))  
+  # ahtml
 }
 
 
