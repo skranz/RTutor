@@ -27,17 +27,21 @@ First you need to find an interesting article for which the data (and ideally al
 
 A  list of selected articles with data from several journals can be found here:
 
-[http://econfin.de/rtutor/restat.html](http://econfin.de/rtutor/restat.html)
+[http://econ.mathematik.uni-ulm.de/rtutor/articles.html](http://econ.mathematik.uni-ulm.de/rtutor/articles.html)
 
 (I have very roughly sorted the list according to which articles I personally find more interesting.)
 
-**Article database**: I also have created a searchable database of articles with data from selected journals (AER, AEJ, REStud). It can be found here:
+The list is updated only sporadically. You can also search for newer articles on the journal websites of the American Economic Association:
 
-[http://econfin.de:3838/articles/](http://econfin.de:3838/articles/)
+[https://www.aeaweb.org/journals/](https://www.aeaweb.org/journals/)
 
-You can search for specific topics in the database by entering different [Journal of Economic Literature (JEL) codes](https://www.aeaweb.org/econlit/jelCodes.php), that classify economic articles by different topics. 
+These websites store the datasets from the Review of Economics and Statistics and the Quarterly Journal of Economics
 
-The shown articles contain a link to the journal website of the article ([example](https://www.aeaweb.org/articles.php?doi=10.1257/aer.100.3.724)). You can download the article there (due to access restrictions this works only from the university network).
+[https://dataverse.harvard.edu/dataverse/restat](https://dataverse.harvard.edu/dataverse/restat)
+
+[https://dataverse.harvard.edu/dataverse/qje](https://dataverse.harvard.edu/dataverse/qje)
+
+(To find the corresponding articles, you have to google their names)
 
 ### Data and code
 From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is inaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.

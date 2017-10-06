@@ -178,10 +178,13 @@ write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), 
 }
 
 output.solution.header = function(rps, te, ps.name=te$ps.name) {
+  restore.point("output.solution.header")
   libs = paste0("library(", c(rps$libs,"RTutor"),")", collapse="\n")  
   source.txt = if (!is.null(rps$extra.code.file)) paste0('source("',rps$extra.code.file,'")') else ""
   
-  knit.opts =  paste0(names(te$knit.print.params), " = ", te$knit.print.params, collapse=", ")
+  knit.print.params =  te$knit.print.params
+  knit.print.params$html.data.frame = FALSE
+  knit.opts =  paste0(names(knit.print.params), " = ", knit.print.params, collapse=", ")
   header = paste0(
 '
 ---

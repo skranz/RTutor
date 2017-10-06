@@ -15,22 +15,33 @@ set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=
 
 }
 
-make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE,output="html") {
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE,output="html", print.data.frame.fun = NULL, print.matrix.fun=NULL) {
   opts = list()
   restore.point("make.knit.print.opts")
   
   #attr(opts,"knit.params") = nlist(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips)
   
-  if (html.data.frame) {
+  if (!is.null(print.data.frame.fun)) {
+   opts[["data.frame"]] = list(
+      fun= print.data.frame.fun,
+      classes=c("data.frame")
+    )
+  } else if (html.data.frame) {
     opts[["data.frame"]] = list(
       fun= function(x, options=NULL, ...) {
         restore.point("ndnfhdubfdbfbfbh")
         
         rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options,output=output,...)  
       },
-      classes=c("data.frame","matrix")
+      classes=c("data.frame")
     )
-  }  
+  } 
+  if (!is.null(print.matrix.fun)) {
+    opts[["matrix"]] = list(
+      fun= print.data.frame.fun,
+      classes=c("matrix")
+    )
+  }
   opts
 }
 
