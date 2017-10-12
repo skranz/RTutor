@@ -200,8 +200,8 @@ output:
 ',libs,'
 ',source.txt,'
 
-# render data frames similar to the RTutor browser
-RTutor::set.knit.print.opts(',knit.opts,')
+# options for rendering data frames
+RTutor::set.knit.print.opts(html.data.frame=FALSE, table.max.rows=25, round.digits=8, signif.digits=8)
 
 # continue knitting even if there is an error
 knitr::opts_chunk$set(error = TRUE) 
