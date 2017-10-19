@@ -38,6 +38,18 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/vanessaschoeller/RTutorTseTse
   - shinyapps.io: https://vanessaschoeller.shinyapps.io/RTutorTseTse/
 
+### Pollution Reduction by Wind Energy (by Anna Sophie Barann)
+  - Github: https://github.com/asbara/RTutorPollutionReductions
+  - shinyapps.io: https://asbara.shinyapps.io/RTutorPollutionReductions/
+
+### Water Pollution and Digestive Cancer (by Brigitte Peter)
+  - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
+  - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
+
+### Wall Street and the Housing Bubble (by Marius Wentz)
+  - Github: 
+  - shinyapps.io:
+  
 ### Air pollution and house prices (by Moritz Sporer)
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
   - shinyapps.io: [https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/](https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/)
