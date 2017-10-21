@@ -47,8 +47,8 @@ For the web-based interface, several students at Ulm University have created ver
   - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
 
 ### Wall Street and the Housing Bubble (by Marius Wentz)
-  - Github: 
-  - shinyapps.io:
+  - Github: https://github.com/mwentz93/RTutorWallStreet
+  - shinyapps.io: https://mwentz93.shinyapps.io/RTutorWallStreet/
   
 ### Air pollution and house prices (by Moritz Sporer)
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
@@ -76,9 +76,14 @@ For the web-based interface, several students at Ulm University have created ver
   
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
-  
 
-## Installing the newest version of RTutor
+## Installing and Running RTutor with Docker  
+
+If you already use [Docker](https://www.docker.com/), you can quickly use RTutor with the docker container `skranz/rtutor`. The container allows you to work with RTutor via RStudio server in your webbrowser. It already contains some example problem sets, but you can install other problem sets or create your own problem sets. Details are here:
+
+https://hub.docker.com/r/skranz/rtutor/
+
+## Installing the newest version of the RTutor package
 
 Since RTutor uses a lot of packages from Github that are not on CRAN, I have written a small install function, that can be found in this gist:
 
@@ -94,7 +99,7 @@ Depending on your devtools version, also the following code may work directly (y
 if (!require(devtools)) 
   install.packages("devtools")
 
-devtools::source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4")
+devtools::source_gist("gist.github.com/skranz/fad6062e5462c9d0efe4", filename="install_rtutor.r")
 install.rtutor(update.github=TRUE)
 library(RTutor)
 ```
