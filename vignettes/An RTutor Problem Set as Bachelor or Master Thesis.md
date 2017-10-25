@@ -172,8 +172,6 @@ Before diving into regressions or the theoretical model, you should describe the
 
 Your problem set should really be carefully designed and well written. This takes time and space. If your problem set is already quite long and you don't have time to treat all analysis of the paper carefully, just leave out some extensions that are discussed in the paper. Of course, the core analysis should be part of the problem set. From a quality and grade perspective, it is much better to leave out some analysis than adding a poorly done analysis to your thesis.
 
-## Try to understand and explain well the econometric details, in particular endogeniety problems
-
 
 ## Citations and bibliography
 
@@ -207,6 +205,28 @@ Your first 'Exercise' can have the name 'Overview' and just briefly describe the
 Your last 'Exercise' can have the name 'Summary' or 'Conclusion' and can contain some final thoughts and bibliography that lists all used references.
 
 You can create these two special exercises after you have created the 'core' of your problem set.
+
+## Causality, Endogeniety Problems and Omitted Variable Bias: Explain these issues very carefully
+
+Most empirical articles in economics try to establish some causal effect of a particular explanatory variable on the dependent variable. Unfortunately, if we would just run a bivariate regression of the dependent on the explanatory variable, we would in most cases get an biassed estimator of the causal effect. That is because economic data seldom comes from a randomized experiment, and thus, we most likely have an *endogenous* explanatory variable that is correlated with the unobserved error term.
+
+Most of the empirical strategy of a typical article is devoted to try to solve the endogeniety problem and get unbiassed estimated of a causal effect. Typical techniques are inclusion of control variables (also in the form of fixed-effects dummies) and often also instrumental variable regressions. Also difference-in-difference estimators or regression discontinuity designs are used to estimate causal effects in an unbiassed fashion.
+
+If applicable to your article, you should very carefully explain these issues in your problem set and also reference to the appropriate chapters in econometric text books. Dealing with endogeniety is typically much more important than problems like heteroscedastic standard errors.
+
+Often a good first step is to explain the omitted variable bias using a short regression model (only one explanatory variable) and a long regression model (two explanatory variables). A good example for such an explanation is given in Exercise 3.2 in the following problem set:
+
+Github: [https://github.com/brigittepeter/RTutorWaterPollutionChina](https://github.com/brigittepeter/RTutorWaterPollutionChina)
+
+Shinyapps.io: [https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina](https://github.com/brigittepeter/RTutorWaterPollutionChina)
+
+Take a look at it. You can also a look at some other RTutor problem sets listed at the end of this guide. Of course, you should always adapt any explanation to your specific article.
+
+If an article wants to establish a causal effect, please **don't** write that some control variables are added because the \(R^2\) is too low. If we are interested in causal effects, control variables are typically added to solve an endogeniety problem, not to increase the \(R^2\).
+
+(If we were not interested in causal effects, but just wanted a good model for prediction only, it might make more sense to try to find a model with high adjusted \(R^2\). But then one typically should also evaluate the model with other measures, like mean squared predication error in a control sample. For prediction only, it also often would make sense to use different models, like random forests, instead of a linear regression. Yet, most economic articles are in fact interested in causal effects.)
+
+Moreover, **never** write that we have to add control variables to a model, because otherwise we don't get significant p-Values for the main variable of interest. Such `p-hacking` is statistic nonsense and absolutely bad scientific practise.
 
 
 # Part 3: More Suggestions for your RTutor problem set
@@ -403,6 +423,13 @@ For bar plots try out the function `pirateplot` from the package `yarrr`.
     - RTutorPublicProcurement
     - RTutorTopIncomeTaxation
     - RTutorSoapOperas
+    - RTutorWaterPollutionChina
+
+## Explanation of endogeniety problems and ommited variable problem
+
+    - RTutorWaterPollutionChina
+    - RTutorSoapOperas
+
 
 ## Quizes
     
@@ -429,9 +456,6 @@ For bar plots try out the function `pirateplot` from the package `yarrr`.
 
     - RTutorTopIncomeTaxation
 
-## Explanation of endogeniety problems and ommited variable problem
-
-    - RTutorSoapOperas
 
 ## Good explanation of theoretical models
 

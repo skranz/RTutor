@@ -18,6 +18,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/KathKaufmann/RTutorEcologicalFootprintOfPovertyAlleviation
   - shinyapps.io: https://kathkaufmann.shinyapps.io/RTutorEcologicalFootprintOfPovertyAlleviation/
 
+### The Effect of Water Pollution on Cancer (by Brigitte Peter)
+  - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
+  - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
+
 ### Assessing Free Trade Agreements (by Tobias Fischer)
   - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
   - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
