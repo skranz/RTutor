@@ -245,9 +245,9 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     analyse.str = paste0(analyse.str, collapse = "\n")
 
     if (!from.assign)
-      display("Let's take a look at your call to the function '", check.na, "'",part.str," and compare it with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
+      display("Let's take a look at your call to the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
     if (from.assign)
-      display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,", and compare it with my solution:\n", analyse.str,start.char=start.char, end.char=end.char)
+      display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
 
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))

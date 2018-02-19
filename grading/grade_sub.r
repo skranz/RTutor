@@ -3,16 +3,16 @@
 grade.log = as.environment(list(current=NULL, all=NULL, file="grade_log.txt"))
 
 examples.grade.sol = function() {
-  base.dir = "D:/lehre/energieoekonomik/rtutor/sub2015"
+  base.dir = "D:/lehre/energieoekonomik/rtutorWS1718/abgaben"
   setwd(base.dir)
   grade.sol()
 }
 
 
 grade.sol = function(base.dir=getwd(), prefix="",postfix=".zip", grade.dir = paste0(base.dir,"/grades")) {
-  restore.point("grade.sol")
   
   library(RTutor)
+  restore.point("grade.sol")
   
   setwd(base.dir)
   
@@ -88,18 +88,19 @@ grade.total.points = function(sub.li, grade.dir = paste0(getwd(),"/grades")) {
     time.rank = rank(finished.time, ties.method="min"),
     perc.time.rank = 100*time.rank / length(time.rank),
     
-    success.rank = rank(-num.success, ties.method="min"),
+    success.rank = rank(-points, ties.method="min"),
     hints.rank = rank(num.hints, ties.method="min")
   )
   
   sub.df = arrange(sub.df,user.name)
   write.csv(sub.df,paste0(grade.dir,"/ps_points.csv"),row.names = FALSE)
   
-  total.points = sum((sub.df %>% group_by(ps.name) %>% summarise(points = first(num.test)))$points)
+  temp.df = sub.df %>% group_by(ps.name) %>% summarise(points = first(max.points))
+  total.points = sum(temp.df$points)
   
   tot.df = sub.df %>% group_by(user.name) %>% summarise(
     max.points = total.points,
-    points = sum(num.success),
+    points = sum(points),
     share.solved = points / max.points,
     num.hints = sum(num.hints),
     num.ps = n()
@@ -115,7 +116,7 @@ load.sub.with.name = function(file) {
   restore.point("load.sub.with.name")
   
   load(file)
-  stud.name = str.left.of(basename(file),"_")
+  stud.name = str.between(basename(file),"----","--")
   Encoding(stud.name) <- "UTF-8"
   stud.name = mark_utf8(stud.name)
   sub$stud.name = correct.stud.names(stud.name)
