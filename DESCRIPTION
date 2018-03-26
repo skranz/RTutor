@@ -13,6 +13,7 @@ Depends:
     stringr,
     stringtools,
     data.table,
+    tibble,
     dplyr,
     shiny (>= 0.11.1),
     dplyrExtras,
