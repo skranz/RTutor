@@ -1,6 +1,4 @@
-# Tutorial for Developing Interactive R Problem Sets with RTutor
-
-**Date: 2015-01-23
+# RTutor: Interactive R Problem Sets
 
 **Author: Sebastian Kranz, Ulm University** 
 
