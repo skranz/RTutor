@@ -32,4 +32,3 @@ check.col(df, col, expr = NULL, class.df = c("data.frame", "data.table",
 \description{
 Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution
 }
-

@@ -14,4 +14,3 @@ add.failure(message, ..., ps = get.ps())
 \description{
 Used inside tests: adds a failure to an exercise
 }
-

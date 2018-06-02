@@ -9,4 +9,3 @@ data(..., envir = parent.frame())
 \description{
 Overwrite the base function data, copy data by default into the calling environment instead of the global environment
 }
-

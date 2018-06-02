@@ -11,4 +11,3 @@ Either a globally stored problem set or
 if RTutor runs as a web-app the associated problem set
 with the current shiny session
 }
-

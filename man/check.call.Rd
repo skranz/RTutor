@@ -25,4 +25,3 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
 \description{
 Checks whether the user makes a particular function call in his code or call a particular R statement
 }
-

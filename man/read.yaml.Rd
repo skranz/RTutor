@@ -11,4 +11,3 @@ read.yaml(file = NULL, verbose = FALSE, keep.quotes = TRUE,
 \description{
 Reads a yaml file and returns as a list
 }
-

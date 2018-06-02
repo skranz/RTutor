@@ -29,4 +29,3 @@ check.variable(var, expr, length = check.all, dim = check.all,
 \description{
 Test: Check whether a variable is equal to a specified expression
 }
-

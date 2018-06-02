@@ -18,4 +18,3 @@ check.chunk(chunk.ind, ps = get.ps(), verbose = FALSE,
 \description{
 Check the student's solution of an exercise contained in stud.file
 }
-

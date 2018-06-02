@@ -11,4 +11,3 @@ translate.var.names(df, orgvar = var.dt$orgvar, var = var.dt$var,
 uses the variable description provided with the problem set
 to change variable names from orgvar to var
 }
-

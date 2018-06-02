@@ -11,4 +11,3 @@ hint.for.assign(expr, ps = get.ps(), env = ps$stud.env,
 \description{
 Default hint for an assignment
 }
-

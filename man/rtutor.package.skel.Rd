@@ -14,4 +14,3 @@ rtutor.package.skel(sol.file, ps.name, pkg.name, pkg.parent.dir,
 \description{
 Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package
 }
-

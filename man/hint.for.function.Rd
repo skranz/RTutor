@@ -9,4 +9,3 @@ hint.for.function(code, ..., ps = get.ps())
 \description{
 Default hint for a call
 }
-

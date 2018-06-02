@@ -20,4 +20,3 @@ If you have installed RTools (http://cran.r-project.org/bin/windows/Rtools/) and
 `zip.solution()`
 to generate the zip file automatically.
 }
-

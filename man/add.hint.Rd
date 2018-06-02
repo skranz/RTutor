@@ -14,4 +14,3 @@ add.hint(hint.name, code, cond = NULL, ex = get.ex())
 \description{
 Add a hint to an exercise.
 }
-

@@ -13,4 +13,3 @@ translate.var.names.in.code(txt = readLines(file), file = NULL,
 Tool to translate automatically variable names in a .r or .rmd file
 useful to update
 }
-

@@ -10,4 +10,3 @@ compare.calls(stud.call, check.call, compare.vals = !is.null(val.env),
 \description{
 Compare if two calls are the same
 }
-

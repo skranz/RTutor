@@ -9,4 +9,3 @@ show.success.message(success.message, ...)
 \description{
 Simply shows a success message when this test is reached for the first time!
 }
-

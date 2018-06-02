@@ -28,4 +28,3 @@ check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
 \description{
 By default a solution is considered correct if the assignment yields the same value than the sample solution, or has the same rhs (e.g. a call runif(1,0,1)), even if the value differs.
 }
-

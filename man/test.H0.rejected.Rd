@@ -34,4 +34,3 @@ TRUE if H0 can be rejected, FALSE if not and "warning" if it can be weakly rejec
 \description{
 Test whether a certain H0 can be significantly rejected
 }
-

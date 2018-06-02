@@ -10,4 +10,3 @@ display(..., collapse = "\\n", sep = "", start.char = "\\n",
 \description{
 Displays the given text
 }
-

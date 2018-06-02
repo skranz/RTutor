@@ -9,4 +9,3 @@ copy.ps.for.session(ps, empty.stud.env = TRUE)
 \description{
 Makes a local copy of a problem set for a new shiny session
 }
-

@@ -9,4 +9,3 @@ hint(..., ps = get.ps())
 \description{
 Shows a hint for the current problem.
 }
-

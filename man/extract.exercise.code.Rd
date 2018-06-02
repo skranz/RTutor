@@ -10,4 +10,3 @@ extract.exercise.code(ex.name, stud.code = ps$stud.code, ps = get.ps(),
 \description{
 Extracts the stud's code of a given exercise
 }
-

@@ -14,4 +14,3 @@ add.warning(message, ..., ps = get.ps())
 \description{
 Used inside tests: adds a warning
 }
-

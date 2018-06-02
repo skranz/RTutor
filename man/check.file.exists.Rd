@@ -13,4 +13,3 @@ check.file.exists(file,
 \description{
 Check whether a given file exists
 }
-

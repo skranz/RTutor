@@ -13,4 +13,3 @@ holds.true(cond, short.message = failure.message,
 \description{
 Test: Does a certain condition on the stud's generated variables hold true
 }
-

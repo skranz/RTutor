@@ -14,4 +14,3 @@ add.success(message, ..., ps = get.ps())
 \description{
 Used inside tests: adds a sucess message
 }
-

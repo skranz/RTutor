@@ -21,4 +21,3 @@ otherwise clear all chunk options (dangerous)}
 \description{
 Set default names for the chunks of problem set rmd files
 }
-

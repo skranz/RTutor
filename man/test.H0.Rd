@@ -31,4 +31,3 @@ TRUE if H0 cannot be rejected, FALSE if not and "warning" if it can be weakly re
 \description{
 Check whether a certain null hypothesis is not significantly rejected
 }
-

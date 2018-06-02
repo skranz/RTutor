@@ -24,4 +24,3 @@ check.function(code, ..., check.args = TRUE, check.defaults = FALSE,
 \description{
 Checks a function written by the student
 }
-

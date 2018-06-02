@@ -27,4 +27,3 @@ rtutor.app.skel(ps.name, app.name = ps.name, app.dir,
 \description{
 Generate a skeleton for a shinyapps.io app of a problem set
 }
-

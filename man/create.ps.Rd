@@ -15,7 +15,8 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
   signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
   = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits))
+  round.digits, signif.digits = signif.digits), e.points = 1,
+  min.chunk.points = 0, chunk.points = 0)
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -45,9 +46,14 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{preknit}{shall sample solution of chunks be knitted when problem set is generated. Default = FALSE}
 
 \item{force.noeval}{shall problem set only be shown in noeval mode? (Used as a security against accidentially forgetting to set noeval=TRUE in show.ps, when showing the problem set in a web app.)}
+
+\item{e.points}{how many points does the user get per required expression in a chunk (expressions in a task do not count). Default=1}
+
+\item{min.chunk.points}{minimal points for checking a chunk even if no none-task expression has to be entered. By default=0.5. I feel there may be a higher motivation to continue a problem set if there are may be some free point chunks farther below. Also it feels nice to get points, even if it is just for pressing the check button.}
+
+\item{chunk.points}{you may also specify fixed points given for solving a chunk that will be added to the points per expression. Default=0}
 }
 \description{
 Generates  .rps file, and .rmd files for empty ps , sample solution
 and output solution
 }
-

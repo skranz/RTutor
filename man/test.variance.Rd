@@ -12,4 +12,3 @@ test.variance(vec, true.val, test = "t.test", short.message, warning.message,
 \description{
 Test: The variance of the distribution from which a vector of random numbers has been drawn
 }
-

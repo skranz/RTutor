@@ -13,4 +13,3 @@ check.regression(var, str.expr, part = NULL, ps = get.ps(),
 \description{
 Check whether an object from a call to lm, glm or some other regression function is correct
 }
-

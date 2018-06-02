@@ -12,4 +12,3 @@ hint.for.call(call, ps = get.ps(), env = ps$stud.env,
 \description{
 Default hint for a call
 }
-

@@ -9,4 +9,3 @@ sc(..., sep = "", collapse = NULL)
 \description{
 Like paste0 but returns an empty vector if some string is empty
 }
-

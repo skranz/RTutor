@@ -4,10 +4,9 @@
 \alias{give.award}
 \title{Used in a solution file. Give an award to a student who made it so far}
 \usage{
-give.award(award.name, award = ps$rps$awards[[award.name]],
-  user = get.user(), ps = get.ps())
+give.award(award.name, award = ps$rps$awards[[award.name]], ups = get.ups(),
+  ps = get.ps())
 }
 \description{
 Used in a solution file. Give an award to a student who made it so far
 }
-

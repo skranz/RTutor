@@ -12,4 +12,3 @@ test.normality(vec, short.message, warning.message, failure.message,
 \description{
 Test: Has a vector of random numbers been drawn from a normal distribution?
 }
-

@@ -23,4 +23,3 @@ and otherwise FALSE}
 \description{
 Create a shiny quiz widget
 }
-

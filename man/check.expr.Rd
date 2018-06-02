@@ -28,4 +28,3 @@ check.expr(check.expr, correct.expr,
 \description{
 Test: Compare the expression check.expr evaluated in the student's environment with the solution correct.expr
 }
-

@@ -4,11 +4,13 @@
 \alias{init.ps}
 \title{Initialize a problem set for the student}
 \usage{
-init.ps(ps.name, dir = getwd(), stud.short.file = paste0(ps.name, ".Rmd"),
-  rps.file = paste0(rps.dir, "/", ps.name, ".rps"), log.file = paste0(dir,
-  "/", ps.name, ".log"), rps.dir = dir, save.nothing = FALSE,
-  check.whitelist = !is.null(wl), wl = NULL, use.memoise = NULL,
-  noeval = FALSE, precomp = FALSE)
+init.ps(ps.name, user.name = "", dir = getwd(),
+  stud.short.file = paste0(ps.name, ".Rmd"), rps.file = paste0(rps.dir, "/",
+  ps.name, ".rps"), log.file = paste0(dir, "/", ps.name, ".log"),
+  rps.dir = dir, ups.dir = dir, user.dir = ups.dir,
+  save.nothing = FALSE, check.whitelist = !is.null(wl), wl = NULL,
+  use.memoise = NULL, noeval = FALSE, precomp = FALSE,
+  replace.sol = FALSE, preknit = FALSE, ups.save = default.ups.save())
 }
 \arguments{
 \item{ps.name}{the name of the problem set}
@@ -20,4 +22,3 @@ init.ps(ps.name, dir = getwd(), stud.short.file = paste0(ps.name, ".Rmd"),
 \description{
 Initialize a problem set for the student
 }
-

@@ -10,4 +10,3 @@ hypothesis.test.result(p.value, alpha.warning = 0.05, alpha.failure = 1e-04,
 \description{
 A helper function for hypothesis test about whether student solution is correct
 }
-

@@ -11,4 +11,3 @@ check.call.args(stud.call, check.call, compare.vals = !is.null(val.env),
 \description{
 Checks whether arguments of stud.call are correct given the specification in check.call
 }
-

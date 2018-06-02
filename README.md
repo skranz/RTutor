@@ -8,6 +8,10 @@ RTutor is an R package that allows to develop interactive R exercises. Problem s
 
 ## Trying out some problem sets
 
+You can try out the Rmarkdown version of RTutor via RStudio Cloud:
+
+[https://rstudio.cloud/project/39040](https://rstudio.cloud/project/39040)
+
 For the web-based interface, several students at Ulm University have created very nice problem sets that allow to interactively replicate the main insights of interesting economic articles and to learn a bit about R and econometrics. Before developing your own problem sets, you may want to try out some of these examples:
 
 ### Public Procurement Auctions: Design, Outcomes and Adaption Costs (by Frederik Collin)
@@ -46,10 +50,6 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/asbara/RTutorPollutionReductions
   - shinyapps.io: https://asbara.shinyapps.io/RTutorPollutionReductions/
 
-### Water Pollution and Digestive Cancer (by Brigitte Peter)
-  - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
-  - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
-
 ### Wall Street and the Housing Bubble (by Marius Wentz)
   - Github: https://github.com/mwentz93/RTutorWallStreet
   - shinyapps.io: https://mwentz93.shinyapps.io/RTutorWallStreet/
@@ -81,18 +81,18 @@ For the web-based interface, several students at Ulm University have created ver
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
 
-## Installing and Running RTutor with Docker 
+# Installation
 
-If you already use [Docker](https://www.docker.com/), you can quickly use RTutor with the docker container `skranz/rtutor`. The container allows you to work with RTutor via RStudio server in your webbrowser. It already contains some example problem sets, but you can install other problem sets or create your own problem sets. Details are here:
+RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:
 
-https://hub.docker.com/r/skranz/rtutor/
+```r
+install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOption("repos")))
+```
+**Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.**
 
-Since the image contains R, shiny, rstudio and a lot of packages, it has quite some size, however.
+## Installing RTutor directly from Github
 
-## Installing the newest version of the RTutor package
-
-Since RTutor uses a lot of packages from Github that are not on CRAN, I have written a small install function, that can be found in this gist:
-
+To install RTutor and required packages directly from Github and CRAN, you can use the small function in the following gist:
 
 [https://gist.github.com/skranz/fad6062e5462c9d0efe4](https://gist.github.com/skranz/fad6062e5462c9d0efe4)
 
@@ -118,6 +118,13 @@ devtools::install_github("skranz/RTutor", upgrade_dependencies=FALSE)
 ```
 (You may have to restart your R session / RStudio for the update to work.)
 
+## Installing and Running RTutor with Docker 
+
+If you already use [Docker](https://www.docker.com/), you can also quickly use RTutor with the docker container `skranz/rtutor`. The container allows you to work with RTutor via RStudio server in your webbrowser. It already contains some example problem sets, but you can install other problem sets or create your own problem sets. Details are here:
+
+https://hub.docker.com/r/skranz/rtutor/
+
+Since the image contains R, shiny, rstudio and a lot of packages, it has quite some size, however.
 
 
 ## Create your own problem sets

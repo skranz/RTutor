@@ -51,4 +51,3 @@ run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
 Only works if a package with problem sets is loaded.
 For problem sets stored in a local .rps file, use show.ps() instead
 }
-

@@ -9,4 +9,3 @@ install.header.txt()
 \description{
 Generate default header text for a Rmd file
 }
-
