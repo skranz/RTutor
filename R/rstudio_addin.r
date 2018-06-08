@@ -24,6 +24,63 @@ check.ps.addin = function(...) {
   doc = rstudioapi::getActiveDocumentContext()
   restore.point("check.ps.addin")
   file = basename(doc$path)
+  if (tolower(tools::file_ext(file)) != "rmd") {
+    message("No .Rmd file selected. Select your problem set file in the editor window and try again.")
+    return()
+  }
+  dir = dirname(doc$path)
+  txt = doc$contents
+  
+  cat("\n---------------------------\nSave and check problem set file ", doc$path," ...\n")
+  
+  # Save file
+  suppressWarnings(writeLines(text = txt, doc$path))
+  
+  user.name.line = which(str.starts.with(str.trim(txt),"user.name ="))
+  if (length(user.name.line)==0) {
+    message = paste0("I could not find a line in your first chunk that starts with `user.name = ` to specify your user.name. I set the user.name to UNKNOWN.\n")
+    message(message)
+    user.name = "UNKNOWN"
+  } else {
+    eval(parse(text=txt[user.name.line]))
+  }
+  
+  ps.name = guess.ps.name(txt,dir,file)
+  if (is.na(ps.name)) return()
+
+  err = NULL
+  tryCatch(check.problem.set(ps.name, dir, file, user.name=user.name), error=function(e) {err<<-paste0(as.character(e),collapse="\n")})
+    
+  if (!is.null(err)) {
+    err = gsub("Error in stop.without.error(message): ","",err,fixed=TRUE)
+    message(err)
+  }
+
+}
+
+guess.ps.name = function(txt, dir, file) {
+  restore.point("guess.ps.name")
+  rmd.guess = paste0(tools::file_path_sans_ext(file))
+  if (file.exists(file.path(dir, paste0(rmd.guess,".rps")))) {
+    return(rmd.guess)
+  }
+  
+  line = which(str.starts.with(str.trim(txt),"check.problem.set("))
+  if (length(line)==0) {
+    message("I could not identify a problem set name. Try again to select your .Rmd file and choose Addins->Check Problemset. Also make sure that your directory contains the binary problem set file that has the same name as your .Rmd file but the file type .rps")
+    return(NA)
+  }
+  ps.name = str.remove.ends(str.trim(str.between(txt[line[1]], "(",",")),1,1)
+  return(ps.name)
+}
+
+
+check.ps.addin.old = function(...) {
+  library(rstudioapi)
+  library(RTutor)
+  doc = rstudioapi::getActiveDocumentContext()
+  restore.point("check.ps.addin")
+  file = basename(doc$path)
   dir = dirname(doc$path)
   txt = doc$contents
   

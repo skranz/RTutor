@@ -1,0 +1,62 @@
+# Problemset Example
+
+
+```{r 'check_ps', include=FALSE}
+
+user.name = 'Jane Doe' # set to your user name
+# To check your problem set, save your file (Ctrl-S) and then run the RStudio Addin 'Check Problemset'
+
+# Alternatively run the following lines 
+library(RTutor)
+ps.dir = getwd(); # directory of this file
+ps.file = 'Example.Rmd' # name of this file
+check.problem.set('Example', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+```
+
+
+Example of an RTutor interactive Problemset
+Author:  Sebastian Kranz
+Date:    12.06.2014
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+## Exercise 1 -- Summary statistics
+
+a) First part
+
+Some Math:
+
+$$x = \beta^2$$
+
+info("Some math in an info block") # Run this line (Strg-Enter) to show info
+
+
+We often want to compute some summary statistic of a vector.
+For example:
+
+
+```{r "1_a",fig.height=3}
+x = 10:20
+# Computing the sum of x
+sum(x)
+# Generating a data frame
+df = data.frame(a=c(1,1,2,2,2,3,3,4), b = runif(8), c="Hi")
+df
+```
+
+Now compute the mean of x.
+```{r "1_a_2"}
+mean(x)
+```
+
+
+info("useful functions for numeric vectors") # Run this line (Strg-Enter) to show info
+
+
+
+## Exercise 2 -- Computing with vectors
+a) Let y be a vector that contains the squared elements of x. Show y
+```{r "2_a"}
+y = x^2
+y
+```

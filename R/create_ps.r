@@ -1054,10 +1054,13 @@ ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(
 ",header,"
 user.name = '",user.name,"' # set to your user name
 
-library(RTutor)
-check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+# To check your problem set, save your file (Ctrl-S) and then run the RStudio Addin 'Check Problemset'
 
-# Run the Addin 'Check Problemset' to save and check your solution
+# Alternatively run the following lines 
+library(RTutor)
+ps.dir = getwd() # directory of this file
+ps.file = '", ps.name,".Rmd' # name of this file
+check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
 ```
 ")
   str

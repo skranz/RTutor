@@ -1,0 +1,52 @@
+# Problemset DataFramesExample
+
+
+```{r 'check_ps', include=FALSE}
+
+user.name = 'Jane Doe' # set to your user name
+# To check your problem set, save your file (Ctrl-S) and then run the RStudio Addin 'Check Problemset'
+
+# Alternatively run the following lines 
+library(RTutor)
+ps.dir = getwd(); # directory of this file
+ps.file = 'DataFramesExample.Rmd' # name of this file
+check.problem.set('DataFramesExample', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+```
+
+
+Example of data frame printing in an RTutor Problemset
+
+#### Author:  Sebastian Kranz
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+
+
+
+## Exercise 1 -- Table outputs
+
+The shiny based inteface of RTutor shows data.frames by default as html tables. This example illustrates how, you can adapt the settings of how data.frames are shown.
+
+Use default settings for printing data.frames, that may have been adapted in the call to `show.ps`.
+```{r "1",optional=TRUE}
+T = 40
+data.frame(x=runif(T),y=runif(T)*100000)
+2*2
+```
+
+You can overwrite the default settings for specific chunks, by specifying chunk options.
+```{r "1__2",signif.digits=5, round.digits=3, table.max.rows=30, html.data.frame=FALSE, optional=TRUE}
+T = 40
+data.frame(x=runif(T),y=runif(T)*100000, z=runif(T))
+```
+
+---
+
+## Exercise 2 -- Empty
+
+
+Enter 2*2
+```{r "2___5143129"}
+2*2
+```
+
+That's all folks!
