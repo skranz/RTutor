@@ -25,5 +25,6 @@ Depends:
     knitr,
     jsonlite,
     DT,
-    memoise
+    memoise,
+    yaml
 RoxygenNote: 6.0.1
