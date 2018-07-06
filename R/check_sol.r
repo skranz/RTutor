@@ -170,8 +170,6 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
   if (NROW(ps$edt)==1) {
     # otherwise data.table throws strange error
     ps$edt$ex.final.env[[ex.ind]] = list(copy(ps$stud.env))
-  } else {
-    ps$edt$ex.final.env[[ex.ind]] = copy(ps$stud.env)
   }
   return(TRUE)
 }
@@ -473,6 +471,8 @@ import.var.into.stud.env = function(import.var, dest.env, ps = get.ps()) {
     vars = import.var[[i]]
     ex.ind = which(edt$ex.name==ex.name)
     source.env = edt$ex.final.env[[ex.ind]]
+    if (is.list(source.env)) source.env = source.env[[1]]
+    
     if (is.null(source.env)) {
       #str = paste0("\nYou must first solve and check exercise '", ex.name, " before you can solve this exercise.\n To check exercise ", ex.name, " enter somewhere an irrelevant space in it's code chunks.")
       ps$failure.message = str

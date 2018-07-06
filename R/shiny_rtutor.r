@@ -370,7 +370,7 @@ rerun.solved.chunks = function(ps = get.ps()) {
       break
     if (is.last.chunk.of.ex(chunk.ind)) {
       ex.ind = ps$cdt$ex.ind[chunk.ind]
-      ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
+      ps$edt$ex.final.env[[ex.ind]] = list(copy.stud.env(ps$stud.env))
     }
   }
   # Could not rerun a chunk that was supposed to be solved

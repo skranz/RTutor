@@ -403,8 +403,12 @@ proceed.with.successfuly.checked.chunk = function(chunk.ind, ps=get.ps()) {
   
   if (is.last.chunk.of.ex(chunk.ind)) {
     ex.ind = ps$cdt$ex.ind[chunk.ind]
-    if (!isTRUE(ps$precomp))
-      ps$edt$ex.final.env[[ex.ind]] = copy.stud.env(ps$stud.env)
+    if (!isTRUE(ps$precomp)) {
+        # need to put env into a list,
+        # since otherwise data.table throws strange error
+        ps$edt$ex.final.env[[ex.ind]] = list(copy.stud.env(ps$stud.env))
+    }
+      
   }
   r.chunk.ui.mode = paste0("r.chunk_",chunk.ind,".ui.mode")
   ps$cdt$mode[[chunk.ind]]="output"
