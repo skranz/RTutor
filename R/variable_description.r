@@ -44,7 +44,7 @@ make.var.txt.from.file = function(file,...,cat=TRUE) {
   } else {
     df = read.table(file,...,nrows=1)
   }
-  return(make.var.txt.from.df(df,table.name,cat=cat))
+  return(make.var.txt.from.df(df,cat=cat))
 }
 
 examples.make.var.txt.from.files = function() {
