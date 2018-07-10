@@ -77,6 +77,7 @@ RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE,
   }
 
   app$ui = make.rtutor.page.ui(inner=uiOutput("psMainUI"),ps=ps)
+
   
   #setAppUI(ui, app)
 
@@ -91,6 +92,7 @@ RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE,
     ps$session = session
     ps$input = input
     ps$output = output
+    
     
     # autocomplete in first open chunk
     set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
