@@ -240,7 +240,7 @@ import.from.rmd = function(rmd.file, ps = get.ps()) {
 import.stud.code.from.rmd = function(rmd.file, ps = get.ps()) {
   #rmd.file = "Example_Seb_export.rmd"
   restore.point("import.from.rmd")
-  txt = readLines(rmd.file)
+  txt = readLines(rmd.file, warn=FALSE)
   
   cl = get.chunk.lines(txt)
   rps = ps$rps

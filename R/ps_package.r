@@ -236,7 +236,7 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   }
   descr.txt = paste0("RTutor problem set ", ps.name)
   for (file in dest.files) {
-    txt = readLines(file)
+    txt = readLines(file, warn=FALSE)
     txt = gsub("PACKAGE_NAME",pkg.name,txt, fixed=TRUE)
     txt = gsub("PROBLEM_SET_NAME",ps.name,txt, fixed=TRUE)
     txt = gsub("AUTHOR_NAME",author,txt, fixed=TRUE)

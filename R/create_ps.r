@@ -49,7 +49,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   Addons = make.addons.list(addons)
 
   setwd(dir)
-  txt = readLines(sol.file)
+  txt = readLines(sol.file, warn=FALSE)
   txt =  name.rmd.chunks(txt=txt)
   txt = mark_utf8(txt)
   
@@ -160,7 +160,7 @@ load.rps = function(ps.name=NULL,file = paste0(ps.name,".rps")) {
 
 parse.sol.rmd = function(sol.file=NULL, txt=NULL, te = get.empty.te()) {
   if (is.null(txt))
-    txt = readLines(sol.file)
+    txt = readLines(sol.file, warn=FALSE)
 
   row = 0
   while (row<length(txt)) {
@@ -1107,7 +1107,7 @@ paste0("
 #' @param keep.option if TRUE (default) don't change chunk options;
 #'        otherwise clear all chunk options (dangerous)
 #'
-name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file), only.empty.chunks=FALSE, keep.options=TRUE, valid.file.name = FALSE) {
+name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), only.empty.chunks=FALSE, keep.options=TRUE, valid.file.name = FALSE) {
   restore.point("name.rmd.chunks")
   ex.name = ""
   part.name = ""
@@ -1191,7 +1191,7 @@ get.chunk.lines = function(txt) {
   quick.df(chunk.name=chunk.name, start.line=chunk.start, end.line=chunk.end)
 }
 
-make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file)) {
+make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file, warn=FALSE)) {
   restore.point("make.shiny.dt")
   library(stringtools)
   library(markdown)

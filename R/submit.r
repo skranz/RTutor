@@ -38,7 +38,7 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
   cdt = ps$cdt
   edt = ps$edt
   
-  rmd.code = readLines(ps$stud.file)
+  rmd.code = readLines(ps$stud.file, warn=FALSE)
   ps$stud.code = rmd.code
   cdt$stud.code = get.stud.chunk.code(ps=ps)
   cdt$code.is.task = cdt$stud.code == cdt$task.txt
@@ -116,7 +116,7 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
   
   sub$hash = digest::digest(list(sub$user.name,sub$ps.name,sub$grade.time,sub$total))
   
-  try(sub$log.txt <- readLines(ps$log.file))
+  try(sub$log.txt <- readLines(ps$log.file, warn=FALSE))
   try(sub$log.df <- import.log(txt=sub$log.txt))
   #object.size(sub)
   

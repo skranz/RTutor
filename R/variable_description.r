@@ -126,7 +126,7 @@ examples.translate.var.names.in.code = function() {
 #' Tool to translate automatically variable names in a .r or .rmd file
 #' useful to update 
 translate.var.names.in.code = function(
-    txt=readLines(file), file=NULL, out.file=file, var.file,
+    txt=readLines(file, warn=FALSE), file=NULL, out.file=file, var.file,
     backup.file = paste0("backup__", sample.int(1e8,1),"__",file)
 ) {  
   if (!is.null(backup.file)) {

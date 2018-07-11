@@ -64,7 +64,7 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   cdt = ps$cdt
   edt = ps$edt
 
-  ps$stud.code = readLines(ps$stud.file)
+  ps$stud.code = readLines(ps$stud.file, warn=FALSE)
   cdt$stud.code = get.stud.chunk.code(ps=ps)
   cdt$code.is.task = cdt$stud.code == cdt$task.txt
   cdt$chunk.changed = cdt$stud.code != cdt$old.stud.code

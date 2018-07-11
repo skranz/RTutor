@@ -27,7 +27,7 @@ read.yaml = function(file=NULL, verbose=FALSE, keep.quotes=TRUE, quote.char = "_
     file.str = ""
   }
   if (is.null(text)) {
-    str = suppressWarnings(paste(readLines(file), collapse = "\n"))
+    str = suppressWarnings(paste(readLines(file, warn=FALSE), collapse = "\n"))
   } else {
     str = text
   }
