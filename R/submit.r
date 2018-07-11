@@ -137,3 +137,48 @@ load.submission = function(file) {
   return(sub)
 }
 
+# Can be called from shiny interface
+ups.to.sub.file = function(ups=get.ups(), ps=get.ps(), sub.file=NULL, rmd.code=NULL) {
+  restore.point("ups.to.sub.file")
+  sub = as.list(ups)
+  user.name = sub$user.name
+  rps = ps$rps
+  # Results of chunks
+  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
+  cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
+  
+  #sub$cu = as.data.frame(cu)
+  sub$rmd.code = rmd.code  
+  sub$grade.time = Sys.time()
+  sub$rtutor.version = packageVersion("RTutor")
+  
+  sum.fun = function(df) {
+    summarise(df,
+      ps.name = ps.name,
+      user.name = user.name,
+      points = sum(points),
+      max.points = sum(max.points),
+      share.solved=round( (sum(points)/sum(max.points))*100),
+      num.hints = sum(num.hint),
+      finished.time = max(solved.date),
+      grade.time = sub$grade.time
+    )
+  }
+  sub$total = sum.fun(cu)
+  sub$by.chunk = group_by(cu, chunk.ps.ind) %>% filter(is.true(max.points>0)) %>% sum.fun()
+  sub$by.ex = sum.fun(group_by(cu,ex.ind))
+  
+  
+  sub$hash = digest::digest(list(sub$user.name,sub$ps.name,sub$grade.time,sub$total))
+  
+  try(sub$log.txt <- readLines(ps$log.file, warn=FALSE))
+  try(sub$log.df <- import.log(txt=sub$log.txt))
+  #object.size(sub)
+  
+  if (is.null(sub.file))
+    sub.file = paste0(sub$ps.name,"__",sub$user.name,".sub")
+  sub = as.environment(sub)
+  save(sub,file=sub.file)
+ 
+  invisible(sub)
+}

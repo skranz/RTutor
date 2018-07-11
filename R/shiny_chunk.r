@@ -32,7 +32,7 @@ make.chunk.nali = function(chunk.name, chunk.ind=which(ps$cdt$chunk.name==chunk.
     "runLineKey","runKey","checkKey","hintKey","helpKey",
     "runLineBtn","runBtn","checkBtn","hintBtn","helpBtn","dataBtn",
     "outputBtn", "restoreBtn", "saveBtn",
-    "editBtn","solutionBtn","alertOut",
+    "editBtn","solutionBtn","revertBtn", "alertOut",
     "inputPanel","outputPanel"
   )
   nali = paste0(name,"_",base.names)
@@ -120,6 +120,12 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
   } else {
     solutionBtn  = NULL
   }
+  if (isTRUE(ps$show.revert.btn)) {
+    revertBtn=bsButton(nali$revertBtn, "original code",size="extra-small")
+  } else {
+    revertBtn  = NULL
+  }
+
   if (isTRUE(ps$show.data.exp)) {
     dataBtn = bsButton(nali$dataBtn, "data", size="extra-small")
   } else {
@@ -138,7 +144,8 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
       bsButton(nali$runBtn, "run chunk",size="extra-small"),
       dataBtn,
       saveBtn,
-      solutionBtn
+      solutionBtn,
+      revertBtn
     )
     keys = list(runLineKey="Ctrl-Enter", helpKey="F1", runKey="Ctrl-R|Ctrl-Shift-Enter", hintKey="Ctrl-H", checkKey = "Ctrl-Alt-R|Ctrl-T")
 
@@ -293,6 +300,10 @@ make.chunk.handlers = function(chunk.ind, nali = ps$cdt$nali[[chunk.ind]], ps=ge
   if (isTRUE(ps$show.solution.btn))
     buttonHandler(nali$solutionBtn, solution.shiny.chunk, chunk.ind=chunk.ind)
 
+  if (isTRUE(ps$show.revert.btn))
+    buttonHandler(nali$revertBtn, restore.shiny.chunk, chunk.ind=chunk.ind)
+
+  
   buttonHandler(nali$editBtn, edit.shiny.chunk, chunk.ind=chunk.ind)
 }
 
@@ -484,8 +495,9 @@ restore.shiny.chunk = function(chunk.ind=ps$chunk.ind,...,session=ps$session,ps=
 }
 
 
+# Show sample solution
 solution.shiny.chunk = function(chunk.ind=ps$chunk.ind,...,session=ps$session,ps=get.ps()) {
-  restore.point("restore.shiny.chunk")
+  restore.point("solution.shiny.chunk")
   set.shiny.chunk(chunk.ind)
 
   ps$cdt$stud.code[[chunk.ind]] = ps$cdt$sol.txt[[chunk.ind]]

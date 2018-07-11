@@ -10,8 +10,15 @@ export.ui = function(ps=get.ps()) {
     zip.ui = NULL
   } 
   
+  sub.ui = list(
+    downloadButton("downloadSubBtn","Download Submission File"),
+    helpText("Downloads a binary file with filetype .sub that contains the solution of your problem set. This file will be saved in your download folder. Your course instructor may have provided a website, e.g. on Moodle, where you can upload that submission file for grading."),
+    br()
+  )
+  
   list(
     br(),
+    sub.ui,
     downloadButton("downloadRmdBtn","Download as RMarkdown"),
     helpText("You can download the problem set with your current solution as an RMarkdown text file. Save it in a directory and open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution. (Note: If you directly open the file with RStudio without saving it first, the file is probably stored in a directory to which you have no write access and RStudio gives the error 'Access denied' if you want to knit the file.)"),
     br(),
@@ -31,6 +38,16 @@ make.export.handlers = function(session=ps$session,ps=get.ps(), app=getApp()) {
     },
     contentType = "text/Rmd"
   )
+  
+  setDownloadHandler("downloadSubBtn", 
+    filename = paste0(ps$name,"__",ps$user.name,".sub"),
+    content = function(file) {
+      restore.point("downLoadSubHandler")
+      ups.to.sub.file(sub.file=file)
+    },
+    contentType = "application/octet-stream"
+  )
+
   
   setDownloadHandler("downloadZipBtn", 
       filename <- paste0(ps$name, "_extra_material.zip"),
