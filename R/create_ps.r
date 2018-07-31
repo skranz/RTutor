@@ -455,6 +455,9 @@ parse.exercise.starts = function(row,str,txt, te) {
   ex = get.empty.ex()
   ex$ex.name = te$ex.name
   te$act.ex = ex
+  if (te$ex.name %in% names(te[["ex"]]))
+    stop(paste0("You have two exercises whose name starts with ## Exercise ", te$ex.name,". Please change one name."))
+  
   te$ex[[ex$ex.name]] = ex
 }
 
@@ -664,6 +667,10 @@ add.te.block = function(te) {
   } else if (type %in% names(te$Addons)) {
     args.li = eval(parse(text=paste0("list(",args,")")))
     add.te.addon(te,type=type, args=args.li)
+  } else if (type=="preknit") {
+    add.te.preknit(te)
+#  } else if (type=="precompute") {
+#    add.te.precompute(te)
   } else {
     str = paste0(chunk.str, " there is an unknown block head: ", te$block.head)
     stop(str, call.=FALSE)
@@ -782,14 +789,18 @@ add.te.settings = function(te) {
 }
 
 
-add.te.info = function(te) {
-  restore.point("add.te.info")
+add.te.info = function(te, as.note=TRUE, info.name=NULL) {
   #stop()
   require(knitr)
   require(markdown)
   str = te$block.head
-  info.name = str.between(str, '"','"')
-
+  restore.point("add.te.info")
+  if (is.null(info.name)) {
+    args = parse.block.args(str)
+    info.name = args$name # str.between(str, '"','"')
+    if (!is.null(args[["as.note"]]))
+      as.note = !is.false(args$as.info)
+  }
   txt = te$block.txt
 
   if (is.null(txt)) {
@@ -797,7 +808,11 @@ add.te.info = function(te) {
     warning("You have an empty info block \n:", str)
   }
   #txt = c(paste0("**",info.name,":** "), txt)
-  ktxt = knit(text=txt)
+  if (is.null(te$.precompute.env))
+    te$.precompute.env = new.env(parent=globalenv())
+
+  #ktxt = knit(text=txt, envir=new.env(parent=te$.precompute.env))
+  ktxt = knit(text=txt, envir=te$.precompute.env, quiet=FALSE)
   html= markdownToHTML(text=ktxt, fragment.only=CREATE.PS.ENV$fragment.only)
 
   if (FALSE) {
@@ -805,13 +820,37 @@ add.te.info = function(te) {
     writeLines(html,htmlFile)
     rstudioapi::viewer(htmlFile)
   }
-  info = list(info.name=info.name,type="html", html=html, rmd=txt)
+  info = list(info.name=info.name,type="html", html=html, rmd=txt, as.note=as.note)
+  
   str = paste0('info("', info.name,'") # Run this line (Strg-Enter) to show info')
-  te$task.txt = c(te$task.txt,str)
-  te$sol.txt = c(te$sol.txt, str)
-  te$out.txt = c(te$out.txt,"\n***\n", paste0("### Info: ", info.name),te$block.txt,"\n***\n")
-
+  if (as.note) {
+    te$task.txt = c(te$task.txt,str)
+    te$sol.txt = c(te$sol.txt, str)
+    te$out.txt = c(te$out.txt,"\n***\n", paste0("### Info: ", info.name),te$block.txt,"\n***\n")
+  } else {
+    # Need this task.txt for make.shiny.dt
+    te$task.txt = c(te$task.txt,str)
+    te$sol.txt = c(te$sol.txt, str)
+    te$out.txt = c(te$out.txt,te$block.txt)
+  }
+    
   te$infos[[info.name]] = info
+}
+
+# Some preknitted RMD code
+# only useful for shiny based problem sets
+add.te.preknit = function(te) {
+  restore.point("add.te.preknit")
+  add.te.info(te, as.note = FALSE, info.name=paste0("preknit_",random.string()))
+}
+
+# Run code that will be available in info
+# blocks and preknit blocks
+add.te.precompute = function(te) {
+  restore.point("add.te.precompute")
+  if (is.null(te$.precompute.env))
+    te$.precompute.env = new.env(parent=globalenv())
+  knit(text=te$block.txt,envir = te$.precompute.env,quiet = TRUE)
 }
 
 
@@ -1020,7 +1059,7 @@ get.empty.te = function(Addons=NULL) {
   te$last.e = NULL
   te$counter = 0
 
-  te$markdown.blocks = c("info","award","ignore",names(te$Addons))
+  te$markdown.blocks = c("info","award","ignore",names(te$Addons), "preknit")
   te$code.blocks = c("test","test_arg","test_hint_arg","extra_test","test_calls",
                   "hint","add_to_hint",
                   "task","task_notest","notest",
@@ -1304,13 +1343,17 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file, warn=FALSE)) {
       header = txt[df$start[i]]
       info.name = str.between(header,'"','"')
       #html = withMathJax(HTML(rps$infos[[info.name]]$html))
-      html = HTML(rps$infos[[info.name]]$html)
+      info = rps$infos[[info.name]]
+      html = HTML(info$html)
 
-      collapseId = paste0("collapse_info_",i)
-      collapsePanelId = paste0("collapse_panel_info_",i)
-      dt$html[[i]] = bsCollapse(open = NULL, id = collapseId,
-        bsCollapsePanel(paste0("Info: ",info.name),value=collapsePanelId, html )
-      )
+      if (is.true(info$as.note)) {
+        collapseId = paste0("collapse_info_",i)
+        collapsePanelId = paste0("collapse_panel_info_",i)
+        dt$html[[i]] = bsCollapse(open = NULL, id = collapseId,bsCollapsePanel(paste0("Info: ",info.name),value=collapsePanelId, html))
+      } else {
+        dt$html[[i]] = html
+      } 
+      
     } else if (dt$type[i]=="addon") {
       dt$addon.id[[i]] = str.right.of(txt[df$start[i]],"#! ")
     } else if (dt$type[i]=="continue") {

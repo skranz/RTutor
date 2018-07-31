@@ -18,10 +18,10 @@ export.ui = function(ps=get.ps()) {
   
   list(
     br(),
-    sub.ui,
     downloadButton("downloadRmdBtn","Download as RMarkdown"),
     helpText("You can download the problem set with your current solution as an RMarkdown text file. Save it in a directory and open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution. (Note: If you directly open the file with RStudio without saving it first, the file is probably stored in a directory to which you have no write access and RStudio gives the error 'Access denied' if you want to knit the file.)"),
     br(),
+    sub.ui,
     zip.ui
   )
 }
@@ -65,6 +65,7 @@ shiny.to.rmd.txt = function(ps=get.ps(), user.name=get.user.name()) {
   
   txt = rps$empty.rmd.txt
   cl = rps$empty.rmd.chunk.lines
+  
   rownames(cl) = cl$chunk.name
   chunks = intersect(cdt$chunk.name, cl$chunk.name)
   
@@ -79,6 +80,18 @@ shiny.to.rmd.txt = function(ps=get.ps(), user.name=get.user.name()) {
   addon.lines = which(str.starts.with(txt,"#! addon__"))
   if (length(addon.lines)>0)
     txt[addon.lines] = sapply(txt[addon.lines],make.rmd.addon.txt,ps=ps)
+  
+  # Replace info blocks by their rmd code
+  info.lines = which((str.starts.with(txt,"info(")))
+  for (line in info.lines) {
+    header = txt[line]
+    info.name = str.between(header,'"','"')
+    info = rps$infos[[info.name]]
+    str = paste0(info$rmd, collapse="\n")
+    if (is.true(info$as.note)) 
+      str = paste0("### Info: ", info.name,"\n",str,"\n***\n")
+    txt[line] = str
+  }
   
   if (length(clear.lines)>0)
     txt = txt[-clear.lines]

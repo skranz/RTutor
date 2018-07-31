@@ -202,12 +202,11 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.package.skel")
 
-  
   dest.dir = paste0(pkg.parent.dir,"/", pkg.name)
   skel.dir = paste0(path.package("RTutor", quiet = FALSE),"/ps_pkg_skel")
   
   if (!file.exists(dest.dir))
-    dir.create(dest.dir)
+    dir.create(dest.dir, recursive = TRUE)
   
   # Copy package skeleton
   long.skel.files = list.files(skel.dir,full.names = TRUE)
@@ -216,11 +215,11 @@ rtutor.package.skel = function(sol.file,ps.name,  pkg.name, pkg.parent.dir,autho
   
   rps.dir =paste0(dest.dir,"/inst/ps/",ps.name)
   if (!file.exists(rps.dir))
-    dir.create(rps.dir)
+    dir.create(rps.dir, recursive = TRUE)
   
   mat.dir = paste0(dest.dir,"/inst/ps/",ps.name,"/material")
   if (!file.exists(mat.dir))
-    dir.create(mat.dir)
+    dir.create(mat.dir, recursive = TRUE)
 
   
   # Replace placeholder strings

@@ -1,7 +1,7 @@
 ---
 title: "Developing Interactive R Problem Sets with RTutor"
 author: "Sebastian Kranz, Ulm University"
-date: "Version from 2015-05-26"
+date: "Version from 2018-07-31"
 output:
   pdf_document:
     number_sections: yes
@@ -381,7 +381,8 @@ The variable `import.var` is a list whose element names correspond to the short 
 
 ## Info blocks
 
-Info blocks are declared outside of code chunks and start with `#< info` and end with `#>`. They allow additional information that will be optionally shown as HTML in the RStudio viewer pane if the user wants to see it. They are very helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:
+Info blocks are declared outside of code chunks and start with `#< info` and end with `#>`. 
+They allow additional information that will be optionally shown as HTML in the RStudio viewer pane if the user wants to see it. In the shiny version of the problem set they appear as collapsible notes. They are very helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:
 
 ```
   #< info "useful functions for numeric vectors"
@@ -399,6 +400,18 @@ Info blocks are declared outside of code chunks and start with `#< info` and end
 An info block can contain normal text and also code chunks. When the problem set is created all info blocks will be compiled via the knitr and markdown packages to html text.
 Since info blocks will be complied already when the problem set is created, you cannot used any variables that are declared outside the info block in the info block code chunks. 
 If you want info blocks with code chunks that the user can solve, see the description of `notes` further below.
+
+
+## preknit blocks (just knit as RMarkdown)
+
+preknit blocks are declared outside of code chunks and start with `#< preknit` and end with `#>`.
+
+Any rmd code inside a preknit block will be knitted at compile-time and shown as usual RMarkdown output in the shiny based version of the problem set. This is very similar to the output of an info block, except that it is not put into a collapsible not.
+
+Note that code that was evaluated in an earlier info or preknit block will be available at compile time at later info or preknit blocks, no matter which exercise the blocks are in. If you want just to do some preliminary computations for later info or preknit blocks without showing any output, add a chunk with the chunk option `include=FALSE` in a preknit block.
+
+preknit blocks typically only make sense, if you use the shiny version of a problem set.
+
 
 ## Giving awards
 
