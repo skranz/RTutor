@@ -53,7 +53,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   txt =  name.rmd.chunks(txt=txt)
   txt = mark_utf8(txt)
   
-  te = get.empty.te(Addons=Addons)
+  te = get.empty.te(Addons=Addons, extra.code.file=extra.code.file)
   te = parse.sol.rmd(txt=txt, te=te)
 
   te$knit.print.params = nlist(html.data.frame,table.max.rows, round.digits, signif.digits) 
@@ -93,7 +93,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     rps$cdt$task.html = create.cdt.task.html(rps$cdt)
   }
 
-  source.rps.extra.code(extra.code.file, rps)
+  rps$extra.code.file = extra.code.file
+  rps$extra.code.env = te$extra.code.env
   if (!is.null(var.txt.file)) {
     rps$var.dt = read.var.txt(var.txt.file)
   } else {
@@ -128,15 +129,15 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   }
 }
 
-source.rps.extra.code = function(extra.code.file, rps) {
+source.te.extra.code = function(extra.code.file, te) {
   restore.point("source.rps.extra.code")
   # Source extra.code
-  rps$extra.code.file = extra.code.file
+  te$extra.code.file = extra.code.file
   if (!is.null(extra.code.file)) {
-    rps$extra.code.env = new.env()
-    source(extra.code.file, local = rps$extra.code.env)
+    te$extra.code.env = new.env()
+    source(extra.code.file, local = te$extra.code.env)
   } else {
-    rps$extra.code.env = NULL
+    te$extra.code.env = NULL
   }
 }
 
@@ -808,8 +809,15 @@ add.te.info = function(te, as.note=TRUE, info.name=NULL) {
     warning("You have an empty info block \n:", str)
   }
   #txt = c(paste0("**",info.name,":** "), txt)
-  if (is.null(te$.precompute.env))
-    te$.precompute.env = new.env(parent=globalenv())
+  if (is.null(te$.precompute.env)) {
+    if (is.null(te$extra.code.env)) {
+      te$.precompute.env = new.env(parent=globalenv())
+    } else {
+      penv = as.environment(as.list(te$extra.code.env))
+      parent.env(penv) = globalenv()
+      te$.precompute.env = new.env(parent=penv)
+    }
+  }
 
   #ktxt = knit(text=txt, envir=new.env(parent=te$.precompute.env))
   ktxt = knit(text=txt, envir=te$.precompute.env, quiet=FALSE)
@@ -1042,7 +1050,7 @@ get.empty.chunk = function() {
   ck
 }
 
-get.empty.te = function(Addons=NULL) {
+get.empty.te = function(Addons=NULL, extra.code.file=NULL) {
   te = new.env()
   te$Addons = Addons
   te$block.type = ""
@@ -1073,6 +1081,8 @@ get.empty.te = function(Addons=NULL) {
   te$items = vector("list",1000)
   te$num.items = 0
 
+  source.te.extra.code(extra.code.file, te)
+  
   te
 }
 
