@@ -167,10 +167,10 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
       return(FALSE)
     }
   }
-  if (NROW(ps$edt)==1) {
+  #if (NROW(ps$edt)==1) {
     # otherwise data.table throws strange error
     ps$edt$ex.final.env[[ex.ind]] = list(copy(ps$stud.env))
-  }
+  #}
   return(TRUE)
 }
 
