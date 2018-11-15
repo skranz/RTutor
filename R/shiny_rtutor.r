@@ -76,12 +76,18 @@ show.ps = function(ps.name, user.name="default_user", sav.file=NULL, load.sav = 
   ps$right.margin = right.margin
 
   # Replace knit.print.funs in globalenv
-  knit.print.funs = make.knit.print.funs(knit.print.opts)
-  old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+#  knit.print.funs = make.knit.print.funs(knit.print.opts)
+#  old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+  
+  # Need to call register 
+  
   # restore old functions on exit
-  if (!make.web.app)
-    on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
+#  if (!make.web.app)
+#    on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
 
+  # We need now to explicitly call registerS3method
+  register.knit.print.functions(knit.print.opts)
+  
   restore.point("show.shiny.ps")
 
   n = NROW(ps$cdt)

@@ -56,9 +56,13 @@ RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE,
   ps$right.margin = right.margin
 
   # Replace knit.print.funs in globalenv
-  knit.print.funs = make.knit.print.funs(knit.print.opts)
-  old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+  #knit.print.funs = make.knit.print.funs(knit.print.opts)
+  #old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+  
+  # We need now to explicitly call registerS3method
+  register.knit.print.functions(knit.print.opts)
 
+  
   restore.point("RTutorPSApp")
 
   n = NROW(ps$cdt)

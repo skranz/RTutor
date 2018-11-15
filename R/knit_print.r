@@ -1,10 +1,24 @@
-set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, env=.GlobalEnv,...) {
+
+# We need now to explicitly call registerS3method
+# see https://github.com/yihui/knitr/issues/1580
+register.knit.print.functions = function(knit.print.opts) {
+  for (opt in knit.print.opts) {
+    for (class in opt$classes) {
+      registerS3method("knit_print", class, opt$fun)
+    }
+  }
+}
+
+
+set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, env=.GlobalEnv, opts=NULL,...) {
   restore.point("set.knit.print.opts")
   #cat(output)
-  if (is(output,"try-error")) output="html"
-  if (is.null(output)) output = "html"
-  opts = make.knit.print.opts(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips = FALSE, output=output)
- 
+  if (is.null(opts)) {
+    if (is(output,"try-error")) output="html"
+    if (is.null(output)) output = "html"
+    opts = make.knit.print.opts(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips = FALSE, output=output)
+  }
+  
   for (opt in opts) {
     fun.names = paste0("knit_print.",opt$classes)
     if (!is.null(opt$fun)) {

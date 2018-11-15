@@ -18,11 +18,15 @@ preknit.rps = function(rps=load.rps(file=file),precomp=TRUE,file=paste0(ps.name,
   
 
   # Replace knit.print.funs in globalenv
-  knit.print.funs = make.knit.print.funs(knit.print.opts)
-  old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
+  #knit.print.funs = make.knit.print.funs(knit.print.opts)
+  #old.knit.print.funs = replace.fields(dest=globalenv(), source=knit.print.funs)
   # restore old functions on exit
-  on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
+  #on.exit(replace.fields(dest=globalenv(), source=old.knit.print.funs), add=TRUE)
+  
+  # We need now to explicitly call registerS3method
+  register.knit.print.functions(knit.print.opts)
 
+  
 
   # Modifiy the cdt file
   cdt = rps$cdt
