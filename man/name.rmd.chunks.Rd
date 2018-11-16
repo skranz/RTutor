@@ -4,7 +4,7 @@
 \alias{name.rmd.chunks}
 \title{Set default names for the chunks of problem set rmd files}
 \usage{
-name.rmd.chunks(rmd.file = NULL, txt = readLines(rmd.file),
+name.rmd.chunks(rmd.file = NULL, txt = readLines(rmd.file, warn = FALSE),
   only.empty.chunks = FALSE, keep.options = TRUE, valid.file.name = FALSE)
 }
 \arguments{

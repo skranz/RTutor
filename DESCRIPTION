@@ -1,7 +1,7 @@
 Package: RTutor
 Type: Package
 Title: R problem sets with automatic test of solution and hints
-Version: 2018.06.08
+Version: 2018.11.16
 Date: 2018-06-08
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>

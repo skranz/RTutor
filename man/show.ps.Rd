@@ -11,8 +11,8 @@ show.ps(ps.name, user.name = "default_user", sav.file = NULL,
   catch.errors = TRUE, dir = getwd(), rps.dir = dir,
   offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
   is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
-  save.nothing = FALSE, show.solution.btn = TRUE, show.data.exp = TRUE,
-  disable.graphics.dev = TRUE, clear.user = FALSE,
+  save.nothing = FALSE, show.revert.btn = TRUE, show.solution.btn = NA,
+  show.data.exp = TRUE, disable.graphics.dev = TRUE, clear.user = FALSE,
   check.whitelist = !is.null(wl), wl = NULL, verbose = FALSE,
   html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
   signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
@@ -21,7 +21,8 @@ show.ps(ps.name, user.name = "default_user", sav.file = NULL,
   print.data.frame.fun, print.matrix.fun = print.matrix.fun),
   print.data.frame.fun = NULL, print.matrix.fun = NULL, precomp = FALSE,
   noeval = FALSE, need.login = FALSE, login.dir = paste0(dir, "/login"),
-  show.points = TRUE, auto.save.code = FALSE, ...)
+  show.points = TRUE, auto.save.code = FALSE,
+  stop.app.if.window.closes = !make.session.ps, ...)
 }
 \arguments{
 \item{load.sav}{shall the last saved be loaded?}

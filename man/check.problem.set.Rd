@@ -6,7 +6,8 @@
 \usage{
 check.problem.set(ps.name, stud.path, stud.short.file, reset = FALSE,
   set.warning.1 = TRUE, user.name = "GUEST", do.check = interactive(),
-  verbose = FALSE, catch.errors = TRUE, from.knitr = !interactive(),
+  verbose = FALSE, catch.errors = TRUE,
+  from.knitr = isTRUE(getOption("knitr.in.progress")) | !interactive(),
   use.null.device = TRUE, just.init = FALSE)
 }
 \description{
