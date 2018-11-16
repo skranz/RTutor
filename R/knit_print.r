@@ -3,33 +3,35 @@
 # see https://github.com/yihui/knitr/issues/1580
 register.knit.print.functions = function(knit.print.opts) {
   for (opt in knit.print.opts) {
-    for (class in opt$classes) {
-      registerS3method("knit_print", class, opt$fun)
+    if (!is.null(opt$fun)) {
+      for (class in opt$classes) {
+        registerS3method("knit_print", class, opt$fun)
+      }
     }
   }
 }
 
 
-set.knit.print.opts = function(output=try(knitr:::pandoc_to()), html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, env=.GlobalEnv, opts=NULL,...) {
+set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, env=.GlobalEnv, opts=NULL, data.frame.theme = c("code","html","kable")[1+html.data.frame],...) {
   restore.point("set.knit.print.opts")
   #cat(output)
   if (is.null(opts)) {
-    if (is(output,"try-error")) output="html"
-    if (is.null(output)) output = "html"
-    opts = make.knit.print.opts(html.data.frame,table.max.rows, round.digits, signif.digits, show.col.tooltips = FALSE, output=output)
+    #if (is(output,"try-error")) output="html"
+    #if (is.null(output)) output = "html"
+    opts = make.knit.print.opts(data.frame.theme=data.frame.theme, ,table.max.rows=table.max.rows, table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips = FALSE, print.data.frame.fun = print.data.frame.fun, print.matrix.fun=print.matrix.fun)
   }
-  
-  for (opt in opts) {
-    fun.names = paste0("knit_print.",opt$classes)
-    if (!is.null(opt$fun)) {
-      for (fun.name in fun.names)
-        env[[fun.name]] = opt$fun
-    }
-  }
+  register.knit.print.functions(opts)  
+#  for (opt in opts) {
+#    fun.names = paste0("knit_print.",opt$classes)
+#    if (!is.null(opt$fun)) {
+#      for (fun.name in fun.names)
+#        env[[fun.name]] = opt$fun
+#    }
+#  }
 
 }
 
-make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, show.col.tooltips = TRUE,output="html", print.data.frame.fun = NULL, print.matrix.fun=NULL) {
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, data.frame.theme = c("code","html","kable")[1+html.data.frame]) {
   opts = list()
   restore.point("make.knit.print.opts")
   
@@ -40,14 +42,14 @@ make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, round.di
       fun= print.data.frame.fun,
       classes=c("data.frame")
     )
-  } else if (html.data.frame) {
+  } else {
     opts[["data.frame"]] = list(
       fun= function(x, options=NULL, ...) {
         restore.point("ndnfhdubfdbfbfbh")
         
-        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options,output=output,...)  
+        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows,table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options, data.frame.theme=data.frame.theme,...)  
       },
-      classes=c("data.frame")
+      classes=c("data.frame","tbl","tbl_df","grouped_df")
     )
   } 
   if (!is.null(print.matrix.fun)) {
@@ -109,7 +111,7 @@ rtutor.knit_print.htmlwidget = function(x,...) {
 
   ui = add.htmlwidget.as.shiny(x, outputId = outputId)
   ui = add.htmlwidget.as.shiny(x)
-  restore.point("ndjndhvbrubr")
+  #restore.point("ndjndhvbrubr")
   
   # knitr shall output ui
   knit_print.shiny.tag.list(ui)
@@ -132,17 +134,17 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
         meta = meta)
 }
 
-rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, signif.digits=8, html.data.frame=TRUE, show.col.tooltips=TRUE, col.tooltips=NULL, output="html", options=NULL, ...) {
+rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, data.frame.theme=c("code","html","kable")[1], show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL, ...) {
   restore.point("rtutor.knit_print.data.frame")
   
   if (is.matrix(x))
     x = as.data.frame(x)
   
   # chunk options have precedent over passed arguments
-  copy.non.null.fields(dest=environment(), source=options, fields=c("table.max.rows","round.digits","signif.digits","html.data.frame","show.col.tooltips"))
+  copy.non.null.fields(dest=environment(), source=options, fields=c("table.max.rows","table.max.cols", "round.digits","signif.digits","data.frame.theme","show.col.tooltips"))
   
   #col.tooltips = NULL
-  if (show.col.tooltips & is.null(col.tooltips)) {
+  if (show.col.tooltips & is.null(col.tooltips) & data.frame.theme=="html") {
     var.dt = get.ps()$rps$var.dt
     if (!is.null(var.dt)) {
       vars = colnames(x)
@@ -154,40 +156,55 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, round.digits=8, si
     }
   }
   
-  
-  MAX.ROW = table.max.rows
-  if (NROW(x)>MAX.ROW) {
-    rows = 1:MAX.ROW
-    
-    if (html.data.frame) {
-      missing.txt = paste0("... only ", MAX.ROW ," of ", NROW(x), " rows  shown  ...")
-      if (output=="html") {
-        h1 = RTutor:::html.table(x[rows,],round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
-        html = c(h1, as.character(p(missing.txt)))
-      } else {
-        dat = pretty.df(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
-        html = paste0(c(kable(dat),missing.txt),collapse="\n")
+  adapt.data = FALSE
+  missing.txt = NULL
+  if (!is.null(table.max.rows)) {
+    if (NROW(x)>table.max.rows) {
+      adapt.data = TRUE
+      missing.txt = paste0("... only ", table.max.rows, " of ", NROW(x), " rows")
+    }
+  }
+  if (!is.null(table.max.cols)) {
+    if (NCOL(x)>table.max.cols) {
+      adapt.data = TRUE
+      if (is.null(missing.txt)) {
+        missing.txt = paste0("... only ", table.max.cols, " of ", NROW(x), " columns")
       }
+      missing.txt = paste0(missing.txt, " and ", table.max.cols, " of ", NCOL(x), " columns")
+    }
+  }
+  if (adapt.data) {
+    missing.txt = paste0(missing.txt, " shown ...")
+    x = max.size.df(x,table.max.rows, table.max.cols)
+    if (data.frame.theme=="html") {
+      h1 = RTutor:::html.table(x,round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
+      html = c(h1, as.character(p(missing.txt)))
+      return(asis_output(html))
+    } else if (data.frame.theme=="kable") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      txt = c(knit_print(kable(dat)),"",missing.txt,"")
+      return(asis_output(txt))
     } else {
-      dat = pretty.df(x[rows,],signif.digits = signif.digits, round.digits = round.digits) 
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = capture.output(print(dat))
-      txt = c(paste0(txt,collapse="\n"),paste0("... only ", MAX.ROW ," of ", NROW(x), " rows shown ..."))
-      
+      txt = c(paste0(txt,collapse="\n"),missing.txt)
       return(txt)
     }
-
   } else {
-    if (html.data.frame) {
+    if (data.frame.theme=="html") {
       html = RTutor:::html.table(x,round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips, ...)
+      return(asis_output(html))
+    } else if (data.frame.theme == "kable") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      txt = c(knit_print(kable(dat)),"","")
+      return(asis_output(txt))
     } else {
-      restore.point("ndjhdbfdub")
-      
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = paste0(capture.output(print(dat)), collapse="\n")
       return(txt)
     }
   }
-  asis_output(html)
+
 }
 
 format.vals = function(vals, signif.digits=NULL, round.digits=NULL) {
@@ -205,6 +222,22 @@ format.vals = function(vals, signif.digits=NULL, round.digits=NULL) {
   vals
 }
 
-pretty.df = function(x, signif.digits=NULL, round.digits=NULL) {
+max.size.df = function(x, max.rows=NULL, max.cols=NULL) {
+  if (!is.null(max.rows)) {
+    if (NROW(x)>max.rows) {
+      x = x[1:max.rows,]
+    }
+  }
+  if (!is.null(max.cols)) {
+    if (NCOL(x)>max.cols) {
+      x = x[,1:max.cols]
+    }
+  }
+  x  
+}
+
+pretty.df = function(x, signif.digits=NULL, round.digits=NULL, max.rows=NULL, max.cols=NULL) {
+  if (!is.null(max.rows) | ! is.null(max.cols))
+    x = max.size.df(x, max.rows, max.cols)
   as.data.frame(lapply(x, format.vals, signif.digits=signif.digits, round.digits=round.digits))
 }

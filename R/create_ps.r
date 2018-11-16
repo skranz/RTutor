@@ -201,8 +201,13 @@ output:
 ',libs,'
 ',source.txt,'
 
-# options for rendering data frames
-RTutor::set.knit.print.opts(html.data.frame=FALSE, table.max.rows=25, round.digits=8, signif.digits=8)
+# Options for rendering data frames
+# You can also set the options like
+# table.max.cols as chunk option
+# Also try data.frame.theme="kable"
+
+RTutor::set.knit.print.opts(data.frame.theme="code", table.max.rows=25, table.max.cols=NULL, round.digits=5, signif.digits=8)
+
 
 # continue knitting even if there is an error
 knitr::opts_chunk$set(error = TRUE) 
