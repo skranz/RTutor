@@ -12,6 +12,15 @@ You can try out the Rmarkdown version of RTutor via RStudio Cloud:
 
 For the web-based interface, several students at Ulm University have created very nice problem sets that allow to interactively replicate the main insights of interesting economic articles and to learn a bit about R and econometrics. Before developing your own problem sets, you may want to try out some of these examples:
 
+### The Effect of Water Pollution on Cancer (by Brigitte Peter)
+  - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
+  - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
+
+### Comparing the Environmental Damages of Driving Electric or Gasoline Cars (by Felix Stickel)
+  - Github: https://github.com/felsti/RTutorECars
+  - shinyapps.io: https://felsti.shinyapps.io/RTutorECars
+  - rstudio.cloud: https://rstudio.cloud/project/139129
+
 ### Public Procurement Auctions: Design, Outcomes and Adaption Costs (by Frederik Collin)
   - Github: https://github.com/Fcolli/RTutorProcurementAuction
   - shinyapps.io: https://fcolli.shinyapps.io/RTutorProcurementAuction
@@ -20,17 +29,18 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/KathKaufmann/RTutorEcologicalFootprintOfPovertyAlleviation
   - shinyapps.io: https://kathkaufmann.shinyapps.io/RTutorEcologicalFootprintOfPovertyAlleviation/
 
-### The Effect of Water Pollution on Cancer (by Brigitte Peter)
-  - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
-  - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
+### How soap operas reduced fertility in Brazil (by Clara Ulmer)
+  - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
+  - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
+
+### Excessive Traffic Jams? Improving Incentive Contracts for Road Construction Projects (by Claudius Schmid)
+  - Github: https://github.com/ClaMaSch/RTutorIncentiveContracts
+  - shinyapps.io: https://clamasch.shinyapps.io/RTutorIncentiveContracts
+  - rstudio cloud: https://rstudio.cloud/project/137023
 
 ### Assessing Free Trade Agreements (by Tobias Fischer)
   - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
   - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
-
-### How soap operas reduced fertility in Brazil (by Clara Ulmer)
-  - Github: https://github.com/ClaraUlmer/RTutorSoapOperas
-  - shinyapps.io: https://claraulmer.shinyapps.io/RTutorSoapOperas
 
 ### CO2 Trading and Risk of Firm Relocation (by Benjamin Lux)
   - Github: https://github.com/b-lux/RTutorCarbonLeakage
