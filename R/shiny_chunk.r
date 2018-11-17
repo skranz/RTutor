@@ -320,14 +320,16 @@ run.shiny.chunk = function(chunk.ind,...,session=ps$session, ps=get.ps()) {
   }
 }
 
-run.line.shiny.chunk = function(chunk.ind, cursor=NULL, selection=NULL,...,session=ps$session,ps=get.ps()) {
-  set.shiny.chunk(chunk.ind, cursor=cursor, selection=selection)
+run.line.shiny.chunk = function(chunk.ind, range=NULL, selection=NULL,...,session=ps$session,ps=get.ps()) {
+  set.shiny.chunk(chunk.ind, cursor=range$start, selection=selection)
   envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
   restore.point("run.line.shiny.chunk")
 
   if (ps$selection == "") {
     txt = sep.lines(ps$code)
-    txt = txt[ps$cursor$row+1]
+    if (length(ps$cursor)>0) {
+      txt = txt[ps$cursor$row+1]
+    }
   } else {
     txt = ps$selection
   }
@@ -456,15 +458,17 @@ hint.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
   updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
 }
 
-help.shiny.chunk = function(chunk.ind, cursor=NULL, selection="",...,session=ps$session, ps=get.ps()) {
-  set.shiny.chunk(chunk.ind, cursor=cursor, selection=selection)
+help.shiny.chunk = function(chunk.ind, range=NULL, selection="",...,session=ps$session, ps=get.ps()) {
+  set.shiny.chunk(chunk.ind, cursor=range$start, selection=selection)
   envir=ps$stud.env; in.R.console=is.null(ps$nali$console)
   restore.point("help.shiny.chunk")
 
   if (ps$selection == "") {
     txt = sep.lines(ps$code)
-    txt = txt[ps$cursor$row+1]
-    txt = word.at.pos(txt, pos=ps$cursor$column+1)
+    if (length(ps$cursor)>0) {
+      txt = txt[ps$cursor$row+1]
+      txt = word.at.pos(txt, pos=ps$cursor$column+1)
+    }
   } else {
     txt = ps$selection
   }
