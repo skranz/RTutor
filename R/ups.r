@@ -58,7 +58,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
     chunk.ind = NULL
   }
   awards = list()
-  ups = as.environment(list(ps.name=ps$name, user.name=user.name, chunk.ind = chunk.ind, cu=cu, aou=aou, awards = awards))
+  ups = as.environment(list(ps.name=ps$name, user.name=user.name, chunk.ind = chunk.ind, cu=cu, aou=aou, awards = awards, cdt.hash=ps$rps$cdt.hash))
 
   save.ups(ups=ups,ps=ps)
   ups

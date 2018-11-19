@@ -29,22 +29,26 @@ examples.show.shiny.ps = function() {
 
 
 
-#' Run a problem set in the webbroser (or in the viewer pane).
+#' Run a shiny based problem set in the browser
 #'
-#' ... contains parameters specified in init.shiny.ps. They are explained here.
-#'
-#' @param load.sav shall the last saved be loaded?
-#' @param sample.solution shall the sample solution be shown
-#' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)
-#' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
+#' Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below.
+#' 
+#' @param ps.name Name of the problem set
+#' @param user.name A user name. Should be a valid variable name
+#' @param auto.save.code If TRUE all entered code will be automatically saved for the user. If FALSE (default) no entered code is saved. The user statistics (how many chunks are solved) are still saved, however.
+#' @param run.solved If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE. 
+#' @param clear.user If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.
+#' @param sample.solution If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.
+#' @param show.solution.btn If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.
 #' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
 #' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
-#' @param is.solved DEPRECEATED
 #' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
 #' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
 #' @param round.digits the number of digits that printed data.frames shall be rounded to
-show.ps = function(ps.name, user.name="default_user", sav.file=NULL, load.sav = !is.null(sav.file), sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), launch.browser=TRUE, catch.errors = TRUE, dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.revert.btn=FALSE, show.solution.btn = NA, show.data.exp=TRUE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits,print.data.frame.fun=print.data.frame.fun,print.matrix.fun=print.matrix.fun), print.data.frame.fun = NULL, print.matrix.fun=NULL, precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), show.points=TRUE, auto.save.code = FALSE, stop.app.if.window.closes=!make.session.ps,  ...) {
+#' @param dir your working directory for the problem set, by default getwd()
+#' @param rps.dir directory of rps.files by default equal to dir
+show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,clear.user=FALSE,run.solved=FALSE,sample.solution=FALSE,launch.browser=TRUE, catch.errors = TRUE,  dir=getwd(), rps.dir=dir, offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, is.solved, make.web.app=FALSE, make.session.ps=make.web.app, save.nothing=FALSE, show.revert.btn=FALSE, show.solution.btn = NA, show.data.exp=TRUE, disable.graphics.dev=TRUE,  check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits,print.data.frame.fun=print.data.frame.fun,print.matrix.fun=print.matrix.fun), print.data.frame.fun = NULL, print.matrix.fun=NULL, precomp=FALSE, noeval=FALSE, need.login=FALSE, login.dir = paste0(dir,"/login"), show.points=TRUE,  stop.app.if.window.closes=!make.session.ps,sav.file=paste0(user.name, "_", ps.name,".sav"), load.sav = FALSE,  show.save.btn=FALSE,   import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"),  ...) {
 
   cat("\nInitialize problem set, this may take a while...")
   app = eventsApp(verbose = verbose)
@@ -61,6 +65,7 @@ show.ps = function(ps.name, user.name="default_user", sav.file=NULL, load.sav = 
     show.solution.btn = show.solution.btn,
     show.revert.btn = show.revert.btn,
     show.data.exp=show.data.exp,
+    show.save.btn = show.save.btn,
     clear.user=clear.user,
     check.whitelist=check.whitelist, wl=wl,
     precomp=precomp, noeval=noeval, auto.save.code=auto.save.code, ...
@@ -170,10 +175,22 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
 
   ps$run.solved = run.solved
   
+  ps$sav.file = sav.file
+  if (load.sav & !clear.user) {
+    ups = load.sav(sav.file, ps=ps)
+    if (!is.null(ups))
+      ps$ups = ups
+  }
+  if (!is.null(ps$rps$cdt.hash) & !is.null(ps$ups$cdt.hash)) {
+    if (ps$rps$cdt.hash != ps$ups$cdt.hash) {
+      cat("\nClear user data since problem set structure has changed...\n")
+      clear.user = TRUE
+    }
+  }
   if (clear.user) {
     ps$ups = init.ups(user.name = user.name, ps=ps)
   }
-
+  
   ps$show.load.save.panel=show.load.save.panel
   ps$show.export.panel=show.export.panel
   ps$show.save.btn = show.save.btn
@@ -217,6 +234,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
     warning("I cannot show the sample solution, since the sample solution was not made available for the problem set.")
     sample.solution = FALSE
   }
+  ps$show.sample.solution = sample.solution
 
   # init addons for shiny
   for (ao in ps$rps$addons) {
@@ -394,6 +412,52 @@ rerun.solved.chunks = function(ps = get.ps()) {
     inds = which((1:NROW(ps$cdt$is.solved))>=chunk.ind)
     ps$cdt$is.solved[inds] = FALSE
   }
+}
+
+# Run all required previous shiny chunks
+# needed to edit the current chunk
+run.required.previous.shiny.chunks = function(ps = get.ps(),chunk.ind, update.chunk.ui=TRUE, use.sample.solution=isTRUE(ps$show.sample.solution)) {
+  restore.point("run.previous.shiny.chunks")
+
+  cdt = ps$cdt
+  ck = cdt[chunk.ind,]
+  nali = cdt$nali[[chunk.ind]]
+
+  # Do we import from previous exercises?
+  import.ex = names(ps$edt$import.var[[ck$ex.ind]])
+  if (length(import.ex)>0) {
+    edt = ps$edt
+    ex.inds = unique(c(edt$ex.ind[match(ex.names,edt$ex.name)],ck$ex.ind))
+  } else {
+    ex.inds = ck$ex.ind
+  }
+
+  prev.chunk.inds = which(cdt$ex.ind %in% ck$ex.ind & cdt$chunk.ps.ind < (ck$chunk.ps.ind) & cdt$optional == FALSE & !cdt$is.solved)
+
+  if (length(prev.chunk.inds)==0) {
+    return(list(ok=TRUE))
+  }
+  ok = TRUE
+
+  org.mode = ps$cdt$mode
+  org.code = ps$cdt$stud.code
+  for (prev.chunk.ind in prev.chunk.inds) {
+    if (org.mode[prev.chunk.ind] != "input") {
+      ok = check.shiny.chunk(chunk.ind = prev.chunk.ind, input.code=org.code[prev.chunk.ind])
+    } else {
+      ok = check.shiny.chunk(chunk.ind = prev.chunk.ind)
+    }
+    if (!ok) break
+  }
+  
+  if (!ok) {
+    res = list(ok=FALSE,failed.chunk=prev.chunk.ind)
+    #ps$cdt$mode[prev.chunk.ind]=="input"
+    #set.
+  } else {
+    res = list(ok=TRUE,failed.chunk=NULL)
+  }
+  return(res)
 }
 
 

@@ -113,40 +113,27 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 
 #' Run a problem set from a package in the browser
 #' 
-#' Only works if a package with problem sets is loaded.
+#' Only works if a package for the problem set is loaded.
 #' For problem sets stored in a local .rps file, use show.ps() instead
 #' 
-#' 
 #' @param user.name Your user name
-#' @param ps.name Name of the problem set. By default the first problem set name of your manually loaded RTutor problem set package.
+#' @param ps.name Name of the problem set. By default the first problem set name of the loaded RTutor problem set package.
+#' @param package name of the package that contains your problem set. Is automatically chosen a (single) package with an RTutor problem set is loaded.
+#' @param auto.save.code If TRUE all entered code will be automatically saved for the user. If FALSE (default) no entered code is saved. The user statistics (how many chunks are solved) are still saved, however.
+#' @param run.solved If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE. 
+#' @param clear.user If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.
+#' @param sample.solution If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.
+#' @param show.solution.btn If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.
+#' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param dir your working directory for the problem set
-#' @param package name of the package that contains your problem set
-#' @param load.sav Default=TRUE Shall a previously saved solution be loaded?
-#' @param sav.file Optional an alternative name for the saved solution
-#' @param sample.solution shall the sample solution be shown?
-#' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (By default FALSE, since starting the problem set then may take quite a while)
-#' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
-#' @param rmd.file name of the .rmd file that shall be imported if import.rmd=TRUE
-#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
-#' @param left.margin number of colums for left margin in browser window (total columns=12) 
-#' @param right.margin number of colums for right margin in browser window (total columns=12)
 #' @param pkg.dir the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package
 #' @param rps.dir directory of rps.files. Will be set to default for current package
 #' @param material.dir directory of additional problem set files. Will be set to default for current package
+#' @param ... additional arguments of show.ps
 #' 
 #' 
 run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(), package=NULL,
-    load.sav = TRUE, sav.file=paste0(user.name, "_", ps.name,".sav"),
-    sample.solution=FALSE, run.solved=FALSE, import.rmd=FALSE, 
-    rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"),
-    offline=!can.connect.to.MathJax(), 
-    left.margin=2, right.margin=2, 
-    info=get.package.info(package),  
-    deploy.local=!make.web.app, make.web.app=FALSE, save.nothing=make.web.app,
-    pkg.dir = path.package(info$package),
-    rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
-    material.dir = find.pkg.material.dir(ps.name, pkg.dir),    
-    ...) {
+ auto.save.code = FALSE,clear.user=FALSE,run.solved=FALSE,sample.solution=FALSE,show.solution.btn=NA,launch.browser=TRUE,info=get.package.info(package),deploy.local = !make.web.app, make.web.app=FALSE, pkg.dir = path.package(info$package),rps.dir = find.pkg.rps.dir(ps.name, pkg.dir), material.dir = find.pkg.material.dir(ps.name, pkg.dir), ...) {
   
   #browser()
   restore.point("run.ps")
@@ -158,8 +145,9 @@ run.ps = function(user.name, ps.name=info$ps[1],dir=getwd(), package=NULL,
       return()
     }
   }
-  show.ps(user.name=user.name, ps.name=ps.name, dir=dir, rps.dir=rps.dir,
-    sav.file=sav.file,load.sav = load.sav, sample.solution=sample.solution, run.solved=run.solved, import.rmd=import.rmd, rmd.file = rmd.file, offline=offline, left.margin=2, right.margin=2,make.web.app=make.web.app, save.nothing=save.nothing,...)
+  show.ps(user.name=user.name, ps.name=ps.name,
+    auto.save.code = auto.save.code,clear.user=clear.user,run.solved=run.solved,sample.solution=sample.solution,show.solution.btn=show.solution.btn,launch.browser=launch.browser,
+    dir=dir, rps.dir=rps.dir, ...)
 }
 
 examples.rtutor.package.skel = function() {

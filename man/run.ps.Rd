@@ -5,49 +5,42 @@
 \title{Run a problem set from a package in the browser}
 \usage{
 run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
-  load.sav = TRUE, sav.file = paste0(user.name, "_", ps.name, ".sav"),
-  sample.solution = FALSE, run.solved = FALSE, import.rmd = FALSE,
-  rmd.file = paste0(ps.name, "_", user.name, "_export.rmd"),
-  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
-  info = get.package.info(package), deploy.local = !make.web.app,
-  make.web.app = FALSE, save.nothing = make.web.app,
-  pkg.dir = path.package(info$package), rps.dir = find.pkg.rps.dir(ps.name,
-  pkg.dir), material.dir = find.pkg.material.dir(ps.name, pkg.dir), ...)
+  auto.save.code = FALSE, clear.user = FALSE, run.solved = FALSE,
+  sample.solution = FALSE, show.solution.btn = NA, launch.browser = TRUE,
+  info = get.package.info(package), pkg.dir = path.package(info$package),
+  rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
+  material.dir = find.pkg.material.dir(ps.name, pkg.dir), ...)
 }
 \arguments{
 \item{user.name}{Your user name}
 
-\item{ps.name}{Name of the problem set. By default the first problem set name of your manually loaded RTutor problem set package.}
+\item{ps.name}{Name of the problem set. By default the first problem set name of the loaded RTutor problem set package.}
 
 \item{dir}{your working directory for the problem set}
 
-\item{package}{name of the package that contains your problem set}
+\item{package}{name of the package that contains your problem set. Is automatically chosen a (single) package with an RTutor problem set is loaded.}
 
-\item{load.sav}{Default=TRUE Shall a previously saved solution be loaded?}
+\item{auto.save.code}{If TRUE all entered code will be automatically saved for the user. If FALSE (default) no entered code is saved. The user statistics (how many chunks are solved) are still saved, however.}
 
-\item{sav.file}{Optional an alternative name for the saved solution}
+\item{clear.user}{If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.}
 
-\item{sample.solution}{shall the sample solution be shown?}
+\item{run.solved}{If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.}
 
-\item{run.solved}{if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (By default FALSE, since starting the problem set then may take quite a while)}
+\item{sample.solution}{If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.}
 
-\item{import.rmd}{shall the solution be imported from the rmd file specificed in the argument rmd.file}
-
-\item{rmd.file}{name of the .rmd file that shall be imported if import.rmd=TRUE}
-
-\item{offline}{(FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.}
-
-\item{left.margin}{number of colums for left margin in browser window (total columns=12)}
-
-\item{right.margin}{number of colums for right margin in browser window (total columns=12)}
+\item{show.solution.btn}{If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.}
 
 \item{pkg.dir}{the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package}
 
 \item{rps.dir}{directory of rps.files. Will be set to default for current package}
 
 \item{material.dir}{directory of additional problem set files. Will be set to default for current package}
+
+\item{...}{additional arguments of show.ps}
+
+\item{lauch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 }
 \description{
-Only works if a package with problem sets is loaded.
+Only works if a package for the problem set is loaded.
 For problem sets stored in a local .rps file, use show.ps() instead
 }

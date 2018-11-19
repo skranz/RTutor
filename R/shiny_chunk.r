@@ -173,7 +173,8 @@ make.chunk.input.ui = function(chunk.ind, theme="textmate", height=NULL, code.li
 
   chunk.fluidRow(
     button.row,
-    bsAlert(nali$alertOut),
+    #bsAlert(nali$alertOut),
+    uiOutput(nali$alertOut),
     edit.row
   )
 }
@@ -267,7 +268,8 @@ make.chunk.output.ui = function(chunk.ind, ps = get.ps()) {
 
   chunk.fluidRow(
     button.row,
-    bsAlert(nali$alertOut),
+    uiOutput(nali$alertOut),
+    #bsAlert(nali$alertOut),
     html
   )
 }
@@ -340,14 +342,17 @@ run.line.shiny.chunk = function(chunk.ind, range=NULL, selection=NULL,...,sessio
   }
 }
 
-check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE, max.lines=300, store.output=FALSE) {
+check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps=get.ps(), internal=FALSE, max.lines=300, store.output=FALSE, input.code=NULL) {
   #cat("\n check.shiny.chunk1")
   if (!internal)
-    set.shiny.chunk(chunk.ind)
+    set.shiny.chunk(chunk.ind, input.code=input.code)
   #cat("\n check.shiny.chunk2")
   #browser()
   restore.point("check.shiny.chunk")
   #cat("\n check.shiny.chunk3")
+  #if (chunk.ind==2) {
+  #    stop()
+  #}
 
   
   if (isTRUE(ps$use.secure.eval)) {
@@ -525,16 +530,42 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
   #browser()
   if (can.chunk.be.edited(chunk.ind)) {
     update.chunk.ui(chunk.ind, mode="input")
-
     set.shiny.chunk(chunk.ind)
     session = ps$session
   } else {
-    nali = ps$cdt$nali[[chunk.ind]]
-    rtutorAlert(session,nali$alertOut,
-        title = "Cannot edit chunk",
-        message= ps$failure.message,
-        type = "info", append=FALSE
-    )
+    cdt = ps$cdt
+    ck = cdt[chunk.ind,]
+    nali = cdt$nali[[chunk.ind]]
+    
+    # Just run all required previous chunks
+    num.prev.chunks = sum(cdt$ex.ind %in% ck$ex.ind & cdt$chunk.ps.ind < (ck$chunk.ps.ind) & cdt$optional == FALSE & !cdt$is.solved)
+    
+    timedMessage(nali$alertOut, html=colored.html(paste0("Try to run all ", num.prev.chunks," required earlier chunks..."),color = "#000088"), millis=Inf)
+      
+    res = run.required.previous.shiny.chunks(ps=ps, chunk.ind = chunk.ind,update.chunk.ui = TRUE, use.sample.solution = isTRUE(ps$show.sample.solution))
+
+    if (res$ok) {
+      timedMessage(nali$alertOut, html=colored.html("Try to run all required earlier chunks... success!",color = "#000088"), millis=5000)
+      # Scroll back to current chunk
+      update.chunk.ui(chunk.ind, mode="input")
+      set.shiny.chunk(chunk.ind)
+      #evalJS(paste0('$("#',nali$chunkUI,'")[0].scrollIntoView();'))
+      js = paste0(';var pos = $("#',nali$chunkUI,'").offset();window.scrollTo(pos.left, pos.top);')
+      #cat("\n",js)
+      evalJS(js)
+  
+    } else {
+      fck = cdt[res$failed.chunk,]
+      if (fck$ex.ind==ck$ex.ind) {
+        loc.msg = paste0("in chunk no ", fck$chunk.ex.ind," of this exercise")
+      } else {
+        loc.msg = paste0("in chunk no ", fck$chunk.ex.ind," of  exercise ", ps$edt$ex.name[fck$ex.ind])
+      }
+      timedMessage(fck$nali[[1]]$alertOut, html=colored.html(paste0("Failure in this required chunk: ", ps$failure.message),color = "#880000"), millis=8000)
+
+      timedMessage(nali$alertOut, html=colored.html(paste0("Failure ", loc.msg),color = "#880000"), millis=8000)
+    }
+    # timedMessage(nali$alertOut, html=colored.html(ps$failure.message,color = "#880000"), millis=5000)
   }
 }
 
@@ -561,24 +592,27 @@ data.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
                     selected = "dataExplorerTabPanel")
 }
 
-save.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,
-                            ...,ps=get.ps()) {
-  restore.point("data.shiny.chunk")
+save.shiny.chunk = function(chunk.ind=ps$chunk.ind,session=ps$session,...,ps=get.ps()) {
+  restore.point("save.shiny.chunk")
   #set.shiny.chunk(chunk.ind)
   save.sav()
   nali = ps$cdt$nali[[chunk.ind]]
-
-  createAlert(session, nali$alertOut,
-    title = paste0("Saved as ", ps$sav.file),
-    content = "",
-    style = "info", append=FALSE
-  )
+  timedMessage(nali$alertOut,"Your changes have been saved.", millis=2000)
+  
+  #createAlert(session, nali$alertOut,
+  #  title = paste0("Saved as ", ps$sav.file),
+  #  content = "",
+  #  style = "info", append=FALSE
+  #)
 }
 
 
-set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
-                           input=session$input,session=ps$session,
-                           ps=get.ps(),reload.env=FALSE, from.data.btn = FALSE) {
+set.shiny.chunk = function(
+  chunk.ind=NULL,selection=NULL, cursor=NULL,
+  input=session$input,session=ps$session,
+  ps=get.ps(),reload.env=FALSE, from.data.btn = FALSE,
+  input.code=NULL
+  ) {
   restore.point("set.shiny.chunk")
   #browser()
   #cat("start set.shiny.chunk\n")
@@ -589,10 +623,16 @@ set.shiny.chunk = function(chunk.ind=NULL,selection=NULL, cursor=NULL,
   nali = ps$cdt$nali[[chunk.ind]]
 
   if (ps$cdt$mode[chunk.ind]=="input") {
-    code = paste0(isolate(input[[nali$editor]]), collapse="\n")
+    if (is.null(input.code)) {
+      code = paste0(isolate(input[[nali$editor]]), collapse="\n")
+    } else {
+      code = input.code
+    }
     ps$stud.code = ps$code = code
     ps$cdt$stud.code[[chunk.ind]] = code
   }
+  restore.point("set.shiny.chunk2")
+
   ps$session = session
   ps$nali = nali
   # Always reload env if chunk.ind has changed

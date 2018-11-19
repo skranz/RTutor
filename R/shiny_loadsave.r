@@ -134,10 +134,14 @@ make.load.save.handlers = function(session=ps$session,ps=get.ps()) {
 
 save.sav = function(file=ps$sav.file, ps=get.ps(), copy.into.global=TRUE) {
   restore.point("save.sav")
-
+  if (is.null(file)) {
+    warning("Cannot save problem set content since no sav.file has been specified.")
+    return()
+  }
   if (isTRUE(ps$save.nothing)) return()
-  sav = get.ups()
-  save(sav, file=file)
+  sav = as.environment(as.list(get.ups()))
+  sav$cu$stud.code = ps$cdt$stud.code
+  saveRDS(sav, file=file)
 }
 
 # load a sav file and set the current problem set to it
@@ -166,7 +170,7 @@ load.sav = function(file =ps$sav.file, ps=get.ps()) {
     return(NULL)
   if (!file.exists(file))
     return(NULL)
-  load(file)
+  sav = readRDS(file)
   return(sav)
 }
 
@@ -222,7 +226,6 @@ export.to.rmd = function(rmd.file =paste0(ps$name,"_",user.name,"_export.rmd"),d
 }
 
 import.from.rmd = function(rmd.file, ps = get.ps()) {
-
   stud.code <- import.stud.code.from.rmd(rmd.file, ps = ps)
 
   if (length(stud.code) != length(ps$cdt$stud.code)) {

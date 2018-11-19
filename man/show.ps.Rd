@@ -2,42 +2,51 @@
 % Please edit documentation in R/shiny_rtutor.r
 \name{show.ps}
 \alias{show.ps}
-\title{Run a problem set in the webbroser (or in the viewer pane).}
+\title{Run a shiny based problem set in the browser}
 \usage{
-show.ps(ps.name, user.name = "default_user", sav.file = NULL,
-  load.sav = !is.null(sav.file), sample.solution = FALSE,
-  run.solved = load.sav, import.rmd = FALSE, rmd.file = paste0(ps.name,
-  "_", user.name, "_export.rmd"), launch.browser = TRUE,
-  catch.errors = TRUE, dir = getwd(), rps.dir = dir,
-  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
-  is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
-  save.nothing = FALSE, show.revert.btn = TRUE, show.solution.btn = NA,
-  show.data.exp = TRUE, disable.graphics.dev = TRUE, clear.user = FALSE,
-  check.whitelist = !is.null(wl), wl = NULL, verbose = FALSE,
-  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
-  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
-  = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits, print.data.frame.fun =
-  print.data.frame.fun, print.matrix.fun = print.matrix.fun),
-  print.data.frame.fun = NULL, print.matrix.fun = NULL, precomp = FALSE,
-  noeval = FALSE, need.login = FALSE, login.dir = paste0(dir, "/login"),
-  show.points = TRUE, auto.save.code = FALSE,
-  stop.app.if.window.closes = !make.session.ps, ...)
+show.ps(ps.name, user.name = "default_user", auto.save.code = FALSE,
+  clear.user = FALSE, run.solved = FALSE, sample.solution = FALSE,
+  launch.browser = TRUE, catch.errors = TRUE, dir = getwd(),
+  rps.dir = dir, offline = !can.connect.to.MathJax(), left.margin = 2,
+  right.margin = 2, is.solved, make.web.app = FALSE,
+  make.session.ps = make.web.app, save.nothing = FALSE,
+  show.revert.btn = FALSE, show.solution.btn = NA, show.data.exp = TRUE,
+  disable.graphics.dev = TRUE, check.whitelist = !is.null(wl), wl = NULL,
+  verbose = FALSE, html.data.frame = TRUE, table.max.rows = 25,
+  round.digits = 8, signif.digits = 8,
+  knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
+  table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+  signif.digits, print.data.frame.fun = print.data.frame.fun, print.matrix.fun =
+  print.matrix.fun), print.data.frame.fun = NULL, print.matrix.fun = NULL,
+  precomp = FALSE, noeval = FALSE, need.login = FALSE,
+  login.dir = paste0(dir, "/login"), show.points = TRUE,
+  stop.app.if.window.closes = !make.session.ps, sav.file = paste0(user.name,
+  "_", ps.name, ".sav"), load.sav = FALSE, show.save.btn = FALSE,
+  import.rmd = FALSE, rmd.file = paste0(ps.name, "_", user.name,
+  "_export.rmd"), ...)
 }
 \arguments{
-\item{load.sav}{shall the last saved be loaded?}
+\item{ps.name}{Name of the problem set}
 
-\item{sample.solution}{shall the sample solution be shown}
+\item{user.name}{A user name. Should be a valid variable name}
 
-\item{run.solved}{if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)}
+\item{auto.save.code}{If TRUE all entered code will be automatically saved for the user. If FALSE (default) no entered code is saved. The user statistics (how many chunks are solved) are still saved, however.}
 
-\item{import.rmd}{shall the solution be imported from the rmd file specificed in the argument rmd.file}
+\item{clear.user}{If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.}
+
+\item{run.solved}{If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.}
+
+\item{sample.solution}{If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.}
 
 \item{catch.errors}{by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()}
 
+\item{dir}{your working directory for the problem set, by default getwd()}
+
+\item{rps.dir}{directory of rps.files by default equal to dir}
+
 \item{offline}{(FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.}
 
-\item{is.solved}{DEPRECEATED}
+\item{show.solution.btn}{If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.}
 
 \item{html.data.frame}{shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)}
 
@@ -48,5 +57,5 @@ show.ps(ps.name, user.name = "default_user", sav.file = NULL,
 \item{lauch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 }
 \description{
-... contains parameters specified in init.shiny.ps. They are explained here.
+Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below.
 }

@@ -120,6 +120,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   write.output.solution(te=te,rps=rps)
 
+  if (require(digest))
+    rps$cdt.hash = digest(rps$cdt)
+  
   #rps$knit.print.opts = knit.print.opts
   
   save.rps(rps)
