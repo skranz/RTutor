@@ -69,14 +69,8 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=isTRUE(ps$run.sol
   
   if (NROW(ps$cdt)==0) return()
 
-  chunk.ind = ups$chunk.ind
-  if (is.null(chunk.ind)) {
-    chunk.ind = 1
-  }
   
   is.solved = rep(FALSE, NROW(ps$cdt))
-  ps$cdt$mode = "output"
-  ps$cdt$mode[chunk.ind] = "input"
   
   if (!sample.solution) {
     if ("stud.code" %in% names(ups$cu) & !sample.solution) {
@@ -96,15 +90,22 @@ ups.init.shiny.ps = function(ps=get.ps(), ups=get.ups(), rerun=isTRUE(ps$run.sol
   if (ups.save$code) {
     ups$cu$stud.code = ps$cdt$stud.code
   }
+
+  chunk.ind = ups$chunk.ind
+  if (is.null(chunk.ind)) chunk.ind = 1
+  ps$cdt$mode = "output"
   
   if (rerun) {
     ps$cdt$is.solved = is.solved
     rerun.solved.chunks(ps)
-    ps$cdt$mode[1] = "output"
+    ps$cdt$mode[chunk.ind] = "input"
+
   } else if (precomp) {
     ps$cdt$is.solved = is.solved
+    ps$cdt$mode[chunk.ind] = "input"
   } else {
     ps$cdt$is.solved = rep(FALSE, NROW(ps$cdt))
+    ps$cdt$mode[1] = "input"
   }
 
   if (replace.sol) {

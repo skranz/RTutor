@@ -546,13 +546,15 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
 
     if (res$ok) {
       timedMessage(nali$alertOut, html=colored.html("Try to run all required earlier chunks... success!",color = "#000088"), millis=5000)
+      # Don't run: otherwise code will vanish...
+      #update.chunk.ui(chunk.ind, mode="input")
+      #set.shiny.chunk(chunk.ind,input.code = ck$stud.code)
+      
       # Scroll back to current chunk
-      update.chunk.ui(chunk.ind, mode="input")
-      set.shiny.chunk(chunk.ind)
       #evalJS(paste0('$("#',nali$chunkUI,'")[0].scrollIntoView();'))
-      js = paste0(';var pos = $("#',nali$chunkUI,'").offset();window.scrollTo(pos.left, pos.top);')
+      #js = paste0(';var pos = $("#',nali$chunkUI,'").offset();window.scrollTo(pos.left, pos.top);')
       #cat("\n",js)
-      evalJS(js)
+      #evalJS(js)
   
     } else {
       fck = cdt[res$failed.chunk,]
