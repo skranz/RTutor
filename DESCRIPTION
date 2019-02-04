@@ -1,8 +1,8 @@
 Package: RTutor
 Type: Package
 Title: R problem sets with automatic test of solution and hints
-Version: 2018.11.19
-Date: 2018-11-19
+Version: 2019.02.04
+Date: 2019-02-04
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: R problem sets with automatic test of solution and hints
@@ -26,7 +26,8 @@ Depends:
     jsonlite,
     DT,
     memoise,
-    yaml
+    yaml,
+    rmarkdown
 Suggests:
   digest
 RoxygenNote: 6.0.1

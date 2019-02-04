@@ -142,6 +142,7 @@ ups.to.sub.file = function(ups=get.ups(), ps=get.ps(), sub.file=NULL, rmd.code=N
   restore.point("ups.to.sub.file")
   sub = as.list(ups)
   user.name = sub$user.name
+  ps.name = ps$name
   rps = ps$rps
   # Results of chunks
   cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
