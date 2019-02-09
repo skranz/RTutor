@@ -7,7 +7,8 @@
 run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
   auto.save.code = FALSE, clear.user = FALSE, run.solved = FALSE,
   sample.solution = FALSE, show.solution.btn = NA, launch.browser = TRUE,
-  info = get.package.info(package), pkg.dir = path.package(info$package),
+  info = get.package.info(package), deploy.local = !make.web.app,
+  make.web.app = FALSE, pkg.dir = path.package(info$package),
   rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
   material.dir = find.pkg.material.dir(ps.name, pkg.dir), ...)
 }

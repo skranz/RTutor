@@ -49,7 +49,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   Addons = make.addons.list(addons)
 
   setwd(dir)
-  txt = readLines(sol.file, warn=FALSE)
+  txt = readLines(sol.file, warn=FALSE,encoding = "UTF-8")
   txt =  name.rmd.chunks(txt=txt)
   txt = mark_utf8(txt)
   
