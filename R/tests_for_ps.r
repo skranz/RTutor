@@ -157,9 +157,9 @@ show.success.message = function(success.message,...) {
 #' @param check.arg.by.value if TRUE (default) check whether students arguments have the same value than in given call, even if their unevaluted representation looks different
 #' @param allow.extra.arg if TRUE (not default) the student is allowed to supply additional arguments to the call that were not in the solution. Useful, e.g. if the student shall plot something and is allowed to customize her plot with additional arguments.
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
-#' @param ok.if.same.val if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
+#' @param ok.if.same.val if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
 #' @export
-check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = FALSE,s3.method=NULL,
+check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = TRUE,s3.method=NULL,
   ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval),  ...
 ) {
 
