@@ -51,11 +51,19 @@ hint = function(..., ps=get.ps()) {
     eval.fun = base::eval
   }
   
+  # Set expression to first expression
+  # if code cannot be evaluated withour error
+  e.ind = ps$e.ind
+  if (e.ind == 0) {
+    e.ind = 1
+  }
+
+  
   # No expression set
-  if (ps$e.ind == 0) {
+  if (e.ind == 0) {
     if (!is.null(chunk.hint)) {
       eval.fun(chunk.hint)
-      log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
+      log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=e.ind)
       if (ps$cdt$num.e[[ps$chunk.ind]]>0) {
         cat("\nI can't give you a more specific hint, since I can't run your code, due to an error.")
       }
@@ -70,21 +78,43 @@ hint = function(..., ps=get.ps()) {
 
   # hint for expression ps$e.ind
   } else {
-    hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[ps$e.ind]]
+    hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[e.ind]]
     if (length(hint.expr)==0) {
       if (!is.null(chunk.hint)) {
-        eval.fun(hint.expr)
-        log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=ps$e.ind)
+        res = try(eval.fun(chunk.hint))
+        if (is("res","try-error")) {
+          if (ps$e.ind==0) {
+            cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
+          } else {
+            cat("\nUps, there was some error when evaluating the hint.")
+          }
+        }
+        log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=e.ind)
       } else {
         do.log = FALSE
         cat("Sorry, but there is no hint for your current problem.")
       }
     } else {
-      eval.fun(hint.expr)
+      res = try(eval.fun(hint.expr))
+      if (is("res","try-error")) {
+        if (ps$e.ind==0) {
+          cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
+        } else {
+          cat("\nUps, there was some error when evaluating the hint.")
+        }
+      }
       if (!is.null(chunk.hint)) {
-        eval.fun(chunk.hint)
+        res = try(eval.fun(chunk.hint))
+        if (is("res","try-error")) {
+          if (ps$e.ind==0) {
+            cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
+          } else {
+            cat("\nUps, there was some error when evaluating the hint.")
+          }
+        }
       }
     }
+    
   }
 
   
