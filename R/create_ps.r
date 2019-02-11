@@ -1194,8 +1194,8 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
         chunk.name = str.to.valid.chunk.name(str.trim(chunk.name))
           
         if (chunk.name %in% used.chunk.names) {
-          str = paste0("I generated the chunk name ", chunk.name, " twice. Make sure that you have unique exercise names and don't duplicate exerice parts like a) b) a).")
-          warning(str)
+          msg = paste0("I generated the chunk name ", chunk.name, " twice. Make sure that you have unique exercise names and don't duplicate exerice parts like a) b) a).")
+          warning(msg)
           chunk.name = paste0(chunk.name, "___", sample.int(10000000,1))
         }
         used.chunk.names = c(used.chunk.names, chunk.name)
@@ -1213,9 +1213,15 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
         counter = 1
       part.name = ""
     } else if (!is.na(temp.part <- str_extract(str,"^([a-z]|[ivx]*)\\)")[1]  )) {
-      part.name = gsub(")","",temp.part, fixed=TRUE)
-      if (!valid.file.name)
-        counter = 1
+      
+      temp.part = trimws(gsub(")","",temp.part, fixed=TRUE))
+      if (nchar(temp.part)>0 & nchar(temp.part)<=3) {
+        part.name = temp.part
+        #restore.point("hufudhfiurhfu")
+        if (!valid.file.name)
+          counter = 1
+      }
+      #cat("temp.part = ", temp.part, " part = ", part.name, " str = ", str)
     }
   }
   if (!is.null(rmd.file))
