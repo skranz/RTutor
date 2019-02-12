@@ -1175,6 +1175,8 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
   used.chunk.names = NULL
     
   str = "```{r 'out_chunk_2_1_b', fig.width=5, fig.height=5, eval=FALSE, echo=TRUE}"
+  str = "```{r optional=TRUE}"
+  
   for (i in 1:length(txt)) {
     str = txt[i]
 
@@ -1212,12 +1214,15 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
       if (!valid.file.name)
         counter = 1
       part.name = ""
-    } else if (!is.na(temp.part <- str_extract(trimws(str),"^[abcdefghjklmnopqrstuvwxyz]\\)")[1]  )) {
+    } else if (!is.na(temp.part <- str_extract(str,"^[a-z]\\)")[1]  )) {
       
-      temp.part = trimws(gsub(")","",temp.part, fixed=TRUE))
-      if (nchar(temp.part)>0 & nchar(temp.part)<=3) {
+      temp.part = substring(temp.part,1,1)
+      ok = TRUE
+      # Ignore numberings like i), ii), iii), iv), v)
+      if (temp.part == "i" & part.name != "h") ok = FALSE
+      if (temp.part == "v" & part.name != "u") ok = FALSE
+      if (ok) {
         part.name = temp.part
-        #restore.point("hufudhfiurhfu")
         if (!valid.file.name)
           counter = 1
       }
