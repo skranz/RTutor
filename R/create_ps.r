@@ -1212,7 +1212,7 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
       if (!valid.file.name)
         counter = 1
       part.name = ""
-    } else if (!is.na(temp.part <- str_extract(str,"^([a-z]|[ivx]*)\\)")[1]  )) {
+    } else if (!is.na(temp.part <- str_extract(trimws(str),"^[abcdefghjklmnopqrstuvwxyz]\\)")[1]  )) {
       
       temp.part = trimws(gsub(")","",temp.part, fixed=TRUE))
       if (nchar(temp.part)>0 & nchar(temp.part)<=3) {
