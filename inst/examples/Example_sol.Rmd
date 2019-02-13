@@ -1,60 +1,42 @@
 # Problemset Example
 
-Example of an RTutor interactive Problemset
-Author:  Sebastian Kranz
-Date:    12.06.2014
+Note: Always save your solution files with UTF-8 Encoding!
 
-Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+Example of an RTutor interactive Problemset
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file. 
 #< ignore
 ```{r "create_ps"}
-library(restorepoint)
-# facilitates error detection
-set.restore.point.options(display.restore.point=TRUE)
-
 library(RTutor)
-#library(restorepoint)
-setwd("D:/libraries/RTutor/examples")
+setwd("D:/libraries/RTutor/RTutor/inst/examples")
 ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
-libs = c("ggplot2") # character vector of all packages you load in the problem set
-#name.rmd.chunks(sol.file) # set auto chunk names in this file
-create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE)
-show.shiny.ps(ps.name, load.sav=FALSE,  sample.solution=TRUE, is.solved=FALSE, catch.errors=TRUE, launch.browser=TRUE)
+# character vector of all packages you load in the problem set
+libs = c("ggplot2") 
+create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE, addons="quiz")
+# Show the problem set in the webbrowser
+show.ps(ps.name, sample.solution=FALSE,auto.save.code = TRUE)
 stop.without.error()
 ```
 #>
 
-## Exercise 1 -- Summary statistics
+## Exercise 1 -- Computing with R
 
-a) First part
+a) We often want to compute some summary statistic of a vector. For example:
 
-Some Math:
-
-$$x = \beta^2$$
-
-#< info "Some math in an info block"
-$$y = \alpha^2$$
-#>
-
-
-We often want to compute some summary statistic of a vector.
-For example:
-
-
-```{r "1 a)",fig.height=3}
+```{r}
 #< task
 x = 10:20
 # Computing the sum of x
 sum(x)
-# Generating a data frame
-df = data.frame(a=c(1,1,2,2,2,3,3,4), b = runif(8), c="Hi")
-#>
-#< task_notest
-df
 #>
 ```
 
 Now compute the mean of x.
-```{r "1 a) 2"}
+```{r optional=TRUE}
+# Note the chunk option optional = TRUE means
+# the user can continue with the next exercise
+# without having solved this one
+
 mean(x)
 #< hint
 cat("There already exist R functions for many things. To find them use Google, e.g. search for 'R compute mean'.")
@@ -64,7 +46,7 @@ cat("There already exist R functions for many things. To find them use Google, e
 
 #< info "useful functions for numeric vectors"
 Here are examples for useful R functions
-```{r "1 "}
+```{r}
 max(c(1,5,2)) # returns maximum
 min(c(1,5,2)) # returns minimum
 
@@ -79,14 +61,63 @@ diff(c(1,5,2)) # returns the vector of differences
 Well, in some occasions one can just guess the name of an R function. The function to compute the mean of a vector, or matrix is called 'mean'. Usually, it is much quicker to goggle than to guess function names, however.
 #>
 
-## Exercise 2 -- Computing with vectors
-```{r "2 "}
-#< settings
-import.var = c("x")
-#>
-```
-a) Let y be a vector that contains the squared elements of x. Show y
-```{r "2 a)"}
+b) Let `y` be a vector that contains the squared elements of `x`, i.e. for each element $i$ we want $$y_i = x_i^2.$$ Then show `y`.
+```{r}
+# We should not set this chunk optional
+# since we need y in the next chunk
 y = x^2
 y
 ```
+
+c) Now use the function `qplot` from the package `ggplot2` to create a scatter plot of `x` against `y`. You can google `r qplot` to get the help for the function `qplot`.
+
+```{r optional=TRUE, dev="svg", fig.width=4}
+#< task
+library(ggplot2) # load ggplot2 package
+
+# Enter your call to qplot here...
+#>
+qplot(x,y)
+#< test_arg
+allow.extra.arg = TRUE 
+#>
+# The block above allows the user to add extra arguments to the call to qplot, i.e. qplot(x,y,xlab="The variable x"), would also pass the test.
+```
+
+
+#< quiz "prime"
+question: What is the 'oddest' prime?
+sc:
+    - 2*
+    - 3
+    - 5
+    - 7
+success: Well, of course the answer is debatable...
+failure: Try again.
+#>
+
+Note: A quiz as specified below only works in the shiny environment. If you want to design a quiz in an RMarkdown based RTutor problem set, you should use a chunk. E.g. as follows:
+
+Which of the following numbers is the oddest prime? 2,3,5 or 7? Enter you solution in the code below and press "check".
+
+```{r}
+2
+```
+#< award "The oddest prime"
+Wouldn't you agree that the only even prime is the odd man out?
+#>
+
+## Exercise Submitting your solution
+
+To submit your solution please proceed as follows:
+
+1. Scroll to the top and click on the icon with the bars <i class="fa fa-tasks fa-fw"></i> to see how many points you got so far. If you want to have more points you can try to solve the missing tasks.
+
+2. If you want to submit click on the download button <i class="fa  fa-download fa-fw"></i> at the very right.
+
+3. In the opened tab click the button "Download Submission File". Your browser should then download a file with the extension `.sub`.
+
+4. Upload that downloaded file to your course management system like Moodle, as specified by your instructor.
+
+
+

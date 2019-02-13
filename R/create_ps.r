@@ -309,6 +309,7 @@ te.to.rps = function(te) {
     dt
   })
   cdt = do.call(rbind,li)
+
   cdt$chunk.ps.ind = 1:NROW(cdt)
   # Add has.passed for each test
   cdt$e.tests.passed = lapply(cdt$test.expr, function(test.expr.li) {
@@ -372,6 +373,8 @@ te.to.rps = function(te) {
   tdt = rbindlist(li)
   if (NROW(tdt)>0) {
     tdt$test.ps.ind = 1:NROW(tdt)
+  } else if (NCOL(tdt)==0) {
+    tdt = data.table(ex.ind=integer(), chunk.ps.ind=integer(), e.ind=integer(), test.e.ind = integer(), test.ps.ind=integer(), test.passed=logical(), test.ps.ind=integer())
   } else {
     tdt$test.ps.ind = c()
   }

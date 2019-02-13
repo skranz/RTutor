@@ -1,25 +1,17 @@
-# Problemset Example
+# Problemset Quizzes
 
-Example of an RTutor interactive Problemset
-
-#### Author:  Sebastian Kranz
+Example of different quiz formats in a shiny based RTutor problemset
 
 Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
 
 #< ignore
 ```{r "create_ps",include=TRUE , eval=TRUE}
 library(RTutor)
-library(yaml)
-#library(restorepoint)
-#setwd("D:/libraries/RTutor/examples")
 setwd("D:/libraries/RTutor/RTutor/inst/examples")
 ps.name = "QuizExample"; sol.file = paste0(ps.name,"_sol.Rmd")
-libs = c("yaml") 
-# Important add the parameter addons="quiz" !
-create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, stop.when.finished=FALSE, addons="quiz")
-
-show.ps(ps.name, user.name="John Does")
-
+# Important to add the parameter addons="quiz" !
+create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, addons="quiz")
+show.ps(ps.name)
 stop()
 ```
 #>
@@ -95,21 +87,15 @@ parts:
 You solved the quiz!
 #>
 
+Note that every problem set must have at least at one chunk in order to compile without error. Yeah... I was simply to lazy to implement all extra handling for problem sets without chunks, since the whole idea of RTutor is to have chunks. 
 
-Enter 2*2
+Therefore one chunk at the end...
 ```{r}
-2*2
+#< task_notest
+(0.3-0.2-0.1)==0
+#>
 ```
+<a href="http://ta.twi.tudelft.nl/users/vuik/wi211/disasters.html" target="_blank">So better don't build rockets with R...</a>
 
 
----
 
-## Exercise 2 -- Empty
-
-
-Enter 2*2
-```{r}
-2*2
-```
-
-That's all folks!
