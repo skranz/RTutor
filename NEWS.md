@@ -1,5 +1,15 @@
 # News for RTutor package
 
+#### 2019-02-19
+
+Several changes in the last 4 years, e.g.:
+
+- optional chunks
+- more robust hints
+- automatically try to run previous chunks in shiny mode
+- possibility to download submission file from shiny
+
+
 ### 2015-11-29 preknit and show in noeval mode
 
 - When creating the problem set, we can now already knit for each

@@ -1,7 +1,7 @@
 ---
 title: An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 author: Sebastian Kranz, Ulm University 
-date: 'Version from 2016-08-12'
+date: 'Version from 2019-02-19'
 output:
   pdf_document:
     number_sections: yes
@@ -23,15 +23,19 @@ So this is not the easiest way for writing a thesis, but from most students who 
 
 ## Step 1: Find an interesting economic article
 
-First you need to find an interesting article for which the data (and ideally also the original code) is accessible.
+First you need to find an interesting article for which the data (and ideally also the original code) is accessible. You can check out the following web app for this purpose:
 
-A  list of selected articles with data from several journals can be found here:
+[http://econ.mathematik.uni-ulm.de:3200/ejd/](http://econ.mathematik.uni-ulm.de:3200/ejd/)
+
+You should try to pick an article for which no RTutor problem set has already been generated according to the list on the RTutor Github site: [https://github.com/skranz/RTutor/](https://github.com/skranz/RTutor/)
+
+An alternative list of selected (older) articles with data from several journals can be found here:
 
 [http://econ.mathematik.uni-ulm.de/rtutor/articles.html](http://econ.mathematik.uni-ulm.de/rtutor/articles.html)
 
 (I have very roughly sorted the list according to which articles I personally find more interesting.)
 
-The list is updated only sporadically. You can also search for newer articles on the journal websites of the American Economic Association:
+The list and app is updated only sporadically. You can also search for newer articles on the journal websites of the American Economic Association:
 
 [https://www.aeaweb.org/journals/](https://www.aeaweb.org/journals/)
 
