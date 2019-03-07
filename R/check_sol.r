@@ -156,7 +156,28 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
       cat(paste0("\nAll chunks were correct and no change in exercise ",ex.name,"\n"))
       return(TRUE)
     }
+    
+
+    # Find chunks that are skipped because they are optional
+    # and have not been changed.
+    skip.rows = !cdt$chunk.changed[rows] & cdt$optional[rows]
+    skip.rows = cummin(skip.rows)==1 # Only skip from beginning
+    skip.rows = rows[skip.rows]
+    
+    if (length(skip.rows)>0) {
+      rows = setdiff(rows, skip.rows)
+      # If only optional chunks remain, try to solve them.
+      if (length(rows)==0) {
+        #cat(paste0("\nOnly optional chunks remain unsolved and unchecked in exercise ",ex.name,". To check an optional chunk, edit it, e.g. just enter a space. Then check the problem set again.\n"))
+        #return(TRUE)
+        cat(paste0("\nThere are some unsolved optional chunks left in exercise ",ex.name,". If you want to check the next exercise, just change a chunk in the next exercise. E.g. just enter a space.\n"))
+        rows = skip.rows
+      } else {
+        cat(paste0("\nSkip unchanged optional chunk(s) ", paste0(cdt$chunk.name[skip.rows], collapse=", ","...\n")))
+      }
+    }
     min.chunk = min(rows)
+    
   }
   chunks = min.chunk:max(which(ck.rows))
   chunk.ind = chunks[1]
