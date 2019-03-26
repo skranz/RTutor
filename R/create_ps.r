@@ -386,9 +386,6 @@ te.to.rps = function(te) {
 
   rps$edt = data.table(ex.ind = seq_along(te$ex),ex.name = names(te$ex), num.chunks=num.chunks, import.var = import.var)
 
-
-  rps$has.fill.in = isTRUE(te$has.fill.in)
-
   rps
 }
 
@@ -617,9 +614,8 @@ add.te.block = function(te) {
   # Mark lines in fill_in blocks
   # then treat them simply as a task_notest
   # block
+  te$fill.in.block = (te$block.type == "fill_in")
   if (te$block.type == "fill_in") {
-    te$has.fill.in = TRUE
-    te$act.chunk$has.fill.in = TRUE
     te$block.type = "task_notest"
     txt = te$block.txt
     expr = tryCatch(check.fill.in.lines(txt),
@@ -627,9 +623,7 @@ add.te.block = function(te) {
         str = paste0(" when parsing your code",te$chunk.str," between rows ", te$block.start, " and ", te$block.end, ":\n ", str.right.of(paste0(as.character(e), collapse="\n"),":") )
       stop(str, call.=FALSE)
     })
-
     te$block.txt = mark.fill.in.lines(txt)
-    te$block.type = "task_notest"
   }
   
   type = te$block.type
@@ -721,17 +715,17 @@ add.te.code = function(te,ck) {
   task = te$block.type == "task" | te$block.type == "task_notest"
   notest = te$block.type == "notest" | te$block.type == "task_notest"
 
-  ck$sol.txt = c(ck$sol.txt, te$block.txt)
-  ck$out.txt = c(ck$out.txt, te$block.txt)
-  if (isTRUE(ck$has.fill.in)) {
-    ck$sol.txt = remove.fill.in.lines(ck$sol.txt)
-    ck$out.txt = remove.fill.in.lines(ck$out.txt)
+  # Ignore fill in blocks in sample solution
+  if (!isTRUE(te$fill.in.block)) {
+    ck$sol.txt = c(ck$sol.txt, te$block.txt)
+    ck$out.txt = c(ck$out.txt, te$block.txt)
   }
-  
+
   if (task) {
-    ck$task.txt = c(ck$task.txt, te$block.txt)
-    if (isTRUE(ck$has.fill.in)) {
-      ck$task.txt = fill.in.lines.to.code(ck$task.txt)
+    if (!isTRUE(te$fill.in.block)) {
+      ck$task.txt = c(ck$task.txt, te$block.txt)
+    } else {
+      ck$task.txt = c(ck$task.txt, fill.in.lines.to.code(te$block.txt))
     }
   }
 
