@@ -1005,6 +1005,8 @@ match.call.object.env = function(stud.env = ps$stud.env,ps=get.ps()) {
   if (isTRUE(ps$noeval)) {
     ps$ps.baseenv
   } else {
+    if (is.null(stud.env))
+      stud.env = new.env(parent=ps$ps.baseenv)
     stud.env
   }
 }

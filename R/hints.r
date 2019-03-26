@@ -52,8 +52,9 @@ hint = function(..., ps=get.ps()) {
   }
   
   # Set expression to first expression
-  # if code cannot be evaluated withour error
+  # if code cannot be evaluated without error
   e.ind = ps$e.ind
+  if (is.null(e.ind)) e.ind = 0
   if (e.ind == 0 & isTRUE(ps$cdt$num.e[[ps$chunk.ind]]>0)) {
     e.ind = 1
   }

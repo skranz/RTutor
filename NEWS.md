@@ -1,5 +1,14 @@
 # News for RTutor package
 
+#### 2019-03-23
+
+Add fill_in block to easier handle syntactially incorrect R code
+that has placeholders. Use it when you want to show students something like
+
+filter(df, a == ___)
+
+where students have to replace the ___.
+
 #### 2019-02-19
 
 Several changes in the last 4 years, e.g.:

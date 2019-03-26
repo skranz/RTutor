@@ -387,6 +387,7 @@ te.to.rps = function(te) {
   rps$edt = data.table(ex.ind = seq_along(te$ex),ex.name = names(te$ex), num.chunks=num.chunks, import.var = import.var)
 
 
+  rps$has.fill.in = isTRUE(te$has.fill.in)
 
   rps
 }
@@ -612,6 +613,25 @@ add.te.item = function(te, type="", id="") {
 
 add.te.block = function(te) {
   restore.point("add.struc.block")
+  
+  # Mark lines in fill_in blocks
+  # then treat them simply as a task_notest
+  # block
+  if (te$block.type == "fill_in") {
+    te$has.fill.in = TRUE
+    te$act.chunk$has.fill.in = TRUE
+    te$block.type = "task_notest"
+    txt = te$block.txt
+    expr = tryCatch(check.fill.in.lines(txt),
+    error = function(e) {
+        str = paste0(" when parsing your code",te$chunk.str," between rows ", te$block.start, " and ", te$block.end, ":\n ", str.right.of(paste0(as.character(e), collapse="\n"),":") )
+      stop(str, call.=FALSE)
+    })
+
+    te$block.txt = mark.fill.in.lines(txt)
+    te$block.type = "task_notest"
+  }
+  
   type = te$block.type
   args = str.trim(str.right.of(te$block.head, te$block.type))
   ck = te$act.chunk
@@ -629,6 +649,8 @@ add.te.block = function(te) {
     ck$has.task = TRUE
   }
 
+  
+  
   # Add test code
   if (type %in% c("chunk","task","task_notest","notest")) {
     add.te.code(te,ck)
@@ -701,8 +723,16 @@ add.te.code = function(te,ck) {
 
   ck$sol.txt = c(ck$sol.txt, te$block.txt)
   ck$out.txt = c(ck$out.txt, te$block.txt)
+  if (isTRUE(ck$has.fill.in)) {
+    ck$sol.txt = remove.fill.in.lines(ck$sol.txt)
+    ck$out.txt = remove.fill.in.lines(ck$out.txt)
+  }
+  
   if (task) {
     ck$task.txt = c(ck$task.txt, te$block.txt)
+    if (isTRUE(ck$has.fill.in)) {
+      ck$task.txt = fill.in.lines.to.code(ck$task.txt)
+    }
   }
 
   if (!notest) {
@@ -1081,7 +1111,7 @@ get.empty.te = function(Addons=NULL, extra.code.file=NULL) {
   te$markdown.blocks = c("info","award","ignore",names(te$Addons), "preknit")
   te$code.blocks = c("test","test_arg","test_hint_arg","extra_test","test_calls",
                   "hint","add_to_hint",
-                  "task","task_notest","notest",
+                  "task","task_notest","notest","fill_in",
                   "compute","settings")
   te$blocks = c(te$markdown.blocks, te$code.blocks, names(te$Addons))
   te$act.chunk = NULL

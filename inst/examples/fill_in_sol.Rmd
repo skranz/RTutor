@@ -1,0 +1,42 @@
+# Problemset Fill In Example
+
+Note: Always save your solution files with UTF-8 Encoding!
+
+Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file. 
+#< ignore
+```{r "create_ps"}
+library(RTutor)
+setwd("D:/libraries/RTutor/RTutor/inst/examples")
+ps.name = "fill_in"; sol.file = paste0(ps.name,"_sol.Rmd")
+# character vector of all packages you load in the problem set
+libs = c("ggplot2") 
+create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE, addons="quiz")
+# Show the problem set in the webbrowser
+show.ps(ps.name, sample.solution=FALSE,auto.save.code = TRUE)
+stop.without.error()
+```
+#>
+
+## Exercise 1 -- Fill in the placeholders
+
+a) We often want to compute some summary statistic of a vector. For example:
+
+```{r}
+#< hint
+cat("If you have a fill in block. Better add a custom chunk hint (at the beginning. That is because automatic hints don't work well if we have syntactically incorrect code that cannot be parsed, like head(___).")
+#>
+
+#< task
+df = data.frame(a=1:10, b=10:1)
+#>
+
+# Let dat contain all rows in which a*b is bigger than 25
+#< fill_in
+# dat = filter(df, ___)
+# # Show the head of dat
+# head(___)
+#>
+dat = filter(df, a*b > 25)
+# Show the head of dat
+head(dat)
+```
