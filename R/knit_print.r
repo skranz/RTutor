@@ -12,7 +12,7 @@ register.knit.print.functions = function(knit.print.opts) {
 }
 
 
-set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, env=.GlobalEnv, opts=NULL, data.frame.theme = c("code","html","kable")[1+html.data.frame],...) {
+set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, env=.GlobalEnv, opts=NULL, data.frame.theme = c("code","html","kable","grid")[1+html.data.frame],...) {
   restore.point("set.knit.print.opts")
   #cat(output)
   if (is.null(opts)) {
@@ -31,7 +31,7 @@ set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max
 
 }
 
-make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, data.frame.theme = c("code","html","kable")[1+html.data.frame]) {
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, data.frame.theme = c("code","html","kable","grob")[1+html.data.frame]) {
   opts = list()
   restore.point("make.knit.print.opts")
   
@@ -134,7 +134,7 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
         meta = meta)
 }
 
-rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, data.frame.theme=c("code","html","kable")[1], show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL, ...) {
+rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, data.frame.theme=c("code","html","kable","grid")[1], show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL, ...) {
   restore.point("rtutor.knit_print.data.frame")
   
   if (is.matrix(x))
@@ -184,6 +184,11 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
       txt = c(knit_print(kable(dat)),"",missing.txt,"")
       return(asis_output(txt))
+    } else if (data.frame.theme == "grid") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      library(gridExtra); library(grid)
+      grid.draw(tableGrob(dat, rows=NULL))
+      return(asis_output(missing.txt))
     } else {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = capture.output(print(dat))
@@ -198,6 +203,11 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
       txt = c(knit_print(kable(dat)),"","")
       return(asis_output(txt))
+    } else if (data.frame.theme == "grid") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      library(gridExtra); library(grid)
+      grid.newpage()
+      grid.draw(tableGrob(dat, rows=NULL))
     } else {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = paste0(capture.output(print(dat)), collapse="\n")

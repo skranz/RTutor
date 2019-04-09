@@ -38,10 +38,11 @@ examples.create.ps = function() {
 #' @param e.points how many points does the user get per required expression in a chunk (expressions in a task do not count). Default=1
 #' @param chunk.points you may also specify fixed points given for solving a chunk that will be added to the points per expression. Default=0
 #' @param min.chunk.points minimal points for checking a chunk even if no none-task expression has to be entered. By default=0.5. I feel there may be a higher motivation to continue a problem set if there are may be some free point chunks farther below. Also it feels nice to get points, even if it is just for pressing the check button.
+#' @param keep.fill.in.output.sol if TRUE (default) the original code with placeholders of a fill in block will be shown in the output solution Rmd file as a comment before the solution. If FALSE only the solution will be shown.
 #' 
 #'
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE) {
   restore.point("create.ps")
 
   CREATE.PS.ENV$fragment.only = fragment.only
@@ -54,6 +55,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   txt = mark_utf8(txt)
   
   te = get.empty.te(Addons=Addons, extra.code.file=extra.code.file)
+  te$keep.fill.in.output.sol = keep.fill.in.output.sol
+
   te = parse.sol.rmd(txt=txt, te=te)
 
   te$knit.print.params = nlist(html.data.frame,table.max.rows, round.digits, signif.digits) 
@@ -719,6 +722,8 @@ add.te.code = function(te,ck) {
   if (!isTRUE(te$fill.in.block)) {
     ck$sol.txt = c(ck$sol.txt, te$block.txt)
     ck$out.txt = c(ck$out.txt, te$block.txt)
+  } else if (isTRUE(te$keep.fill.in.output.sol)) {
+    ck$out.txt = c(ck$out.txt, fill.in.lines.to.comment(te$block.txt),"")
   }
 
   if (task) {
