@@ -1,5 +1,10 @@
 # News for RTutor package
 
+#### 2019-04-10
+
+Add simple functionality to render data frames as word table if
+output solution is knitted as Word file
+
 #### 2019-03-23
 
 Add fill_in block to easier handle syntactially incorrect R code

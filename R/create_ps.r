@@ -208,9 +208,16 @@ output:
 ',source.txt,'
 
 # Options for rendering data frames
+# If you knit to a Word docx file, try
+# 
+# data.frame.theme="word" 
+# 
+# (needs RStudio > 1.2.1)
+# 
 # You can also set the options like
-# table.max.cols as chunk option
-# Also try data.frame.theme="kable"
+# table.max.cols as chunk options
+# Makes sense if there are too many, too wide
+# columns in some chunks
 
 RTutor::set.knit.print.opts(data.frame.theme="code", table.max.rows=25, table.max.cols=NULL, round.digits=5, signif.digits=8)
 

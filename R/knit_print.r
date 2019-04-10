@@ -12,13 +12,13 @@ register.knit.print.functions = function(knit.print.opts) {
 }
 
 
-set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, env=.GlobalEnv, opts=NULL, data.frame.theme = c("code","html","kable","grid")[1+html.data.frame],...) {
+set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, env=.GlobalEnv, opts=NULL, data.frame.theme = c("code","html","kable","grid","flextable")[1+html.data.frame],word.table.style="Table Simple 1",...) {
   restore.point("set.knit.print.opts")
   #cat(output)
   if (is.null(opts)) {
     #if (is(output,"try-error")) output="html"
     #if (is.null(output)) output = "html"
-    opts = make.knit.print.opts(data.frame.theme=data.frame.theme, ,table.max.rows=table.max.rows, table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips = FALSE, print.data.frame.fun = print.data.frame.fun, print.matrix.fun=print.matrix.fun)
+    opts = make.knit.print.opts(data.frame.theme=data.frame.theme, ,table.max.rows=table.max.rows, table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips = FALSE, print.data.frame.fun = print.data.frame.fun, print.matrix.fun=print.matrix.fun, word.table.style=word.table.style)
   }
   register.knit.print.functions(opts)  
 #  for (opt in opts) {
@@ -31,7 +31,7 @@ set.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max
 
 }
 
-make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, data.frame.theme = c("code","html","kable","grob")[1+html.data.frame]) {
+make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, show.col.tooltips = TRUE, print.data.frame.fun = NULL, print.matrix.fun=NULL, data.frame.theme = c("code","html","kable","grid","flextable")[1+html.data.frame], word.table.style="Table Simple 1") {
   opts = list()
   restore.point("make.knit.print.opts")
   
@@ -47,7 +47,7 @@ make.knit.print.opts = function(html.data.frame=TRUE,table.max.rows=25, table.ma
       fun= function(x, options=NULL, ...) {
         restore.point("ndnfhdubfdbfbfbh")
         
-        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows,table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options, data.frame.theme=data.frame.theme,...)  
+        rtutor.knit_print.data.frame(x,table.max.rows=table.max.rows,table.max.cols=table.max.cols, round.digits=round.digits, signif.digits=signif.digits, show.col.tooltips=show.col.tooltips, options=options, data.frame.theme=data.frame.theme, word.table.style=word.table.style,...)  
       },
       classes=c("data.frame","tbl","tbl_df","grouped_df")
     )
@@ -134,7 +134,7 @@ rtutor.knit_print.shiny.tag.list = function (x, ...)
         meta = meta)
 }
 
-rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, data.frame.theme=c("code","html","kable","grid")[1], show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL, ...) {
+rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NULL, round.digits=8, signif.digits=8, data.frame.theme=c("code","html","kable","grid","flextable")[1], show.col.tooltips=TRUE, col.tooltips=NULL, options=NULL,word.table.style="Table Simple 1", ...) {
   restore.point("rtutor.knit_print.data.frame")
   
   if (is.matrix(x))
@@ -180,6 +180,10 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
       h1 = RTutor:::html.table(x,round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips,...)
       html = c(h1, as.character(p(missing.txt)))
       return(asis_output(html))
+    } else if (data.frame.theme == "word") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      txt = paste0('```{=openxml}\n',word.xml.table(dat),"\n```\n","\n\n",missing.txt,"")
+      return(asis_output(txt))
     } else if (data.frame.theme=="kable") {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
       txt = c(knit_print(kable(dat)),"",missing.txt,"")
@@ -189,6 +193,13 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
       library(gridExtra); library(grid)
       grid.draw(tableGrob(dat, rows=NULL))
       return(asis_output(missing.txt))
+    } else if (data.frame.theme == "flextable") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      library(flextable)
+      tab = regulartable(dat) %>% theme_zebra()
+      txt = c(knit_print(tab),"\n\n",missing.txt,"")
+      return(asis_output(txt))
+
     } else {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = capture.output(print(dat))
@@ -199,6 +210,10 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
     if (data.frame.theme=="html") {
       html = RTutor:::html.table(x,round.digits=round.digits, signif.digits=signif.digits, col.tooltips=col.tooltips, ...)
       return(asis_output(html))
+    } else if (data.frame.theme == "word") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      txt = paste0('```{=openxml}\n',word.xml.table(dat),"\n```\n")
+      return(asis_output(txt))
     } else if (data.frame.theme == "kable") {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
       txt = c(knit_print(kable(dat)),"","")
@@ -208,6 +223,11 @@ rtutor.knit_print.data.frame = function(x, table.max.rows=25, table.max.cols=NUL
       library(gridExtra); library(grid)
       grid.newpage()
       grid.draw(tableGrob(dat, rows=NULL))
+    } else if (data.frame.theme == "flextable") {
+      dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits)
+      library(flextable)
+      tab = regulartable(dat) %>% theme_zebra() %>% autofit()
+      return(knit_print(tab))
     } else {
       dat = pretty.df(x,signif.digits = signif.digits, round.digits = round.digits) 
       txt = paste0(capture.output(print(dat)), collapse="\n")
