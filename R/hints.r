@@ -136,7 +136,7 @@ log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.i
   # Update ups statistics
   if (isTRUE(ps$e.ind>0)) {
     ups = get.ups()
-    update = !ups$cu$solved[chunk.ind]
+    update = isTRUE(!ups$cu$solved[chunk.ind])
     
     if (update) {
       ups$cu$num.hint[chunk.ind] = ups$cu$num.hint[chunk.ind]+1
