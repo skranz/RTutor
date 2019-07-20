@@ -289,7 +289,10 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
     if (!store.output) ps$chunk.console.out=""
     has.error = !stepwise.eval.stud.expr(stud.expr=ps$stud.expr.li,stud.env=stud.env, store.output=store.output)
 
-    if (has.error) {
+    # Update 19.07.2019: Don't stop after error
+    # if we have multiple expressions to test
+    # The error may have occured in later expressions only
+    if (has.error & length(ck$e.li[[1]])==1) {
       log.event(type="check_chunk",chunk=chunk.ind, ex=ck$ex.ind,e.ind=0,code=stud.code, ok=FALSE,message=ps$failure.message)
 
       update.ups.chunk.check(passed=FALSE,chunk.ind=chunk.ind, save=TRUE, ps=ps)
