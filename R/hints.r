@@ -59,11 +59,16 @@ hint = function(..., ps=get.ps()) {
     e.ind = 1
   }
 
+  ps$stud.env$sjjsf[1]
+  
+  
+  hint.env = new.env(parent=ps$stud.env)
+  hint.env$stud.env = ps$stud.env
   
   # No expression set
   if (e.ind == 0) {
     if (!is.null(chunk.hint)) {
-      eval.fun(chunk.hint)
+      eval.fun(chunk.hint, hint.env)
       log.event(type="hint",chunk=ps$chunk.ind, ex=ps$ex.ind, e.ind=e.ind)
       if (ps$cdt$num.e[[ps$chunk.ind]]>0) {
         cat("\nI can't give you a more specific hint, since I can't run your code, due to an error.")
@@ -82,7 +87,7 @@ hint = function(..., ps=get.ps()) {
     hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[e.ind]]
     if (length(hint.expr)==0) {
       if (!is.null(chunk.hint)) {
-        res = try(eval.fun(chunk.hint))
+        res = try(eval.fun(chunk.hint, hint.env))
         if (is("res","try-error")) {
           if (ps$e.ind==0) {
             cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
@@ -96,7 +101,7 @@ hint = function(..., ps=get.ps()) {
         cat("Sorry, but there is no hint for your current problem.")
       }
     } else {
-      res = try(eval.fun(hint.expr))
+      res = try(eval.fun(hint.expr, hint.env))
       if (is("res","try-error")) {
         if (ps$e.ind==0) {
           cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
@@ -105,7 +110,7 @@ hint = function(..., ps=get.ps()) {
         }
       }
       if (!is.null(chunk.hint)) {
-        res = try(eval.fun(chunk.hint))
+        res = try(eval.fun(chunk.hint, hint.env))
         if (is("res","try-error")) {
           if (ps$e.ind==0) {
             cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
@@ -125,6 +130,20 @@ hint = function(..., ps=get.ps()) {
   #ps$chunk.ind
   #ps$e.ind
   invisible("")
+}
+
+#' A robust implementation of isTRUE
+#' 
+#' Returns FALSE if evaluation expr yields an
+#' error or is not TRUE.
+#' 
+#' Useful for customized hints were evaluating
+#' an expression may often cause errors,
+#' e.g. if a user did not define a variable.
+true = function(expr, env=parent.frame()) {
+  expr = substitute(expr)
+  res = try(eval(expr),silent = TRUE)
+  isTRUE(res)
 }
 
 
