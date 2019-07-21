@@ -159,7 +159,7 @@ show.success.message = function(success.message,...) {
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
 #' @param ok.if.same.val if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
 #' @export
-check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = TRUE,s3.method=NULL,
+check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = NA,s3.method=NULL,
   ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval),  ...
 ) {
 
@@ -171,6 +171,9 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     ok.if.same.val = FALSE
   }
 
+  if (is.na(ok.if.same.val)) {
+    ok.if.same.val = !is.name(call)
+  }
 
   # restore.point can lead to error
   restore.point("check.call")
@@ -181,13 +184,43 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
   dce = describe.call(call.obj=ce)
   check.na = dce$name
 
+  all.stud.expr.li = stud.expr.li
+  
   stud.na = sapply(stud.expr.li,  name.of.call)
   # Filter all student calls that have the same name of call
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
 
+  # User has not called the correct function
+  # in the code. Check whether a different function
+  # with same outcome is called.
+  if (ok.if.same.val & length(stud.expr.li)==0) {
+    check.val <- eval(ce, stud.env)
+    ok = FALSE
+    for (se in all.stud.expr.li) {
+      tryCatch({
+        sval <- eval(se,stud.env)
+        if (is.same(check.val,sval)) {
+          ok <- TRUE
+          break
+        }
+      }, error = function(e){})
+    }
+    if (ok) {
+      # Result is correct but force student
+      # to use desired function.
+      failure.message = paste0("Well,",part.str," your command\n    ", deparse1(se),"\nyields the correct result. But in this task you shall learn how to directly call the function '",check.na,"', like \n    ", deparse1(expr), "\nPlease change your code.")
+      add.failure(failure.message)
+      return(FALSE)
+    } else {
+      if (is.null(failure.message))
+        failure.message = paste0("You have not yet entered all correct commands", part.str,".")
+      add.failure(failure.message)
+      return(FALSE)
+    }
+  }
 
   # Check if a student call with the same name has the same return value
-  if (ok.if.same.val) {
+  if (ok.if.same.val & length(stud.expr.li)>0) {
     check.val <- eval(ce, stud.env)
     ok = FALSE
     for (se in stud.expr.li) {
@@ -205,17 +238,20 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
       return(TRUE)
     }
   }
-
+  
+  
+  
   stud.expr.li = lapply(stud.expr.li, function(e) match.call.object(e, envir=match.call.object.env(), s3.method=s3.method))
 
 
-  ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval)
+  # Note: We set check.value = FALSE
+  # since we manually check same return values above
+  ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval, check.value=FALSE)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
      add.success(success.message)
      return(TRUE)
   } else {
-
     if (is.null(failure.message))
       failure.message = paste0("You have not yet entered all correct commands", part.str,".")
     add.failure(failure.message)
@@ -223,13 +259,14 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
   }
 }
 
-internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FALSE, ignore.arg=NULL,check.arg.by.value=TRUE, noeval=FALSE) {
+internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FALSE, ignore.arg=NULL,check.arg.by.value=TRUE, noeval=FALSE, check.value=TRUE) {
   restore.point("internal.check.call")
   check.na = dce$name
   stud.na = sapply(stud.expr.li,  name.of.call)
 
 
-  # Filter all student calls that have the same name of call
+  # Filter all student calls that have
+  # the same name of call
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
   if (length(stud.expr.li)==0) {
     return(list(FALSE,"not found"))
@@ -265,6 +302,9 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
   }
 
   # For the moment let us check everything but fun by the return value
+  if (!check.value) {
+    return(list(FALSE, "not found"))
+  }
   if (dce$type != "fun") {
 
     if (noeval) {
@@ -354,6 +394,15 @@ check.assign = function(
   if (length(stud.expr.li) == 0) {
     if (is.null(failure.message))
       failure.message = paste0("You have not yet made an assignment to ", var, part.str,".")
+    add.failure(failure.message)
+    return(FALSE)
+    
+  # New: 2019-07-21
+  # Son't allow multiple assignments of the
+  # same variable
+  } else if (length(stud.expr.li)>1) {
+    if (is.null(failure.message))
+      failure.message = paste0("Please assign the variable ", var, " only once in your code chunk.")
     add.failure(failure.message)
     return(FALSE)
   }

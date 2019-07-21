@@ -658,11 +658,11 @@ stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.en
 #' @param message a longer description shown to the user
 #' @param ... variables that will be rendered into messages that have whiskers
 #' @export
-add.failure = function(message,..., ps= get.ps()) {
+add.failure = function(message,..., add.new.line=TRUE, ps= get.ps()) {
   message=replace.whisker(message,...)
   args = list(...)
   restore.point("add.failure")
-  ps$failure.message = message
+  ps$failure.message = if (add.new.line) paste0("\n",message) else message
 }
 
 #' Used inside tests: adds a sucess message

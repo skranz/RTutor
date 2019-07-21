@@ -59,11 +59,11 @@ hint = function(..., ps=get.ps()) {
     e.ind = 1
   }
 
-  ps$stud.env$sjjsf[1]
-  
+  .stud.code = ps$cdt$stud.code[[ps$chunk.ind]]
   
   hint.env = new.env(parent=ps$stud.env)
-  hint.env$stud.env = ps$stud.env
+  hint.env$.stud.env = ps$stud.env
+  hint.env$.stud.code = .stud.code
   
   # No expression set
   if (e.ind == 0) {
