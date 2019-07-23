@@ -208,7 +208,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     if (ok) {
       # Result is correct but force student
       # to use desired function.
-      failure.message = paste0("Well,",part.str," your command\n    ", deparse1(se),"\nyields the correct result. But in this task you shall learn how to directly call the function '",check.na,"', like \n    ", deparse1(expr), "\nPlease change your code.")
+      failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But in this task you shall learn how to directly call the function '",check.na,"', like \n\n    ", deparse1(expr), "\n\nPlease change your code.")
       add.failure(failure.message)
       return(FALSE)
     } else {
@@ -402,7 +402,7 @@ check.assign = function(
   # same variable
   } else if (length(stud.expr.li)>1) {
     if (is.null(failure.message))
-      failure.message = paste0("Please assign the variable ", var, " only once in your code chunk.")
+      failure.message = paste0("You have assigned ", length(stud.expr.li)," times a value to the variable ", var, " in your chunk. While you might get the correct result in RStudio, RTutor can only check your result if you assign a value to ", var, " only once in your chunk.")
     add.failure(failure.message)
     return(FALSE)
   }

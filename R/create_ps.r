@@ -44,7 +44,10 @@ examples.create.ps = function() {
 #' @export
 create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE) {
   restore.point("create.ps")
-
+  
+  # Clear current problem set
+  set.ps(NULL)
+  
   CREATE.PS.ENV$fragment.only = fragment.only
   CREATE.PS.ENV$add.enter.code.here = add.enter.code.here
   Addons = make.addons.list(addons)
@@ -130,6 +133,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   
   save.rps(rps)
   remove.ups(ps.name=rps$ps.name)
+  
+  
   if (stop.when.finished) {
     stop.without.error("The problem set files have been succefully created.")
   }

@@ -1,11 +1,11 @@
 Package: RTutor
 Type: Package
-Title: R problem sets with automatic test of solution and hints
-Version: 2019.07.18
-Date: 2019-07-18
+Title: Interactive R problem sets with automatic testing of solutions and automatic hints
+Version: 2019.07.22
+Date: 2019-07-22
 Author: Sebastian Kranz
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
-Description: R problem sets with automatic test of solution and hints
+Description: Interactive R problem sets with automatic testing of solutions and automatic hints
 License: Programm code: GPL >= 2.0
     Contributed problem sets: Creative Commons (CY)
 Depends:

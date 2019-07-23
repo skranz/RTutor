@@ -385,7 +385,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 update.ups.chunk.check = function(passed, chunk.ind = ps$chunk.ind, ups=get.ups(), ps=get.ps(), save=TRUE) {
   restore.point("update.ups.chunk.check")
 
-  update = isTRUE(!ups$cu$solved[chunk.ind])
+  update = isTRUE(try(!ups$cu$solved[chunk.ind], silent=TRUE))
 
   if (update) {
     if (is.na(ups$cu$first.check.date[chunk.ind]))

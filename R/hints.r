@@ -155,7 +155,7 @@ log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.i
   # Update ups statistics
   if (isTRUE(ps$e.ind>0)) {
     ups = get.ups()
-    update = isTRUE(!ups$cu$solved[chunk.ind])
+    update = isTRUE(try(!ups$cu$solved[chunk.ind], silent=TRUE))
     
     if (update) {
       ups$cu$num.hint[chunk.ind] = ups$cu$num.hint[chunk.ind]+1
@@ -259,7 +259,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     }
 
     # Environment in which argument values shall be evaluated. Is a data frame
-    # if the function is a dplyer function like mutate(dat,...)
+    # if the function is a dplyr function like mutate(dat,...)
     if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
       val.env = NULL
     } else {
@@ -314,6 +314,14 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   }  else if (cde$type == "var") {
     if (!from.assign)
       display("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
+  }  else if (cde$type == "subset") {
+    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
+    if (from.assign) {
+      display("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+    } else {
+      display("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+    }
+  
   } else {
     display("Sorry... I actually do not have a hint for you.", start.char=start.char, end.char=end.char)
   }

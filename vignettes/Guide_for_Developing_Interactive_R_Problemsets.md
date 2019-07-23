@@ -391,6 +391,28 @@ Sometimes you want to show the advice from the automatically generated hint but 
     #>
 ```
 
+## Adaptive Custom Hints
+
+The hints described above always show the same message, independent of the student's code. Automatic hints already adapt to the student's input and from RTutor version 2019.07.23 it is also more simple to make custom hints adaptive.
+
+Here is an example, where the task is to assign the first 100 square numbers to the variable `z`.
+```r
+z = 1:100 * 1:100
+#< hint
+if (true(identical(z,1:10*1:10))) {
+  cat("Huh, you made a common mistake. Read the task precisely. You shall assign to z the first 100 square numbers, not only all square numbers that are less or equal to 100")
+} else if (true(length(z)!=100)) {
+  cat("Your variable z must have 100 elements, but in your solution z has", length(z),"elements.")  
+} else {
+  cat("There is a simple one-line formula to compute the first 100 square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).
+")
+}
+#>
+```
+The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also the student's current code that chunk has been run in a parent environment. 
+
+The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` if the expression cannot be evaluated. This is useful, because whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. A normal call to `isTRUE` would throw an error if `z` does not exist.
+
 ## Info blocks
 
 Info blocks are declared outside of code chunks and start with `#< info` and end with `#>`. 
@@ -520,6 +542,11 @@ The variable `import.var` is a list whose element names correspond to the short 
 
 
 # Examples and tipps for creating tests and hints
+
+
+## Iteratively Refining Hints and the Problem Set
+
+The companion package [RTutorSAGI](https://github.com/skranz/RTutorSAGI) allows to study logs of students' submitted solutions. One can see were were students systematically got stuck and can adapt the problem set structure and hints correspondingly. Take a look at the README.md of that package.
 
 ## Testing a function written by the student
 
