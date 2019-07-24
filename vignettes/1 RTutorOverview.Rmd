@@ -1,0 +1,287 @@
+---
+title: "1 RTutor Overview"
+author: "Sebastian Kranz, Ulm University"
+output:
+  html_document:
+    toc: yes
+---
+```{r setup, include="FALSE"}
+knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
+
+verbatimize.chunks = function() {
+  # Make chunks verbatim as explained here
+  # https://yihui.name/knitr/faq/ 
+  # Point 7
+  
+  library(stringtools)
+  setwd("D:/libraries/RTutor/RTutor/vignettes")
+  file = "test.Rmd"
+  txt = readLines(file)
+  lines = which(str.starts.with(trimws(txt), "```{r") & !str.ends.with(trimws(txt),"`r ''`"))[-1]
+  txt[lines] = paste0(txt[lines],"`r ''`")
+  writeLines(txt, file)
+}
+```
+
+
+##  Brief overview
+
+RTutor is an R package that allows to develop interactive R problem sets. The interactive tasks directly test a student's solution and provide hints if not everything is correct. For an overview of the main features that distinguishes RTutor from similar projects like [learnr](https://rstudio.github.io/learnr/), you can take a look at [this blog entry](https://skranz.github.io/r/2019/04/29/RTutor_vs_Learnr.html.)
+
+RTutor allows off-line or on-line use. Problem sets can either be solved as RMarkdown files directly in RStudio or in a browser based interface powered by Shiny.
+
+RTutor is used in several courses at [Ulm University](https://www.uni-ulm.de/en/) and other universities. I also have supervised several students who have created very nice web-based RTutor problem sets that allow to replicate the analyses of well published economic articles in an interactive fashion (a list is on the [main page](https://skranz.github.io/RTutor)).
+
+Examples and additional material can be found on RTutor's Github page:
+
+[https://github.com/skranz/RTutor](https://github.com/skranz/RTutor)
+
+This document gives you a first overview of how to generate an interactive RTutor problem set.
+
+
+## Installation
+
+To install RTutor just run
+
+```s
+install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOption("repos")))
+```
+
+If you create problem sets that you want to host on shinyapps.io, you have to install all packages directly from Github. See the instructions on [RTutor's Github page]((https://github.com/skranz/RTutor).
+
+
+## Create an R Markdown solution file
+
+You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, quizzes or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.
+
+Some examples can be found [here in the example directory on Gthub](https://github.com/skranz/RTutor/tree/master/inst/examples).
+
+Below is a simple example problem set that we name `myps`. This code should be saven in a file named `myps_sol.Rmd`.
+```
+    # Problemset Example
+ 
+    Adapt the working directory below and (Run setup chunk in RStudio).
+    This creates the problem set files and the sample solution from this solution file.
+    
+    #< ignore
+    ```{r "setup"}`r ''`
+    library(RTutor)
+    setwd("C:/folder_of_this_solution_file")
+    ps.name = "myps"; sol.file = paste0(ps.name,"_sol.Rmd")
+    libs = c("ggplot2") # character vector of all packages you load in the problem set
+
+    #name.rmd.chunks(sol.file)
+    create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)
+              
+    # The following line directly shows the problem set 
+    # in the browser
+    show.ps(ps.name,launch.browser=TRUE,
+      auto.save.code=FALSE,sample.solution=FALSE)
+
+    ```
+    #>
+    ## Exercise 1 -- Summary statistics
+    
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r "1 a)"}`r ''`
+    #< task_notest
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #>
+    ```
+    
+    Now compute the mean of x.
+    ```{r "1 a) 2"}`r ''`
+    mean(x)
+    #< hint
+    display("Use Google, e.g. search for 'R compute mean'.")
+    #>
+    ```
+    
+    #< award "mean means mean"
+    Well, in some occasions one can just guess the name of an R function.
+    The function to compute the mean of a vector, or matrix is called 'mean'.
+    Usually, it is much quicker to goggle than to guess function names, however.
+    #>
+    
+    
+    ## Exercise 2 -- Computing with vectors
+    a) Let y be a vector that contains the squared elements of x.
+       Then show y.
+    
+    ```{r "2 a)"}`r ''`
+    #< task
+    x = 1:5
+    #>
+    y = x^2
+    y
+    ```
+    
+    We can also plot in a problem set
+    ```{r "2 a) 2"}`r ''`
+    library(ggplot2)
+    qplot(x,y)
+    ```
+   
+    
+    #< info "random numbers"
+    Here are examples for generating random numbers
+    ```{r "1 "}`r ''`
+    runif(3,0,100)
+    sample(1:100,5)
+    ```
+    #>
+    
+    Here is a quiz that will be nicely shown in the
+    shiny version.
+    #< quiz "prime"
+    question: What is the 'oddest' prime?
+    sc:
+        - 2*
+        - 3
+        - 5
+        - 7
+    success: Well, of course the answer is debatable...
+    failure: Try again.
+    #>
+    
+```
+
+The different blocks starting with `#<` are described here ### and more advanced features here. Further details on customizing tests and hints are given here.  
+The functions `create.ps` and `show.ps` both have a large set of arguments that allow a lot of customization. Take a look at the corresponding help files.
+
+## Generate a structure file and empty problem set for students
+
+To create a problem copy the example above or another example. Then set the right working directory in the setup chunk.
+
+```s
+    setwd("C:/folder_of_this_solution_file")
+```
+Then run the setup chunk in RStudio. 
+
+The call to
+```s
+   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)
+```
+generates several files
+  - myps.rps: a binary representation of the problem set structure
+  - myps.Rmd: empty problem set in Rmarkdown format
+  - myps_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format.
+  - myps_output_solution.Rmd: An Rmd file that can be the basis to statically knit the solved problem set. (This file is mainly useful for students who want to write a Bachelor or Master thesis based on an RTutor problem set.)
+  
+Note: RTutor creates automatic chunk names for the created Rmd files. If you uncomment the line
+
+    #name.rmd.chunks(sol.file)
+
+in the setup chunk of your solution file `myps_sol.Rmd`, its chunk names will be set in the same way.
+
+## Running the problem set
+
+### Running as shiny app in the browser
+
+The call
+
+```s
+show.ps(ps.name,launch.browser=TRUE,
+  auto.save.code=FALSE,sample.solution=FALSE)
+```
+starts your default browser with an empty problem set. You should be able to solve it by working on the first code chunk and pressing the "check" button when finished.
+
+If you set the argument `sample.solution=TRUE` the problem set is already filled with your sample solution.
+ 
+### Solving and checking an RMarkdown file in RStudio
+
+Alternatively a problem set can be solved by the students as an .Rmd file using RStudio. You should give students a ZIP file that contains the files `myps.Rmd` (the unsolved problem set) and `myps.rps` (compiled version of the problem set structure and solution) and possible all addition files like data sets etc.
+
+Students should extract the files into a directory and open `myps.Rmd` in RStudio. That is the file they work on. Students can check their solution by clicking on the [RStudio Addin](https://rstudio.github.io/rstudioaddins/) `Check Problemset`, which is available once RTutor has been installed.
+
+A student can type `stats()` in the R console to get some information of how much of the problem set he has already solved.
+
+Typing `hint()` provides hints about how to solve the current task that failed to pass the solution tests.
+
+You can test yourself whether that works fine by opening `Example_sample_solution.Rmd` and then checking the problem set.
+
+## Submitting Solutions and Grading
+
+You can use RTutor problem sets just as interactive tutorials without the need for students to submit any solutions. 
+
+Or you can ask students who have finished their problem sets, to submit their solution. In the shiny version there is a button to create a submission file (with file type `.sub`) and in the RTutor version, students should call the function `make.submission()`. You should briefly described this at the end of a problem set.
+
+The companion package [RTutorSAGI](https://github.com/skranz/RTutorSAGI) contains tools to combine all submission files for grading purposes. Take a look at the README.md file for details.
+
+## Distributing and Hosting Problem Sets
+
+### Distribute as ZIP files
+
+As a teacher, you may just distribute problem sets as ZIP files to your students and ask them to solve at home and then submit the solutions (see explanation above).
+
+### Host in the rstudio cloud
+
+It can also be very convenient to host RTutor problem sets in the rstudio cloud. Take a look at my [blog entry](https://skranz.github.io/r/2018/06/04/RTutor_Shiny_Cloud.html) for details.
+
+### Distribute as an R package on Github
+
+You can also create an R package that contains the problem set and host it on Github. This is described in more detail in this vignette:
+
+[https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
+
+### Host online as a shiny app on shinyapps.io
+
+You can also host web-based problem sets on shinyapps.io. Users can then solve them without having to install R. This is explained in this vignette:
+[https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd)
+
+### Hosting problem sets on your own server
+
+In principle, you could also host the problem set as an app on your own shiny server. However, this seems a substantial security risk since users can run arbitrary R code, which allows them to access your file system and generate disaster. This problem can probably be overcome if you spin up a separate docker container for each student instance, but I have not implemented such a scheme. 
+
+
+
+
+## Iterative Development
+
+I guess the most natural way to develop a problem set is to repeatedly perform the following 3 steps:
+
+  1. Write and adapt your solution file and generate problem set files by running the setup chunk.
+  2. Test whether the sample solution runs without problems
+  3. Try to solve the empty problem set yourself and check whether you should change tests, hints or exercise tasks in your solution file (Step 1). 
+
+## Distributing your problem set
+
+### Simple way to distribute problem sets for a class
+
+Distributing the problem set for RStudio use is simple: just give your students the structure file as .rps and the empty problem set as .rmd file and tell them to install RStudio and all packages as described above. Students can then go on solving the problem set. You can also ask them to upload the solutions and possible the log files that track their solution process.
+
+It is planned to implement more functionality that facilitates grading. The goal is to put all solutions in a directory and quickly generate tables that show the total percentage solved for all students.
+
+### Distribute as an R package on Github
+
+You can also create an R package that contains the problem set and host it on Github. This is described in more detail in this vignette:
+
+[https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
+
+### Host online as a shiny app on shinyapps.io
+
+You can also host web-based problem sets on shinyapps.io. Users can then solve them without having to install R. This is explained in this vignette:
+[https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd)
+
+### Host problem sets on your own shiny server
+
+In principle, you could also host the problem set as an app on your own shiny server. However, this seems a substantial security risk since users can run arbitrary R code. This could lead to desaster if you don't carefully restrict access. This problem can probably be overcome if you spin up a separate docker container with limited rights for each student instance, but I have not implemented such a scheme. [Shiny proxy](https://www.shinyproxy.io/) may be helpful in this regard.
+
+
+# Commonly occuring errors
+
+- Problem: When I run `create.ps` I get the following error message:
+  ```
+  Error in nchar(paste0(code, collapse = "\n")) :
+    invalid multibyte string, element 1
+  ```
+  + Answer: This is a nasty error that has to do with the *encoding* of your text file. Try the following with your _sol.Rmd file. In RStudio choose the menu `File -> Reopen with encoding`. Then pick the Encoding `UTF-8` and press ok. Now make some small changes in your file, save it and try again to run `create.ps`. Hopefully it now works...
+
+
+- Problem: I change my _sol.Rmd file run `create.ps` and `show.ps`, the browser opens but the changes do not appear in the shown problem set.
+  + Answer: Make sure that you have correctly set the working directory with `setwd` to the folder in which your _sol.Rmd file is stored.
+
+

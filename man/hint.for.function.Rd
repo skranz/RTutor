@@ -2,10 +2,10 @@
 % Please edit documentation in R/hints.r
 \name{hint.for.function}
 \alias{hint.for.function}
-\title{Default hint for a call}
+\title{Default hint for a function}
 \usage{
 hint.for.function(code, ..., ps = get.ps())
 }
 \description{
-Default hint for a call
+Default hint for a function
 }

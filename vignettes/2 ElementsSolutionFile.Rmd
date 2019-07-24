@@ -1,0 +1,362 @@
+---
+title: "2 Elements of a Solution File"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+```{r setup, include="FALSE"}
+knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
+
+```
+
+# Elements of Solution Files
+
+Let us dig a bit deeper into the structure of the RMarkdown file files that specify an RTutor problem set. Here is the code of a simple, we would save as `Example_sol.Rmd`
+
+```
+    # Problemset Example
+
+    #< ignore
+    ```{r "Create problem set files"}`r ''`
+    setwd("C:/folder_of_this_solution_file")
+    ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+    libs = NULL # character vector of all packages you load in the problem set
+    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
+    ```
+    #>
+    
+    ## Exercise 1 -- Summary statistics
+    
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}`r ''`
+    #< task
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #>
+    ```
+    Now compute the mean of x.
+    ```{r}`r ''`
+    mean(x)
+    ```
+```
+As in a normal RMarkdown down file we have text and code chunks intermingled. In addition RTutor recognizes several keywords with special meaning.
+
+In the example above, we have:
+
+  - An exercise header starting with `## Exercise`.
+  - There is an *ignore block* starting with the line `#< ignore` and ending with the line `#>`. Inside the ignore block we have the setup chunk.
+  - Inside the first chunk we have a *task block* starting with the line `#< ignore` and ending with the line `#>` Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.
+
+Run the setup chunk and take a look at the empty problem set `Example.Rmd` that you can give to students. Places where students have to enter code will be marked by.
+```
+    ```{r }`r ''`
+    # enter your code here ...
+    ```
+```
+
+Below we give an overview of the most important special keywords and blocks you can use to specify an RTutor problem set.
+
+## Exercise header
+
+A solution file consists of one or more exercises. An exercise starts with a line like
+
+    ## Exercise 1 -- Summary statistics
+
+You can pick any label for the exercise (it can include spaces). Yet, the recommend format for the exercise name is an exercise number, optionally followed by `--` and a short description, as in the example above.
+
+It is necessary that your line starts with 
+
+    ## Exercise 
+
+## parts a), b) ...
+
+RTutor recognizes lines in the exercise description that start with a) or ii) etc. as a "part" of an exercise and will use this information when automatically naming the code chunks in the empty problem set. 
+
+# Task blocks and variants
+
+
+## task blocks
+
+In our exercise the first code chunk shall be an example that will also be shown to the student. We make code being shown to students by wrapping it in a block starting with the line
+
+	#< task
+
+and ending with a line
+
+	#>
+
+Generate the problem set files and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set while the second code chunk asks the student to enter her solution.
+
+The interactive problem set can already be used. It automatically tests the solution and if the test fails since `mean(x)` is not entered correctly, it gives the option to type `hint()` to get a hint.
+
+## task_notest blocks 
+
+By default also the code as part of a task block will be tested for correctness when the student tests her solution. That is because future code may rely on the given code in the task and we want to make sure that the task code has not been accidentally changed by the user. If you don't want to generate tests for the code given in the task you can do so by wrapping the code instead in a block starting with `#< task_notest`, e.g.
+
+```
+  #< task_notest
+    sum(1:5)
+  #>
+```
+
+## fill_in blocks 
+
+Sometimes you would want to show your users a task where they should fill
+in code at some point, e.g.
+
+```s
+  # Enter the code at the ___
+  dat %>% 
+    # Filter all rows where x is larger than 5
+    filter(___) %>%
+    # Sort in descending order in y
+    arrange(___)
+```
+
+The following RTutor code allows to implement this in the easiest fashion.
+```
+  ```{r}`r ''`
+  #< hint
+  cat("Best add a chunk hint at the beginning,
+    since automatic hints don't work well, if the user code is not
+    syntactically correct R code.")
+  #>
+  
+  # Enter the code at the ___
+  #< fill_in
+  # dat %>% 
+  #  # Filter all rows where x is larger than 5
+  #  filter(___) %>%
+  #  # Sort in descending order in y
+  #  arrange(___)
+  #>
+  dat %>% 
+    # Filter all rows where x is larger than 5
+    filter(x>5) %>%
+    # Sort in descending order in y
+    arrange(desc(y))
+  ```
+```
+Note that all code in the fill_in block is commented out and starts with `#` followed by a space. That is by design because the `___` make the code syntactically incorrect. If the code would not be commented out, you would have trouble creating your problem set. When the chunk is shown to the user, the comments will be removed. RTutor can then deal with the incorrect R Syntax. Automatic hints don't work well with syntactically incorrect code. Therefore it is recommended to add a custom chunk hint at the beginning, that always will be shown (see below for custom hints).
+
+
+# Blocks for customized hints and tests
+
+There are several block types that are related to customized hints and tests:
+
+`hint`, `add_to_hint`, `compute`, `test`, and `test_arg`. See the [section on customized hints and tests](https://skranz.github.io/RTutor/articles/3%20CustomHintsAndTests.html) for details.
+
+# Other block types
+
+
+## Quiz blocks
+
+For problem sets designed for the web browser, you can easily specify quizzes. Just take a look at the example problem on RTutor's Github page [here]( [https://github.com/skranz/RTutor/blob/master/inst/examples/QuizExample_sol.Rmd).
+
+Note that you have to add the argument `addons="quiz"` to your call to `create.ps` in your setup chunk.
+
+
+
+## Info blocks
+
+Info blocks are declared outside of code chunks and start with `#< info` and end with `#>`.
+In the shiny version of the problem set the content of an info block is shown inside a collapsible note. In the RStudio version, info blocks are less useful, but they can be shown in the viewer pane.
+
+Info blocks are helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:
+
+```md
+  #< info "useful functions for numeric vectors"
+    Here are examples for useful R functions
+    ```{r}`r ''`
+    max(c(1,5,2)) # returns maximum
+    min(c(1,5,2)) # returns minimum
+    
+    sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA
+    cumsum(c(1,5,2)) # returns cummulated sum
+    diff(c(1,5,2)) # returns the vector of differences
+    ``` 
+  #>  
+```
+An info block can contain normal text and also code chunks. When the problem set is created all info blocks will be compiled via the knitr and markdown packages to html text.
+Since info blocks will be complied already when the problem set is created, you cannot used any variables that are declared outside the info block in the info block code chunks. 
+
+If you want info blocks with code chunks that the user can solve use a *note block*.
+
+## Notes -- Or info blocks that can contain chunks
+
+The simplest way to add notes / footnotes is to use an info block as described above, with a block:
+
+	#< info "Title"
+	Description here and code that will be compiled beforehand.
+	#>
+
+ Info blocks cannot include chunks, however. There is a new feature of RTutor that allows notes that contain optional chunks. Here is an example:
+ 
+```
+	#! start_note "A note with a chunk"
+	This is a note.
+	
+	```{r "1_1  6",optional=TRUE}`r ''`
+	#< task
+	# show that all integers between 0 and 10
+	#>
+	1:10
+	```
+	#! end_note	
+```
+
+Everything between the lines 
+
+`#! start_note "Title"` 
+
+and
+
+`#! end_note` 
+
+will be shown in a note.  Chunks inside the note can be solved by users. They should have `optional=TRUE` in the chunk header. Beware that RTutor is not (yet) very good in giving sensible failure messages, if you make mistakes, like forgetting the `#! end_note` line. 
+
+## preknit blocks (just knit as RMarkdown)
+
+preknit blocks are declared outside of code chunks and start with `#< preknit` and end with `#>`.
+
+Any rmd code inside a preknit block will be knitted at compile-time and shown as usual RMarkdown output in the shiny based version of the problem set. This is very similar to the output of an info block, except that it is not put into a collapsible.
+
+Note that code that was evaluated in an earlier preknit block or earlier info block will be available at compile time at later info or preknit blocks, no matter which exercise the blocks are in. If you want just to do some preliminary computations for later info or preknit blocks without showing any output, add a chunk with the chunk option `include=FALSE` in a preknit block.
+
+preknit blocks typically only make sense, if you use the shiny version of a problem set.
+
+
+
+
+## Awards
+
+Isn't it amazing when video game players play for hours and hours, doing sometimes quite repetitive and boring tasks, just in order to earn some virtual points or virtual trophies? Well it seems that many people can be motivated, at least to some degree, by such stuff (see [Wikipedia](http://en.wikipedia.org/wiki/Achievement_%28video_gaming%29)).
+
+Since a main motivation for RTutor is to make learning R, as well as statistical and economic concepts, more interesting and more entertaining, it seems natural to borrow some ideas from computer games.
+
+You can give students **awards** if they have solved a problem by adding an award block, like e.g.
+```
+  #< award "mean means mean"
+  Well, in some occasions one can just guess the name of an R function.
+  The function to compute the mean of a vector or matrix
+  is called 'mean'.
+  Usually, it is much quicker to goggle than 
+  to guess function names, however.
+  #>
+```
+Just write some markdown text inside the block. You can also include HTML tags, and e.g. embed a youtube video.
+
+The student sees the award once the chunk efore the award is solved. By typing `awards()` in the R console all awards are shown.
+
+Note that even the world's probably biggest data collecting organisation has used awards to teach it analysists...
+
+[http://qz.com/114277/to-learn-spying-software-nsa-analysts-unlock-achievements-to-win-skilz/](http://qz.com/114277/to-learn-spying-software-nsa-analysts-unlock-achievements-to-win-skilz/)
+
+
+## Using variables from earlier exercises (NOT RECOMMENDED)
+
+By default variables that have been generated by the student in earlier exercises are not known in the current exercise.
+
+It is possible to use variables from earlier exercises, but that is not recommended, because then one can only start with a new exercise if the previous has been solved. Better make each exercise self-contained.
+
+Nevertheless here is an example, how one could do it.
+
+```
+    ## Exercise 2 -- Computing with vectors
+    
+    ```{r}`r ''`
+    #< settings
+    import.var = list("1"="x")
+    #>
+    ```
+    a) Let y be a vector that contains the squared elements of x. Show y
+    ```{r}`r ''`
+    y = x^2
+    y
+    ```
+```
+As you see, in order to use variables from earlier exercises, you must add at the beginning of an exercise a settings block that defines a variable `import.var`, like
+```
+    ```{r}`r ''`
+    #< settings
+    import.var = list("1"="x")
+    #>
+    ```
+```
+The variable `import.var` is a list whose element names correspond to the short exercise names (part of the name before --) from which you want to import variables. The list elements are character vectors of the variable names you want to import from the corresponding exercise.
+
+# Special chunks options
+
+## Optional chunks
+
+By default you have to solve all chunks in an exercise in the given order. If you set the chunk option `optional=TRUE`, a chunk may not be solved. Example:
+
+```  
+  ```{r "1_b", optional = TRUE}`r ''`
+  # Code here
+  
+  ```
+```  
+This is in particular useful if you use notes that contain chunks. Note that variables that have been computed in optional chunks will not be known in later chunks.
+
+Note that `optional` is not a chunk option known by `knitr` but only used for RTutor.
+
+
+
+## Chunks with HTML output
+
+You can specify chunks whose output is native HTML code, e.g. if you want to show an HTML table or show a motion plot. As in normal rmarkdown, you can do so by setting the chunk option `results= "asis"`. Here is an example from an interactive problem set that shows a motion plot:
+
+```  
+  ```{r "2_1_a_example", results = 'asis'}`r ''`
+  #< task
+  library(googleVis)
+  mp = gvisMotionChart(Int.data,
+         idvar = "country", timevar = "year")
+  plot(mp, tag = "chart")
+  #>
+  ```
+```
+
+There are a lot of R packages that help creating nice HTML tables, like `stargazer`, or `hwriter`.
+
+## Chunks with HTML Widgets as outputs
+
+It is also possible to have chunks that have HTML widgets as output. If you use the shiny based version of RTutor you then need some additional chunk options. Here is an example for the leaflet widget:
+
+```
+  ```{r output="htmlwidget", widget="leaflet"}`r ''`
+  #< task_notest
+  SFmap <- leaflet() %>% 
+    addTiles() %>% 
+    setView(9.9620289,48.4251394, zoom = 11) %>% 
+    addMarkers(9.963614702355699,48.42517242865929,
+      popup = 'RTutor was created here at Ulm University')
+  SFmap
+  #>
+  ```
+```
+
+The `widget` argument is typically the name of the R package in which the html widget is specified.
+
+## Specifying figure width and height
+
+If your chunk plots a figure, you may want to specify the width and height of the resulting figure. You can do this like for normal RMarkdown files with the chunk options `fig.width` and `fig.height` that specify width and height in inches.
+
+```
+  ```{r "1_a", fig.width=12, fig.height=5}`r ''`
+  #< task
+  plot(1:10,(1:10)^2)
+  #>
+  ```
+```
+
+You can also specify other chunk options of the `knitr` package. An overview is given here:
+
+[http://yihui.name/knitr/options/](http://yihui.name/knitr/options/)
+

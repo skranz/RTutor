@@ -61,7 +61,8 @@ hint = function(..., ps=get.ps()) {
 
   .stud.code = ps$cdt$stud.code[[ps$chunk.ind]]
   
-  hint.env = new.env(parent=ps$stud.env)
+  hint.env = new.env(parent=parent.env(ps$stud.env))
+  copy.into.env(ps$stud.env, hint.env)
   hint.env$.stud.env = ps$stud.env
   hint.env$.stud.code = .stud.code
   
@@ -140,9 +141,9 @@ hint = function(..., ps=get.ps()) {
 #' Useful for customized hints were evaluating
 #' an expression may often cause errors,
 #' e.g. if a user did not define a variable.
-true = function(expr, env=parent.frame()) {
+true = function(expr, envir=parent.frame()) {
   expr = substitute(expr)
-  res = try(eval(expr),silent = TRUE)
+  res = try(eval(expr, envir),silent = TRUE)
   isTRUE(res)
 }
 
@@ -164,7 +165,7 @@ log.hint = function(chunk.ind = ps$chunk.ind, ex.ind = ps$ex.ind, e.ind = ps$e.i
   }
 }
 
-#' Default hint for a call
+#' Default hint for a function
 #' @export
 hint.for.function = function(code, ..., ps = get.ps()) {
   code = substitute(code)
@@ -192,7 +193,7 @@ hint.for.function = function(code, ..., ps = get.ps()) {
     display("You must assign a function to the variable ", fun.name)
     return()
   }
-  display("\nTake a look at the variables test.your.res and test.sol.res to compare the results of your function with the official solution from the test call that your function has failed.")
+  display("\nYou may want to take a look at the variables test.your.res and test.sol.res to compare the results of your function with the official solution from the test call that your function has failed.")
 
   args.sol = names(formals(sol.fun))
   args.stud = names(formals(stud.fun))
@@ -207,11 +208,17 @@ hint.for.function = function(code, ..., ps = get.ps()) {
     stud.glob = findGlobals(stud.fun, merge=FALSE)$variables
     if (length(stud.glob)>0) {
       stud.glob =  paste0(stud.glob,collapse=", ")
-      display("\nWarning: Your function uses the global variable(s) \n    ",stud.glob,
+      display("Warning: Your function uses the global variable(s) \n    ",stud.glob,
               "\nOften global variables in a function indicate a bug and you just have forgotten to assign values to ", stud.glob, " inside your function. Either correct your function or make sure that you truely want to use these global variables inside your function.")
     }
+    stud.locals = findFuncLocals(NULL,body = body(stud.fun))
+    overwritten = intersect(stud.locals, args.stud)
+    if (length(overwritten)>0) {
+      display("Warning: Inside your function you assign new values to the function arguments ", paste0(overwritten, collapse=","),". This is typically a mistake.")
+    }
+    
   } else {
-    display("Please install from CRAN the package 'codetools' to get more information about possible errors in your function. After you have installed the package, type hint() again.")
+    display("Please call\n\ninstall.packages('codetools')\n\nin order to install from CRAN the package 'codetools'. This allows RTutor to get more information about possible errors in your function. After you have installed the package, type hint() again.")
     return()
   }
 }
@@ -546,14 +553,14 @@ inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, 
   } else if (compare.vals) {
 
     if (fail == 1) {
-      display("You don't have even the first element of the chain correct.")
+      display("You don't have even the first element of the pipe chain correct.")
       return(invisible())
     } else if (fail > 1) {
       wrong.call.na = name.of.call(cde$arg[[fail]])
       if (fail == 2) {
-        display("In your following chain, I can detect wrong results already after the second element '", wrong.call.na,"':")
+        display("In your following pipe chain, I detect wrong results starting from the second element '", wrong.call.na,"':")
       } else {
-        display("In your following chains, I can detect wrong results already after element ", fail,", the call to '", wrong.call.na,"':")
+        display("In your following pipe chain, I detect wrong results starting after element ", fail,", the call to '", wrong.call.na,"':")
       }
       scall.str = sapply(sde.li, function(sde) {
         sna = sapply(sde$arg, deparse1)

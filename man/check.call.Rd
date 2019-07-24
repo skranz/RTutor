@@ -6,7 +6,7 @@
 \usage{
 check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   ignore.arg = NULL, success.message = NULL, failure.message = NULL,
-  no.command.failure.message = NULL, ok.if.same.val = FALSE,
+  no.command.failure.message = NULL, ok.if.same.val = NA,
   s3.method = NULL, ps = get.ps(), stud.env = ps$stud.env,
   part = ps$part, stud.expr.li = ps$stud.expr.li, verbose = FALSE,
   noeval = isTRUE(ps$noeval), ...)
@@ -20,7 +20,7 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
 
 \item{ignore.arg}{a vector of argument names that will be ignored when checking correctness}
 
-\item{ok.if.same.val}{if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.}
+\item{ok.if.same.val}{if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.}
 }
 \description{
 Checks whether the user makes a particular function call in his code or call a particular R statement

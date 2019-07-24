@@ -1,7 +1,6 @@
 ---
 title: Guide to fixing errors when solving a problem set
 author: Sebastian Kranz, Ulm University 
-date: 'Version from 2015-05-26'
 output:
   pdf_document:
     number_sections: yes
@@ -96,6 +95,7 @@ Changing these lines can happen by accident, however. E.g. you may accidentally 
     b) Now store the value 10 in the variable x ...
 
 If you then check your solution, you will get a cryptic error message as above. The best is to search for the code shown in the error message (here `b)`) and check whether you messed up a code chunk above.
+
 Note that RStudio shows code chunks with a light-grey background while text has white background. This should help you to find messed up code chunks.
 
 ## 2. Problems reading csv files (Excel distorts csv files) 
@@ -119,7 +119,7 @@ http://cran.r-project.org/bin/windows/base/old/
 
 ## 4. Strange errors of RTutor -- Remove file .Rdata from your problem set directory
 
-We had the case of very cryptic RTutor errors that looked similar as follows when checking your solution:
+We had one case of very cryptic RTutor errors that looked similar as follows when checking your solution:
 
 ```
 error in eval(...): cannot find function check.assign

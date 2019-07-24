@@ -56,7 +56,7 @@ Here is the code from the example solution file "Example_sol.Rmd" that you find 
     #name.rmd.chunks(sol.file) # set auto chunk names in this file
     create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,
               libs=libs, extra.code.file=NULL, var.txt.file=NULL)
-    
+              
     # When you want to solve in the browser
     show.ps(ps.name,launch.browser=TRUE, load.sav=FALSE,
             sample.solution=FALSE, is.solved=FALSE)
@@ -409,9 +409,25 @@ if (true(identical(z,1:10*1:10))) {
 }
 #>
 ```
+
 The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also the student's current code that chunk has been run in a parent environment. 
 
 The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` if the expression cannot be evaluated. This is useful, because whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. A normal call to `isTRUE` would throw an error if `z` does not exist.
+
+Here is an example for an adaptive custom hint in an `#< add_to_hint` block from one of my problem sets:
+
+> Task: Using the command `cbind`, generate the matrix X of explanatory variable whose first column consists of 1 and the second column consists of p.
+
+```r
+X = cbind(1,p)
+#< add_to_hint
+if (exists("x") & !exists("X")) {
+  cat("It looks like you assigned the value to 'x' (lowercase), but you shall assign the value to 'X' (uppercase).")
+}
+#>
+```
+Looking at the logs of students' solution, it became apparent that many mixed up X with x. The automatic hint did not help for this problem, yet in other cases, it was helpful. So I just wanted to add this specific custom hint to the automatic hint.
+
 
 ## Info blocks
 

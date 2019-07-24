@@ -126,14 +126,6 @@ devtools::install_github("skranz/RTutor", upgrade_dependencies=FALSE)
 ```
 (You may have to restart your R session / RStudio for the update to work.)
 
-## Installing and Running RTutor with Docker 
-
-If you already use [Docker](https://www.docker.com/), you can also quickly use RTutor with the docker container `skranz/rtutor`. The container allows you to work with RTutor via RStudio server in your webbrowser. It already contains some example problem sets, but you can install other problem sets or create your own problem sets. Details are here:
-
-https://hub.docker.com/r/skranz/rtutor/
-
-Since the image contains R, shiny, rstudio and a lot of packages, it has quite some size, however.
-
 
 ## Create your own problem sets
 
@@ -141,4 +133,4 @@ Take a look at the files in the vignette folder for documentation of how to crea
 
 ## Suggestions & Feedback
 
-If you have suggestions or find bugs, please don't hesitate to open an issue on this github page. RTutor is still in a preliminary version and feedback is very appreciated.
+If you have suggestions or find bugs, please don't hesitate to open an [issue on the Github page](https://github.com/skranz/RTutor/issues).

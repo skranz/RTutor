@@ -6,7 +6,7 @@
 \usage{
 make.submission(ps = get.ps(), user.name = get.user.name(),
   ps.name = ps$name, stud.path = ps$stud.path,
-  stud.short.file = ps$stud.short.file, reset = TRUE,
+  stud.short.file = ps$stud.short.file, add.log = TRUE, reset = TRUE,
   set.warning.1 = TRUE, verbose = FALSE, catch.errors = TRUE,
   from.knitr = !interactive(), use.null.device = TRUE,
   ups.dir = ps$ups.dir)

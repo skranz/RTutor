@@ -110,7 +110,11 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
     if (ret==FALSE) {
       edt$ex.solved[i] = FALSE
       if (cdt$code.is.task[ps$chunk.ind]) {
+        
         message = paste0("\nYou have not yet started with chunk ", cdt$chunk.name[ps$chunk.ind],"\nIf you have no clue how to start, try hint().")
+        if (isTRUE(identical(cdt$sol.txt[ps$chunk.ind], cdt$stud.code[ps$chunk.ind]))) {
+          message = paste0(message,"\n\nUps, it also looks like there is an error in the sample solution of chunk ", cdt$chunk.name[ps$chunk.ind],". Running it yields:\n\n", paste0(ps$failure.message, collapse="\n"))
+        }
         cat(message)
         return()
         #stop.without.error(message)

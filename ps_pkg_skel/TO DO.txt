@@ -1,7 +1,0 @@
-TO DO:
-
-Take a look at the vignettes for deploying RTutor problem sets in the folder
-
-https://github.com/skranz/RTutor/tree/master/vignettes
-
-for the additional steps.

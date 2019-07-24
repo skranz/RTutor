@@ -4,18 +4,18 @@ Note: Always save your solution files with UTF-8 Encoding!
 
 Example of an RTutor interactive Problemset
 
-Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file. 
+Adapt the working directory below and run the setup chunk in RStudio. This creates the problem set files and the sample solution from this solution file. 
 #< ignore
-```{r "create_ps"}
+```{r "setup"}
 library(RTutor)
+# Adapt working directory
 setwd("D:/libraries/RTutor/RTutor/inst/examples")
 ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
 # character vector of all packages you load in the problem set
 libs = c("ggplot2") 
 create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE, addons="quiz")
 # Show the problem set in the webbrowser
-show.ps(ps.name, sample.solution=FALSE,auto.save.code = TRUE)
-stop.without.error()
+show.ps(ps.name,sample.solution=FALSE,auto.save.code = TRUE)
 ```
 #>
 

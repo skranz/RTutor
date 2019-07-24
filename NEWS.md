@@ -1,5 +1,15 @@
 # News for RTutor package
 
+#### 2019-07-24
+
+Allow adaptive custom hints.
+
+Make automatic tests more informative for some common errors.
+
+Created the companion package RTutorSAGI that helps to analyse
+submission logs in order to identify parts where students systematically
+get stuck.
+
 #### 2019-04-10
 
 Add simple functionality to render data frames as word table if

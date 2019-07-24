@@ -2,7 +2,7 @@
 
 Example of different quiz formats in a shiny based RTutor problemset
 
-Adapt the working directory below and press Ctrl-Alt-R (run all chunks). This creates the problem set files and the sample solution from this solution file.
+Adapt the working directory below and run the setup chunk in RStudio. This creates the problem set files and the sample solution from this solution file. 
 
 #< ignore
 ```{r "create_ps",include=TRUE , eval=TRUE}

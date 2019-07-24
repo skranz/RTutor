@@ -1,0 +1,284 @@
+---
+title: "3 Custom Hints and Tests"
+output:
+  html_document:
+    toc: yes
+---
+```{r setup, include="FALSE"}
+knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
+```
+
+
+# Customizing Hints and Tests
+
+## Automatic Hints and Tests
+
+I put a lot of effort to write sensible automatic tests and hints for RTutor. In most cases no customization should yield a descent experience for the user.
+
+For example, consider a chunk were students shall write a dplyr pipe
+
+```s
+#< task
+dat = tibble(a = sample(1:4,100, replace=TRUE), x=runif(100,0,a))
+#>
+dat %>%
+  group_by(a) %>%
+  summarize(mean_x = mean(x)) %>%
+  arrange(-mean_x)
+```
+If the user writes the following wrong code
+```s
+dat = tibble(a = sample(1:4,100, replace=TRUE), x=runif(100,0,a))
+dat %>%
+  group_by(a) %>%
+  summarize(mean_x = 2*mean(x)) %>%
+  arrange(-mean_x)
+```
+The test fails with the not very informative message:
+```
+Error: 
+You have not yet entered all correct commands in chunk 1.
+For a hint, type hint() in the console and press Enter.
+```
+When typing `hint()` the automatic hint shows the more detailed error analysis:
+
+```
+In your following pipe chain, I detect wrong results starting after element 3, the call to 'summarize':
+
+dat %>%
+   group_by(a) %>%
+   summarize(mean_x = 2 * mean(x)) %>% !! WRONG RESULTS !!
+   arrange(-mean_x)
+```
+
+Nevertheless, you there are cases were you want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.
+
+There are also (in my experience substantially fewer) cases, in which you want to adapt the automatic correctness checks. We will describe test customization further below.
+
+## Analyse students' submissions to improve hints
+
+In general it is hard to predict where automatic hints will not be sufficient. If you use your problem sets in a course in which students submit there solution, take a look at the [README.md of the companion package RTutorSAGI](https://github.com/skranz/RTutorSAGI). It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.
+
+# Hints
+
+## Custom hints
+
+Consider the following specification in a problem set solution file. The user shall store the mean of a variable `x` in the variable `m` and then show `m`.
+
+```s
+m = mean(x)
+#< hint
+cat("Use Google, e.g. search for 'R compute mean'.")
+#>
+m
+#< hint
+cat("Great, you computed m. But read the task exactly, you shall also show it. Just type m in your code.")
+#>
+```
+The `#< hint` blocks describe the code that is run if the user calls `hint()` after the expression directly above was not solved correctly.
+
+We have a different hint for each of the two expressions. Such a custom hint block overwrites the automatic hints, which won't be shown. A motivation to overwrite the first automatic hint is that it makes the solution too simple by already revealing the function name `mean` (although not the argument `y`). Here the custom hint pushes students to learn the extremely useful method to solve problems when coding: search the internet.
+
+The second custom hint is not really neccessary though, since the automatic hint essentially reveals the same info. We can also set custom hints only for some expressions in a chunk, e.g.
+```s
+m = mean(x)
+#< hint
+cat("Use Google, e.g. search for 'R compute mean'.")
+#>
+m
+```
+
+## Adaptive Custom Hints
+
+The hints described above always show the same message, independent of the student's code. Automatic hints already adapt to the student's input and from RTutor version 2019.07.23 it is also more simple to make custom hints adaptive.
+
+Here is an example, where the task is to assign the first 100 square numbers to the variable `z`.
+```s
+z = 1:100 * 1:100
+#< hint
+if (true(identical(z,1:10*1:10))) {
+  cat("Huh, you made a common mistake. Read the task precisely. You shall assign to z the first 100 square numbers, not only all square numbers that are less or equal to 100")
+} else if (true(length(z)!=100)) {
+  cat("Your variable z must have 100 elements, but in your solution z has", length(z),"elements.")  
+} else {
+  cat("There is a simple one-line formula to compute the first 100 square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).
+")
+}
+#>
+```
+
+The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. 
+
+Also (at least if you use the default tests) the student's current code has been evaluated in the hint environment. 
+
+This means whether the whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. 
+
+The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` even if the expression cannot be evaluated, e.g. because `z` does not exist.
+
+## Add custom hints to automatic hins with #< add_to_hint blocks
+
+Here is an example for an adaptive custom hint in an `#< add_to_hint` block from one of my problem sets:
+
+> Task: Using the command `cbind`, generate the matrix X of explanatory variable whose first column consists of 1 and the second column consists of p.
+
+```s
+X = cbind(1,p)
+#< add_to_hint
+if (exists("x") & !exists("X")) {
+  cat("It looks like you assigned the value to 'x' (lowercase), but you shall assign the value to 'X' (uppercase).")
+}
+#>
+```
+Looking at the logs of students' solution, it became apparent that many mixed up X with x. The automatic hint did not help for this problem, yet in other cases, it was helpful. So I just wanted to add this specific custom hint to the automatic hint.
+
+# Tests
+
+## Adapting tests of student's solution
+
+I tried my best to automatically test whether the student entered a correct solution or not. Yet, sometimes we need to manually include specific variants of tests in the solution file. Here is an example for such a manual test:
+```
+    #' b) Save in the variable u a vector of 4 different numbers
+    u = c(3,6,7,99)  
+    #< test
+    check.variable("u",c(3,6,7,99),values=FALSE)
+    #>
+```
+
+The automatic test would check whether one of the following two conditions is meet:
+
+  - u has the same value than in the solution. This means u=c(2,5,6,98)+1 would also pass as correct solution
+  - u is generated by an equivalent call as in the solution (equivalent means the function name should be the same and the arguments should have the same value). This is useful if the solution is a call that generates a random variable like x = runif(1).
+  
+Yet in this example, the automatic test is too restrictive. The student shall just generate some arbitrary vector consisting of 4 numbers. The block
+
+```
+    #< test
+    check.variable("u",c(3,6,7,99),values=FALSE)
+    #>
+```
+
+replaces the automatic test with a test that just checks whether a variable u exists, and has the same length and class (numeric or integer) as an example solution c(3,6,7,99).
+
+RTutor has a series of helper functions for such manual tests. Take a look at the package help for a documentation.
+
+## Specifying parameters of default tests
+
+By default, tests are generated that call either `check.call` (a statement that does not assign a variable), `check.assign` (if a value is assigned to a variable), or `check.function` (if a function is generated). You can take a look at the generated _struc.r file to see which default and manual tests are generated. All test function have a number of arguments, that allow to customize the tests. A block starting with the line  `#< test_arg` allows you to change the arguments of a default test. Consider the following example:
+
+```
+    plot(x=p,y=q,main="A plot", xlab="Prices")
+    #< test_arg
+      ignore.arg = c("main","xlab")
+      allow.extra.arg=TRUE
+    #>
+```
+The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the `check.call` function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of `check.call` for a description of arguments.
+
+If the sample solution assigns a value to a variable, the default function is `check.assign`. See its help file for possible arguments.
+
+
+
+
+
+## Testing a function written by the student
+
+Sometimes you may ask to write a function in the problem set. Here is an example, how you could construct a solution file. In the exercise the student is asked to complete a manual function `ols` that shall compute an ols estimate:
+
+```
+    #< task_notest
+    ols = function(y,X) {
+      
+      # enter code to compute beta.hat here ...
+      
+      return(as.numeric(beta.hat))
+    }
+    #> task
+    
+    ols <- function(y,X) {
+      beta.hat = solve(t(X) %*% X) %*% t(X) %*% y
+      return(as.numeric(beta.hat))
+    }
+    #< test_arg
+      ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
+      hint.name="ols"
+    #>
+    #< hint
+    display("Just insert inside the function ols the code to compute beta.hat",
+            "from y and X. You have developed this code in Exercise 1.")
+    #>
+```
+First, we have a `#< task_notest` block that specifies an unfinished function that will be given to the student. Afterward, we have an example of a correct function `ols`.
+Then the `#< test_arg` block specifies parameters for the automatic test `check.function`. The unnamed parameter 
+
+```
+    ols(c(100,50,20,60),cbind(1,c(20,30,15,20)))
+```
+Specifies a test call. `check.function` will run this test call for the official solution and the student's solution. The test will only pass if both versions return the same value.
+The parameter hint.name specifies a manual name for a hint, since currently no automatic hints are generated for function creation (hopefully that will improve in later versions of RTutor.) Finally, the `#< hint ols` specifies what the hint `ols` shows.
+
+## Testing a function that generates random variables
+
+In the moment there is relatively little support to check user written functions that generate random variables, and I hope this will improve with newer versions of RTutor. What currently can be done to compare the results of the student's function and the official solution using the same random seed.
+
+Here is an example:
+```
+    a) Write a function `runif.square` with parameters n, min and max
+    that generates n random variables that are the square of variables
+    that are uniform distributed on the interval from min to max.
+    
+    ```{r}`r ''`
+    runif.square = function(n,min,max) {
+      runif(n,min,max)^2
+    }
+    #< test_arg
+      with.random.seed(runif.square(n=20,min=4,max=9), seed=12345)
+    #>
+    ```
+```
+Our test call is now embedded in the function with.random.seed that calls the function with a fixed random seed. The test check.function only passes if the students function and official solution return the same value when called with the same random seed.
+
+If a function requires simulation of more than one random number, this testing procedure only works if the student draws the random numbers in the same order than the official solution. This means your task should specify already a lot of structure for the function and tell the student not to draw any additional random variables inside the function.
+
+## Test if variables that satisfy specific conditions are generated
+
+Consider the following example:
+
+```
+    a) Specify a number of observations T>=5
+    
+    ```{r }`r ''`
+    T = 100
+    #< test
+      check.variable("T",100,values=FALSE)
+      holds.true(T>=5, failure.message="You must set T>=5.")
+    #>
+    ```
+```
+The default test `check.assign` would only pass if the student would set `T=100`, but any T>=5 shall be considered correct. So we first replace the default test by a `check.variable` test that checks whether a numeric variable T of length 1 exists. Then we add another manual test `holds.true` that checks whether T>=5 holds. Note that using the holds.true test without first checking that a numeric, variable T of length 1 exists can cause the holds.true test to crash.
+
+# Designing computations with many steps
+
+Sometimes you want to ask students to perform computations that will usually require several intermediate steps.
+Two somewhat opposite ways of implementing such multistep computations in a problem set would be the following:
+
+  i) Only check the final result and let the student figure out the intermediate steps herself.
+  ii) Include all intermediate steps as part of the problem set
+
+A `#< compute ... #>` block allows an intermediate approach. Here is an example from a problem set of mine that asks a student to compute a matrix of choice probabilities from a conditional logit model.
+
+```s
+    #< compute P
+    
+    ## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.
+    
+    ## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)
+    exp.V = exp(V/scale)
+    
+    ## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. 
+    sum.exp.V = rowSums(exp.V)
+    
+    ## Compute P as ratio of the numerator and the denominator
+    P = exp.V / sum.exp.V
+    #>
+```
+The solution will pass as correct if the final values of `P` are correct. The student is not obliged to perform the particular intermediate computations like `exp.V`. Yet, if the student has not yet correctly computed `P` and types `hint()`, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with `##` will be transformed into text that will be shown in the hint.

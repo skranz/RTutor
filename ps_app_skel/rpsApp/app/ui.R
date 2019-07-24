@@ -1,1 +1,0 @@
-shinyUI(app$ui)

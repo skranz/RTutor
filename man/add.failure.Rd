@@ -4,7 +4,7 @@
 \alias{add.failure}
 \title{Used inside tests: adds a failure to an exercise}
 \usage{
-add.failure(message, ..., ps = get.ps())
+add.failure(message, ..., add.new.line = TRUE, ps = get.ps())
 }
 \arguments{
 \item{message}{a longer description shown to the user}

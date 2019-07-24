@@ -327,12 +327,14 @@ te.to.rps = function(te) {
 
   cdt$chunk.ps.ind = 1:NROW(cdt)
   # Add has.passed for each test
-  cdt$e.tests.passed = lapply(cdt$test.expr, function(test.expr.li) {
-    lapply(test.expr.li, function(et) {
-      rep(FALSE, length(et))
-    })
-  })
-  
+  # See https://stackoverflow.com/questions/32054302/data-table-add-list-as-column-when-only-one-row
+  # For why we have 3 nested lists here
+  cdt$e.tests.passed = list(lapply(cdt$test.expr, function(test.expr.li) {
+      lapply(test.expr.li, function(et) {
+        rep(FALSE, length(et))
+      })
+  }))
+
   cdt$points = pmax(
     te$chunk.points + te$e.points * (cdt$num.e - cdt$num.e.task),
     # we may give points even for just 'click check' chunks
