@@ -50,22 +50,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/1%20RTutorOverview.html">1 RTutor Overview</a>
+      <a href="../articles/01_RTutorOverview.html">1 RTutor Overview</a>
     </li>
     <li>
-      <a href="../articles/2%20ElementsSolutionFile.html">2 Elements of a Solution File</a>
+      <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
     </li>
     <li>
-      <a href="../articles/3%20CustomHintsAndTests.html">3 Custom Hints and Tests</a>
+      <a href="../articles/03_CustomHintsAndTests.html">3 Custom Hints and Tests</a>
     </li>
     <li>
-      <a href="../articles/4%20Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
+      <a href="../articles/04_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
     </li>
     <li>
-      <a href="../articles/5%20Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
+      <a href="../articles/05_Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
-      <a href="../articles/RTutorMainManual.html">RTutor Main Manual</a>
+      <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
     </li>
   </ul>
 </li>
@@ -99,7 +99,7 @@
             
       
       
-      <div class="hidden name"><code>2 ElementsSolutionFile.Rmd</code></div>
+      <div class="hidden name"><code>02_ElementsSolutionFile.Rmd</code></div>
 
     </div>
 
@@ -108,10 +108,8 @@
 <div id="elements-of-solution-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#elements-of-solution-files" class="anchor"></a>Elements of Solution Files</h1>
-<p>Let us dig a bit deeper into the structure of the RMarkdown file files that specify an RTutor problem set. Here is the code of a simple, we would save as <code>Example_sol.Rmd</code></p>
-<pre><code>    # Problemset Example
-
-    #&lt; ignore
+<p>Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set, we would save in <code>Example_sol.Rmd</code></p>
+<pre><code>    #&lt; ignore
     ```{r "Create problem set files"}
     setwd("C:/folder_of_this_solution_file")
     ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
@@ -139,8 +137,8 @@
 <p>In the example above, we have:</p>
 <ul>
 <li>An exercise header starting with <code>## Exercise</code>.</li>
-<li>There is an <em>ignore block</em> starting with the line <code>#&lt; ignore</code> and ending with the line <code>#&gt;</code>. Inside the ignore block we have the setup chunk.</li>
-<li>Inside the first chunk we have a <em>task block</em> starting with the line <code>#&lt; ignore</code> and ending with the line <code>#&gt;</code> Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.</li>
+<li>There is an ignore block starting with the line <code>#&lt; ignore</code> and ending with the line <code>#&gt;</code>. Inside the ignore block we have the setup chunk.</li>
+<li>Inside the first real chunk we have a task block starting with the line <code>#&lt; task</code> and ending with the line <code>#&gt;</code> Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.</li>
 </ul>
 <p>Run the setup chunk and take a look at the empty problem set <code>Example.Rmd</code> that you can give to students. Places where students have to enter code will be marked by.</p>
 <pre><code>    ```{r }
@@ -150,7 +148,7 @@
 <div id="exercise-header" class="section level2">
 <h2 class="hasAnchor">
 <a href="#exercise-header" class="anchor"></a>Exercise header</h2>
-<p>A solution file consists of one or more exercises. An exercise starts with a line like</p>
+<p>A solution file <em>must</em> consist of one or more exercises. An exercise starts with a line like</p>
 <pre><code>## Exercise 1 -- Summary statistics</code></pre>
 <p>You can pick any label for the exercise (it can include spaces). Yet, the recommend format for the exercise name is an exercise number, optionally followed by <code>--</code> and a short description, as in the example above.</p>
 <p>It is necessary that your line starts with</p>
@@ -165,36 +163,61 @@
 <div id="task-blocks-and-variants" class="section level1">
 <h1 class="hasAnchor">
 <a href="#task-blocks-and-variants" class="anchor"></a>Task blocks and variants</h1>
+<p>By default if you write code in a chunk of your solution file, it means that this is the sample solution that the user should replicate. This will not be shown to the user. However, often we want to show some code to the user. For this task blocks and its variants are useful.</p>
 <div id="task-blocks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#task-blocks" class="anchor"></a>task blocks</h2>
-<p>In our exercise the first code chunk shall be an example that will also be shown to the student. We make code being shown to students by wrapping it in a block starting with the line</p>
-<pre><code>#&lt; task</code></pre>
-<p>and ending with a line</p>
-<pre><code>#&gt;</code></pre>
-<p>Generate the problem set files and look at the empty problem set. You see that the code of the first chunk is now shown in the empty problem set while the second code chunk asks the student to enter her solution.</p>
-<p>The interactive problem set can already be used. It automatically tests the solution and if the test fails since <code><a href="https://www.rdocumentation.org/packages/base/topics/mean">mean(x)</a></code> is not entered correctly, it gives the option to type <code><a href="../reference/hint.html">hint()</a></code> to get a hint.</p>
+<p>Code inside a task block will be shown to the user. Here is an example:</p>
+<pre><code>    ```{r}
+    #&lt; task
+    x = 10:20
+    # Compute the mean of x
+    #&gt;
+    mean(x)
+    ```</code></pre>
+<p>The definition of <code>x</code> and the R comment describing is in the the task block and will be shown to the user. Yet the last line is outside the task block and will not be shown, but shall be entered by the user herself.</p>
 </div>
-<div id="task_notest-blocks" class="section level2">
+<div id="task_notest-vs-task-blocks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#task_notest-blocks" class="anchor"></a>task_notest blocks</h2>
-<p>By default also the code as part of a task block will be tested for correctness when the student tests her solution. That is because future code may rely on the given code in the task and we want to make sure that the task code has not been accidentally changed by the user. If you don’t want to generate tests for the code given in the task you can do so by wrapping the code instead in a block starting with <code>#&lt; task_notest</code>, e.g.</p>
-<pre><code>  #&lt; task_notest
-    sum(1:5)
-  #&gt;</code></pre>
+<a href="#task_notest-vs-task-blocks" class="anchor"></a>task_notest vs task blocks</h2>
+<p>Code in a normal task block will still be checked by RTutor. This means if a user modifies the given code in a task block, RTutor will not accept the solution. This requirement is useful if the task block specifies variables that will be used in later computations.</p>
+<p>Other times, we just want to show some output and no harm is done if the user changes the code. You should then put such code in a task_notest block. Here is an example:</p>
+<pre><code>    ```{r}
+    #&lt; task_notest
+    # Here is a plot
+    plot(x=1:10,y= (1:10)^2)
+    #&gt;
+    ```</code></pre>
+<p>Code in a task_notest block will never be checked and created variables will not be available in later blocks. This makes it also faster to evaluate task_notest blocks than task blocks.</p>
 </div>
 <div id="fill_in-blocks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fill_in-blocks" class="anchor"></a>fill_in blocks</h2>
-<p>Sometimes you would want to show your users a task where they should fill in code at some point, e.g.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb8-1" title="1">  <span class="co"># Enter the code at the ___</span></a>
-<a class="sourceLine" id="cb8-2" title="2">  dat %&gt;% </a>
-<a class="sourceLine" id="cb8-3" title="3">    <span class="co"># Filter all rows where x is larger than 5</span></a>
-<a class="sourceLine" id="cb8-4" title="4">    filter(___) %&gt;%</a>
-<a class="sourceLine" id="cb8-5" title="5">    <span class="co"># Sort in descending order in y</span></a>
-<a class="sourceLine" id="cb8-6" title="6">    arrange(___)</a></code></pre></div>
-<p>The following RTutor code allows to implement this in the easiest fashion. <code></code>{r} #&lt; hint cat(“Best add a chunk hint at the beginning, since automatic hints don’t work well, if the user code is not syntactically correct R code.”) #&gt;</p>
-<p># Enter the code at the <strong><em> #&lt; fill_in # dat %&gt;% # # Filter all rows where x is larger than 5 # filter(</em></strong>) %&gt;% # # Sort in descending order in y # arrange(___) #&gt; dat %&gt;% # Filter all rows where x is larger than 5 filter(x&gt;5) %&gt;% # Sort in descending order in y arrange(desc(y)) <code></code> Note that all code in the fill_in block is commented out and starts with <code>#</code> followed by a space. That is by design because the <code>___</code> make the code syntactically incorrect. If the code would not be commented out, you would have trouble creating your problem set. When the chunk is shown to the user, the comments will be removed. RTutor can then deal with the incorrect R Syntax. Automatic hints don’t work well with syntactically incorrect code. Therefore it is recommended to add a custom chunk hint at the beginning, that always will be shown (see below for custom hints).</p>
+<p>Sometimes, we would like students to fill in code at some place holders. For example, instead of writing a long line of ggplot commands, we want the user to just fill in the relevant aesthetics:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb7-1" title="1">ggplot(data, aes(x= ___, y = ___)) +</a>
+<a class="sourceLine" id="cb7-2" title="2">  geom_point() +</a>
+<a class="sourceLine" id="cb7-3" title="3">  ggtitle(<span class="st">"My first ggplot!"</span>)</a></code></pre></div>
+<p>You specification in your solution file would look like</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb8-1" title="1"><span class="co">#&lt; hint</span></a>
+<a class="sourceLine" id="cb8-2" title="2">cat(<span class="st">"Just fill in the right values for x and y in the placeholders below."</span>)</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&lt; fill_in</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co"># ggplot(data, aes(x= ___, y = ___)) +</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#  geom_point() +</span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co">#  ggtitle("My first ggplot!")</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co"># Below the fill_in block put the sample solution</span></a>
+<a class="sourceLine" id="cb8-10" title="10">ggplot(data, aes(x=weight, y = height)) +</a>
+<a class="sourceLine" id="cb8-11" title="11">  geom_point() +</a>
+<a class="sourceLine" id="cb8-12" title="12">  ggtitle(<span class="st">"My first ggplot!"</span>)</a></code></pre></div>
+<p>The code with the place holders is not syntactically correct R code. That would cause <code>create.ps</code> to fail, if we would not have commented it out. For that reason fill_in blocks have the following special behavior. If <em>all</em> lines in a fill_in block start with <code>#</code> then these comments will be removed when shown to the student.</p>
+<p>Unfortunately, automatic hints don’t yet work very well with syntactically incorrect code. It can therefore be useful to add a custom hint at the beginning of the chunk. Such hints will always be shown if <code><a href="../reference/hint.html">hint()</a></code> is called, even if the student’s code is syntactically incorrect.</p>
+</div>
+<div id="notest-blocks" class="section level2">
+<h2 class="hasAnchor">
+<a href="#notest-blocks" class="anchor"></a>notest blocks</h2>
+<p>Code in a notest block will neither be shown to the user nor is the user required to replicate it. It will be just shown for information in the created <code>_sample_solution.Rmd</code> and <code>_output_solution.Rmd</code> files.</p>
+<p>You may not very often use notest blocks. But one use case is the following. You may have a difficult quiz in a shiny based problem set that can be easier solved if the user can freely experiment with some code in the chunk above. This means the user is free to enter, what she likes in the chunk. Yet, you still put some code that would solve the quiz in the notest block if you later want to distribute sample solutions.</p>
 </div>
 </div>
 <div id="blocks-for-customized-hints-and-tests" class="section level1">
@@ -203,19 +226,25 @@
 <p>There are several block types that are related to customized hints and tests:</p>
 <p><code>hint</code>, <code>add_to_hint</code>, <code>compute</code>, <code>test</code>, and <code>test_arg</code>. See the <a href="https://skranz.github.io/RTutor/articles/3%20CustomHintsAndTests.html">section on customized hints and tests</a> for details.</p>
 </div>
-<div id="other-block-types" class="section level1">
+<div id="block-types-used-outside-of-chunks" class="section level1">
 <h1 class="hasAnchor">
-<a href="#other-block-types" class="anchor"></a>Other block types</h1>
+<a href="#block-types-used-outside-of-chunks" class="anchor"></a>Block types used outside of chunks</h1>
+<p>The blocks described above all started and ended within a chunk. However, RTutor also recognizes some block types that start and end outside of chunks and may contain one or several chunks.</p>
+<div id="ignore-blocks" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ignore-blocks" class="anchor"></a>ignore blocks</h2>
+<p>All code in ignore blocks will not be part of the problem set. For example, the setup chunk that contains the code to compile the problem set will be put in an ignore block.</p>
+</div>
 <div id="quiz-blocks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#quiz-blocks" class="anchor"></a>Quiz blocks</h2>
+<a href="#quiz-blocks" class="anchor"></a>quiz blocks</h2>
 <p>For problem sets designed for the web browser, you can easily specify quizzes. Just take a look at the example problem on RTutor’s Github page <a href="%5Bhttps://github.com/skranz/RTutor/blob/master/inst/examples/QuizExample_sol.Rmd">here</a>.</p>
 <p>Note that you have to add the argument <code>addons="quiz"</code> to your call to <code>create.ps</code> in your setup chunk.</p>
 </div>
 <div id="info-blocks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#info-blocks" class="anchor"></a>Info blocks</h2>
-<p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. In the shiny version of the problem set the content of an info block is shown inside a collapsible note. In the RStudio version, info blocks are less useful, but they can be shown in the viewer pane.</p>
+<a href="#info-blocks" class="anchor"></a>info blocks</h2>
+<p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. In the shiny version of the problem set the content of an info block is shown inside a collapsible note. In the RStudio version, info blocks are less useful.</p>
 <p>Info blocks are helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode md"><code class="sourceCode markdown"><a class="sourceLine" id="cb9-1" title="1">  #&lt; info "useful functions for numeric vectors"</a>
 <a class="sourceLine" id="cb9-2" title="2"><span class="bn">    Here are examples for useful R functions</span></a>
@@ -234,11 +263,8 @@
 <div id="notes-or-info-blocks-that-can-contain-chunks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#notes-or-info-blocks-that-can-contain-chunks" class="anchor"></a>Notes – Or info blocks that can contain chunks</h2>
-<p>The simplest way to add notes / footnotes is to use an info block as described above, with a block:</p>
-<pre><code>#&lt; info "Title"
-Description here and code that will be compiled beforehand.
-#&gt;</code></pre>
-<p>Info blocks cannot include chunks, however. There is a new feature of RTutor that allows notes that contain optional chunks. Here is an example:</p>
+<p>Info blocks cannot include chunks that the user shall solve. Notes are a variant of info blocks that can contain chunks for the user to be solved.</p>
+<p>The syntax for note blocks is non-standard, since I never updated RTutor to a parser that generally handles nested <code>#&lt;</code> … <code>#&gt;</code> blocks. Here is an example:</p>
 <pre><code>    #! start_note "A note with a chunk"
     This is a note.
     
@@ -253,7 +279,7 @@ Description here and code that will be compiled beforehand.
 <p><code>#! start_note "Title"</code></p>
 <p>and</p>
 <p><code>#! end_note</code></p>
-<p>will be shown in a note. Chunks inside the note can be solved by users. They should have <code>optional=TRUE</code> in the chunk header. Beware that RTutor is not (yet) very good in giving sensible failure messages, if you make mistakes, like forgetting the <code>#! end_note</code> line.</p>
+<p>will be shown in a note. Chunks inside the note can be solved by users. They should have <code>optional=TRUE</code> in the chunk header.</p>
 </div>
 <div id="preknit-blocks-just-knit-as-rmarkdown" class="section level2">
 <h2 class="hasAnchor">
@@ -261,11 +287,10 @@ Description here and code that will be compiled beforehand.
 <p>preknit blocks are declared outside of code chunks and start with <code>#&lt; preknit</code> and end with <code>#&gt;</code>.</p>
 <p>Any rmd code inside a preknit block will be knitted at compile-time and shown as usual RMarkdown output in the shiny based version of the problem set. This is very similar to the output of an info block, except that it is not put into a collapsible.</p>
 <p>Note that code that was evaluated in an earlier preknit block or earlier info block will be available at compile time at later info or preknit blocks, no matter which exercise the blocks are in. If you want just to do some preliminary computations for later info or preknit blocks without showing any output, add a chunk with the chunk option <code>include=FALSE</code> in a preknit block.</p>
-<p>preknit blocks typically only make sense, if you use the shiny version of a problem set.</p>
 </div>
-<div id="awards" class="section level2">
+<div id="award-blocks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#awards" class="anchor"></a>Awards</h2>
+<a href="#award-blocks" class="anchor"></a>award blocks</h2>
 <p>Isn’t it amazing when video game players play for hours and hours, doing sometimes quite repetitive and boring tasks, just in order to earn some virtual points or virtual trophies? Well it seems that many people can be motivated, at least to some degree, by such stuff (see <a href="http://en.wikipedia.org/wiki/Achievement_%28video_gaming%29">Wikipedia</a>).</p>
 <p>Since a main motivation for RTutor is to make learning R, as well as statistical and economic concepts, more interesting and more entertaining, it seems natural to borrow some ideas from computer games.</p>
 <p>You can give students <strong>awards</strong> if they have solved a problem by adding an award block, like e.g.</p>
@@ -280,32 +305,6 @@ Description here and code that will be compiled beforehand.
 <p>The student sees the award once the chunk efore the award is solved. By typing <code><a href="../reference/awards.html">awards()</a></code> in the R console all awards are shown.</p>
 <p>Note that even the world’s probably biggest data collecting organisation has used awards to teach it analysists…</p>
 <p><a href="http://qz.com/114277/to-learn-spying-software-nsa-analysts-unlock-achievements-to-win-skilz/">http://qz.com/114277/to-learn-spying-software-nsa-analysts-unlock-achievements-to-win-skilz/</a></p>
-</div>
-<div id="using-variables-from-earlier-exercises-not-recommended" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-variables-from-earlier-exercises-not-recommended" class="anchor"></a>Using variables from earlier exercises (NOT RECOMMENDED)</h2>
-<p>By default variables that have been generated by the student in earlier exercises are not known in the current exercise.</p>
-<p>It is possible to use variables from earlier exercises, but that is not recommended, because then one can only start with a new exercise if the previous has been solved. Better make each exercise self-contained.</p>
-<p>Nevertheless here is an example, how one could do it.</p>
-<pre><code>    ## Exercise 2 -- Computing with vectors
-    
-    ```{r}
-    #&lt; settings
-    import.var = list("1"="x")
-    #&gt;
-    ```
-    a) Let y be a vector that contains the squared elements of x. Show y
-    ```{r}
-    y = x^2
-    y
-    ```</code></pre>
-<p>As you see, in order to use variables from earlier exercises, you must add at the beginning of an exercise a settings block that defines a variable <code>import.var</code>, like</p>
-<pre><code>    ```{r}
-    #&lt; settings
-    import.var = list("1"="x")
-    #&gt;
-    ```</code></pre>
-<p>The variable <code>import.var</code> is a list whose element names correspond to the short exercise names (part of the name before –) from which you want to import variables. The list elements are character vectors of the variable names you want to import from the corresponding exercise.</p>
 </div>
 </div>
 <div id="special-chunks-options" class="section level1">
@@ -343,6 +342,36 @@ Description here and code that will be compiled beforehand.
 <p><a href="http://yihui.name/knitr/options/">http://yihui.name/knitr/options/</a></p>
 </div>
 </div>
+<div id="other-features" class="section level1">
+<h1 class="hasAnchor">
+<a href="#other-features" class="anchor"></a>Other features</h1>
+<div id="using-variables-from-earlier-exercises-not-recommended" class="section level2">
+<h2 class="hasAnchor">
+<a href="#using-variables-from-earlier-exercises-not-recommended" class="anchor"></a>Using variables from earlier exercises (NOT RECOMMENDED)</h2>
+<p>By default variables that have been generated by the student in earlier exercises are not known in the current exercise.</p>
+<p>It is possible to use variables from earlier exercises, but that is not recommended, because then one can only start with a new exercise if the previous has been solved. Better make each exercise self-contained.</p>
+<p>Nevertheless here is an example, how one could do it.</p>
+<pre><code>    ## Exercise 2 -- Computing with vectors
+    
+    ```{r}
+    #&lt; settings
+    import.var = list("1"="x")
+    #&gt;
+    ```
+    a) Let y be a vector that contains the squared elements of x. Show y
+    ```{r}
+    y = x^2
+    y
+    ```</code></pre>
+<p>As you see, in order to use variables from earlier exercises, you must add at the beginning of an exercise a settings block that defines a variable <code>import.var</code>, like</p>
+<pre><code>    ```{r}
+    #&lt; settings
+    import.var = list("1"="x")
+    #&gt;
+    ```</code></pre>
+<p>The variable <code>import.var</code> is a list whose element names correspond to the short exercise names (part of the name before –) from which you want to import variables. The list elements are character vectors of the variable names you want to import from the corresponding exercise.</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -359,19 +388,20 @@ Description here and code that will be compiled beforehand.
       <li>
 <a href="#task-blocks-and-variants">Task blocks and variants</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#task-blocks">task blocks</a></li>
-      <li><a href="#task_notest-blocks">task_notest blocks</a></li>
+      <li><a href="#task_notest-vs-task-blocks">task_notest vs task blocks</a></li>
       <li><a href="#fill_in-blocks">fill_in blocks</a></li>
+      <li><a href="#notest-blocks">notest blocks</a></li>
       </ul>
 </li>
       <li><a href="#blocks-for-customized-hints-and-tests">Blocks for customized hints and tests</a></li>
       <li>
-<a href="#other-block-types">Other block types</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#quiz-blocks">Quiz blocks</a></li>
-      <li><a href="#info-blocks">Info blocks</a></li>
+<a href="#block-types-used-outside-of-chunks">Block types used outside of chunks</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#ignore-blocks">ignore blocks</a></li>
+      <li><a href="#quiz-blocks">quiz blocks</a></li>
+      <li><a href="#info-blocks">info blocks</a></li>
       <li><a href="#notes-or-info-blocks-that-can-contain-chunks">Notes – Or info blocks that can contain chunks</a></li>
       <li><a href="#preknit-blocks-just-knit-as-rmarkdown">preknit blocks (just knit as RMarkdown)</a></li>
-      <li><a href="#awards">Awards</a></li>
-      <li><a href="#using-variables-from-earlier-exercises-not-recommended">Using variables from earlier exercises (NOT RECOMMENDED)</a></li>
+      <li><a href="#award-blocks">award blocks</a></li>
       </ul>
 </li>
       <li>
@@ -380,6 +410,11 @@ Description here and code that will be compiled beforehand.
       <li><a href="#chunks-with-html-output">Chunks with HTML output</a></li>
       <li><a href="#chunks-with-html-widgets-as-outputs">Chunks with HTML Widgets as outputs</a></li>
       <li><a href="#specifying-figure-width-and-height">Specifying figure width and height</a></li>
+      </ul>
+</li>
+      <li>
+<a href="#other-features">Other features</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#using-variables-from-earlier-exercises-not-recommended">Using variables from earlier exercises (NOT RECOMMENDED)</a></li>
       </ul>
 </li>
       </ul>

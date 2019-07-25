@@ -50,22 +50,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/1%20RTutorOverview.html">1 RTutor Overview</a>
+      <a href="../articles/01_RTutorOverview.html">1 RTutor Overview</a>
     </li>
     <li>
-      <a href="../articles/2%20ElementsSolutionFile.html">2 Elements of a Solution File</a>
+      <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
     </li>
     <li>
-      <a href="../articles/3%20CustomHintsAndTests.html">3 Custom Hints and Tests</a>
+      <a href="../articles/03_CustomHintsAndTests.html">3 Custom Hints and Tests</a>
     </li>
     <li>
-      <a href="../articles/4%20Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
+      <a href="../articles/04_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
     </li>
     <li>
-      <a href="../articles/5%20Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
+      <a href="../articles/05_Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
-      <a href="../articles/RTutorMainManual.html">RTutor Main Manual</a>
+      <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
     </li>
   </ul>
 </li>
@@ -101,17 +101,25 @@
             <h4 class="date">15.03.2015</h4>
       
       
-      <div class="hidden name"><code>5 Deploy problem set on shinyapps.io.Rmd</code></div>
+      <div class="hidden name"><code>05_Deploy problem set on shinyapps.io.Rmd</code></div>
 
     </div>
 
     
     
-<p>This vignette explains how you can host a problem set directly in the web using shinyapps.io.</p>
-<p>You can create an app based on an .rps file or based on a problem set package hosted that is hosted on Github (see the corresponding vignette for how to create such a package)</p>
-<div id="create-an-app-based-on-an-skeleton-with-rtutor-app-skel" class="section level3">
+<p>This vignette explains how you can host a problem set directly in the web using <a href="https://www.shinyapps.io/">shinyapps.io</a>.</p>
+<div id="make-sure-you-have-installed-all-packages-directly-from-github" class="section level3">
 <h3 class="hasAnchor">
-<a href="#create-an-app-based-on-an-skeleton-with-rtutor-app-skel" class="anchor"></a>1. Create an app based on an skeleton with <code>rtutor.app.skel</code>
+<a href="#make-sure-you-have-installed-all-packages-directly-from-github" class="anchor"></a>1. Make sure you have installed all packages directly from github</h3>
+<p>The standard installation of RTutor and dependencies uses my own R repositorium.</p>
+<p>However, if you want to host problem sets on shinyapps.io, all packages have to be installed from CRAN or directly from Github.</p>
+<p>Hence, if you have not done so, follow the corresponding installation instructions on</p>
+<p><a href="https://github.com/skranz/RTutor">https://github.com/skranz/RTutor</a></p>
+<p>to reinstall your packages correspondingly.</p>
+</div>
+<div id="create-the-app-skeleton-with-rtutor-app-skel" class="section level3">
+<h3 class="hasAnchor">
+<a href="#create-the-app-skeleton-with-rtutor-app-skel" class="anchor"></a>2. Create the app skeleton with <code>rtutor.app.skel</code>
 </h3>
 <p>The RTutor package has a function <code>rtutor.app.skel</code> that creates a skeleton of your app directory and a file <code>deployapp.r</code> which contains commands to deploy your app.</p>
 <p>Here is an example fore creating an app based on an .rps file:</p>
@@ -132,24 +140,6 @@
 <h3 class="hasAnchor">
 <a href="#open-deployapp-r-and-follow-the-described-steps" class="anchor"></a>2. Open <code>deployapp.r</code> and follow the described steps</h3>
 <p>Now in your app directory, e.g. “D:/libraries/RTutor/examples/ExampleApp” a file <code>deployapp.r</code> is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.</p>
-</div>
-<div id="security-issues" class="section level3">
-<h3 class="hasAnchor">
-<a href="#security-issues" class="anchor"></a>Security issues</h3>
-<p>RTutor problem sets allow the user to run arbitrary code. So unless you have really figured out security issues, I would definitely <em>not</em> recommend hosting shinyapps on your own shinyserver. (I personally have not figured out these security issues.) Since RStudio allows to run arbitrary apps on shinyapps.io, they probably have carefully sandboxed their app environment. Still, maliciously minded users may damage your app on shinyapps.io e.g. by deleting data. So deploying an app on shinyapps.io allows users to have a glimpse at your app, but it is not really useful as robust deployment, e.g. for use in a course. If you want to use RTutor in a course, users should locally install RTutor and the problem set (see the main vignette for deplyoment options).</p>
-</div>
-<div id="not-recommended-create-app-based-on-an-rtutor-problemset-package-hosted-on-github" class="section level3">
-<h3 class="hasAnchor">
-<a href="#not-recommended-create-app-based-on-an-rtutor-problemset-package-hosted-on-github" class="anchor"></a>Not recommended: create app based on an RTutor problemset package hosted on github</h3>
-<p>If you have created an github R package for your RTutor problem set, you could also create the app based on your package. However, uploading this app on shinyapps.io may not work if your github package contains data sets that are too larg. Therefore:</p>
-<p><strong>I would recommend to create your app based on an .rps file.</strong></p>
-<p>Nevertheless, here is an example, how you could create an app based on an github based RTutor problemset package .</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">  <span class="co"># Create app based on a problem set package</span></a>
-<a class="sourceLine" id="cb2-2" title="2">  ps.name =<span class="st"> "Example"</span></a>
-<a class="sourceLine" id="cb2-3" title="3">  app.dir =<span class="st"> "D:/libraries/RTutor/examples/ExampleApp"</span></a>
-<a class="sourceLine" id="cb2-4" title="4">  <span class="kw"><a href="../reference/rtutor.app.skel.html">rtutor.app.skel</a></span>(<span class="dt">ps.name=</span>ps.name, <span class="dt">app.name=</span><span class="st">"RTutorExample"</span>,<span class="dt">app.dir=</span>app.dir, </a>
-<a class="sourceLine" id="cb2-5" title="5">                  <span class="dt">pkg.name =</span> <span class="st">"RTutorExample"</span>, <span class="dt">rps.app =</span> <span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb2-6" title="6">                  <span class="dt">github.user =</span> <span class="st">"skranz"</span>, <span class="dt">overwrite=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 </div>
   </div>
 

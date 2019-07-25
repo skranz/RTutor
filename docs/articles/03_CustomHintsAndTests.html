@@ -50,22 +50,22 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/1%20RTutorOverview.html">1 RTutor Overview</a>
+      <a href="../articles/01_RTutorOverview.html">1 RTutor Overview</a>
     </li>
     <li>
-      <a href="../articles/2%20ElementsSolutionFile.html">2 Elements of a Solution File</a>
+      <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
     </li>
     <li>
-      <a href="../articles/3%20CustomHintsAndTests.html">3 Custom Hints and Tests</a>
+      <a href="../articles/03_CustomHintsAndTests.html">3 Custom Hints and Tests</a>
     </li>
     <li>
-      <a href="../articles/4%20Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
+      <a href="../articles/04_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
     </li>
     <li>
-      <a href="../articles/5%20Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
+      <a href="../articles/05_Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
-      <a href="../articles/RTutorMainManual.html">RTutor Main Manual</a>
+      <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
     </li>
   </ul>
 </li>
@@ -99,7 +99,7 @@
             
       
       
-      <div class="hidden name"><code>3 CustomHintsAndTests.Rmd</code></div>
+      <div class="hidden name"><code>03_CustomHintsAndTests.Rmd</code></div>
 
     </div>
 
@@ -111,8 +111,8 @@
 <div id="automatic-hints-and-tests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#automatic-hints-and-tests" class="anchor"></a>Automatic Hints and Tests</h2>
-<p>I put a lot of effort to write sensible automatic tests and hints for RTutor. In most cases no customization should yield a descent experience for the user.</p>
-<p>For example, consider a chunk were students shall write a dplyr pipe</p>
+<p>I put a lot of effort into writing sensible automatic tests and hints for RTutor. Hence, in most cases problem set tasks without customized hints or tests should yield a decent experience for users.</p>
+<p>For an example of the automatic hints, consider a chunk were students shall write a dplyr pipe</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb1-1" title="1"><span class="co">#&lt; task</span></a>
 <a class="sourceLine" id="cb1-2" title="2">dat = tibble(a = sample(<span class="kw">1:</span><span class="dv">4</span>,<span class="dv">100</span>, replace=TRUE), x=runif(<span class="dv">100</span>,<span class="dv">0</span>,a))</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt;</span></a>
@@ -126,7 +126,7 @@
 <a class="sourceLine" id="cb2-3" title="3">  group_by(a) %&gt;%</a>
 <a class="sourceLine" id="cb2-4" title="4">  summarize(mean_x = <span class="dv">2</span>*mean(x)) %&gt;%</a>
 <a class="sourceLine" id="cb2-5" title="5">  arrange(-mean_x)</a></code></pre></div>
-<p>The test fails with the not very informative message:</p>
+<p>The test fails with a not very informative message:</p>
 <pre><code>Error: 
 You have not yet entered all correct commands in chunk 1.
 For a hint, type hint() in the console and press Enter.</code></pre>
@@ -137,13 +137,13 @@ dat %&gt;%
    group_by(a) %&gt;%
    summarize(mean_x = 2 * mean(x)) %&gt;% !! WRONG RESULTS !!
    arrange(-mean_x)</code></pre>
-<p>Nevertheless, you there are cases were you want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.</p>
+<p>There are cases were you may want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.</p>
 <p>There are also (in my experience substantially fewer) cases, in which you want to adapt the automatic correctness checks. We will describe test customization further below.</p>
 </div>
 <div id="analyse-students-submissions-to-improve-hints" class="section level2">
 <h2 class="hasAnchor">
 <a href="#analyse-students-submissions-to-improve-hints" class="anchor"></a>Analyse students’ submissions to improve hints</h2>
-<p>In general it is hard to predict where automatic hints will not be sufficient. If you use your problem sets in a course in which students submit there solution, take a look at the <a href="https://github.com/skranz/RTutorSAGI">README.md of the companion package RTutorSAGI</a>. It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.</p>
+<p>In general it is hard to predict where and how hints should be customized. If you use your problem sets in a course in which students submit there solution, take a look at the README.md of the companion package <a href="https://github.com/skranz/RTutorSAGI">RTutorSAGI</a>. It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.</p>
 </div>
 </div>
 <div id="hints" class="section level1">
@@ -178,22 +178,25 @@ dat %&gt;%
 <div class="sourceCode" id="cb7"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb7-1" title="1">z = <span class="kw">1:</span><span class="dv">100</span> * <span class="kw">1:</span><span class="dv">100</span></a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="co">#&lt; hint</span></a>
 <a class="sourceLine" id="cb7-3" title="3">if (true(identical(z,<span class="kw">1:</span><span class="dv">10</span>*<span class="kw">1:</span><span class="dv">10</span>))) {</a>
-<a class="sourceLine" id="cb7-4" title="4">  cat(<span class="st">"Huh, you made a common mistake. Read the task precisely. You shall assign to z the first 100 square numbers, not only all square numbers that are less or equal to 100"</span>)</a>
-<a class="sourceLine" id="cb7-5" title="5">} else if (true(length(z)!=<span class="dv">100</span>)) {</a>
-<a class="sourceLine" id="cb7-6" title="6">  cat(<span class="st">"Your variable z must have 100 elements, but in your solution z has"</span>, length(z),<span class="st">"elements."</span>)  </a>
-<a class="sourceLine" id="cb7-7" title="7">} else {</a>
-<a class="sourceLine" id="cb7-8" title="8">  cat(<span class="st">"There is a simple one-line formula to compute the first 100 square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).</span></a>
-<a class="sourceLine" id="cb7-9" title="9"><span class="st">")</span></a>
-<a class="sourceLine" id="cb7-10" title="10">}</a>
-<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt;</span></a></code></pre></div>
-<p>The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known.</p>
-<p>Also (at least if you use the default tests) the student’s current code has been evaluated in the hint environment.</p>
-<p>This means whether the whether <code>z</code> exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not.</p>
-<p>The function <code>true</code> is a robust version of <code>isTRUE</code> that never throws an error, but simply returns <code>FALSE</code> even if the expression cannot be evaluated, e.g. because <code>z</code> does not exist.</p>
+<a class="sourceLine" id="cb7-4" title="4">  cat(<span class="st">"Huh, you made a common mistake. Read the task precisely.</span></a>
+<a class="sourceLine" id="cb7-5" title="5">  You shall assign to z the first <span class="dv">100</span> square numbers,</a>
+<a class="sourceLine" id="cb7-6" title="6">not only all square numbers that are less or equal to <span class="dv">100</span><span class="st">")</span></a>
+<a class="sourceLine" id="cb7-7" title="7">} else if (true(length(z)!=<span class="dv">100</span>)) {</a>
+<a class="sourceLine" id="cb7-8" title="8">  cat(<span class="st">"Your variable z must have 100 elements,</span></a>
+<a class="sourceLine" id="cb7-9" title="9">  but in your solution z has<span class="st">", length(z),"</span>elements.<span class="st">")  </span></a>
+<a class="sourceLine" id="cb7-10" title="10">} else {</a>
+<a class="sourceLine" id="cb7-11" title="11">  cat(<span class="st">"There is a simple one-line formula to compute the first 100 square numbers.</span></a>
+<a class="sourceLine" id="cb7-12" title="12">  Just combine what you have learned in exercise <span class="dv">2</span> f) and in exercise <span class="dv">3</span> b).</a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="st">")</span></a>
+<a class="sourceLine" id="cb7-14" title="14">}</a>
+<a class="sourceLine" id="cb7-15" title="15"><span class="co">#&gt;</span></a></code></pre></div>
+<p>The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also (at least if you use the default tests) the student’s current code has been already be evaluated in the hint environment.</p>
+<p>This means whether whether <code>z</code> exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. The function <code>true</code> is a robust version of <code>isTRUE</code> that never throws an error. This means even if <code>z</code> does not exist and thus the expression cannot be evaluated, we just get a <code>FALSE</code>.</p>
 </div>
-<div id="add-custom-hints-to-automatic-hins-with-add_to_hint-blocks" class="section level2">
+<div id="add_to_hint-blocks-to-combine-automatic-and-custom-hints" class="section level2">
 <h2 class="hasAnchor">
-<a href="#add-custom-hints-to-automatic-hins-with-add_to_hint-blocks" class="anchor"></a>Add custom hints to automatic hins with #&lt; add_to_hint blocks</h2>
+<a href="#add_to_hint-blocks-to-combine-automatic-and-custom-hints" class="anchor"></a>add_to_hint blocks to combine automatic and custom hints</h2>
+<p>There are many situations were you want to keep the automatic hint but just add some additional hint. Then write your hint code in an <code>add_to_hint</code>block.</p>
 <p>Here is an example for an adaptive custom hint in an <code>#&lt; add_to_hint</code> block from one of my problem sets:</p>
 <blockquote>
 <p>Task: Using the command <code>cbind</code>, generate the matrix X of explanatory variable whose first column consists of 1 and the second column consists of p.</p>
@@ -205,6 +208,17 @@ dat %&gt;%
 <a class="sourceLine" id="cb8-5" title="5">}</a>
 <a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt;</span></a></code></pre></div>
 <p>Looking at the logs of students’ solution, it became apparent that many mixed up X with x. The automatic hint did not help for this problem, yet in other cases, it was helpful. So I just wanted to add this specific custom hint to the automatic hint.</p>
+</div>
+<div id="hints-at-the-beginning-of-chunk" class="section level2">
+<h2 class="hasAnchor">
+<a href="#hints-at-the-beginning-of-chunk" class="anchor"></a>Hints at the beginning of chunk</h2>
+<p>If you place a hint at the beginning of a chunk, the hint text will be added to all the hints of the individual commands.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb9-1" title="1"><span class="co">#&lt; hint</span></a>
+<a class="sourceLine" id="cb9-2" title="2">cat(<span class="st">"This hint will be added to the automatic hints</span></a>
+<a class="sourceLine" id="cb9-3" title="3">of all commands below.<span class="st">")</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb9-5" title="5">x = <span class="kw">1:</span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb9-6" title="6">y = x^<span class="dv">2</span></a></code></pre></div>
 </div>
 </div>
 <div id="tests" class="section level1">
@@ -317,19 +331,19 @@ dat %&gt;%
 <li>Include all intermediate steps as part of the problem set</li>
 </ol>
 <p>A <code>#&lt; compute ... #&gt;</code> block allows an intermediate approach. Here is an example from a problem set of mine that asks a student to compute a matrix of choice probabilities from a conditional logit model.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb16-1" title="1">    <span class="co">#&lt; compute P</span></a>
-<a class="sourceLine" id="cb16-2" title="2">    </a>
-<a class="sourceLine" id="cb16-3" title="3">    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></a>
-<a class="sourceLine" id="cb16-4" title="4">    </a>
-<a class="sourceLine" id="cb16-5" title="5">    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></a>
-<a class="sourceLine" id="cb16-6" title="6">    exp.V = exp(V/scale)</a>
-<a class="sourceLine" id="cb16-7" title="7">    </a>
-<a class="sourceLine" id="cb16-8" title="8">    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></a>
-<a class="sourceLine" id="cb16-9" title="9">    sum.exp.V = rowSums(exp.V)</a>
-<a class="sourceLine" id="cb16-10" title="10">    </a>
-<a class="sourceLine" id="cb16-11" title="11">    <span class="co">## Compute P as ratio of the numerator and the denominator</span></a>
-<a class="sourceLine" id="cb16-12" title="12">    P = exp.V / sum.exp.V</a>
-<a class="sourceLine" id="cb16-13" title="13">    <span class="co">#&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb17-1" title="1">    <span class="co">#&lt; compute P</span></a>
+<a class="sourceLine" id="cb17-2" title="2">    </a>
+<a class="sourceLine" id="cb17-3" title="3">    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></a>
+<a class="sourceLine" id="cb17-4" title="4">    </a>
+<a class="sourceLine" id="cb17-5" title="5">    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></a>
+<a class="sourceLine" id="cb17-6" title="6">    exp.V = exp(V/scale)</a>
+<a class="sourceLine" id="cb17-7" title="7">    </a>
+<a class="sourceLine" id="cb17-8" title="8">    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></a>
+<a class="sourceLine" id="cb17-9" title="9">    sum.exp.V = rowSums(exp.V)</a>
+<a class="sourceLine" id="cb17-10" title="10">    </a>
+<a class="sourceLine" id="cb17-11" title="11">    <span class="co">## Compute P as ratio of the numerator and the denominator</span></a>
+<a class="sourceLine" id="cb17-12" title="12">    P = exp.V / sum.exp.V</a>
+<a class="sourceLine" id="cb17-13" title="13">    <span class="co">#&gt;</span></a></code></pre></div>
 <p>The solution will pass as correct if the final values of <code>P</code> are correct. The student is not obliged to perform the particular intermediate computations like <code>exp.V</code>. Yet, if the student has not yet correctly computed <code>P</code> and types <code><a href="../reference/hint.html">hint()</a></code>, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with <code>##</code> will be transformed into text that will be shown in the hint.</p>
 </div>
   </div>
@@ -349,7 +363,8 @@ dat %&gt;%
 <a href="#hints">Hints</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#custom-hints">Custom hints</a></li>
       <li><a href="#adaptive-custom-hints">Adaptive Custom Hints</a></li>
-      <li><a href="#add-custom-hints-to-automatic-hins-with-add_to_hint-blocks">Add custom hints to automatic hins with #&lt; add_to_hint blocks</a></li>
+      <li><a href="#add_to_hint-blocks-to-combine-automatic-and-custom-hints">add_to_hint blocks to combine automatic and custom hints</a></li>
+      <li><a href="#hints-at-the-beginning-of-chunk">Hints at the beginning of chunk</a></li>
       </ul>
 </li>
       <li>

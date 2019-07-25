@@ -1,0 +1,50 @@
+---
+title: "5 Deploy a problem set on shinyapps.io"
+author: "Sebastian Kranz"
+date: "15.03.2015"
+output:
+  html_document:
+    highlight: textmate
+    theme: readable
+    toc: yes
+---
+
+This vignette explains how you can host a problem set directly in the web using [shinyapps.io](https://www.shinyapps.io/).
+
+### 1. Make sure you have installed all packages directly from github
+
+The standard installation of RTutor and dependencies uses my own R repositorium.
+
+However, if you want to host problem sets on shinyapps.io, all packages have to be installed from CRAN or directly from Github.
+
+Hence, if you have not done so, follow the corresponding installation instructions on 
+
+[https://github.com/skranz/RTutor](https://github.com/skranz/RTutor)
+
+to reinstall your packages correspondingly.
+
+### 2. Create the app skeleton with `rtutor.app.skel`
+
+The RTutor package has a function `rtutor.app.skel` that creates a skeleton of your app directory and a file `deployapp.r` which contains commands to deploy your app. 
+
+Here is an example fore creating an app based on an .rps file:
+```{r eval=FALSE}
+  # Create app based on .rps
+ 
+  ps.name = "Example" # problem set name
+  libs = c("foreign", "ggplot2") # list of all libraries used by ps
+  # Folder that contains your .rps file
+  rps.dir = "D:/libraries/RTutor/examples"
+  # Folder in which app shall be created
+  app.dir = "D:/libraries/RTutor/examples/ExampleApp"
+  rtutor.app.skel(ps.name=ps.name, app.name="RTutorExample",
+                  app.dir=app.dir, rps.dir = rps.dir,
+                  rps.app = TRUE, libs=libs,overwrite=TRUE)
+ 
+```
+
+You must just adapt the names and directories in the example above.
+
+### 2. Open `deployapp.r` and follow the described steps
+
+Now in your app directory, e.g. "D:/libraries/RTutor/examples/ExampleApp" a file `deployapp.r` is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.

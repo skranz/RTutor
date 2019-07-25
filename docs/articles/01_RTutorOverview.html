@@ -50,30 +50,27 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/1%20RTutorOverview.html">1 RTutor Overview</a>
+      <a href="../articles/01_RTutorOverview.html">1 RTutor Overview</a>
     </li>
     <li>
-      <a href="../articles/2%20ElementsSolutionFile.html">2 Elements of a Solution File</a>
+      <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
     </li>
     <li>
-      <a href="../articles/3%20CustomHintsAndTests.html">3 Custom Hints and Tests</a>
+      <a href="../articles/03_CustomHintsAndTests.html">3 Custom Hints and Tests</a>
     </li>
     <li>
-      <a href="../articles/4%20Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
+      <a href="../articles/04_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
     </li>
     <li>
-      <a href="../articles/5%20Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
+      <a href="../articles/05_Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
-      <a href="../articles/RTutorMainManual.html">RTutor Main Manual</a>
+      <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
     </li>
   </ul>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -100,7 +97,7 @@
             
       
       
-      <div class="hidden name"><code>1 RTutorOverview.Rmd</code></div>
+      <div class="hidden name"><code>01_RTutorOverview.Rmd</code></div>
 
     </div>
 
@@ -109,11 +106,8 @@
 <div id="brief-overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#brief-overview" class="anchor"></a>Brief overview</h2>
-<p>RTutor is an R package that allows to develop interactive R problem sets. The interactive tasks directly test a student’s solution and provide hints if not everything is correct. For an overview of the main features that distinguishes RTutor from similar projects like <a href="https://rstudio.github.io/learnr/">learnr</a>, you can take a look at <a href="https://skranz.github.io/r/2019/04/29/RTutor_vs_Learnr.html.">this blog entry</a></p>
-<p>RTutor allows off-line or on-line use. Problem sets can either be solved as RMarkdown files directly in RStudio or in a browser based interface powered by Shiny.</p>
-<p>RTutor is used in several courses at <a href="https://www.uni-ulm.de/en/">Ulm University</a> and other universities. I also have supervised several students who have created very nice web-based RTutor problem sets that allow to replicate the analyses of well published economic articles in an interactive fashion (a list is on the <a href="https://skranz.github.io/RTutor">main page</a>).</p>
-<p>Examples and additional material can be found on RTutor’s Github page:</p>
-<p><a href="https://github.com/skranz/RTutor">https://github.com/skranz/RTutor</a></p>
+<p>RTutor is an R package that allows to develop interactive R problem sets. The interactive tasks directly test a student’s solution and provide hints if not everything is correct. For an overview of the main features that distinguishes RTutor from similar projects like <a href="https://rstudio.github.io/learnr/">learnr</a>, you can take a look at <a href="https://skranz.github.io/r/2019/04/29/RTutor_vs_Learnr.html.">this blog entry</a> RTutor problem sets can either be solved as RMarkdown files directly in RStudio or in a browser based interface powered by Shiny.</p>
+<p>RTutor is used in several courses at <a href="https://www.uni-ulm.de/en/">Ulm University</a> and other universities. I also have supervised several students who have created very nice web-based RTutor problem sets that allow to replicate the analyses of well published economic articles in an interactive fashion (a list is on the RTutor main page <a href="https://skranz.github.io/RTutor">https://skranz.github.io/RTutor</a>).</p>
 <p>This document gives you a first overview of how to generate an interactive RTutor problem set.</p>
 </div>
 <div id="installation" class="section level2">
@@ -121,20 +115,18 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>To install RTutor just run</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb1-1" title="1">install.packages(<span class="st">"RTutor"</span>,repos = c(<span class="st">"https://skranz-repo.github.io/drat/"</span>,getOption(<span class="st">"repos"</span>)))</a></code></pre></div>
-<p>If you create problem sets that you want to host on shinyapps.io, you have to install all packages directly from Github. See the instructions on [RTutor’s Github page]((<a href="https://github.com/skranz/RTutor" class="uri">https://github.com/skranz/RTutor</a>).</p>
+<p>If you create problem sets that you want to host on shinyapps.io, you have to install all packages directly from Github. See the instructions on <a href="https://github.com/skranz/RTutor">https://github.com/skranz/RTutor</a>.</p>
 </div>
 <div id="create-an-r-markdown-solution-file" class="section level2">
 <h2 class="hasAnchor">
 <a href="#create-an-r-markdown-solution-file" class="anchor"></a>Create an R Markdown solution file</h2>
-<p>You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, quizzes or other commands like giving awards for a correct solution. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
-<p>Some examples can be found <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">here in the example directory on Gthub</a>.</p>
-<p>Below is a simple example problem set that we name <code>myps</code>. This code should be saven in a file named <code>myps_sol.Rmd</code>.</p>
-<pre><code>    # Problemset Example
- 
-    Adapt the working directory below and (Run setup chunk in RStudio).
-    This creates the problem set files and the sample solution from this solution file.
-    
-    #&lt; ignore
+<p>You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, quizzes or other commands e.g. to give awards. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
+<p>Some examples can be found <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">here in the example directory on Github</a>.</p>
+<p>Below is a simple example problem set that we name <code>myps</code>. (Obviously, you can replace <code>myps</code> everywhere in this manual by your chosen problem set name.) This code should be saved in a file named <code>myps_sol.Rmd</code>.</p>
+<pre><code>    #&lt; ignore
+    Save the file as `myps_sol.Rmd`.
+    Adapt the working directory below and then run setup chunk in RStudio.
+
     ```{r "setup"}
     library(RTutor)
     setwd("C:/folder_of_this_solution_file")
@@ -218,18 +210,25 @@
     failure: Try again.
     #&gt;
     </code></pre>
-<p>The different blocks starting with <code>#&lt;</code> are described here ### and more advanced features here. Further details on customizing tests and hints are given here.<br>
-The functions <code>create.ps</code> and <code>show.ps</code> both have a large set of arguments that allow a lot of customization. Take a look at the corresponding help files.</p>
+<p>The lines starting with <code>## Exercise</code> are very important. Every RTutor problem set must have at least one exercise.</p>
+<p>The different blocks starting with <code>#&lt;</code> are described in <a href="https://skranz.github.io/RTutor/articles/02_ElementsSolutionFile.html">this manual</a> and further details on customizing tests and hints are given <a href="https://skranz.github.io/RTutor/articles/03_CustomHintsAndTests.html">here</a>.</p>
+<p>The functions <code>create.ps</code> and <code>show.ps</code> both have a large set of arguments that allow a lot of customization. Take a look at the corresponding help files.</p>
 </div>
 <div id="generate-a-structure-file-and-empty-problem-set-for-students" class="section level2">
 <h2 class="hasAnchor">
 <a href="#generate-a-structure-file-and-empty-problem-set-for-students" class="anchor"></a>Generate a structure file and empty problem set for students</h2>
-<p>To create a problem copy the example above or another example. Then set the right working directory in the setup chunk.</p>
+<p>To create a problem copy the example above or <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">another example</a>. Save it in <code>myps_sol.Rmd</code>. Then set the right working directory in the setup chunk.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb3-1" title="1">    setwd(<span class="st">"C:/folder_of_this_solution_file"</span>)</a></code></pre></div>
-<p>Then run the setup chunk in RStudio.</p>
+<p>Afterwards run the setup chunk in RStudio. (You may assign a keyboard shortcut to running the setup chunk.)</p>
 <p>The call to</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1">   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)</a></code></pre></div>
-<p>generates several files - myps.rps: a binary representation of the problem set structure - myps.Rmd: empty problem set in Rmarkdown format - myps_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format. - myps_output_solution.Rmd: An Rmd file that can be the basis to statically knit the solved problem set. (This file is mainly useful for students who want to write a Bachelor or Master thesis based on an RTutor problem set.)</p>
+<p>generates several files:</p>
+<ul>
+<li><p>myps.rps: a binary representation of the problem set structure</p></li>
+<li><p>myps.Rmd: empty problem set in Rmarkdown format</p></li>
+<li><p>myps_sample_solution.Rmd: A sample solution of the problem set in Rmarkdown format.</p></li>
+<li><p>myps_output_solution.Rmd: An Rmd file that can be the basis to statically knit the solved problem set. (This file is mainly useful for students who want to write a Bachelor or Master thesis based on an RTutor problem set.)</p></li>
+</ul>
 <p>Note: RTutor creates automatic chunk names for the created Rmd files. If you uncomment the line</p>
 <pre><code>#name.rmd.chunks(sol.file)</code></pre>
 <p>in the setup chunk of your solution file <code>myps_sol.Rmd</code>, its chunk names will be set in the same way.</p>
@@ -241,27 +240,34 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
 <h3 class="hasAnchor">
 <a href="#running-as-shiny-app-in-the-browser" class="anchor"></a>Running as shiny app in the browser</h3>
 <p>The call</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb6-1" title="1">show.ps(ps.name,launch.browser=TRUE,</a>
-<a class="sourceLine" id="cb6-2" title="2">  auto.save.code=FALSE,sample.solution=FALSE)</a></code></pre></div>
-<p>starts your default browser with an empty problem set. You should be able to solve it by working on the first code chunk and pressing the “check” button when finished.</p>
-<p>If you set the argument <code>sample.solution=TRUE</code> the problem set is already filled with your sample solution.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb6-1" title="1">show.ps(ps.name,launch.browser=TRUE, auto.save.code=FALSE,sample.solution=FALSE)</a></code></pre></div>
+<p>shows the problem set in your default browser. You can enter some code in the first chunk and check your solution by pressing the “check” button.</p>
+<p>If you set the argument <code>sample.solution=TRUE</code> all chunks are already filled with the sample solution.</p>
 </div>
 <div id="solving-and-checking-an-rmarkdown-file-in-rstudio" class="section level3">
 <h3 class="hasAnchor">
 <a href="#solving-and-checking-an-rmarkdown-file-in-rstudio" class="anchor"></a>Solving and checking an RMarkdown file in RStudio</h3>
-<p>Alternatively a problem set can be solved by the students as an .Rmd file using RStudio. You should give students a ZIP file that contains the files <code>myps.Rmd</code> (the unsolved problem set) and <code>myps.rps</code> (compiled version of the problem set structure and solution) and possible all addition files like data sets etc.</p>
+<p>Alternatively, the problem set can be solved by students working in RStudio with the created <code>myps.Rmd</code> file. You should give students a ZIP file that contains the files <code>myps.Rmd</code> (the unsolved problem set) and <code>myps.rps</code> (compiled version of the problem set structure and solution) and possible all additional files like data sets etc.</p>
 <p>Students should extract the files into a directory and open <code>myps.Rmd</code> in RStudio. That is the file they work on. Students can check their solution by clicking on the <a href="https://rstudio.github.io/rstudioaddins/">RStudio Addin</a> <code>Check Problemset</code>, which is available once RTutor has been installed.</p>
 <p>A student can type <code><a href="../reference/stats.html">stats()</a></code> in the R console to get some information of how much of the problem set he has already solved.</p>
 <p>Typing <code><a href="../reference/hint.html">hint()</a></code> provides hints about how to solve the current task that failed to pass the solution tests.</p>
 <p>You can test yourself whether that works fine by opening <code>Example_sample_solution.Rmd</code> and then checking the problem set.</p>
 </div>
 </div>
+<div id="order-in-which-tasks-have-to-be-solved-and-known-previous-results" class="section level2">
+<h2 class="hasAnchor">
+<a href="#order-in-which-tasks-have-to-be-solved-and-known-previous-results" class="anchor"></a>Order in which tasks have to be solved and known previous results</h2>
+<p>By default all variables from previous chunks of an exercise are known in later chunks of that exercise. Therefore all tasks within an exercise have to be solved in the given order.</p>
+<p>Exceptions are chunks marked with the chunk option <code>optional=TRUE</code>. These chunks don’t have to be solved in order to proceed. Correspondingly, also the computed variables from optional chunks will not be available in later chunks, since we cannot generally expect that optional chunks have been solved.</p>
+<p>Also variables created in task_notest blocks or notest blocks will not be available in later chunks of an exercise.</p>
+<p>Different exercises are independent of</p>
+</div>
 <div id="submitting-solutions-and-grading" class="section level2">
 <h2 class="hasAnchor">
 <a href="#submitting-solutions-and-grading" class="anchor"></a>Submitting Solutions and Grading</h2>
 <p>You can use RTutor problem sets just as interactive tutorials without the need for students to submit any solutions.</p>
 <p>Or you can ask students who have finished their problem sets, to submit their solution. In the shiny version there is a button to create a submission file (with file type <code>.sub</code>) and in the RTutor version, students should call the function <code><a href="../reference/make.submission.html">make.submission()</a></code>. You should briefly described this at the end of a problem set.</p>
-<p>The companion package <a href="https://github.com/skranz/RTutorSAGI">RTutorSAGI</a> contains tools to combine all submission files for grading purposes. Take a look at the README.md file for details.</p>
+<p>The companion package <a href="https://github.com/skranz/RTutorSAGI">RTutorSAGI</a> contains tools to combine all submission files for grading purposes. Take a look at its README.md file for details.</p>
 </div>
 <div id="distributing-and-hosting-problem-sets" class="section level2">
 <h2 class="hasAnchor">
@@ -281,6 +287,7 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
 <a href="#distribute-as-an-r-package-on-github" class="anchor"></a>Distribute as an R package on Github</h3>
 <p>You can also create an R package that contains the problem set and host it on Github. This is described in more detail in this vignette:</p>
 <p><a href="https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd">https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd</a></p>
+<p>My students who created RTutor problem sets that allow to interactively replicate economic articles typically put their problem sets on Github and many also on shinyapps.io.</p>
 </div>
 <div id="host-online-as-a-shiny-app-on-shinyapps-io" class="section level3">
 <h3 class="hasAnchor">
@@ -296,12 +303,13 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
 <div id="iterative-development" class="section level2">
 <h2 class="hasAnchor">
 <a href="#iterative-development" class="anchor"></a>Iterative Development</h2>
-<p>I guess the most natural way to develop a problem set is to repeatedly perform the following 3 steps:</p>
+<p>I guess for the first version the most natural way to develop a problem set is to repeatedly perform the following 3 steps:</p>
 <ol style="list-style-type: decimal">
 <li>Write and adapt your solution file and generate problem set files by running the setup chunk.</li>
 <li>Test whether the sample solution runs without problems</li>
 <li>Try to solve the empty problem set yourself and check whether you should change tests, hints or exercise tasks in your solution file (Step 1).</li>
 </ol>
+<p>To improve problem sets used in courses where students submit solutions take a look at the README of <a href="https://github.com/skranz/RTutorSAGI">https://github.com/skranz/RTutorSAGI</a></p>
 </div>
 <div id="distributing-your-problem-set" class="section level2">
 <h2 class="hasAnchor">
@@ -315,13 +323,12 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
 <div id="distribute-as-an-r-package-on-github-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#distribute-as-an-r-package-on-github-1" class="anchor"></a>Distribute as an R package on Github</h3>
-<p>You can also create an R package that contains the problem set and host it on Github. This is described in more detail in this vignette:</p>
-<p><a href="https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd">https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd</a></p>
+<p>You can also create an R package that contains the problem set and host it on Github. This is described in more detail in <a href="https://skranz.github.io/RTutor/articles/4_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">this manual</a></p>
 </div>
 <div id="host-online-as-a-shiny-app-on-shinyapps-io-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#host-online-as-a-shiny-app-on-shinyapps-io-1" class="anchor"></a>Host online as a shiny app on shinyapps.io</h3>
-<p>You can also host web-based problem sets on shinyapps.io. Users can then solve them without having to install R. This is explained in this vignette: <a href="https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd">https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd</a></p>
+<p>You can also host web-based problem sets on shinyapps.io. Users can then solve them without having to install R. This is explained in <a href="https://skranz.github.io/RTutor/articles/5_Deploy%20problem%20set%20on%20shinyapps.io.html">this manual</a></p>
 </div>
 <div id="host-problem-sets-on-your-own-shiny-server" class="section level3">
 <h3 class="hasAnchor">
@@ -329,24 +336,12 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
 <p>In principle, you could also host the problem set as an app on your own shiny server. However, this seems a substantial security risk since users can run arbitrary R code. This could lead to desaster if you don’t carefully restrict access. This problem can probably be overcome if you spin up a separate docker container with limited rights for each student instance, but I have not implemented such a scheme. <a href="https://www.shinyproxy.io/">Shiny proxy</a> may be helpful in this regard.</p>
 </div>
 </div>
-<div id="commonly-occuring-errors" class="section level1">
-<h1 class="hasAnchor">
-<a href="#commonly-occuring-errors" class="anchor"></a>Commonly occuring errors</h1>
-<ul>
-<li>
-<p>Problem: When I run <code>create.ps</code> I get the following error message:</p>
-<pre><code>Error in nchar(paste0(code, collapse = "\n")) :
-  invalid multibyte string, element 1</code></pre>
-<ul>
-<li>Answer: This is a nasty error that has to do with the <em>encoding</em> of your text file. Try the following with your _sol.Rmd file. In RStudio choose the menu <code>File -&gt; Reopen with encoding</code>. Then pick the Encoding <code>UTF-8</code> and press ok. Now make some small changes in your file, save it and try again to run <code>create.ps</code>. Hopefully it now works…</li>
-</ul>
-</li>
-<li>Problem: I change my _sol.Rmd file run <code>create.ps</code> and <code>show.ps</code>, the browser opens but the changes do not appear in the shown problem set.
-<ul>
-<li>Answer: Make sure that you have correctly set the working directory with <code>setwd</code> to the folder in which your _sol.Rmd file is stored.</li>
-</ul>
-</li>
-</ul>
+<div id="additional-documentation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#additional-documentation" class="anchor"></a>Additional Documentation</h2>
+<p>Most documentation can be found under <code>Manuals</code> on the RTutor page: <a href="https://skranz.github.io/RTutor">https://skranz.github.io/RTutor</a>.</p>
+<p>In addition I wrote a <a href="https://github.com/skranz/RTutor/raw/master/vignettes/An_RTutor_Problem_Set_as_Bachelor_or_Master_Thesis.pdf">PDF Guide</a> for students who want to create an RTutor problem set about an economics article in their Bachelor or Master thesis.</p>
+<p><a href="https://github.com/skranz/RTutor/raw/master/vignettes/Guide_for_fixing_errors_when_solving_a_problem_set.pdf">Here</a> is a PDF guide I give to students in my courses where RStudio based RTutor problem sets have to be solved. It provides some tips of how to deal with problems that might arise.</p>
 </div>
   </div>
 
@@ -360,11 +355,12 @@ The functions <code>create.ps</code> and <code>show.ps</code> both have a large 
       <li><a href="#create-an-r-markdown-solution-file">Create an R Markdown solution file</a></li>
       <li><a href="#generate-a-structure-file-and-empty-problem-set-for-students">Generate a structure file and empty problem set for students</a></li>
       <li><a href="#running-the-problem-set">Running the problem set</a></li>
+      <li><a href="#order-in-which-tasks-have-to-be-solved-and-known-previous-results">Order in which tasks have to be solved and known previous results</a></li>
       <li><a href="#submitting-solutions-and-grading">Submitting Solutions and Grading</a></li>
       <li><a href="#distributing-and-hosting-problem-sets">Distributing and Hosting Problem Sets</a></li>
       <li><a href="#iterative-development">Iterative Development</a></li>
       <li><a href="#distributing-your-problem-set">Distributing your problem set</a></li>
-      <li><a href="#commonly-occuring-errors">Commonly occuring errors</a></li>
+      <li><a href="#additional-documentation">Additional Documentation</a></li>
       </ul>
 </div>
       </div>

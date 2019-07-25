@@ -10,6 +10,13 @@ output:
     toc: yes
 ---
 
+# THIS GUIDE IS OUTDATED
+
+I have updated the documentation. The new documentation in HTML format can now be found on the new RTutor page under
+
+[https://skranz.github.io/RTutor](https://skranz.github.io/RTutor)
+
+under the menu entry "Manuals". If there is interest in an updated version PDF format, send me please an Email.
 
 # Brief overview
 

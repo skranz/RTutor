@@ -85,14 +85,17 @@ Even though your final "product" will be written in R, it can be helpful to run 
 
 ## Step 4: Create your thesis in form of an interactive RTutor problem set 
 
-Now you can start creating the RTutor problem set. An overview of creating problem sets is given here:
+Now you can start creating the RTutor problem set. For information of how problem sets are build, look at the main RTutor page here:
 
-[https://Github.com/skranz/RTutor/blob/master/vignettes/Guide_for_Developing_Interactive_R_Problemsets.md](https://Github.com/skranz/RTutor/blob/master/vignettes/Guide_for_Developing_Interactive_R_Problemsets.md)
+[https://skranz.github.io/RTutor/](https://skranz.github.io/RTutor/)
+
+In particular look at the different articles listed under `Manuals`.
+
 As an initial template for your problem, either use the example file in the RTutor package:
 
-https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/Example_sol.Rmd
+[https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/Example_sol.Rmd](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/Example_sol.Rmd)
 
-or a solution file from one of the existing problem sets. First try to make the example run before you build your own exercises. Note that some bugs and features are not yet well documented. So just drop by, if it does not run.
+or even better a solution file from one of the existing problem sets. First try to make the example run before you build your own exercises. Note that some bugs and features are not yet well documented. So just drop by, if it does not run.
 
 Parts 2-4 below give detailed advice on how the problem set should be structured, and which R packages seem useful.
 

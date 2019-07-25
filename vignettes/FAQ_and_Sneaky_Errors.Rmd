@@ -1,0 +1,39 @@
+---
+title: "Sneaky Errors"
+author: "Sebastian Kranz, Ulm University"
+output:
+  html_document:
+    toc: yes
+---
+```{r setup, include="FALSE"}
+knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
+
+verbatimize.chunks = function() {
+  # Make chunks verbatim as explained here
+  # https://yihui.name/knitr/faq/ 
+  # Point 7
+  
+  library(stringtools)
+  setwd("D:/libraries/RTutor/RTutor/vignettes")
+  file = "test.Rmd"
+  txt = readLines(file)
+  lines = which(str.starts.with(trimws(txt), "```{r") & !str.ends.with(trimws(txt),"`r ''`"))[-1]
+  txt[lines] = paste0(txt[lines],"`r ''`")
+  writeLines(txt, file)
+}
+```
+
+# Sneaky errors that might occur when developing a problem set
+
+- Problem: When running `create.ps` the following error message appears
+  ```
+  Error in nchar(paste0(code, collapse = "\n")) :
+    invalid multibyte string, element 1
+  ```
+  + Answer: This is a nasty error that has to do with the *encoding* of your text file. Try the following with your _sol.Rmd file. In RStudio choose the menu `File -> Reopen with encoding`. Then pick the Encoding `UTF-8` and press ok. Now make some small changes in your file, save it and try again to run `create.ps`. Hopefully it now works...
+
+
+- Problem: After changing the _sol.Rmd file and runing `create.ps` and `show.ps`, the browser opens but the changes do not appear in the shown problem set.
+  + Answer: Make sure that you have correctly set the working directory with `setwd` to the folder in which your _sol.Rmd file is stored.
+
+

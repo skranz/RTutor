@@ -129,7 +129,7 @@ devtools::install_github("skranz/RTutor", upgrade_dependencies=FALSE)
 
 ## Create your own problem sets
 
-Take a look at the files in the vignette folder for documentation of how to create own problem sets.
+Take a look at the [manuals](https://skranz.github.io/RTutor/articles) for documentation of how to create own problem sets.
 
 ## Suggestions & Feedback
 

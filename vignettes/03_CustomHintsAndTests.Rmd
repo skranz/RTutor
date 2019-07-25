@@ -8,14 +8,13 @@ output:
 knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
 ```
 
-
 # Customizing Hints and Tests
 
 ## Automatic Hints and Tests
 
-I put a lot of effort to write sensible automatic tests and hints for RTutor. In most cases no customization should yield a descent experience for the user.
+I put a lot of effort into writing sensible automatic tests and hints for RTutor. Hence, in most cases problem set tasks without customized hints or tests should yield a decent experience for users.
 
-For example, consider a chunk were students shall write a dplyr pipe
+For an example of the automatic hints, consider a chunk were students shall write a dplyr pipe
 
 ```s
 #< task
@@ -34,7 +33,7 @@ dat %>%
   summarize(mean_x = 2*mean(x)) %>%
   arrange(-mean_x)
 ```
-The test fails with the not very informative message:
+The test fails with a not very informative message:
 ```
 Error: 
 You have not yet entered all correct commands in chunk 1.
@@ -51,13 +50,13 @@ dat %>%
    arrange(-mean_x)
 ```
 
-Nevertheless, you there are cases were you want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.
+There are cases were you may want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.
 
 There are also (in my experience substantially fewer) cases, in which you want to adapt the automatic correctness checks. We will describe test customization further below.
 
 ## Analyse students' submissions to improve hints
 
-In general it is hard to predict where automatic hints will not be sufficient. If you use your problem sets in a course in which students submit there solution, take a look at the [README.md of the companion package RTutorSAGI](https://github.com/skranz/RTutorSAGI). It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.
+In general it is hard to predict where and how hints should be customized. If you use your problem sets in a course in which students submit there solution, take a look at the README.md of the companion package [RTutorSAGI](https://github.com/skranz/RTutorSAGI). It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.
 
 # Hints
 
@@ -97,25 +96,28 @@ Here is an example, where the task is to assign the first 100 square numbers to 
 z = 1:100 * 1:100
 #< hint
 if (true(identical(z,1:10*1:10))) {
-  cat("Huh, you made a common mistake. Read the task precisely. You shall assign to z the first 100 square numbers, not only all square numbers that are less or equal to 100")
+  cat("Huh, you made a common mistake. Read the task precisely.
+  You shall assign to z the first 100 square numbers,
+not only all square numbers that are less or equal to 100")
 } else if (true(length(z)!=100)) {
-  cat("Your variable z must have 100 elements, but in your solution z has", length(z),"elements.")  
+  cat("Your variable z must have 100 elements,
+  but in your solution z has", length(z),"elements.")  
 } else {
-  cat("There is a simple one-line formula to compute the first 100 square numbers. Just combine what you have learned in exercise 2 f) and in exercise 3 b).
+  cat("There is a simple one-line formula to compute the first 100 square numbers.
+  Just combine what you have learned in exercise 2 f) and in exercise 3 b).
 ")
 }
 #>
 ```
 
-The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. 
+The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also (at least if you use the default tests) the student's current code has been already be evaluated in the hint environment. 
 
-Also (at least if you use the default tests) the student's current code has been evaluated in the hint environment. 
+This means whether whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. 
+The function `true` is a robust version of `isTRUE` that never throws an error. This means even if `z` does not exist and thus the expression cannot be evaluated, we just get a `FALSE`.
 
-This means whether the whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. 
+## add_to_hint blocks to combine automatic and custom hints
 
-The function `true` is a robust version of `isTRUE` that never throws an error, but simply returns `FALSE` even if the expression cannot be evaluated, e.g. because `z` does not exist.
-
-## Add custom hints to automatic hins with #< add_to_hint blocks
+There are many situations were you want to keep the automatic hint but just add some additional hint. Then write your hint code in an `add_to_hint`block.
 
 Here is an example for an adaptive custom hint in an `#< add_to_hint` block from one of my problem sets:
 
@@ -130,6 +132,19 @@ if (exists("x") & !exists("X")) {
 #>
 ```
 Looking at the logs of students' solution, it became apparent that many mixed up X with x. The automatic hint did not help for this problem, yet in other cases, it was helpful. So I just wanted to add this specific custom hint to the automatic hint.
+
+## Hints at the beginning of chunk
+
+If you place a hint at the beginning of a chunk, the hint text will be added to all the hints of the individual commands.
+```s
+#< hint
+cat("This hint will be added to the automatic hints
+of all commands below.")
+#>
+x = 1:10
+y = x^2
+```
+
 
 # Tests
 
@@ -175,10 +190,6 @@ By default, tests are generated that call either `check.call` (a statement that 
 The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the `check.call` function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of `check.call` for a description of arguments.
 
 If the sample solution assigns a value to a variable, the default function is `check.assign`. See its help file for possible arguments.
-
-
-
-
 
 ## Testing a function written by the student
 
