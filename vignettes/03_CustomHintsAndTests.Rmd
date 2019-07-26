@@ -149,7 +149,9 @@ y = x^2
 
 # Correctness Tests
 
-I tried my best to automatically test whether the student entered a correct solution or not. Yet, sometimes you may want to adapt the test parameters or written custom tests.
+I tried my best to automatically test whether the student entered a correct solution or not.
+
+A typical reason for adapting the automatic tests or writing custom tests is when you want to allow several correct solutions for a specific task.
 
 ## Specifying parameters of automatic tests
 
@@ -167,12 +169,9 @@ A `test_arg` blocks allows you to change the arguments of a default test for the
 The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the `check.call` function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of `check.call` for a description of arguments.
 
 
-## Custom test
+## Custom tests
 
-
-If you need more customization, you can use a `test` block. Unlike a hint block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like `check.variable`, `check.assign.with.multiple.sol`, `check.expr`,  `holds.true`, `check.regression`
-
-They are described in the funcion reference.
+If you need more customization, you can use a `test` block. Unlike a `hint` block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like `holds.true`, `check.variable`, `check.assign.with.multiple.sol`, `check.expr`,  `check.regression`.
 
 Consider the following an example:
 ```
@@ -198,27 +197,31 @@ Yet in this example, the automatic test is too restrictive. The student shall ju
 
 replaces the automatic test with a test that just checks whether a variable `u` exists, and has the same length and class (numeric or integer) as an example solution `c(3,6,7,99)`.
 
-## An example with two tests
+## An more complex example of custom tests
 
-Consider the following example:
+Here is a more complex example for customized tests and hints.
 
+> Task: Simulate a vector p of T prices that are correlated (but not perfectly correlated) with the weather w but uncorrelated with the demand shock u.
+
+```{r "1 a) 2"}
+p = 1.1*c + 0.5*w
+#< test
+check.variable("p",1.1*c + 0.5*w,values=FALSE)
+test.H0.rejected(cor.test(p,w),failure.message="I don't find a significant correlation between p and w (p-value=={{p_value}})")
+holds.true(cor(p,w)<1-1e-14, failure.message="p and w shall not be perfectly correlated!")
+test.H0(cor.test(p,u),failure.message="I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated.")
+#>
+#< hint
+display("To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks.")
+#>
 ```
-    a) Specify a number of observations T>=5
-    
-    ```{r }`r ''`
-    T = 100
-    #< test
-      check.variable("T",100,values=FALSE)
-      holds.true(T>=5, failure.message="You must set T>=5.")
-    #>
-    ```
-```
-The test only passes if both checks in the test block pass.
+We still provide a sample solution `p = 1.1*c + 0.5*w`, but many other solutions are possible here.
 
-The default test `check.assign` would only pass if the student would set `T=100`, but any `T >= 5` shall be considered correct. So we first replace the default test by a `check.variable` test that checks whether a numeric variable T of length 1 exists. Then we add another manual test `holds.true` that checks whether `T >= 5` holds.
+A feasible solution must pass all 4 tests in the test block to be accepted. The function `holds.true` is a quite general tool that can be used in custom tests.
 
-Note that using the `holds.true` test without first checking that a numeric, variable T of length 1 exists can cause the `holds.true` test to crash.
+The functions `test.H0.rejected`, and `test.H0` are just examples for special purpose convenience test functions.
 
+Note that if you specify a custom test there will be no automatic hint. We thus added a custom hint.
 
 ## Testing a function written by the student
 

@@ -222,7 +222,8 @@ dat %&gt;%
 <div id="correctness-tests" class="section level1">
 <h1 class="hasAnchor">
 <a href="#correctness-tests" class="anchor"></a>Correctness Tests</h1>
-<p>I tried my best to automatically test whether the student entered a correct solution or not. Yet, sometimes you may want to adapt the test parameters or written custom tests.</p>
+<p>I tried my best to automatically test whether the student entered a correct solution or not.</p>
+<p>A typical reason for adapting the automatic tests or writing custom tests is when you want to allow several correct solutions for a specific task.</p>
 <div id="specifying-parameters-of-automatic-tests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#specifying-parameters-of-automatic-tests" class="anchor"></a>Specifying parameters of automatic tests</h2>
@@ -235,11 +236,10 @@ dat %&gt;%
     #&gt;</code></pre>
 <p>The <code>#&lt; test_arg</code> block customizes the parameters <code>ignore.arg</code> and <code>allow.extra.arg</code> of the <code>check.call</code> function. The parameter <code>ignore.arg = c("main","xlab")</code> means that the student does not have to add these two arguments to the plot function or can use different values. The parameter <code>allow.extra.arg=TRUE</code> allows the student to specify additional arguments when calling plot, e.g. specifying a <code>ylab</code>. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of <code>check.call</code> for a description of arguments.</p>
 </div>
-<div id="custom-test" class="section level2">
+<div id="custom-tests" class="section level2">
 <h2 class="hasAnchor">
-<a href="#custom-test" class="anchor"></a>Custom test</h2>
-<p>If you need more customization, you can use a <code>test</code> block. Unlike a hint block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like <code>check.variable</code>, <code>check.assign.with.multiple.sol</code>, <code>check.expr</code>, <code>holds.true</code>, <code>check.regression</code></p>
-<p>They are described in the funcion reference.</p>
+<a href="#custom-tests" class="anchor"></a>Custom tests</h2>
+<p>If you need more customization, you can use a <code>test</code> block. Unlike a <code>hint</code> block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like <code>holds.true</code>, <code>check.variable</code>, <code>check.assign.with.multiple.sol</code>, <code>check.expr</code>, <code>check.regression</code>.</p>
 <p>Consider the following an example:</p>
 <pre><code>    #' b) Save in the variable u a vector of 4 different numbers
     u = c(3,6,7,99)  
@@ -259,22 +259,27 @@ dat %&gt;%
     #&gt;</code></pre>
 <p>replaces the automatic test with a test that just checks whether a variable <code>u</code> exists, and has the same length and class (numeric or integer) as an example solution <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c(3,6,7,99)</a></code>.</p>
 </div>
-<div id="an-example-with-two-tests" class="section level2">
+<div id="an-more-complex-example-of-custom-tests" class="section level2">
 <h2 class="hasAnchor">
-<a href="#an-example-with-two-tests" class="anchor"></a>An example with two tests</h2>
-<p>Consider the following example:</p>
-<pre><code>    a) Specify a number of observations T&gt;=5
-    
-    ```{r }
-    T = 100
-    #&lt; test
-      check.variable("T",100,values=FALSE)
-      holds.true(T&gt;=5, failure.message="You must set T&gt;=5.")
-    #&gt;
-    ```</code></pre>
-<p>The test only passes if both checks in the test block pass.</p>
-<p>The default test <code>check.assign</code> would only pass if the student would set <code>T=100</code>, but any <code>T &gt;= 5</code> shall be considered correct. So we first replace the default test by a <code>check.variable</code> test that checks whether a numeric variable T of length 1 exists. Then we add another manual test <code>holds.true</code> that checks whether <code>T &gt;= 5</code> holds.</p>
-<p>Note that using the <code>holds.true</code> test without first checking that a numeric, variable T of length 1 exists can cause the <code>holds.true</code> test to crash.</p>
+<a href="#an-more-complex-example-of-custom-tests" class="anchor"></a>An more complex example of custom tests</h2>
+<p>Here is a more complex example for customized tests and hints.</p>
+<blockquote>
+<p>Task: Simulate a vector p of T prices that are correlated (but not perfectly correlated) with the weather w but uncorrelated with the demand shock u.</p>
+</blockquote>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">p =<span class="st"> </span><span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&lt; test</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="kw"><a href="../reference/check.variable.html">check.variable</a></span>(<span class="st">"p"</span>,<span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w,<span class="dt">values=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="kw"><a href="../reference/test.H0.rejected.html">test.H0.rejected</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,w),<span class="dt">failure.message=</span><span class="st">"I don't find a significant correlation between p and w (p-value=={{p_value}})"</span>)</a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="kw"><a href="../reference/holds.true.html">holds.true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor">cor</a></span>(p,w)<span class="op">&lt;</span><span class="dv">1</span><span class="fl">-1e-14</span>, <span class="dt">failure.message=</span><span class="st">"p and w shall not be perfectly correlated!"</span>)</a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="kw"><a href="../reference/test.H0.html">test.H0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,u),<span class="dt">failure.message=</span><span class="st">"I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated."</span>)</a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&lt; hint</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="kw"><a href="../reference/display.html">display</a></span>(<span class="st">"To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks."</span>)</a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;</span></a></code></pre></div>
+<p>We still provide a sample solution <code>p = 1.1*c + 0.5*w</code>, but many other solutions are possible here.</p>
+<p>A feasible solution must pass all 4 tests in the test block to be accepted. The function <code>holds.true</code> is a quite general tool that can be used in custom tests.</p>
+<p>The functions <code>test.H0.rejected</code>, and <code>test.H0</code> are just examples for special purpose convenience test functions.</p>
+<p>Note that if you specify a custom test there will be no automatic hint. We thus added a custom hint.</p>
 </div>
 <div id="testing-a-function-written-by-the-student" class="section level2">
 <h2 class="hasAnchor">
@@ -399,8 +404,8 @@ dat %&gt;%
       <li>
 <a href="#correctness-tests">Correctness Tests</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#specifying-parameters-of-automatic-tests">Specifying parameters of automatic tests</a></li>
-      <li><a href="#custom-test">Custom test</a></li>
-      <li><a href="#an-example-with-two-tests">An example with two tests</a></li>
+      <li><a href="#custom-tests">Custom tests</a></li>
+      <li><a href="#an-more-complex-example-of-custom-tests">An more complex example of custom tests</a></li>
       <li><a href="#testing-a-function-written-by-the-student">Testing a function written by the student</a></li>
       <li><a href="#testing-a-function-that-generates-random-variables">Testing a function that generates random variables</a></li>
       </ul>

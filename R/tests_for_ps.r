@@ -866,7 +866,12 @@ holds.true = function(cond, short.message = failure.message,failure.message="Fai
   }
   restore.point("holds.true")
 
-  if (!all(eval(cond,stud.env))) {
+  res = try(eval(cond,stud.env), silent = TRUE)
+  if (is(res,"try-error")) {
+    add.failure(failure.message,cond=cond.str,...)
+    return(FALSE)
+  }
+  if (!true(all(res))) {
     add.failure(failure.message,cond=cond.str,...)
     return(FALSE)
   }

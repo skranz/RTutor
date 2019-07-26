@@ -66,16 +66,16 @@ sigma.test = function (x, sigma = 1, sigmasq = sigma^2,
 }
 
 
-# Test whether a certain H0 can be significantly rejected
-#
-# @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
-# @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
-# @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
-# @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
-# @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
-# @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
-# @param check.warning if FALSE don't check for a warning
-# @return TRUE if H0 can be rejected, FALSE if not and "warning" if it can be weakly rejected
+#' Can be used in a custom test block. Checks whether a certain H0 can be significantly rejected
+#'
+#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
+#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
+#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
+#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
+#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
+#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
+#' @param check.warning if FALSE don't check for a warning
+#' @return TRUE if H0 can be rejected, FALSE if not and "warning" if it can be weakly rejected
 # @export
 test.H0.rejected = function(test.expr,p.value,test.name="",
   alpha.warning = 0.01,alpha.failure =0.05,
@@ -112,15 +112,15 @@ test.H0.rejected = function(test.expr,p.value,test.name="",
   return(TRUE)
 }
 
-# Check whether a certain null hypothesis is not significantly rejected
-# @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
-# @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
-# @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
-# @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
-# @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
-# @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
-# @param check.warning if FALSE don't check for a warning
-# @return TRUE if H0 cannot be rejected, FALSE if not and "warning" if it can be weakly rejected
+#' Helper function for custom test blocks. Check whether a certain null hypothesis is not significantly rejected
+#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
+#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
+#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
+#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
+#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
+#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
+#' @param check.warning if FALSE don't check for a warning
+#' @return TRUE if H0 cannot be rejected, FALSE if not and "warning" if it can be weakly rejected
 # @export
 test.H0 = function(test.expr,p.value,test.name="",
                    alpha.warning = 0.05,alpha.failure =0.001,
