@@ -6,6 +6,11 @@
 \usage{
 \method{with}{random.seed}(expr, seed = 1234567890)
 }
+\arguments{
+\item{expr}{the expression to be evaluated}
+
+\item{seed}{the seed as integer}
+}
 \description{
 Calls a function with a specified random.seed
 }

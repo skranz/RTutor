@@ -377,7 +377,14 @@ check.shiny.chunk = function(chunk.ind = ps$chunk.ind,...,session=ps$session, ps
   
   if (!internal) {
     if (!ret) {
-      txt = merge.lines(c(ps$success.log, ps$failure.message,"Press Ctrl-H to get a hint."))
+      txt = merge.lines(c(ps$success.log, ps$failure.message))
+      if (isTRUE(ps$current.hint.on.fail)) {
+        hint.txt = tryCatch(merge.lines(capture.output(hint(ps=ps))),
+         error = function(e) {merge.lines(as.character(e))})
+        txt = paste0(txt,"\nHint:", hint.txt)
+      } else {
+        txt = paste0(txt,"\nPress the hint button to get a hint.")
+      }
       updateAceEditor(ps$session, ps$nali$console, value=txt, mode="text")
       ps$cdt$is.solved[chunk.ind] = FALSE
     } else {

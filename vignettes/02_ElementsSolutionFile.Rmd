@@ -258,33 +258,31 @@ Note that even the world's probably biggest data collecting organisation has use
 
 ## Optional chunks
 
-By default you have to solve all chunks in an exercise in the given order. If you set the chunk option `optional=TRUE`, a chunk may not be solved. Example:
+By default you have to solve all chunks in an exercise in the given order. If you set the chunk option `optional=TRUE`, a chunk need not be solved in order to continue. Example:
 
 ```  
-  ```{r "1_b", optional = TRUE}`r ''`
-  # Code here
-  
-  ```
+    ```{r "1_b", optional = TRUE}`r ''`
+    # Code here
+    
+    ```
 ```  
 This is in particular useful if you use notes that contain chunks. Note that variables that have been computed in optional chunks will not be known in later chunks.
 
 Note that `optional` is not a chunk option known by `knitr` but only used for RTutor.
-
-
 
 ## Chunks with HTML output
 
 You can specify chunks whose output is native HTML code, e.g. if you want to show an HTML table or show a motion plot. As in normal rmarkdown, you can do so by setting the chunk option `results= "asis"`. Here is an example from an interactive problem set that shows a motion plot:
 
 ```  
-  ```{r "2_1_a_example", results = 'asis'}`r ''`
-  #< task
-  library(googleVis)
-  mp = gvisMotionChart(Int.data,
-         idvar = "country", timevar = "year")
-  plot(mp, tag = "chart")
-  #>
-  ```
+    ```{r "2_1_a_example", results = 'asis'}`r ''`
+    #< task
+    library(googleVis)
+    mp = gvisMotionChart(Int.data,
+           idvar = "country", timevar = "year")
+    plot(mp, tag = "chart")
+    #>
+    ```
 ```
 
 There are a lot of R packages that help creating nice HTML tables, like `stargazer`, or `hwriter`.
@@ -294,30 +292,36 @@ There are a lot of R packages that help creating nice HTML tables, like `stargaz
 It is also possible to have chunks that have HTML widgets as output. If you use the shiny based version of RTutor you then need some additional chunk options. Here is an example for the leaflet widget:
 
 ```
-  ```{r output="htmlwidget", widget="leaflet"}`r ''`
-  #< task_notest
-  SFmap <- leaflet() %>% 
-    addTiles() %>% 
-    setView(9.9620289,48.4251394, zoom = 11) %>% 
-    addMarkers(9.963614702355699,48.42517242865929,
-      popup = 'RTutor was created here at Ulm University')
-  SFmap
-  #>
-  ```
+    ```{r output="htmlwidget", widget="leaflet"}`r ''`
+    #< task_notest
+    SFmap <- leaflet() %>% 
+      addTiles() %>% 
+      setView(9.9620289,48.4251394, zoom = 11) %>% 
+      addMarkers(9.963614702355699,48.42517242865929,
+        popup = 'RTutor was created here at Ulm University')
+    SFmap
+    #>
+    ```
 ```
 
 The `widget` argument is typically the name of the R package in which the html widget is specified.
+
+## Customizing data frame printer
+
+In the shiny version of RTutor data frames are by default shown as HTML tables. You can set global options or chunk options that customize its appearance.
+
+For details, take a look at this [example](https://github.com/skranz/RTutor/blob/master/inst/examples/DataFramesExample_sol.Rmd).
 
 ## Specifying figure width and height
 
 If your chunk plots a figure, you may want to specify the width and height of the resulting figure. You can do this like for normal RMarkdown files with the chunk options `fig.width` and `fig.height` that specify width and height in inches.
 
 ```
-  ```{r "1_a", fig.width=12, fig.height=5}`r ''`
-  #< task
-  plot(1:10,(1:10)^2)
-  #>
-  ```
+    ```{r "1_a", fig.width=12, fig.height=5}`r ''`
+    #< task
+    plot(1:10,(1:10)^2)
+    #>
+    ```
 ```
 
 You can also specify other chunk options of the `knitr` package. An overview is given here:

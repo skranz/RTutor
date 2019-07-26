@@ -95,9 +95,10 @@ describe.chain.call = function(call.obj, chain.operator=NULL) {
   }
 }
 
-#' Checks whether arguments of stud.call are correct given the specification in check.call
+# Checks whether arguments of stud.call are correct given the specification in check.call.
+# Used inside correctness tests
 check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, allow.extra.arg=FALSE, ignore.arg=NULL, check.values=NULL) {
-  restore.point("compare.call.args")
+  #restore.point("check.call.args")
 
   sarg = args.of.call(stud.call, name.empty.arg=TRUE)
   carg = args.of.call(check.call, name.empty.arg=TRUE)
@@ -185,7 +186,7 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
   return(FALSE)
 }
 
-#' Compare if two calls are the same
+# Compare if two calls are the same
 compare.calls = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
 
   stud.call = match.call.object(stud.call, ...)

@@ -121,7 +121,12 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
       }
 
       message = ps$failure.message
-      message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
+      if (isTRUE(ps$current.hint.on.fail)) {
+        hint.txt = tryCatch(merge.lines(capture.output(hint(ps=ps))), error = function(e) {merge.lines(as.character(e))})
+        message = paste0(message,"\nHint:", hint.txt)
+      } else {
+        message = paste0(message,"\nFor a hint, type hint() in the console and press Enter.")
+      }
       message = paste(message,code.change.message)
 
 
@@ -200,16 +205,18 @@ check.exercise = function(ex.ind, verbose = FALSE, ps=get.ps(), check.all=FALSE)
 }
 
 
-#' Check the student's solution of an exercise contained in stud.file
-#' @param ex.name The name of the exercise
-#' @param stud.code The code of the student's solution as a string (or vector of strings)
-#' @export
+# Check the student's solution of an exercise contained in stud.file
+# @param ex.name The name of the exercise
+# @param stud.code The code of the student's solution as a string (or vector of strings)
+# @export
 check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stud.code[[chunk.ind]], stud.env=make.chunk.stud.env(chunk.ind, ps), expect.change = FALSE, store.output=TRUE, noeval = isTRUE(ps$noeval), precomp=isTRUE(ps$precomp)) {
   restore.point("check.chunk")
 
   ck = ps$cdt[chunk.ind,]
   chunk.name = ck$chunk.name
 
+  ps$current.hint.on.fail = isTRUE(ps$rps$hint.on.fail)
+  
   ps$cdt$old.stud.code[chunk.ind] = stud.code
   ps$cdt$is.solved[chunk.ind] = FALSE
 
@@ -567,8 +574,8 @@ can.chunk.be.edited = function(chunk.ind, ps = get.ps()) {
 
 }
 
-#' Extracts the stud's code of a given exercise
-#' @export
+# Extracts the stud's code of a given exercise
+# @export
 extract.exercise.code = function(ex.name,stud.code = ps$stud.code, ps=get.ps(),warn.if.missing=TRUE) {
   restore.point("extract.r.exercise.code")
 

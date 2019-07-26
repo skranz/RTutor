@@ -105,9 +105,6 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -145,7 +142,8 @@
   <span class='kw'>no.command.failure.message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ok.if.same.val</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
   <span class='kw'>s3.method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ps</span> <span class='kw'>=</span> <span class='fu'><a href='get.ps.html'>get.ps</a></span>(), <span class='kw'>stud.env</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>stud.env</span>,
   <span class='kw'>part</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>part</span>, <span class='kw'>stud.expr.li</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>stud.expr.li</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>noeval</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Logic'>isTRUE</a></span>(<span class='no'>ps</span>$<span class='no'>noeval</span>), <span class='no'>...</span>)</pre>
+  <span class='kw'>noeval</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Logic'>isTRUE</a></span>(<span class='no'>ps</span>$<span class='no'>noeval</span>), <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Logic'>isTRUE</a></span>(<span class='no'>ps</span>$<span class='no'>rps</span>$<span class='no'>hint.on.fail</span>),
+  <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,6 +167,10 @@
     <tr>
       <th>ok.if.same.val</th>
       <td><p>if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.</p></td>
+    </tr>
+    <tr>
+      <th>hint.on.fail</th>
+      <td><p>Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type <code><a href='hint.html'>hint()</a></code>. Yet, default can be overwritten in call to <code>create.ps</code>.</p></td>
     </tr>
     </table>
     

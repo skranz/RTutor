@@ -124,15 +124,15 @@ quizDefaults = function(lang="en") {
   }
 }
 
-#' Create a shiny quiz widget
-#'
-#' @param id the id of the quiz
-#' @param qu a list that contains the quiz fields as would have
-#'        been parsed by read.yaml from package YamlObjects
-#' @param yaml alternatively to qu, is yaml a string that specifies the quiz
-#' @param quiz.handler a function that will be called if the quiz is checked.
-#'        The boolean argument solved is TRUE if the quiz was solved
-#'        and otherwise FALSE
+# Create a shiny quiz widget
+#
+# @param id the id of the quiz
+# @param qu a list that contains the quiz fields as would have
+#        been parsed by read.yaml from package YamlObjects
+# @param yaml alternatively to qu, is yaml a string that specifies the quiz
+# @param quiz.handler a function that will be called if the quiz is checked.
+#        The boolean argument solved is TRUE if the quiz was solved
+#        and otherwise FALSE
 shinyQuiz = function(id=paste0("quiz_",sample.int(10e10,1)),qu=NULL, yaml,  quiz.handler=NULL, add.handler=TRUE, single.check.btn=TRUE, defaults=quizDefaults(lang=lang), lang="en") {
   restore.point("shinyQuiz")
 

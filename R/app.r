@@ -1,20 +1,20 @@
-#' Make a problem set app suited for hosting RTutor in the web
-#' 
-#' The user first opens the login app, which creates a session file
-#' and then calls this app.
-#'
-#'
-#' @param load.sav shall the last saved be loaded?
-#' @param sample.solution shall the sample solution be shown
-#' @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)
-#' @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
-#' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
-#' @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
-#' @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
-#' @param is.solved DEPRECEATED
-#' @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
-#' @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
-#' @param round.digits the number of digits that printed data.frames shall be rounded to
+# Make a problem set app suited for hosting RTutor in the web
+# 
+# The user first opens the login app, which creates a session file
+# and then calls this app.
+#
+#
+# @param load.sav shall the last saved be loaded?
+# @param sample.solution shall the sample solution be shown
+# @param run.solved if sample.solution or load.sav shall the correct chunks be automatically run when the problem set is loaded? (Starting the problem set then may take quite a while)
+# @param import.rmd shall the solution be imported from the rmd file specificed in the argument rmd.file
+# @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
+# @param catch.errors by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()
+# @param offline (FALSE or TRUE) Do you have no internet connection. By default it is checked whether RTutor can connect to the MathJax server. If you have no internet connection, you cannot render mathematic formulas. If RTutor wrongly thinks you have an internet connection, while you don't, your chunks may not show at all. If you encounter this problem, set manually offline=TRUE.
+# @param is.solved DEPRECEATED
+# @param html.data.frame shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)
+# @param table.max.rows the maximum number of rows that is shown if a data.frame is printed as html.table
+# @param round.digits the number of digits that printed data.frames shall be rounded to
 RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE, run.solved=load.sav, import.rmd=FALSE, rmd.file = paste0(ps.name,"_",user.name,"_export.rmd"), catch.errors = TRUE, dir=getwd(), rps.dir=dir, ups.dir=paste0(dir,"/ups"), offline=!can.connect.to.MathJax(), left.margin=2, right.margin=2, save.nothing=FALSE, show.solution.btn = TRUE, show.data.exp = FALSE, disable.graphics.dev=TRUE, clear.user=FALSE, check.whitelist=!is.null(wl), wl=NULL, verbose=FALSE, html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), precomp=FALSE, noeval=FALSE, need.login=TRUE, sessions.dir = paste0(dir,"/sessions"), session.key = NULL, use.secure.eval=TRUE, secure.eval.timeout = 10, secure.eval.profile=NULL, hint.noeval=noeval, show.points=TRUE, replace.sol=precomp, ups.save = default.ups.save(chunk.ind=TRUE, code=!(replace.sol | noeval)), log.file = paste0(dir,"/log/",ps.name,".log"), session.timeout.sec=300,  ...) {
 
   cat("\nInitialize problem set, this may take a while...")
@@ -119,7 +119,7 @@ RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE,
 
 
 
-#' This function must be called in the initHandler of the app
+# This function must be called in the initHandler of the app
 rtutor.observe.html.query = function(app=getApp(), ps = get.ps(), session.timeout.sec=300) {
   restore.point("rtutor.login.dispatch")
   session = app$session

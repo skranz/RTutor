@@ -1,20 +1,6 @@
 # All sorts of functions to initialize working on a problem set
 
-#' Returns a list of the names of all problem sets that are included in RTutor
-#' @export
-list.ps = function() {
-  structure.path = paste0(find.package("RTutor"),"/problemsets")
-  files = list.files(structure.path)
-  pattern = ".rps"
-  files = files[substring(files,nchar(files)-nchar(pattern)+1,)==pattern]
-  names = substring(files,1,nchar(files)-nchar(pattern))
-  return(names)
-}
-examples.list.ps = function() {
-  list.ps()
-}
-
-#' Makes a local copy of a problem set for a new shiny session
+# Makes a local copy of a problem set for a new shiny session
 copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
   if (!empty.stud.env)
     stop("Current version can only make copies of empty.stud.env")
@@ -35,11 +21,11 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
   return(ps)
 }
 
-#' Initialize a problem set for the student
-#' @param ps.name the name of the problem set
-#' @param dir the path in which the stud has stored his file
-#' @param stud.hort.file the file name (without path) of the .rmd problem set file
-#' @export
+# Initialize a problem set for the student
+# @param ps.name the name of the problem set
+# @param dir the path in which the stud has stored his file
+# @param stud.hort.file the file name (without path) of the .rmd problem set file
+# @export
 init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(ps.name,".Rmd"), rps.file = paste0(rps.dir,"/",ps.name,".rps"),log.file = paste0(dir,"/",ps.name,".log"), rps.dir=dir, ups.dir=dir, user.dir=ups.dir, save.nothing=FALSE, check.whitelist=!is.null(wl), wl = NULL, use.memoise=NULL, noeval=FALSE, precomp=FALSE,replace.sol = FALSE, preknit=FALSE, ups.save=default.ups.save()) {
   restore.point("init.ps")
 

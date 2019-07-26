@@ -1,6 +1,6 @@
 
-#' Used in a solution file. Give an award to a student who made it so far
-#' @export
+# Used in a solution file. Give an award to a student who made it so far
+# @export
 give.award = function(award.name, award = ps$rps$awards[[award.name]] , ups = get.ups(), ps=get.ps()) {
   restore.point("give.award")
 

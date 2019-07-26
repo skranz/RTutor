@@ -1,7 +1,6 @@
 # Direct testing functions
 
-#' Tests whether a package is loaded. Not yet implemented for speed reasons
-#' @export
+# Tests whether a package is loaded. Not yet implemented for speed reasons
 check.package = function(package) {
   return(TRUE)
 }
@@ -143,8 +142,8 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
 
 
 
-#' Simply shows a success message when this test is reached for the first time!
-#' @export
+# Simply shows a success message when this test is reached for the first time!
+# @export
 show.success.message = function(success.message,...) {
   add.success(success.message,...)
   return(TRUE)
@@ -158,13 +157,16 @@ show.success.message = function(success.message,...) {
 #' @param allow.extra.arg if TRUE (not default) the student is allowed to supply additional arguments to the call that were not in the solution. Useful, e.g. if the student shall plot something and is allowed to customize her plot with additional arguments.
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
 #' @param ok.if.same.val if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
+#' @param hint.on.fail Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type \code{hint()}. Yet, default can be overwritten in call to \code{create.ps}. 
 #' @export
 check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = NA,s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval),  ...
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail), ...
 ) {
 
   expr = call = substitute(call)
 
+  ps$current.hint.on.fail = hint.on.fail
+  
   if (noeval) {
     stud.env = emptyenv()
     check.arg.by.value=FALSE
@@ -210,6 +212,10 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
       # to use desired function.
       failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But in this task you shall learn how to directly call the function '",check.na,"', like \n\n    ", deparse1(expr), "\n\nPlease change your code.")
       add.failure(failure.message)
+      
+      # Message is already very revealing
+      # So turn off current.hint.on.fail
+      ps$current.hint.on.fail = FALSE
       return(FALSE)
     } else {
       if (is.null(failure.message))
@@ -603,33 +609,6 @@ check.expr = function(check.expr, correct.expr,
   return(TRUE)
 }
 
-check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ps=get.ps(),stud.env = ps$stud.env, part=NULL) {
-
-  if (!is.null(unsubst.expr)) {
-    expr = unsubst.expr
-  } else if (!is.null(str.expr)) {
-    expr = base::parse(text=str.expr, srcfile = NULL)
-  } else {
-    expr = substitute(expr)
-  }
-
-  class = class(eval(expr,envir=stud.env))
-  if (any(class %in% classes))
-    return(TRUE)
-
-  if (is.null(str.expr))
-    str.expr = deparse1(expr)
-
-  if (length(classes)>1) {
-    failure.message=paste0(str.expr, " has class ", paste0(class,collapse=" and ")," but it should be one of ", paste0(classes, collapse=", "),".")
-  } else {
-    failure.message=paste0(str.expr, " has wrong class. It should be ", paste0(classes, collapse=", "),".")
-  }
-  add.failure(failure.message)
-  return(FALSE)
-
-}
-
 #' Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution
 #' @param df name of the data frame or matrix
 #' @param col name of the column
@@ -729,14 +708,6 @@ check.col = function(df,col, expr=NULL, class.df = c("data.frame","data.table","
 }
 
 
-check.var.exists = function(var, ps=get.ps(),stud.env = ps$stud.env) {
-  if (!exists(var,stud.env, inherits=FALSE)) {
-      msg = paste0("You have not yet generated the variable '", var,"'.")
-      add.failure(msg, var = var)
-      return(FALSE)
-  }
-  return(TRUE)
-}
 
 #' Test: Check whether a variable is equal to a specified expression
 #' @param var a the variable name as string
@@ -824,6 +795,44 @@ check.variable = function(var, expr, length=check.all,dim=check.all, class=check
   return(TRUE)
 }
 
+
+check.var.exists = function(var, ps=get.ps(),stud.env = ps$stud.env) {
+  if (!exists(var,stud.env, inherits=FALSE)) {
+      msg = paste0("You have not yet generated the variable '", var,"'.")
+      add.failure(msg, var = var)
+      return(FALSE)
+  }
+  return(TRUE)
+}
+
+check.class = function(expr, classes,unsubst.expr=NULL, str.expr=NULL, ps=get.ps(),stud.env = ps$stud.env, part=NULL) {
+
+  if (!is.null(unsubst.expr)) {
+    expr = unsubst.expr
+  } else if (!is.null(str.expr)) {
+    expr = base::parse(text=str.expr, srcfile = NULL)
+  } else {
+    expr = substitute(expr)
+  }
+
+  class = class(eval(expr,envir=stud.env))
+  if (any(class %in% classes))
+    return(TRUE)
+
+  if (is.null(str.expr))
+    str.expr = deparse1(expr)
+
+  if (length(classes)>1) {
+    failure.message=paste0(str.expr, " has class ", paste0(class,collapse=" and ")," but it should be one of ", paste0(classes, collapse=", "),".")
+  } else {
+    failure.message=paste0(str.expr, " has wrong class. It should be ", paste0(classes, collapse=", "),".")
+  }
+  add.failure(failure.message)
+  return(FALSE)
+
+}
+
+
 flags.to.string = function(..., sep=", ", last.sep = " and ") {
   args = list(...)
 
@@ -839,238 +848,12 @@ flags.to.string = function(..., sep=", ", last.sep = " and ") {
 }
 
 
-#' A helper function for hypothesis test about whether student solution is correct
-#' @export
-hypothesis.test.result = function(p.value, alpha.warning=0.05, alpha.failure = 0.0001, verbose=FALSE) {
-  if (p.value < alpha.failure) {
-    if (verbose)
-      message("  H0 is highly significantly rejected... check fails!")
-    return(FALSE)
-  } else if (p.value < alpha.warning) {
-    if (verbose)
-      message(paste0("  H0 signicantly rejected... warning!"))
-    return("warning")
-  } else {
-    if (verbose)
-      cat(paste0("... ok!"))
-    return(TRUE)
-  }
-
-}
-
-#' Test for variance (copied from TeachingDemos)
-#' @export
-sigma.test = function (x, sigma = 1, sigmasq = sigma^2,
-          alternative = c("two.sided", "less", "greater"),
-          conf.level = 0.95,  ...) {
-  alternative <- match.arg(alternative)
-  sigma <- sqrt(sigmasq)
-  n <- length(x)
-  xs <- var(x)*(n-1)/sigma^2
-  out <- list(statistic = c("X-squared" = xs))
-  class(out) <- "htest"
-  out$parameter <- c(df = n-1)
-  minxs <- min(c(xs, 1/xs))
-  maxxs <- max(c(xs, 1/xs))
-  PVAL <- pchisq(xs, df = n - 1)
-
-  out$p.value <- switch(alternative,
-                        two.sided = 2*min(PVAL, 1 - PVAL),
-                        less = PVAL,
-                        greater = 1 - PVAL)
-  out$conf.int <- switch(alternative,
-                         two.sided = xs * sigma^2 *
-                           1/c(qchisq(1-(1-conf.level)/2, df = n-1), qchisq((1-conf.level)/2, df
-                                                                            = n-1)),
-                         less = c(0, xs * sigma^2 /
-                                    qchisq(1-conf.level, df = n-1)),
-                         greater = c(xs * sigma^2 /
-                                       qchisq(conf.level, df = n-1), Inf))
-  attr(out$conf.int, "conf.level") <- conf.level
-  out$estimate <- c("var of x" = var(x))
-  out$null.value <- c(variance = sigma^2)
-  out$alternative <- alternative
-  out$method <- "One sample Chi-squared test for variance"
-  out$data.name <- deparse1(substitute(x))
-  names(out$estimate) <- paste("var of", out$data.name)
-  return(out)
-}
-
-
-#' Test whether a certain H0 can be significantly rejected
-#'
-#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
-#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
-#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
-#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
-#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
-#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
-#' @param check.warning if FALSE don't check for a warning
-#' @return TRUE if H0 can be rejected, FALSE if not and "warning" if it can be weakly rejected
-#' @export
-test.H0.rejected = function(test.expr,p.value,test.name="",
-  alpha.warning = 0.01,alpha.failure =0.05,
-  short.message="Fail to reject '{{test_name}}', p.value = {{p_value}}",
-  warning.message="The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.",
-  failure.message="I couldn't significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}",
-  success.message = "Great, I could significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-  check.warning=TRUE, ps=get.ps(),stud.env = ps$stud.env, part=NULL,...)
-{
-
-
-  if (!missing(test.expr)) {
-    test.expr = substitute(test.expr)
-    if (test.name=="") {
-      test.name = deparse1(test.expr)
-    }
-  }
-  if (missing(p.value)) {
-    test.res = eval(test.expr, stud.env)
-    p.value = test.res$p.value
-  }
-  if (p.value > alpha.failure) {
-    add.failure(failure.message,test_name=test.name,p_value=p.value)
-    return(FALSE)
-  }
-
-  add.success(success.message,test_name=test.name,p_value=p.value)
-
-  if (p.value > alpha.warning & check.warning) {
-    add.warning(warning.message,test_name=test.name,p_value=p.value)
-    return("warning")
-  }
-
-  return(TRUE)
-}
-
-#' Check whether a certain null hypothesis is not significantly rejected
-#' @param test.expr an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"
-#' @param p.value Instead of providing test.expr, one can directly provide a p.value from a previously run test
-#' @param test.name an optional test.name that can be used to fill the {{test_name}} whiskers in warning or failure messages.
-#' @param alpha.failure default=0.001 the critical p.value below which the stud code is considered wrong
-#' @param alpha.warning default=0.05 a p.value below a warning is printed that the code may be wrong
-#' @param short.message,failure.messages, warning.messages Messages in case of a failure and warning and  short message for the log.file
-#' @param check.warning if FALSE don't check for a warning
-#' @return TRUE if H0 cannot be rejected, FALSE if not and "warning" if it can be weakly rejected
-#' @export
-test.H0 = function(test.expr,p.value,test.name="",
-                   alpha.warning = 0.05,alpha.failure =0.001,
-                  short.message,warning.message,failure.message,
-                   success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-
-                  check.warning=TRUE, part=NULL,
-                  ps=get.ps(),stud.env = ps$stud.env,...) {
-
-
-  #browser()
-  if (!missing(test.expr)) {
-    test.expr = substitute(test.expr)
-    if (test.name=="") {
-      test.name = deparse1(test.expr)
-    }
-  }
-  if (missing(p.value)) {
-    test.res = eval(test.expr, stud.env)
-    p.value = test.res$p.value
-  }
-  if (missing(short.message)) {
-    short.message = paste0("rejected '{{test_name}}' has p.value = {{p_value}}")
-  }
-  if (missing(failure.message)) {
-    failure.message = paste0("The null hypothesis from the test '{{test_name}}' shall hold, but it is rejected at p.value = {{p_value}}")
-  }
-  if (missing(warning.message)) {
-    warning.message = paste0("The null hypothesis from the test '{{test_name}}', should not be rejcected, but I get a fairly low p.value of {{p_value}}.")
-  }
-
-  if (p.value < alpha.failure) {
-    add.failure(failure.message,test_name=test.name,p_value=p.value,...)
-    return(FALSE)
-  }
-
-  add.success(success.message,test_name=test.name,p_value=p.value,...)
-
-  if (p.value < alpha.warning & check.warning) {
-    add.warning(warning.message,test_name=test.name,p_value=p.value,...)
-    return("warning")
-  }
-  return(TRUE)
-}
-
-#' Test: The variance of the distribution from which a vector of random numbers has been drawn
-#' @export
-test.variance = function(vec, true.val, test = "t.test",short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired variance {{vari_sol}}!", ps=get.ps(),stud.env = ps$stud.env,part=NULL,...) {
-  call.str = as.character(match.call())
-
-  var.name = call.str[2]
-  p.value = sigma.test(vec,sigmasq=true.val)$p.value
-
-  if (missing(short.message)) {
-    short.message ="wrong variance {{var}}: is {{vari_stud}} shall {{vari_sol}}, p.value = {{p_value}}"
-  }
-  if (missing(failure.message)) {
-    failure.message = "{{var}} has wrong variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypothesis were true, it would be very unlikely (p.value={{p_value}}) to get a sample as extreme as yours!"
-  }
-  if (missing(warning.message)) {
-    warning.message = "{{var}} has a suspicious variance! \n Your random variable {{var}} has a sample variance of {{vari_stud}} but shall have {{vari_sol}}. A chi-square test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample variance"
-  }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message, success.message=success.message,
-  var = var.name, vari_stud = var(vec), vari_sol=true.val,...)
-
-
-}
-
-
-#' Test: The mean of the distribution from which a vector of random numbers has been drawn
-#' @export
-test.mean = function(vec, true.val, test = "t.test", short.message,warning.message,failure.message, success.message = "Great, I cannot statistically reject that {{var}} has the desired mean of {{mean_sol}}!", ps=get.ps(),stud.env = ps$stud.env,part=NULL,...) {
-  call.str = as.character(match.call())
-
-  stopifnot(test=="t.test")
-
-  var.name = call.str[2]
-  p.value = t.test(vec,mu=true.val)$p.value
-
-  if (missing(short.message)) {
-    short.message ="wrong mean {{var}}: is {{mean_stud}} shall {{mean_sol}}, p.value = {{p_value}}"
-  }
-  if (missing(failure.message)) {
-    failure.message = "{{var}} has wrong mean! \n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypothesis were true, it would be very unlikely (p.value={{p_value}}) to get a sample mean as extreme as yours!"
-  }
-  if (missing(warning.message)) {
-    warning.message = "{{var}} has a suspicious mean!\n Your random variable {{var}} has a sample mean of {{mean_stud}} but shall have {{mean_sol}}. A t-test tells me that if that null hypthesis were true, the probability would be just around {{p_value}} to get such an extreme sample mean_"
-  }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,
-        var = var.name, mean_stud = mean(vec), mean_sol=true.val,...)
-}
-
-#' Test: Has a vector of random numbers been drawn from a normal distribution?
-#' @export
-test.normality = function(vec,short.message,warning.message,failure.message,ps=get.ps(),stud.env = ps$stud.env, success.message = "Great, I cannot statistically reject that {{var}} is indeed normally distributed!",part=NULL,...) {
-  call.str = as.character(match.call())
-  restore.point("test.normality")
-
-  var.name=call.str[2]
-
-  # Cannot use more than 5000 observations
-  if (length(vec)>5000)
-    vec = vec[sample.int(n=length(vec), size=5000)]
-  p.value = shapiro.test(vec)$p.value
-
-  if (missing(short.message)) {
-    short.message ="{{var}} not normally distributed, p.value = {{p_value}}"
-  }
-  if (missing(failure.message)) {
-    failure.message = "{{var}} looks really not normally distributed.\n A Shapiro-Wilk test rejects normality at an extreme significance level of {{p_value}}."
-  }
-  if (missing(warning.message)) {
-    warning.message = "{{var}} looks not very normally distributed.\n A Shapiro-Wilk test rejects normality at a significance level of {{p_value}}."
-  }
-  test.H0(p.value=p.value,short.message=short.message, warning.message=warning.message, failure.message=failure.message,success.message=success.message,
-        var = var.name,...)
-}
-
-#' Test: Does a certain condition on the stud's generated variables hold true
+#' To be used in a test block
+#' 
+#' Checks whether a certain condition on the stud's generated variables hold true
+#' @param cond The condition to be checked
+#' @param failure.message The failure message to be shown if the text fails.
+#' @param success.message The success message
 #' @export
 holds.true = function(cond, short.message = failure.message,failure.message="Failure in holds.true",success.message="Great, the condition {{cond}} holds true in your solution!",part=NULL,ps=get.ps(),stud.env = ps$stud.env, cond.str=NULL,...) {
 

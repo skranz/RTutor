@@ -262,12 +262,14 @@ view.in.pane = function(html=NULL, markdown=NULL) {
 
 
 
-#' Overwrite the base function data, copy data by default into the calling environment instead of the global environment
+# Overwrite the base function data, copy data by default into the calling environment instead of the global environment
 data = function(..., envir = parent.frame()) {
   utils:::data(..., envir=envir)
 }
 
 #' Calls a function with a specified random.seed
+#' @param expr the expression to be evaluated
+#' @param seed the seed as integer
 #' @export
 with.random.seed <- function (expr, seed = 1234567890) 
 {

@@ -72,9 +72,6 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -313,9 +310,11 @@
 <div id="optional-chunks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#optional-chunks" class="anchor"></a>Optional chunks</h2>
-<p>By default you have to solve all chunks in an exercise in the given order. If you set the chunk option <code>optional=TRUE</code>, a chunk may not be solved. Example:</p>
-<p><code></code>{r “1_b”, optional = TRUE} # Code here</p>
-<pre><code></code></pre>
+<p>By default you have to solve all chunks in an exercise in the given order. If you set the chunk option <code>optional=TRUE</code>, a chunk need not be solved in order to continue. Example:</p>
+<pre><code>    ```{r "1_b", optional = TRUE}
+    # Code here
+    
+    ```</code></pre>
 <p>This is in particular useful if you use notes that contain chunks. Note that variables that have been computed in optional chunks will not be known in later chunks.</p>
 <p>Note that <code>optional</code> is not a chunk option known by <code>knitr</code> but only used for RTutor.</p>
 </div>
@@ -323,21 +322,47 @@
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-output" class="anchor"></a>Chunks with HTML output</h2>
 <p>You can specify chunks whose output is native HTML code, e.g. if you want to show an HTML table or show a motion plot. As in normal rmarkdown, you can do so by setting the chunk option <code>results= "asis"</code>. Here is an example from an interactive problem set that shows a motion plot:</p>
-<p><code></code>{r “2_1_a_example”, results = ‘asis’} #&lt; task library(googleVis) mp = gvisMotionChart(Int.data, idvar = “country”, timevar = “year”) plot(mp, tag = “chart”) #&gt; <code></code></p>
+<pre><code>    ```{r "2_1_a_example", results = 'asis'}
+    #&lt; task
+    library(googleVis)
+    mp = gvisMotionChart(Int.data,
+           idvar = "country", timevar = "year")
+    plot(mp, tag = "chart")
+    #&gt;
+    ```</code></pre>
 <p>There are a lot of R packages that help creating nice HTML tables, like <code>stargazer</code>, or <code>hwriter</code>.</p>
 </div>
 <div id="chunks-with-html-widgets-as-outputs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-widgets-as-outputs" class="anchor"></a>Chunks with HTML Widgets as outputs</h2>
 <p>It is also possible to have chunks that have HTML widgets as output. If you use the shiny based version of RTutor you then need some additional chunk options. Here is an example for the leaflet widget:</p>
-<p><code></code>{r output=“htmlwidget”, widget=“leaflet”} #&lt; task_notest SFmap &lt;- leaflet() %&gt;% addTiles() %&gt;% setView(9.9620289,48.4251394, zoom = 11) %&gt;% addMarkers(9.963614702355699,48.42517242865929, popup = ‘RTutor was created here at Ulm University’) SFmap #&gt; <code></code></p>
+<pre><code>    ```{r output="htmlwidget", widget="leaflet"}
+    #&lt; task_notest
+    SFmap &lt;- leaflet() %&gt;% 
+      addTiles() %&gt;% 
+      setView(9.9620289,48.4251394, zoom = 11) %&gt;% 
+      addMarkers(9.963614702355699,48.42517242865929,
+        popup = 'RTutor was created here at Ulm University')
+    SFmap
+    #&gt;
+    ```</code></pre>
 <p>The <code>widget</code> argument is typically the name of the R package in which the html widget is specified.</p>
+</div>
+<div id="customizing-data-frame-printer" class="section level2">
+<h2 class="hasAnchor">
+<a href="#customizing-data-frame-printer" class="anchor"></a>Customizing data frame printer</h2>
+<p>In the shiny version of RTutor data frames are by default shown as HTML tables. You can set global options or chunk options that customize its appearance.</p>
+<p>For details, take a look at this <a href="https://github.com/skranz/RTutor/blob/master/inst/examples/DataFramesExample_sol.Rmd">example</a>.</p>
 </div>
 <div id="specifying-figure-width-and-height" class="section level2">
 <h2 class="hasAnchor">
 <a href="#specifying-figure-width-and-height" class="anchor"></a>Specifying figure width and height</h2>
 <p>If your chunk plots a figure, you may want to specify the width and height of the resulting figure. You can do this like for normal RMarkdown files with the chunk options <code>fig.width</code> and <code>fig.height</code> that specify width and height in inches.</p>
-<p><code></code>{r “1_a”, fig.width=12, fig.height=5} #&lt; task plot(1:10,(1:10)^2) #&gt; <code></code></p>
+<pre><code>    ```{r "1_a", fig.width=12, fig.height=5}
+    #&lt; task
+    plot(1:10,(1:10)^2)
+    #&gt;
+    ```</code></pre>
 <p>You can also specify other chunk options of the <code>knitr</code> package. An overview is given here:</p>
 <p><a href="http://yihui.name/knitr/options/">http://yihui.name/knitr/options/</a></p>
 </div>
@@ -409,6 +434,7 @@
 <li><a href="#optional-chunks">Optional chunks</a></li>
       <li><a href="#chunks-with-html-output">Chunks with HTML output</a></li>
       <li><a href="#chunks-with-html-widgets-as-outputs">Chunks with HTML Widgets as outputs</a></li>
+      <li><a href="#customizing-data-frame-printer">Customizing data frame printer</a></li>
       <li><a href="#specifying-figure-width-and-height">Specifying figure width and height</a></li>
       </ul>
 </li>
@@ -436,22 +462,5 @@
 
   
 
-
-  <script type="text/javascript">
-  var sc_project=12051162; 
-  var sc_invisible=1; 
-  var sc_security="60139410"; 
-  </script>
-  <script type="text/javascript"
-  src="https://www.statcounter.com/counter/counter.js"
-  async></script>
-  <noscript><div class="statcounter"><a title="Web Analytics
-  Made Easy - StatCounter" href="https://statcounter.com/"
-  target="_blank"><img class="statcounter"
-  src="https://c.statcounter.com/12051162/0/60139410/1/"
-  alt="Web Analytics Made Easy -
-  StatCounter"></a></div></noscript>
-  
-  
   </body>
 </html>

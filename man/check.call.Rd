@@ -9,7 +9,8 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   no.command.failure.message = NULL, ok.if.same.val = NA,
   s3.method = NULL, ps = get.ps(), stud.env = ps$stud.env,
   part = ps$part, stud.expr.li = ps$stud.expr.li, verbose = FALSE,
-  noeval = isTRUE(ps$noeval), ...)
+  noeval = isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail),
+  ...)
 }
 \arguments{
 \item{call}{the correct function call that shall be checked (not a quoted call)}
@@ -21,6 +22,8 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
 \item{ignore.arg}{a vector of argument names that will be ignored when checking correctness}
 
 \item{ok.if.same.val}{if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.}
+
+\item{hint.on.fail}{Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type \code{hint()}. Yet, default can be overwritten in call to \code{create.ps}.}
 }
 \description{
 Checks whether the user makes a particular function call in his code or call a particular R statement

@@ -10,7 +10,7 @@
 # clear.user()
 
 
-#' Specify which information will be automatically saved in ups
+# Specify which information will be automatically saved in ups
 default.ups.save = function(
     chunks = TRUE,
     awards = TRUE,
@@ -245,9 +245,6 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get
   sr
 }
 
-
-#' Shows your progress
-#' @export
 old.stats = function(do.display=TRUE) {
   ps = get.ps()
   if (is.null(ps)) {

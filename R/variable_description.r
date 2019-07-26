@@ -98,11 +98,11 @@ get.var.descr.html = function(...) {
 
 
 
-#' Translates variable names of a data frame
-#' 
-#' uses the variable description provided with the problem set
-#' to change variable names from orgvar to var
-#' @export
+# Translates variable names of a data frame
+# 
+# uses the variable description provided with the problem set
+# to change variable names from orgvar to var
+# @export
 translate.var.names = function(df, orgvar=var.dt$orgvar, var=var.dt$var, var.dt = get.ps()$rps$var.dt) {  
   
   restore.point("translate.var.names")
@@ -123,8 +123,8 @@ examples.translate.var.names.in.code = function() {
   translate.var.names.in.code(file=file, var.file=var.file)
 }
 
-#' Tool to translate automatically variable names in a .r or .rmd file
-#' useful to update 
+# Tool to translate automatically variable names in a .r or .rmd file
+# useful to update 
 translate.var.names.in.code = function(
     txt=readLines(file, warn=FALSE), file=NULL, out.file=file, var.file,
     backup.file = paste0("backup__", sample.int(1e8,1),"__",file)

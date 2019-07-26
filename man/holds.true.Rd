@@ -2,7 +2,7 @@
 % Please edit documentation in R/tests_for_ps.r
 \name{holds.true}
 \alias{holds.true}
-\title{Test: Does a certain condition on the stud's generated variables hold true}
+\title{To be used in a test block}
 \usage{
 holds.true(cond, short.message = failure.message,
   failure.message = "Failure in holds.true",
@@ -10,6 +10,13 @@ holds.true(cond, short.message = failure.message,
   part = NULL, ps = get.ps(), stud.env = ps$stud.env, cond.str = NULL,
   ...)
 }
+\arguments{
+\item{cond}{The condition to be checked}
+
+\item{failure.message}{The failure message to be shown if the text fails.}
+
+\item{success.message}{The success message}
+}
 \description{
-Test: Does a certain condition on the stud's generated variables hold true
+Checks whether a certain condition on the stud's generated variables hold true
 }

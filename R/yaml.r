@@ -101,8 +101,8 @@ examples.read.yaml = function() {
 }
 
 
-#' Prints list read from a yaml file
-#' @export
+# Prints list read from a yaml file
+# @export
 print.yaml = function(obj) {
   if (class(obj)=="character") {
     cat(obj)

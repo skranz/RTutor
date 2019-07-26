@@ -357,8 +357,8 @@ copy.env = function(env) {
   new
 }
 
-#' Parse the name of a knitr chunk and its arguments
-#' @export
+# Parse the name of a knitr chunk and its arguments
+# @export
 parse.chunk.args = function(header, arg.str=NULL) {
   restore.point("parse.chunk.opt.and.name")
   if (!is.null(arg.str)) {

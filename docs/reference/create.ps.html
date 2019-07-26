@@ -106,9 +106,6 @@ and output solution" />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
@@ -154,7 +151,8 @@ and output solution</p>
   <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>knit.print.opts</span> <span class='kw'>=</span> <span class='fu'>make.knit.print.opts</span>(<span class='kw'>html.data.frame</span>
   <span class='kw'>=</span> <span class='no'>html.data.frame</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='no'>table.max.rows</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span>
   <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='no'>signif.digits</span>), <span class='kw'>e.points</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -230,6 +228,10 @@ and output solution</p>
     <tr>
       <th>keep.fill.in.output.sol</th>
       <td><p>if TRUE (default) the original code with placeholders of a fill in block will be shown in the output solution Rmd file as a comment before the solution. If FALSE only the solution will be shown.</p></td>
+    </tr>
+    <tr>
+      <th>hint.on.fail</th>
+      <td><p>shall by default a hint be shown already if the correctness test fails. If FALSE (default) hints are only shown if the user types hint() or, in the shiny version, presses the hint button.</p></td>
     </tr>
     </table>
     
