@@ -62,6 +62,9 @@
       <a href="../articles/04_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
     </li>
     <li>
+      <a href="../articles/04_Evaluation.html">4 Evaluation Order and Environments</a>
+    </li>
+    <li>
       <a href="../articles/05_Deploy%20problem%20set%20on%20shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
@@ -236,10 +239,30 @@ dat %&gt;%
     #&gt;</code></pre>
 <p>The <code>#&lt; test_arg</code> block customizes the parameters <code>ignore.arg</code> and <code>allow.extra.arg</code> of the <code>check.call</code> function. The parameter <code>ignore.arg = c("main","xlab")</code> means that the student does not have to add these two arguments to the plot function or can use different values. The parameter <code>allow.extra.arg=TRUE</code> allows the student to specify additional arguments when calling plot, e.g. specifying a <code>ylab</code>. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of <code>check.call</code> for a description of arguments.</p>
 </div>
+<div id="allowing-several-correct-solutions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#allowing-several-correct-solutions" class="anchor"></a>Allowing several correct solutions</h2>
+<p>Consider the following example</p>
+<blockquote>
+<p>Task: Let x contain the square roots of 4</p>
+</blockquote>
+<div class="sourceCode" id="cb11"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb11-1" title="1">x = c(-<span class="dv">2</span>,<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="co">#&lt; test_arg</span></a>
+<a class="sourceLine" id="cb11-3" title="3">other.sols = list(quote(</a>
+<a class="sourceLine" id="cb11-4" title="4">  x&lt;-c(<span class="dv">2</span>,-<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb11-5" title="5">))</a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="co">#&lt; add_to_hint</span></a>
+<a class="sourceLine" id="cb11-8" title="8">if (true(x==<span class="dv">2</span> | x==-<span class="dv">2</span>)) {</a>
+<a class="sourceLine" id="cb11-9" title="9">  cat(<span class="st">"Recall that 4 has two square roots: a positive and a negative one.)</span></a>
+<a class="sourceLine" id="cb11-10" title="10">}</a>
+<a class="sourceLine" id="cb11-11" title="11"><span class="co">#&gt;</span></a></code></pre></div>
+<p>The argument <code>other.sols</code> of the default test function <code>check.assign</code> takes a list of quoted assignments that consitute alternative correct solutions. In the example above, we don’t care about the order of the solution vector. Note that you must assign with <code>&lt;-</code> instead of <code>=</code> inside the <code>quote</code> function.</p>
+</div>
 <div id="custom-tests" class="section level2">
 <h2 class="hasAnchor">
 <a href="#custom-tests" class="anchor"></a>Custom tests</h2>
-<p>If you need more customization, you can use a <code>test</code> block. Unlike a <code>hint</code> block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like <code>holds.true</code>, <code>check.variable</code>, <code>check.assign.with.multiple.sol</code>, <code>check.expr</code>, <code>check.regression</code>.</p>
+<p>If you need more customization, e.g. because there is a large number of correct solutions, you can use a <code>test</code> block. Unlike a <code>hint</code> block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like <code>holds.true</code>, <code>check.variable</code>, <code>check.expr</code>, <code>test.H0.rejected</code>, <code>test.H0</code> and <code>check.regression</code>.</p>
 <p>Consider the following an example:</p>
 <pre><code>    #' b) Save in the variable u a vector of 4 different numbers
     u = c(3,6,7,99)  
@@ -266,16 +289,16 @@ dat %&gt;%
 <blockquote>
 <p>Task: Simulate a vector p of T prices that are correlated (but not perfectly correlated) with the weather w but uncorrelated with the demand shock u.</p>
 </blockquote>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">p =<span class="st"> </span><span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w</a>
-<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&lt; test</span></a>
-<a class="sourceLine" id="cb13-3" title="3"><span class="kw"><a href="../reference/check.variable.html">check.variable</a></span>(<span class="st">"p"</span>,<span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w,<span class="dt">values=</span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb13-4" title="4"><span class="kw"><a href="../reference/test.H0.rejected.html">test.H0.rejected</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,w),<span class="dt">failure.message=</span><span class="st">"I don't find a significant correlation between p and w (p-value=={{p_value}})"</span>)</a>
-<a class="sourceLine" id="cb13-5" title="5"><span class="kw"><a href="../reference/holds.true.html">holds.true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor">cor</a></span>(p,w)<span class="op">&lt;</span><span class="dv">1</span><span class="fl">-1e-14</span>, <span class="dt">failure.message=</span><span class="st">"p and w shall not be perfectly correlated!"</span>)</a>
-<a class="sourceLine" id="cb13-6" title="6"><span class="kw"><a href="../reference/test.H0.html">test.H0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,u),<span class="dt">failure.message=</span><span class="st">"I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated."</span>)</a>
-<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt;</span></a>
-<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&lt; hint</span></a>
-<a class="sourceLine" id="cb13-9" title="9"><span class="kw"><a href="../reference/display.html">display</a></span>(<span class="st">"To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks."</span>)</a>
-<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">p =<span class="st"> </span><span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w</a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="co">#&lt; test</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="kw"><a href="../reference/check.variable.html">check.variable</a></span>(<span class="st">"p"</span>,<span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w,<span class="dt">values=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="kw"><a href="../reference/test.H0.rejected.html">test.H0.rejected</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,w),<span class="dt">failure.message=</span><span class="st">"I don't find a significant correlation between p and w (p-value=={{p_value}})"</span>)</a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="kw"><a href="../reference/holds.true.html">holds.true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor">cor</a></span>(p,w)<span class="op">&lt;</span><span class="dv">1</span><span class="fl">-1e-14</span>, <span class="dt">failure.message=</span><span class="st">"p and w shall not be perfectly correlated!"</span>)</a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="kw"><a href="../reference/test.H0.html">test.H0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,u),<span class="dt">failure.message=</span><span class="st">"I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated."</span>)</a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="co">#&lt; hint</span></a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="kw"><a href="../reference/display.html">display</a></span>(<span class="st">"To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks."</span>)</a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="co">#&gt;</span></a></code></pre></div>
 <p>We still provide a sample solution <code>p = 1.1*c + 0.5*w</code>, but many other solutions are possible here.</p>
 <p>A feasible solution must pass all 4 tests in the test block to be accepted. The function <code>holds.true</code> is a quite general tool that can be used in custom tests.</p>
 <p>The functions <code>test.H0.rejected</code>, and <code>test.H0</code> are just examples for special purpose convenience test functions.</p>
@@ -286,28 +309,28 @@ dat %&gt;%
 <a href="#testing-a-function-written-by-the-student" class="anchor"></a>Testing a function written by the student</h2>
 <p>Personally, I find it very valuable if students learn to write own functions. However, it is not easy to nicely test functions and students with little programming experience can get stuck easily.</p>
 <p>Assume, you would like students to write an OLS function</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb14-1" title="1">ols = function(y,X) {</a>
-<a class="sourceLine" id="cb14-2" title="2">  Xt = t(X)</a>
-<a class="sourceLine" id="cb14-3" title="3">  invXtX = solve(Xt %*% X)</a>
-<a class="sourceLine" id="cb14-4" title="4">  beta.hat = invXtX %*% Xt %*% y</a>
-<a class="sourceLine" id="cb14-5" title="5">  as.numeric(beta.hat)</a>
-<a class="sourceLine" id="cb14-6" title="6">}</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb15-1" title="1">ols = function(y,X) {</a>
+<a class="sourceLine" id="cb15-2" title="2">  Xt = t(X)</a>
+<a class="sourceLine" id="cb15-3" title="3">  invXtX = solve(Xt %*% X)</a>
+<a class="sourceLine" id="cb15-4" title="4">  beta.hat = invXtX %*% Xt %*% y</a>
+<a class="sourceLine" id="cb15-5" title="5">  as.numeric(beta.hat)</a>
+<a class="sourceLine" id="cb15-6" title="6">}</a></code></pre></div>
 <p>Directly asking them to correctly write such a function will probably fail for many students.</p>
 <p>But you could first create one or several chunks, were students first develop the function body for an example. A solved chunk may look like</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb15-1" title="1"><span class="co"># Example arguments</span></a>
-<a class="sourceLine" id="cb15-2" title="2">x1 = <span class="kw">1:</span>T </a>
-<a class="sourceLine" id="cb15-3" title="3">y = <span class="dv">100</span> + <span class="dv">2</span>*x1 + rnorm(<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb15-4" title="4">X = cbind(<span class="dv">1</span>,x1)</a>
-<a class="sourceLine" id="cb15-5" title="5"></a>
-<a class="sourceLine" id="cb15-6" title="6"><span class="co"># Code that we will put inside the function</span></a>
-<a class="sourceLine" id="cb15-7" title="7">Xt = t(X)</a>
-<a class="sourceLine" id="cb15-8" title="8">invXtX = solve(Xt %*% X)</a>
-<a class="sourceLine" id="cb15-9" title="9">beta.hat = invXtX %*% Xt %*% y</a>
-<a class="sourceLine" id="cb15-10" title="10">as.numeric(beta.hat)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb16-1" title="1"><span class="co"># Example arguments</span></a>
+<a class="sourceLine" id="cb16-2" title="2">x1 = <span class="kw">1:</span>T </a>
+<a class="sourceLine" id="cb16-3" title="3">y = <span class="dv">100</span> + <span class="dv">2</span>*x1 + rnorm(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb16-4" title="4">X = cbind(<span class="dv">1</span>,x1)</a>
+<a class="sourceLine" id="cb16-5" title="5"></a>
+<a class="sourceLine" id="cb16-6" title="6"><span class="co"># Code that we will put inside the function</span></a>
+<a class="sourceLine" id="cb16-7" title="7">Xt = t(X)</a>
+<a class="sourceLine" id="cb16-8" title="8">invXtX = solve(Xt %*% X)</a>
+<a class="sourceLine" id="cb16-9" title="9">beta.hat = invXtX %*% Xt %*% y</a>
+<a class="sourceLine" id="cb16-10" title="10">as.numeric(beta.hat)</a></code></pre></div>
 <p>Then provide a function stub like</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb16-1" title="1">ols = function(y,X) {</a>
-<a class="sourceLine" id="cb16-2" title="2">  <span class="co"># Insert your code here</span></a>
-<a class="sourceLine" id="cb16-3" title="3">}</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb17-1" title="1">ols = function(y,X) {</a>
+<a class="sourceLine" id="cb17-2" title="2">  <span class="co"># Insert your code here</span></a>
+<a class="sourceLine" id="cb17-3" title="3">}</a></code></pre></div>
 <p>and let students insert their code here.</p>
 <p>Here is an example how you might specify the second chunk in your solution file:</p>
 <pre><code>    #&lt; fill_in
@@ -365,19 +388,19 @@ dat %&gt;%
 <li>Include all intermediate steps as part of the problem set</li>
 </ol>
 <p>A <code>#&lt; compute ... #&gt;</code> block allows an intermediate approach. Here is an example from a problem set of mine that asks a student to compute a matrix of choice probabilities from a conditional logit model.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb20-1" title="1">    <span class="co">#&lt; compute P</span></a>
-<a class="sourceLine" id="cb20-2" title="2">    </a>
-<a class="sourceLine" id="cb20-3" title="3">    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></a>
-<a class="sourceLine" id="cb20-4" title="4">    </a>
-<a class="sourceLine" id="cb20-5" title="5">    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></a>
-<a class="sourceLine" id="cb20-6" title="6">    exp.V = exp(V/scale)</a>
-<a class="sourceLine" id="cb20-7" title="7">    </a>
-<a class="sourceLine" id="cb20-8" title="8">    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></a>
-<a class="sourceLine" id="cb20-9" title="9">    sum.exp.V = rowSums(exp.V)</a>
-<a class="sourceLine" id="cb20-10" title="10">    </a>
-<a class="sourceLine" id="cb20-11" title="11">    <span class="co">## Compute P as ratio of the numerator and the denominator</span></a>
-<a class="sourceLine" id="cb20-12" title="12">    P = exp.V / sum.exp.V</a>
-<a class="sourceLine" id="cb20-13" title="13">    <span class="co">#&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb21-1" title="1">    <span class="co">#&lt; compute P</span></a>
+<a class="sourceLine" id="cb21-2" title="2">    </a>
+<a class="sourceLine" id="cb21-3" title="3">    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></a>
+<a class="sourceLine" id="cb21-4" title="4">    </a>
+<a class="sourceLine" id="cb21-5" title="5">    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></a>
+<a class="sourceLine" id="cb21-6" title="6">    exp.V = exp(V/scale)</a>
+<a class="sourceLine" id="cb21-7" title="7">    </a>
+<a class="sourceLine" id="cb21-8" title="8">    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></a>
+<a class="sourceLine" id="cb21-9" title="9">    sum.exp.V = rowSums(exp.V)</a>
+<a class="sourceLine" id="cb21-10" title="10">    </a>
+<a class="sourceLine" id="cb21-11" title="11">    <span class="co">## Compute P as ratio of the numerator and the denominator</span></a>
+<a class="sourceLine" id="cb21-12" title="12">    P = exp.V / sum.exp.V</a>
+<a class="sourceLine" id="cb21-13" title="13">    <span class="co">#&gt;</span></a></code></pre></div>
 <p>The solution will pass as correct if the final values of <code>P</code> are correct. The student is not obliged to perform the particular intermediate computations like <code>exp.V</code>. Yet, if the student has not yet correctly computed <code>P</code> and types <code><a href="../reference/hint.html">hint()</a></code>, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with <code>##</code> will be transformed into text that will be shown in the hint.</p>
 </div>
   </div>
@@ -404,6 +427,7 @@ dat %&gt;%
       <li>
 <a href="#correctness-tests">Correctness Tests</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#specifying-parameters-of-automatic-tests">Specifying parameters of automatic tests</a></li>
+      <li><a href="#allowing-several-correct-solutions">Allowing several correct solutions</a></li>
       <li><a href="#custom-tests">Custom tests</a></li>
       <li><a href="#an-more-complex-example-of-custom-tests">An more complex example of custom tests</a></li>
       <li><a href="#testing-a-function-written-by-the-student">Testing a function written by the student</a></li>

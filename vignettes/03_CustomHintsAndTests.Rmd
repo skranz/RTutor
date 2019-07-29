@@ -168,10 +168,30 @@ A `test_arg` blocks allows you to change the arguments of a default test for the
 ```
 The `#< test_arg` block customizes the parameters `ignore.arg` and `allow.extra.arg` of the `check.call` function. The parameter `ignore.arg = c("main","xlab")` means that the student does not have to add these two arguments to the plot function or can use different values. The parameter `allow.extra.arg=TRUE` allows the student to specify additional arguments when calling plot, e.g. specifying a `ylab`. So essentially, it will now only be tested whether the x and y arguments of the plot are correct and any customization of the plot will still be considered a correct solution. See the help of `check.call` for a description of arguments.
 
+## Allowing several correct solutions
+
+Consider the following example
+
+> Task: Let x contain the square roots of 4
+
+```s
+x = c(-2,2)
+#< test_arg
+other.sols = list(quote(
+  x<-c(2,-2)
+))
+#>
+#< add_to_hint
+if (true(x==2 | x==-2)) {
+  cat("Recall that 4 has two square roots: a positive and a negative one.)
+}
+#>
+```
+The argument `other.sols` of the default test function `check.assign` takes a list of quoted assignments that consitute alternative correct solutions. In the example above, we don't care about the order of the solution vector. Note that you must assign with `<-` instead of `=` inside the `quote` function.
 
 ## Custom tests
 
-If you need more customization, you can use a `test` block. Unlike a `hint` block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like `holds.true`, `check.variable`, `check.assign.with.multiple.sol`, `check.expr`,  `check.regression`.
+If you need more customization, e.g. because there is a large number of correct solutions, you can use a `test` block. Unlike a `hint` block you cannot just enter arbitrary code that will be evaluated in an approbriate environment. Instead you should call one or several given test functions like `holds.true`, `check.variable`, `check.expr`, `test.H0.rejected`, `test.H0` and  `check.regression`.
 
 Consider the following an example:
 ```

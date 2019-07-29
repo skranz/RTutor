@@ -1,0 +1,25 @@
+---
+title: "4 Order of Solving and Evaluation Environments"
+output:
+  html_document:
+    toc: yes
+---
+```{r setup, include="FALSE"}
+knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
+```
+
+# 4 Evaluation Order and Environments
+
+This section gives a short overview about the order in which students have to solve problem sets and methods for customization. We also give some background information about the environments in which solutions are evaluated.
+
+## Default Rule: Exercises Matter
+
+The default evaluation order is that within an exercise chunks must be solved in the given order. In contrast, it is not neccessary to have solved all previous exercises to start a new exercise.
+
+Recall that the start of a new exercise is determined in your solution file with a line like:
+
+```s
+## Exercise 1 -- My First Exercise`
+```
+
+All evaluated students code from earlier

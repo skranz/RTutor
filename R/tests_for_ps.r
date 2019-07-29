@@ -361,16 +361,24 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 #' @param allow.extra.arg if TRUE (not default) the student is allowed to supply additional arguments to the call that were not in the solution. Useful, e.g. if the student shall plot something and is allowed to customize her plot with additional arguments.
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
 #' @param ok.if.same.val if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
+#' @param other.sols a list of quoted assignments, e.g. \code{list(quote(x<-5), quote(x<-10))} of other solutions that are also correct. 
 #' @param only.check.assign.exists if TRUE (default = FALSE) only check if an assignemnt to the lhs variable exists no matter whether the assignment is correct. May be sensible if there are additional tests specified afterwards that check some characteristics of the assigned variable.
 #' @export
 check.assign = function(
   call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,call.object=NULL,  s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, only.check.assign.exists=FALSE, noeval=isTRUE(ps$noeval), ...) {
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, only.check.assign.exists=FALSE, noeval=isTRUE(ps$noeval), other.sols=NULL, ...) {
 
   if (!is.null(call.object)) {
     call = call.object
   } else {
     call = substitute(call)
+  }
+  
+  if (length(other.sols)>0) {
+    restore.point("jhkfhkdhg")
+    sol.list = c(other.sols, list(call))
+    return(check.assign.with.multiple.sol(sol.list=sol.list, allow.extra.arg=allow.extra.arg,
+      ignore.arg=ignore.arg, success.message=success.message, failure.message = failure.message,no.command.failure.message = no.command.failure.message, ok.if.same.val = ok.if.same.val, verbose=verbose, only.check.assign.exists=only.check.assign.exists, noeval=noeval))
   }
   
   
@@ -473,8 +481,7 @@ check.assign = function(
 #' 
 #' check.assign.with.multiple.sol(x<-5, x<-10)
 #' @export
-check.assign.with.multiple.sol = function(sol1, sol2, sol3, sol4, sol5, ...) {
-  sol.list = list()
+check.assign.with.multiple.sol = function(sol1, sol2, sol3, sol4, sol5, ..., sol.list=list()) {
   if (!missing(sol1)) {
     sol.list[[length(sol.list)+1]] = substitute(sol1)
   }

@@ -242,7 +242,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   stud.na = sapply(stud.expr.li,  name.of.call)
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
 
-  assign.str = ifelse(from.assign,paste0(" ",lhs, " ="),"")
+  assign.str = ifelse(from.assign,paste0(" ",lhs, " = "),"")
   if (cde$type == "fun") {
 
     # Special cases
@@ -276,39 +276,40 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       }
     }
 
-    analyse.str = lapply(stud.expr.li, function(se) {
+    analyse.str = sapply(stud.expr.li, function(se) {
       ret = compare.call.args(stud.call=se, check.call=ce, compare.vals = !is.null(val.env), val.env = val.env, s3.method=s3.method)
-      s = NULL
-      if (length(ret$differ.arg)>0) {
-        s = c(s,paste0("Your argument ", ret$differ.arg, " = ", ret$stud.arg[ret$differ.arg], " differs in its ", ret$differ.detail, " from my solution."))
-      }
-      if (length(ret$extra.arg)>0) {
-        s = c(s,paste0("In my solution I don't use the argument '", ret$extra.arg,"'"))
-      }
-      if (length(ret$missing.arg)>0) {
-        s = c(s,paste0("You don't use the argument '", ret$missing.arg,"'"))
-      }
+      s = ret$descr
       if (length(s)>0) {
-        s = paste0("     - ",s, collapse="\n")
+        s = gsub("\n","\n   ", s, fixed=TRUE)
+        s = paste0("  - ",s, collapse="\n")
       }
       if (!is.null(s)) {
-        str = paste0("  ",assign.str, deparse1(se),":\n",s)
+        s = paste0(trimws(assign.str)," ", deparse1(se),"\n\n",s)
       } else {
-        str = paste0("  ",assign.str, deparse1(se),": is ok.")
+        s = ""
       }
-      str
-
+      s
     })
+    analyse.str = analyse.str[nchar(analyse.str)>0]
+    if (length(analyse.str)==0) {
+      return()
+    } else if (length(analyse.str)==1) {
+      cat("\nI found problems with your call\n")
+    } else {
+      cat("\nI found problems with ", length(analyse.str)," of your calls:\n\n")
+    }
     analyse.str = paste0(analyse.str, collapse = "\n")
 
     if (!from.assign)
-      display("Let's take a look at your call to the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
+      #display("Let's take a look at your call to the function '", check.na, "'",part.str,"\n", analyse.str,start.char=start.char, end.char=end.char)
+      cat(analyse.str,"\n")
     if (from.assign)
-      display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
+      #display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
+      cat(analyse.str,"\n")
 
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))
-  }  else if (cde$type == "math") {
+  }  else if (cde$type == "math" | cde$type == "formula") {
     restore.point("math.fail")
     hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
 
@@ -322,7 +323,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (!from.assign)
       display("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
   }  else if (cde$type == "subset") {
-    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
+    hint.str = scramble.text(deparse(call),"?",0.6, keep.char=c("[","]", "$",","))
     if (from.assign) {
       display("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {

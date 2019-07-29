@@ -676,7 +676,13 @@ add.te.block = function(te) {
     # Remove default hint for manual tests
     ck$hint.txt[length(ck$hint.txt)] <- ""
   } else if (type == "test_arg") {
-    test.txt = test.code.for.e(te$last.e, extra.arg = paste0(btxt,collapse=", "))
+    extra.arg = btxt
+    # More than one 1 line
+    # combine as comma list
+    if (length(extra.arg)>1) {
+      extra.arg = paste0(sapply(parse(text=btxt), deparse1), collapse=", ")
+    }
+    test.txt = test.code.for.e(te$last.e, extra.arg = extra.arg)
     ck$test.txt[length(ck$test.txt)] <- test.txt
   } else if (type == "test_hint_arg") {
     #browser()

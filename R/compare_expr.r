@@ -36,6 +36,8 @@ describe.call = function(call, call.obj=NULL, call.str=NULL) {
   type = "fun"
   if (na %in% c("+","-","*","/","%*%","(")) {
     type="math"
+  } else if (na == "~") {
+    type = "formula"
   } else if (na == "%.%" | na == "%>%") {
     type="chain"
   } else if (na == "<-" | na =="=") {
@@ -145,10 +147,10 @@ remove.names = function(x) {
   x
 }
 
-is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE) {
+is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE, ignore.environment=TRUE) {
   restore.point("is.same")
 
-  if(identical(x,y))
+  if(identical(x,y,ignore.environment = ignore.environment))
     return(TRUE)
 
   if (length(x)!=length(y))
@@ -256,7 +258,32 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   # Make a description that is used by hint functions.
   s = NULL
   if (length(differ.arg)>0) {
-    s = c(s,paste0("Your argument ", differ.arg, " = ", sarg[differ.arg], " differs in its ", differ.detail, " from my solution."))
+    check.call.name = name.of.call(check.call)
+    s = sapply(seq_along(differ.arg), function(i) {
+      
+      arg.name = differ.arg[[i]]
+  
+      cde = describe.call(call.obj = carg[[arg.name]])
+      if (cde$type == "formula") {
+        ok = FALSE
+        if (check.call.name == "lm") {
+          res = try(compare.regression.formula(sarg[[arg.name]],carg[[arg.name]], from="lm"), silent=TRUE)
+          if (!is("res","try-error"))
+            return(res$descr)
+        }  
+        scramble = scramble.text(deparse1(carg[[arg.name]]),"?",0.5, keep.char=c(" ","~","|"))
+        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
+      } else if (cde$type == "math") {
+        scramble = scramble.text(deparse1(carg[[arg.name]]),"?",0.4, keep.char=" ")
+        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
+      } else if (cde$type == "fun") {
+        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution, where I call the function ", cde$name,".")
+      } else if (isTRUE(is.null(differ.detail) | differ.detail[i] %in% c("values","code"))) {
+        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution.")
+      } else {
+        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution in its ", differ.detail[i])
+      }
+    })
   }
   if (length(extra.arg)>0) {
     s = c(s,paste0("In my solution I don't use the argument ", extra.arg))
@@ -268,6 +295,8 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
 
   nlist(differ.arg,differ.detail,missing.arg,extra.arg,same.arg, overlap.arg, stud.arg=sarg, check.arg=carg, descr=s)
 }
+
+
 
 
 compare.values = function(var.stud,var.sol, class=TRUE, length=TRUE, dim=TRUE, names=TRUE, values=TRUE, groups=TRUE, tol=1e-12, details = TRUE, check.all.equal=TRUE) {
