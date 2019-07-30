@@ -242,8 +242,13 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   stud.na = sapply(stud.expr.li,  name.of.call)
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
 
+  # For filter we show a scrambled version of the 
+  # sample solution since arguments are not named
+  # and the order does not matter
+  scramble.fun = isTRUE(check.na == "filter")
+  
   assign.str = ifelse(from.assign,paste0(" ",lhs, " = "),"")
-  if (cde$type == "fun") {
+  if (cde$type == "fun" & !scramble.fun) {
 
     # Special cases
     if (check.na=="library") {
@@ -306,11 +311,10 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (from.assign)
       #display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
-
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))
   }  else if (cde$type == "math" | cde$type == "formula") {
-    restore.point("math.fail")
+    #restore.point("math.fail")
     hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
 
     if (from.assign) {
@@ -318,7 +322,14 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     } else {
       display("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
+  } else if (cde$type == "fun" & scramble.fun) { 
+    hint.str = scramble.text(deparse(call),"?",0.45, keep.char=c(" ",",","(",")"))
 
+    if (from.assign) {
+      display("You have to assign a correct function call to '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+    } else {
+      display("You have to enter a correct function call to ", check.na," Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+    }
   }  else if (cde$type == "var") {
     if (!from.assign)
       display("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
@@ -437,147 +448,4 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
 
 is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
-}
-
-inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n", env=ps$stud.env,...) {
-
-  restore.point("inner.hint.for.call.chain")
-
-
-  compare.vals = ! (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval))
-
-  # if (isTRUE(ps$noeval)) {
-  #   display("Sorry, the default hint requires to evaluate your code, but this is forbidden for security reasons on this server. I show you the complete solution instead:")
-  #   sol.txt = ps$cdt$sol.txt[[ps$chunk.ind]]
-  #   display(sol.txt)
-  #   return()
-  # }
-
-  op = cde$name
-  chain.na = sapply(cde$arg, name.of.call)
-  comb.chain.na = paste0(chain.na,collapse=";")
-
-  sde.li = lapply(stud.expr.li, function(se) describe.call(call.obj=se))
-  scomb.chain.na = sapply(sde.li, function(sde){
-     paste0(sapply(sde$arg, name.of.call), collapse=";")
-  })
-
-  correct.calls = which(scomb.chain.na == comb.chain.na)
-  chain.str = paste0(chain.na, "???", collapse = paste0(" ",op,"\n  "))
-  chain.str = paste0(assign.str, chain.str)
-
-
-  if (length(correct.calls)==0) {
-    display("My solution consists of a chain of the form:\n\n", chain.str,"\n\nThe ??? may stand for some function arguments wrapped in () that you must figure out.", start.char=start.char, end.char=end.char)
-    return(invisible())
-  }
-
-  sde.li = sde.li[correct.calls]
-  stud.expr.li = stud.expr.li[correct.calls]
-  # Stepwise check all results
-
-  ccode = deparse1(cde$arg[[1]])
-  ccall = cde$arg[[1]]
-  scode.li = lapply(sde.li, function(sde) deparse1(sde$arg[[1]]))
-  scall.li = lapply(sde.li, function(sde) sde$arg[[1]])
-  correct = rep(TRUE, length(sde.li))
-  i = 1
-
-  while (TRUE) {
-
-    # compare with checking values
-    if (compare.vals) {
-      cval = eval(ccall, env)
-      new.correct = sapply(seq_along(scall.li), function(j) {
-        #if (!correct[j]) return(FALSE)
-        is.same(eval(scall.li[[j]],env),cval)
-      })
-
-    # compare without checking values
-    } else {
-      new.correct = sapply(seq_along(sde.li), function(j) {
-        #if (!correct[j]) return(FALSE)
-        compare.calls(stud.call = sde.li[[j]]$args[[i]], check.call = cde$args[[i]],compare.vals = FALSE,val.env = NULL)$same
-      })
-    }
-
-    if (!any(new.correct)) {
-      fail = i
-      best.ind = which(correct)
-      break
-    }
-    i = i+1
-    correct = new.correct
-    # Some user solution is completely correct
-    if (i > length(cde$arg)) {
-      fail = FALSE
-      best.ind = which(correct)
-      break
-    }
-
-    ccode = paste(ccode, op, deparse1(cde$arg[[i]]))
-    ccall = base::parse(text=ccode,srcfile=NULL)
-    sde.li = sde.li[correct]
-    stud.expr.li = stud.expr.li[correct]
-    scode.li = scode.li[correct]
-    scode.li = lapply(seq_along(sde.li), function(j)
-      paste(scode.li[[j]], op, deparse1(sde.li[[j]]$arg[[i]]))
-    )
-    scall.li = lapply(scode.li, function(scode) parse(text=scode,srcfile=NULL))
-  }
-
-  if (!compare.vals) {
-    if (fail == 1) {
-      display("You don't have even the first element of the chain correct.")
-      return(invisible())
-
-    } else if (fail > 1) {
-
-      wrong.call.na = name.of.call(cde$arg[[fail]])
-
-      display("Your element ", fail,", the call to '", wrong.call.na,"', is different from the sample solution:")
-
-      scall.str = sapply(sde.li, function(sde) {
-        sna = sapply(sde$arg, deparse1)
-        err.code = rep("", length(sna))
-        err.code[fail] = " !!"
-        paste0(sna[1]," ",op,err.code[1],paste0("\n   ", sna[-1]," ", op,err.code[-1], collapse=""))
-      })
-      display(scall.str)
-      display("You must call ", deparse1(cde$args[[fail]]),".")
-      return(invisible())
-    } else if (fail==0) {
-        display("Hmm, it actually looks like you have the correct commands. The test should pass pass...")
-    }
-
-
-  } else if (compare.vals) {
-
-    if (fail == 1) {
-      display("You don't have even the first element of the pipe chain correct.")
-      return(invisible())
-    } else if (fail > 1) {
-      wrong.call.na = name.of.call(cde$arg[[fail]])
-      if (fail == 2) {
-        display("In your following pipe chain, I detect wrong results starting from the second element '", wrong.call.na,"':")
-      } else {
-        display("In your following pipe chain, I detect wrong results starting after element ", fail,", the call to '", wrong.call.na,"':")
-      }
-      scall.str = sapply(sde.li, function(sde) {
-        sna = sapply(sde$arg, deparse1)
-        err.code = rep("", length(sna))
-        err.code[fail] = " !! WRONG RESULTS !!"
-        paste0(sna[1]," ",op,err.code[1],paste0("\n   ", sna[-1]," ", op,err.code[-1], collapse=""))
-      })
-      display(scall.str)
-      if (wrong.call.na=="group_by") {
-        display("\nNote: For group_by(...) RTutor requires the groups and their order to be equal to the sample solution. You must call ", deparse1(ccall[[1]][[fail]]),".")
-      }
-
-      return(invisible())
-    } else if (fail==0) {
-        display("Hmm, it actually looks like you have a correct command. It is strange that the test did not pass...")
-    }
-  }
-
 }

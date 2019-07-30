@@ -814,3 +814,13 @@ examples.grow.list = function() {
     
 
 }
+
+# Transforms integer to ordinal text like "1st", "4th" and so on
+# Works correctly so far only for numbers below 20
+to_ordinal = function(i) {
+  i = as.integer(i)
+  if (i == 1) return("1st")
+  if (i == 2) return("2nd")
+  if (i == 3) return("3rd")
+  paste0(i,"th")
+}

@@ -182,7 +182,7 @@ other.sols = list(quote(
 ))
 #>
 #< add_to_hint
-if (true(x==2 | x==-2)) {
+if (true(identical(x,2) | identical(x,-2))) {
   cat("Recall that 4 has two square roots: a positive and a negative one.)
 }
 #>

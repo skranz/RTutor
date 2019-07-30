@@ -215,11 +215,13 @@ compare.calls = function(stud.call, check.call, compare.vals = !is.null(val.env)
 }
 
 
-compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ...) {
+compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, from.pipe=FALSE, ...) {
+  
+  if (!from.pipe) {
+    stud.call = match.call.object(stud.call, ...)
+    check.call = match.call.object(check.call, ...)
+  }
   restore.point("compare.call.args")
-
-  stud.call = match.call.object(stud.call, ...)
-  check.call = match.call.object(check.call, ...)
 
   sarg = args.of.call(stud.call, name.empty.arg=TRUE)
   carg = args.of.call(check.call, name.empty.arg=TRUE)
@@ -255,6 +257,8 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   }
   same.arg = setdiff(overlap.arg, differ.arg)
 
+  is.num.differ.arg = suppressWarnings(!is.na(as.integer(differ.arg)))
+
   # Make a description that is used by hint functions.
   s = NULL
   if (length(differ.arg)>0) {
@@ -262,7 +266,13 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
     s = sapply(seq_along(differ.arg), function(i) {
       
       arg.name = differ.arg[[i]]
-  
+      arg.txt = if (is.num.differ.arg[[i]]) {
+        paste0("Your ", to_ordinal(arg.name), " argument ")
+      } else {
+        paste0("Your argument ", arg.name," = ")
+      }
+      
+      
       cde = describe.call(call.obj = carg[[arg.name]])
       if (cde$type == "formula") {
         ok = FALSE
@@ -272,16 +282,16 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
             return(res$descr)
         }  
         scramble = scramble.text(deparse1(carg[[arg.name]]),"?",0.5, keep.char=c(" ","~","|"))
-        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
       } else if (cde$type == "math") {
         scramble = scramble.text(deparse1(carg[[arg.name]]),"?",0.4, keep.char=" ")
-        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
       } else if (cde$type == "fun") {
-        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution, where I call the function ", cde$name,".")
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution, where I call the function ", cde$name,".")
       } else if (isTRUE(is.null(differ.detail) | differ.detail[i] %in% c("values","code"))) {
-        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution.")
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution.")
       } else {
-        paste0("Your argument ", arg.name, " = ", sarg[differ.arg[i]], " differs from my solution in its ", differ.detail[i])
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution in its ", differ.detail[i])
       }
     })
   }
