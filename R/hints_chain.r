@@ -145,7 +145,7 @@ get.chain.failure.results = function(step=1, sde, cde, compare.vals=TRUE, same.u
   if (is.null(call.comp.descr)) {
     if (stud.na == check.na & is.fun) {
       comp.call = compare.call.args(stud.call = sde$args[[step]], check.call = cde$args[[step]],compare.vals = FALSE, from.pipe=TRUE)
-      call.comp.descr = paste0("You correctly call ", check.na,". But: ", paste0(comp.call$descr,collapse="\nAlso: "))
+      call.comp.descr = paste0("It is correct to call ", check.na,". But: ", paste0(comp.call$descr,collapse="\nAlso: "))
     } else if (is.fun) {
       call.comp.descr = paste0("You call the function ", stud.na, " but the sample solution calls the function ", check.na,".")
     } else {

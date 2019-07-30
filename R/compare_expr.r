@@ -217,6 +217,7 @@ compare.calls = function(stud.call, check.call, compare.vals = !is.null(val.env)
 
 compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, from.pipe=FALSE, ...) {
   
+  org.check.call = check.call
   if (!from.pipe) {
     stud.call = match.call.object(stud.call, ...)
     check.call = match.call.object(check.call, ...)
@@ -236,8 +237,14 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   } else {
     differ.arg = same.arg = overlap.arg
   }
+  
+  
 
   if (length(differ.arg)>0) {
+    if (setequal(sarg,carg)) {
+      return(nlist(differ.arg,differ.detail=NULL,missing.arg,extra.arg,same.arg=NULL, overlap.arg, stud.arg=sarg, check.arg=carg,setequal=TRUE, descr=paste0("You have the right function arguments, but in the wrong order. The call in the sample solution is:\n", deparse1(org.check.call))))  
+    }
+    
     if (compare.vals) {
       differ.detail = lapply(differ.arg, function(var) {
         stud.val = eval(sarg[[var]],val.env)
