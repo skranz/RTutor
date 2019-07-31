@@ -4,10 +4,11 @@ pkgdown_sha: ~
 articles:
   01_RTutorOverview: 01_RTutorOverview.html
   02_ElementsSolutionFile: 02_ElementsSolutionFile.html
-  03_CustomHintsAndTests: 03_CustomHintsAndTests.html
-  04_Deploy Problem Sets as Package on Github: 04_Deploy Problem Sets as Package on
+  03_HintsAndTests: 03_HintsAndTests.html
+  04_Evaluation: 04_Evaluation.html
+  05_Deploy Problem Sets as Package on Github: 05_Deploy Problem Sets as Package on
     Github.html
-  05_Deploy problem set on shinyapps.io: 05_Deploy problem set on shinyapps.io.html
+  06_Deploy problem set on shinyapps.io: 06_Deploy problem set on shinyapps.io.html
   FAQ_and_Sneaky_Errors: FAQ_and_Sneaky_Errors.html
   _RTutorMainManual: _RTutorMainManual.html
 

@@ -1,5 +1,5 @@
 ---
-title: "3 Custom Hints and Tests"
+title: "3 Hints and Tests"
 output:
   html_document:
     toc: yes
@@ -8,7 +8,7 @@ output:
 knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
 ```
 
-# Customizing Hints and Tests
+# Hints and Tests
 
 ## Automatic Hints
 
@@ -50,7 +50,8 @@ dat %>%
    summarize(mean_x = sum(x)) %>% !! WRONG !!
    arrange(-mean_x) 
 
-It is correct to call summarize. But: Your argument mean_x = sum(x) differs from my solution, where I call the function mean.
+It is correct to call summarize. But: Your argument mean_x = sum(x)
+differs from my solution, where I call the function mean.
 ```
 
 There are cases were you may want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer texts.
@@ -61,7 +62,7 @@ There are also (in my experience substantially fewer) cases, in which you want t
 
 In general it is hard to predict where and how hints should be customized. If you use your problem sets in a course in which students submit there solution, take a look at the README.md of the companion package [RTutorSAGI](https://github.com/skranz/RTutorSAGI). It describes how you can analyse log files contained in the submission to detect and improve problematic tasks were many students got stuck. This allows for a nice iterative improvement process for your problem sets.
 
-# Hints
+# Customizing Hints
 
 ## Custom hints
 
@@ -148,7 +149,7 @@ x = 1:10
 y = x^2
 ```
 
-# Correctness Tests
+# Customizing Tests
 
 I tried my best to automatically test whether the student entered a correct solution or not.
 

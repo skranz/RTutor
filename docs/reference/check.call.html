@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
       </span>
     </div>
 
@@ -89,13 +89,16 @@
       <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
     </li>
     <li>
-      <a href="../articles/03_CustomHintsAndTests.html">3 Custom Hints and Tests</a>
+      <a href="../articles/03_HintsAndTests.html">3 Hints and Tests</a>
     </li>
     <li>
-      <a href="../articles/04_Deploy Problem Sets as Package on Github.html">4 Deploy RTutor Problem Set as a Package on Github</a>
+      <a href="../articles/04_Evaluation.html">4 Evaluation Order and Environments</a>
     </li>
     <li>
-      <a href="../articles/05_Deploy problem set on shinyapps.io.html">5 Deploy a problem set on shinyapps.io</a>
+      <a href="../articles/05_Deploy Problem Sets as Package on Github.html">5 Deploy RTutor Problem Set as a Package on Github</a>
+    </li>
+    <li>
+      <a href="../articles/06_Deploy problem set on shinyapps.io.html">6 Deploy a problem set on shinyapps.io</a>
     </li>
     <li>
       <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
@@ -143,7 +146,7 @@
   <span class='kw'>s3.method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ps</span> <span class='kw'>=</span> <span class='fu'><a href='get.ps.html'>get.ps</a></span>(), <span class='kw'>stud.env</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>stud.env</span>,
   <span class='kw'>part</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>part</span>, <span class='kw'>stud.expr.li</span> <span class='kw'>=</span> <span class='no'>ps</span>$<span class='no'>stud.expr.li</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>noeval</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Logic'>isTRUE</a></span>(<span class='no'>ps</span>$<span class='no'>noeval</span>), <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Logic'>isTRUE</a></span>(<span class='no'>ps</span>$<span class='no'>rps</span>$<span class='no'>hint.on.fail</span>),
-  <span class='no'>...</span>)</pre>
+  <span class='kw'>check.cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sort.cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,6 +174,14 @@
     <tr>
       <th>hint.on.fail</th>
       <td><p>Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type <code><a href='hint.html'>hint()</a></code>. Yet, default can be overwritten in call to <code>create.ps</code>.</p></td>
+    </tr>
+    <tr>
+      <th>check.cols</th>
+      <td><p>only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided only check whether those columns are correctly computed but ignore other columns. Only works if <code>compare.vals = TRUE</code> (default).</p></td>
+    </tr>
+    <tr>
+      <th>sort.cols</th>
+      <td><p>only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with <code>check.cols</code>.</p></td>
     </tr>
     </table>
     
