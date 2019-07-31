@@ -12,12 +12,11 @@ knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
 
 ## Automatic Hints
 
-I put a lot of effort into writing sensible automatic tests and hints for RTutor. Hence, in most cases problem set tasks without customized hints or tests should yield a decent experience for users.
+I put a lot of effort into writing sensible automatic tests and hints for RTutor. In most cases problem set tasks without customized hints or tests should yield a decent experience for users.
 
 If no custom hint is provided, RTutor calls automatically either `hint.for.assign` (if a variable is assigned), `hint.for.call` (function call without assignment), `hint.for.function` (if the user generates a function) or `hint.for.compute` (for multi-step computations in a compute block).
 
-For an example of the automatic hints, consider a chunk were students shall write a dplyr pipe
-
+For an example of an automatic hint, consider a chunk were students shall write a dplyr pipe. The code in the solution file is:
 ```s
 #< task
 dat = tibble(a = sample(1:4,100, replace=TRUE), x=runif(100,0,a))
@@ -32,7 +31,7 @@ If the user writes the following wrong code
 dat = tibble(a = sample(1:4,100, replace=TRUE), x=runif(100,0,a))
 dat %>%
   group_by(a) %>%
-  summarize(mean_x = 2*mean(x)) %>%
+  summarize(mean_x = sum(x)) %>%
   arrange(-mean_x)
 ```
 The test fails with a not very informative message:
@@ -41,20 +40,22 @@ Error:
 You have not yet entered all correct commands in chunk 1.
 For a hint, type hint() in the console and press Enter.
 ```
-When typing `hint()` the automatic hint shows the more detailed error analysis:
 
+When typing `hint()` the automatic hint shows a relatively detailed error analysis:
 ```
-In your following pipe chain, I detect wrong results starting after element 3, the call to 'summarize':
+In your following pipe chain, I detect an error in the 3rd element:
 
 dat %>%
    group_by(a) %>%
-   summarize(mean_x = 2 * mean(x)) %>% !! WRONG RESULTS !!
-   arrange(-mean_x)
+   summarize(mean_x = sum(x)) %>% !! WRONG !!
+   arrange(-mean_x) 
+
+It is correct to call summarize. But: Your argument mean_x = sum(x) differs from my solution, where I call the function mean.
 ```
 
-There are cases were you may want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer text.
+There are cases were you may want to customize your hints. Sometimes the automatic hints may reveal to much, sometimes they may reveal to little, or sometimes you just want to really polish your problem set and want hints with nicer texts.
 
-There are also (in my experience substantially fewer) cases, in which you want to adapt the automatic correctness checks. We will describe test customization further below.
+There are also (in my experience substantially fewer) cases, in which you want to adapt the automatic correctness tests. We will describe test customization further below.
 
 ## Analyse students' submissions to improve hints
 
@@ -188,6 +189,30 @@ if (true(identical(x,2) | identical(x,-2))) {
 #>
 ```
 The argument `other.sols` of the default test function `check.assign` takes a list of quoted assignments that consitute alternative correct solutions. In the example above, we don't care about the order of the solution vector. Note that you must assign with `<-` instead of `=` inside the `quote` function.
+
+## Testing only selected columns in a data frame
+
+Consider a data set `dat` were we observe the sales quantity `q` of all car models for different years and regions. The student has the task to create a new data frame `dat1` with an additional column that contains the market `share` of each car model in each year and region. We don't care with which exact commands `share` is computed, however.
+
+Below is the specification in the solution file:
+```r
+dat1 = dat %>%
+  group_by(year,region) %>%
+  mutate(
+    Q = sum(q), # Total sales
+    share = q / Q   # Market share of each car
+  )
+#< test_arg
+check.cols = "share"
+sort.cols = c("year","market","car_model")
+#>
+```
+In the sample solution, we compute an intermediate variable `Q`, which is not really neccessary to solve the exercise. The test argument `check.cols` can specify a subset of columns that will be checked. Here we only want to check the column `share`. The argument `sort.cols` specifies that both the sample solution and the student's solution shall be sorted by the given columns. If the sort columns uniquely identify each row, this guarantees that  solution is also accepted if the student has ordered the data frame in a different way than the sample solution. (If the student deletes one of the sort columns, the test will return `FALSE`.)
+
+While the correctness checks accept many different solutions, the automatic hints when `hint()` is typed will guide the student along the concrete given sample solution.
+
+Note that `check.cols` and `sort.cols` are only used if the sample solution computes a `data.frame` or `tibble`.
+
 
 ## Custom tests
 

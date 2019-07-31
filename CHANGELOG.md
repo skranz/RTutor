@@ -1,10 +1,12 @@
 # RTutor (main)
 
-## 2019-07-24
+## 2019-07-31
 
 * Allow adaptive custom hints.
 
-* Make automatic tests more informative for some common errors.
+* Make automatic tests and hints more informative for some common errors. Also automatic hints for %>% chains are now considerably more informative.
+
+* Add test arguments check.cols and sort.cols for simple testing only selected columns of a computed data frame.
 
 *  Created the companion package RTutorSAGI that helps to analyse
 submission logs in order to identify parts where students systematically

@@ -11,7 +11,7 @@ check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   ps = get.ps(), stud.env = ps$stud.env, part = ps$part,
   stud.expr.li = ps$stud.expr.li, verbose = FALSE,
   only.check.assign.exists = FALSE, noeval = isTRUE(ps$noeval),
-  other.sols = NULL, ...)
+  other.sols = NULL, check.cols = NULL, sort.cols = NULL, ...)
 }
 \arguments{
 \item{call}{the correct assignment that shall be checked (not a quoted call)}
@@ -27,6 +27,10 @@ check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
 \item{only.check.assign.exists}{if TRUE (default = FALSE) only check if an assignemnt to the lhs variable exists no matter whether the assignment is correct. May be sensible if there are additional tests specified afterwards that check some characteristics of the assigned variable.}
 
 \item{other.sols}{a list of quoted assignments, e.g. \code{list(quote(x<-5), quote(x<-10))} of other solutions that are also correct.}
+
+\item{check.cols}{only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided only check whether those columns are correctly computed but ignore other columns. Only works if \code{compare.vals = TRUE} (default).}
+
+\item{sort.cols}{only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with \code{check.cols}.}
 }
 \description{
 By default a solution is considered correct if the assignment yields the same value than the sample solution, or has the same rhs (e.g. a call runif(1,0,1)), even if the value differs.

@@ -147,8 +147,39 @@ remove.names = function(x) {
   x
 }
 
+# Compares selected columns of data frames
+# Also allows to sort data frame before checking
+same.data.frame.cols = function(x,y, check.cols=NULL, sort.cols=NULL,tol=1e-9, check.names=FALSE, check.attributes=FALSE,...) {
+  if (!is.data.frame(x) | !is.data.frame(y))
+    return(FALSE)
+  
+  #restore.point("same.data.frame.cols")
+  
+  if (NROW(x) != NROW(y)) return(FALSE)
+  
+  if (!is.null(sort.cols)) {
+    if (!all(sort.cols %in% colnames(x)))
+      return(FALSE)
+    if (!all(sort.cols %in% colnames(y)))
+      return(FALSE)
+    x = ungroup(x)
+    y = ungroup(y)
+    x = arrange_at(x, sort.cols)
+    y = arrange_at(y, sort.cols)
+  }
+
+  if (is.null(check.cols))
+    return(is.same(x,y, tol=tol, check.names=check.names, check.attributes = check.attributes,...))
+  
+  for (col in check.cols) {
+    ok = isTRUE(all.equal(x[[col]],y[[col]],tol=tol, check.names=check.names, check.attributes=check.attributes))
+    if (!ok) return(FALSE)
+  }
+  return(TRUE)
+}
+
 is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE, ignore.environment=TRUE) {
-  restore.point("is.same")
+  #restore.point("is.same")
 
   if(identical(x,y,ignore.environment = ignore.environment))
     return(TRUE)

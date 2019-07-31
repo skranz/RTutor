@@ -157,10 +157,12 @@ show.success.message = function(success.message,...) {
 #' @param allow.extra.arg if TRUE (not default) the student is allowed to supply additional arguments to the call that were not in the solution. Useful, e.g. if the student shall plot something and is allowed to customize her plot with additional arguments.
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
 #' @param ok.if.same.val if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
-#' @param hint.on.fail Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type \code{hint()}. Yet, default can be overwritten in call to \code{create.ps}. 
+#' @param hint.on.fail Shall automatically be a hint shown if a test fails. By default FALSE, i.e. student has to type \code{hint()}. Yet, default can be overwritten in call to \code{create.ps}.
+#' @param check.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided only check whether those columns are correctly computed but ignore other columns. Only works if \code{compare.vals = TRUE} (default).
+#' @param sort.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with \code{check.cols}.
 #' @export
 check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = NA,s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail), ...
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail),check.cols=NULL, sort.cols=NULL, ...
 ) {
 
   expr = call = substitute(call)
@@ -252,7 +254,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
 
   # Note: We set check.value = FALSE
   # since we manually check same return values above
-  ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval, check.value=FALSE)
+  ret = internal.check.call(ce,dce, stud.expr.li,stud.env, allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval, check.value=FALSE, check.cols=check.cols, sort.cols=sort.cols)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly called the command: ",ret[[2]])
      add.success(success.message)
@@ -265,7 +267,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
   }
 }
 
-internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FALSE, ignore.arg=NULL,check.arg.by.value=TRUE, noeval=FALSE, check.value=TRUE) {
+internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FALSE, ignore.arg=NULL,check.arg.by.value=TRUE, noeval=FALSE, check.value=TRUE,check.cols=NULL, sort.cols=NULL) {
   restore.point("internal.check.call")
   check.na = dce$name
   stud.na = sapply(stud.expr.li,  name.of.call)
@@ -289,7 +291,7 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
     }
 
     # Environment in which argument values shall be evaluated. Is a data frame
-    # if the function is a dplyer function like mutate(dat,...)
+    # if the function is a dplyr function like mutate(dat,...)
     if (check.arg.by.value) {
       val.env = stud.env
       if (is.dplyr.fun(check.na)) {
@@ -307,7 +309,8 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
     return(list(FALSE,"wrong arg"))
   }
 
-  # For the moment let us check everything but fun by the return value
+  # For the moment let us check everything except
+  # fun by the return value
   if (!check.value) {
     return(list(FALSE, "not found"))
   }
@@ -326,7 +329,12 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
         error = function(e) has.error <<- TRUE
       )
       if (!has.error) {
-        if (is.same(check.val, stud.val)) {
+        if (is.data.frame(check.val) & (!is.null(sort.cols) | (!is.null(check.cols)))) {
+          ok = same.data.frame.cols(stud.val, check.val, check.cols=check.cols, sort.cols=sort.cols)
+        } else {
+          ok = (is.same(check.val, stud.val)) 
+        }
+        if (ok) { 
           call.str = deparse1(se)
           return(list(TRUE, call.str))
         }
@@ -362,11 +370,13 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
 #' @param ok.if.same.val if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
 #' @param other.sols a list of quoted assignments, e.g. \code{list(quote(x<-5), quote(x<-10))} of other solutions that are also correct. 
+#' @param check.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided only check whether those columns are correctly computed but ignore other columns. Only works if \code{compare.vals = TRUE} (default).
+#' @param sort.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with \code{check.cols}.
 #' @param only.check.assign.exists if TRUE (default = FALSE) only check if an assignemnt to the lhs variable exists no matter whether the assignment is correct. May be sensible if there are additional tests specified afterwards that check some characteristics of the assigned variable.
 #' @export
 check.assign = function(
   call,check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = "You have not yet included correctly, all required R commands in your code...", ok.if.same.val = TRUE,call.object=NULL,  s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, only.check.assign.exists=FALSE, noeval=isTRUE(ps$noeval), other.sols=NULL, ...) {
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, only.check.assign.exists=FALSE, noeval=isTRUE(ps$noeval), other.sols=NULL, check.cols=NULL, sort.cols=NULL, ...) {
 
   if (!is.null(call.object)) {
     call = call.object
@@ -378,7 +388,7 @@ check.assign = function(
     restore.point("jhkfhkdhg")
     sol.list = c(other.sols, list(call))
     return(check.assign.with.multiple.sol(sol.list=sol.list, allow.extra.arg=allow.extra.arg,
-      ignore.arg=ignore.arg, success.message=success.message, failure.message = failure.message,no.command.failure.message = no.command.failure.message, ok.if.same.val = ok.if.same.val, verbose=verbose, only.check.assign.exists=only.check.assign.exists, noeval=noeval))
+      ignore.arg=ignore.arg, success.message=success.message, failure.message = failure.message,no.command.failure.message = no.command.failure.message, ok.if.same.val = ok.if.same.val, verbose=verbose, only.check.assign.exists=only.check.assign.exists, noeval=noeval, check.cols=check.cols, sort.cols=sort.cols))
   }
   
   
@@ -456,7 +466,7 @@ check.assign = function(
     }
   }
 
-  ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env,allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval)
+  ret = internal.check.call(ce.rhs,dce.rhs, se.rhs.li,stud.env,allow.extra.arg=allow.extra.arg, ignore.arg=ignore.arg, check.arg.by.value=check.arg.by.value, noeval=noeval, check.cols=check.cols, sort.cols=sort.cols)
   if (ret[[1]]==TRUE) {
      success.message = paste0("Great,",part.str," you correctly assigned ", var, " = ",ret[[2]],"!")
      add.success(success.message)
