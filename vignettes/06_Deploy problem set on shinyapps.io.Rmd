@@ -1,7 +1,5 @@
 ---
 title: "6 Deploy a problem set on shinyapps.io"
-author: "Sebastian Kranz"
-date: "15.03.2015"
 output:
   html_document:
     highlight: textmate

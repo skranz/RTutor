@@ -1,7 +1,5 @@
 ---
 title: "5 Deploy RTutor Problem Set as a Package on Github"
-author: "Sebastian Kranz"
-date: "15.03.2015"
 output:
   html_document:
     highlight: textmate
