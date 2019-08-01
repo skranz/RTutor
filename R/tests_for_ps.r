@@ -212,12 +212,23 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
     if (ok) {
       # Result is correct but force student
       # to use desired function.
-      failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But in this task you shall learn how to directly call the function '",check.na,"', like \n\n    ", deparse1(expr), "\n\nPlease change your code.")
+      
+      if (true(check.na %in% find.funs(se) | (!substring(check.na,1,1) %in% c(letters,LETTERS))) ) {
+        # Student already uses desired function
+        # but not directly. Or we have an operator
+        failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But you shall directly use the the function '",check.na,"', by just writing \n\n    ", deparse1(expr), "\n\nPlease change your code.")
+        ps$current.hint.on.fail = FALSE        
+      } else {
+        # Student does not yet use desired function
+        failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But you shall solve this task instead by using the function '",check.na,"'.")
+        ps$current.hint.on.fail = FALSE        
+
+      }
       add.failure(failure.message)
       
       # Message is already very revealing
       # So turn off current.hint.on.fail
-      ps$current.hint.on.fail = FALSE
+
       return(FALSE)
     } else {
       if (is.null(failure.message))
