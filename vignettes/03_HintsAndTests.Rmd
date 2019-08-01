@@ -362,7 +362,6 @@ Our test call is now embedded in the function `with.random.seed` that calls the 
 
 If a function requires simulation of more than one random number, this testing procedure only works if the student draws the random numbers in the same order than the official solution. This means your task should specify already a lot of structure for the function and tell the student not to draw any additional random variables inside the function.
 
-
 # Compute blocks for computations with many steps
 
 Sometimes you want to ask students to perform computations that will usually require several intermediate steps.
@@ -390,3 +389,70 @@ A `#< compute ... #>` block allows an intermediate approach. Here is an example 
 ```
 
 The solution will pass as correct if the final values of `P` are correct. The student is not obliged to perform the particular intermediate computations like `exp.V`. Yet, if the student has not yet correctly computed `P` and types `hint()`, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with `##` will be transformed into text that will be shown in the hint.
+
+
+# Testing ggplot commands (or other plot commands)
+
+RTutor is not good at providing sensible hints or automatic tests that allow a user build long ggplot chains from scratch.
+
+Assume you want to show in a problem set the following ggplot:
+```s
+ggplot(data = counties,aes(x=area, y=population, col=state)) +
+  geom_point()+
+  xlim(c(0, 0.1)) + 
+  ylim(c(0, 500000)) + 
+  labs(title="Area vs Population", 
+       y="Population", 
+       x="Area") +
+  theme_bw()
+```
+One option would be to just provide the plotting commands in a `task_notest` block and don't force the student to write anything.
+
+An alternative would be to specify in your solution  a fill in block, like:
+```s
+#< fill_in
+# # Fill in the ???
+# ggplot(data = counties,aes(x=???, y=population, colour=???)) +
+#  geom_point()+
+#  xlim(c(0, 0.1)) + 
+#  ylim(c(0, 500000)) + 
+#  labs(title="Area vs Population", 
+#       y="Population", 
+#       x="Area") +
+#  theme_bw()
+#>
+# Sample solution
+ggplot(data = counties,aes(x=area, y=population, colour=state)) +
+  geom_point()+
+  xlim(c(0, 0.1)) + 
+  ylim(c(0, 500000)) + 
+  labs(title="Area vs Population", 
+       y="Population", 
+       x="Area") +
+  theme_bw()
+#< test_arg
+ok.if.same.val = FALSE
+#>
+```
+Here the student only has to fill in the two mising aesthetics. RTutor accepts the solution only if the student has the exact sample solution, but since only blanks have to be filled in that should be possible.
+
+We put the code in the `fill_in` block in comments, since due to the `???` this is not syntactically correct R code and `create.ps` would fail otherwise. The student will directly see the code without comments, however:
+
+```s
+# Fill in the ???
+ggplot(data = counties,aes(x=???, y=population, colour=???)) +
+  geom_point()+
+  xlim(c(0, 0.1)) + 
+  ylim(c(0, 500000)) + 
+  labs(title="Area vs Population", 
+    y="Population", 
+  x="Area") +
+  theme_bw()
+```
+The block
+```s
+#< test_arg
+ok.if.same.val = FALSE
+#>
+```
+is optional. It has the effect that when checking the student's solution RTutor does not need to evaluate the sample solution or the student's solution but just compares the arguments of the function call with the student solution. This makes checking the the problem set faster.

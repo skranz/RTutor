@@ -120,7 +120,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   rps$use.memoise = use.memoise
   if (use.memoise)
-    rps$memoise.fun.li = memoise.fun.li(memoise.funs)
+    rps$memoise.fun.li = memoise.fun.li(memoise.funs, libs=libs)
 
   if (preknit | precomp) {
     rps = preknit.rps(rps=rps,precomp=precomp, knit.print.opts=knit.print.opts)

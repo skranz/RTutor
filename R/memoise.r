@@ -1,13 +1,14 @@
 example.memoise = function() {
 
-  li = memoise.fun.li(rtutor.default.memoise.funs())
+  li = memoise.fun.li(rtutor.default.memoise.funs(), libs="rio")
   
 }
 
 # Creates a list of memoised functions that have the original function names
-memoise.fun.li = function(funs) {
+memoise.fun.li = function(funs, libs=NULL) {
   restore.point("memoise.fun.li")
   
+  libs = unique(c("base","utils", libs))
   fun.li = lapply(funs, function(str) {
     restore.point("inner.memoise.fun.li")
 
@@ -22,6 +23,7 @@ memoise.fun.li = function(funs) {
       fun = get(fun.name)
       pkg = getPackageName(environment(fun))
     }
+    if (!pkg %in% libs) return(NULL)
     
     call = substitute(memoise(pkg::fun.name), list(pkg=as.name(pkg), fun.name=as.name(fun.name)))
     li = list(eval(call))
@@ -33,5 +35,5 @@ memoise.fun.li = function(funs) {
 }
 
 rtutor.default.memoise.funs = function() {
-  c("read.csv","read.table","readRDS","foreign::read.dta","readstata13::read.dta13")
+  c("read.csv","read.table","readRDS","foreign::read.dta","readstata13::read.dta13","rio::import", "readr::read_csv")
 }

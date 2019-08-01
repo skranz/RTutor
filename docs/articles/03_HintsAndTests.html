@@ -425,6 +425,61 @@ differs from my solution, where I call the function mean.</code></pre>
 <a class="sourceLine" id="cb22-13" title="13">    <span class="co">#&gt;</span></a></code></pre></div>
 <p>The solution will pass as correct if the final values of <code>P</code> are correct. The student is not obliged to perform the particular intermediate computations like <code>exp.V</code>. Yet, if the student has not yet correctly computed <code>P</code> and types <code><a href="../reference/hint.html">hint()</a></code>, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with <code>##</code> will be transformed into text that will be shown in the hint.</p>
 </div>
+<div id="testing-ggplot-commands-or-other-plot-commands" class="section level1">
+<h1 class="hasAnchor">
+<a href="#testing-ggplot-commands-or-other-plot-commands" class="anchor"></a>Testing ggplot commands (or other plot commands)</h1>
+<p>RTutor is not good at providing sensible hints or automatic tests that allow a user build long ggplot chains from scratch.</p>
+<p>Assume you want to show in a problem set the following ggplot:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb23-1" title="1">ggplot(data = counties,aes(x=area, y=population, col=state)) +</a>
+<a class="sourceLine" id="cb23-2" title="2">  geom_point()+</a>
+<a class="sourceLine" id="cb23-3" title="3">  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </a>
+<a class="sourceLine" id="cb23-4" title="4">  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </a>
+<a class="sourceLine" id="cb23-5" title="5">  labs(title=<span class="st">"Area vs Population"</span>, </a>
+<a class="sourceLine" id="cb23-6" title="6">       y=<span class="st">"Population"</span>, </a>
+<a class="sourceLine" id="cb23-7" title="7">       x=<span class="st">"Area"</span>) +</a>
+<a class="sourceLine" id="cb23-8" title="8">  theme_bw()</a></code></pre></div>
+<p>One option would be to just provide the plotting commands in a <code>task_notest</code> block and don’t force the student to write anything.</p>
+<p>An alternative would be to specify in your solution a fill in block, like:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb24-1" title="1"><span class="co">#&lt; fill_in</span></a>
+<a class="sourceLine" id="cb24-2" title="2"><span class="co"># # Fill in the ???</span></a>
+<a class="sourceLine" id="cb24-3" title="3"><span class="co"># ggplot(data = counties,aes(x=???, y=population, colour=???)) +</span></a>
+<a class="sourceLine" id="cb24-4" title="4"><span class="co">#  geom_point()+</span></a>
+<a class="sourceLine" id="cb24-5" title="5"><span class="co">#  xlim(c(0, 0.1)) + </span></a>
+<a class="sourceLine" id="cb24-6" title="6"><span class="co">#  ylim(c(0, 500000)) + </span></a>
+<a class="sourceLine" id="cb24-7" title="7"><span class="co">#  labs(title="Area vs Population", </span></a>
+<a class="sourceLine" id="cb24-8" title="8"><span class="co">#       y="Population", </span></a>
+<a class="sourceLine" id="cb24-9" title="9"><span class="co">#       x="Area") +</span></a>
+<a class="sourceLine" id="cb24-10" title="10"><span class="co">#  theme_bw()</span></a>
+<a class="sourceLine" id="cb24-11" title="11"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb24-12" title="12"><span class="co"># Sample solution</span></a>
+<a class="sourceLine" id="cb24-13" title="13">ggplot(data = counties,aes(x=area, y=population, colour=state)) +</a>
+<a class="sourceLine" id="cb24-14" title="14">  geom_point()+</a>
+<a class="sourceLine" id="cb24-15" title="15">  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </a>
+<a class="sourceLine" id="cb24-16" title="16">  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </a>
+<a class="sourceLine" id="cb24-17" title="17">  labs(title=<span class="st">"Area vs Population"</span>, </a>
+<a class="sourceLine" id="cb24-18" title="18">       y=<span class="st">"Population"</span>, </a>
+<a class="sourceLine" id="cb24-19" title="19">       x=<span class="st">"Area"</span>) +</a>
+<a class="sourceLine" id="cb24-20" title="20">  theme_bw()</a>
+<a class="sourceLine" id="cb24-21" title="21"><span class="co">#&lt; test_arg</span></a>
+<a class="sourceLine" id="cb24-22" title="22">ok.if.same.val = FALSE</a>
+<a class="sourceLine" id="cb24-23" title="23"><span class="co">#&gt;</span></a></code></pre></div>
+<p>Here the student only has to fill in the two mising aesthetics. RTutor accepts the solution only if the student has the exact sample solution, but since only blanks have to be filled in that should be possible.</p>
+<p>We put the code in the <code>fill_in</code> block in comments, since due to the <code>???</code> this is not syntactically correct R code and <code>create.ps</code> would fail otherwise. The student will directly see the code without comments, however:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb25-1" title="1"><span class="co"># Fill in the ???</span></a>
+<a class="sourceLine" id="cb25-2" title="2">ggplot(data = counties,aes(x=???, y=population, colour=???)) +</a>
+<a class="sourceLine" id="cb25-3" title="3">  geom_point()+</a>
+<a class="sourceLine" id="cb25-4" title="4">  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </a>
+<a class="sourceLine" id="cb25-5" title="5">  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </a>
+<a class="sourceLine" id="cb25-6" title="6">  labs(title=<span class="st">"Area vs Population"</span>, </a>
+<a class="sourceLine" id="cb25-7" title="7">    y=<span class="st">"Population"</span>, </a>
+<a class="sourceLine" id="cb25-8" title="8">  x=<span class="st">"Area"</span>) +</a>
+<a class="sourceLine" id="cb25-9" title="9">  theme_bw()</a></code></pre></div>
+<p>The block</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb26-1" title="1"><span class="co">#&lt; test_arg</span></a>
+<a class="sourceLine" id="cb26-2" title="2">ok.if.same.val = FALSE</a>
+<a class="sourceLine" id="cb26-3" title="3"><span class="co">#&gt;</span></a></code></pre></div>
+<p>is optional. It has the effect that when checking the student’s solution RTutor does not need to evaluate the sample solution or the student’s solution but just compares the arguments of the function call with the student solution. This makes checking the the problem set faster.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -458,6 +513,7 @@ differs from my solution, where I call the function mean.</code></pre>
       </ul>
 </li>
       <li><a href="#compute-blocks-for-computations-with-many-steps">Compute blocks for computations with many steps</a></li>
+      <li><a href="#testing-ggplot-commands-or-other-plot-commands">Testing ggplot commands (or other plot commands)</a></li>
       </ul>
 </div>
       </div>
