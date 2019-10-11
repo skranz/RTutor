@@ -17,7 +17,6 @@ knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
 Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set.
 
 Important: If you want to run this example, copy the [Rmd file on Github](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/SmallExample_sol.Rmd). Copy pasting the code below won't work.
-
 ```
     #< ignore
     ```{r "Create problem set files"}`r ''`

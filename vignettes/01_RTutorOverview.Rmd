@@ -51,7 +51,6 @@ Some examples can be found [here in the example directory on Github](https://git
 Below is the code of the example [myps_sol.Rmd](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd) a simple example problem set that we name `myps`.
 
 **Important:** If you want to run this example, copy the [Rmd file on Github](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd). Copy pasting the code below won't work.
-
 ```
     #< ignore
     ```{r "setup"}`r ''`
