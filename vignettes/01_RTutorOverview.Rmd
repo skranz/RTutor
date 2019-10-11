@@ -48,21 +48,21 @@ If you create problem sets that you want to host on shinyapps.io, you have to in
 You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, quizzes or other commands e.g. to give awards. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints. 
 
 Some examples can be found [here in the example directory on Github](https://github.com/skranz/RTutor/tree/master/inst/examples).
+Below is the code of the example [myps_sol.Rmd](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd) a simple example problem set that we name `myps`.
 
-Below is a simple example problem set that we name `myps`. (Obviously, you can replace `myps` everywhere in this manual by your chosen problem set name.) This code should be saved in a file named `myps_sol.Rmd`.
+**Important:** If you want to run this example, copy the [Rmd file on Github](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd). Copy pasting the code below won't work.
+
 ```
     #< ignore
-    Save the file as `myps_sol.Rmd`.
-    Adapt the working directory below and then run setup chunk in RStudio.
-
     ```{r "setup"}`r ''`
     library(RTutor)
+    # Adapt the working directory below and then run setup chunk in RStudio.
     setwd("C:/folder_of_this_solution_file")
     ps.name = "myps"; sol.file = paste0(ps.name,"_sol.Rmd")
     libs = c("ggplot2") # character vector of all packages you load in the problem set
 
     #name.rmd.chunks(sol.file)
-    create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)
+    create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = "quiz")
               
     # The following line directly shows the problem set 
     # in the browser
@@ -156,7 +156,7 @@ Afterwards run the setup chunk in RStudio. (You may assign a keyboard shortcut t
 
 The call to
 ```s
-   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)
+   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = "quiz")
 ```
 generates several files:
 

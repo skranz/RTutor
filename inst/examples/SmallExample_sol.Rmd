@@ -1,0 +1,28 @@
+#< ignore
+```{r "Create problem set files"}
+# Change working directory
+setwd("C:/folder_of_this_solution_file")
+ps.name = "SmallExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = NULL # character vector of all packages you load in the problem set
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
+```
+#>
+
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+
+```{r}
+#< task
+x = 10:20
+# Computing the sum of x
+sum(x)
+#>
+```
+
+Now compute the mean of x.
+
+```{r}
+mean(x)
+```

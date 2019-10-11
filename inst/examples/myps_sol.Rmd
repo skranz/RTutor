@@ -1,0 +1,85 @@
+#< ignore
+
+```{r setup}
+library(RTutor)
+# Adapt the working directory below and then run setup chunk in RStudio.
+setwd("D:/libraries/RTutor/examples")
+ps.name = "myps"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c("ggplot2") # character vector of all packages you load in the problem set
+
+#name.rmd.chunks(sol.file)
+create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs,addons = "quiz")
+          
+# The following line directly shows the problem set 
+# in the browser
+show.ps(ps.name,launch.browser=TRUE,
+  auto.save.code=FALSE,sample.solution=FALSE)
+```
+#>
+
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+```{r "1 a)"}
+#< task_notest
+x = 10:20
+# Computing the sum of x
+sum(x)
+#>
+```
+
+Now compute the mean of x.
+```{r "1 a) 2"}
+mean(x)
+#< hint
+display("Use Google, e.g. search for 'R compute mean'.")
+#>
+```
+
+#< award "mean means mean"
+Well, in some occasions one can just guess the name of an R function.
+The function to compute the mean of a vector, or matrix is called 'mean'.
+Usually, it is much quicker to goggle than to guess function names, however.
+#>
+
+
+## Exercise 2 -- Computing with vectors
+a) Let y be a vector that contains the squared elements of x.
+   Then show y.
+
+```{r "2 a)"}
+#< task
+x = 1:5
+#>
+y = x^2
+y
+```
+
+We can also plot in a problem set
+```{r "2 a) 2"}
+library(ggplot2)
+qplot(x,y)
+```
+
+
+#< info "random numbers"
+Here are examples for generating random numbers
+```{r "1 "}
+runif(3,0,100)
+sample(1:100,5)
+```
+#>
+
+Here is a quiz that will be nicely shown in the
+shiny version.
+#< quiz "prime"
+question: What is the 'oddest' prime?
+sc:
+    - 2*
+    - 3
+    - 5
+    - 7
+success: Well, of course the answer is debatable...
+failure: Try again.
+#>

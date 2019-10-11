@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.10.11</span>
       </span>
     </div>
 
@@ -108,31 +108,32 @@
 <div id="elements-of-solution-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#elements-of-solution-files" class="anchor"></a>Elements of Solution Files</h1>
-<p>Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set, we would save in <code>Example_sol.Rmd</code></p>
-<pre><code>    #&lt; ignore
-    ```{r "Create problem set files"}
-    setwd("C:/folder_of_this_solution_file")
-    ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
-    libs = NULL # character vector of all packages you load in the problem set
-    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
-    ```
-    #&gt;
-    
-    ## Exercise 1 -- Summary statistics
-    
-    a) We often want to compute some summary statistic of a vector.
-    For example:
-    ```{r}
-    #&lt; task
-    x = 10:20
-    # Computing the sum of x
-    sum(x)
-    #&gt;
-    ```
-    Now compute the mean of x.
-    ```{r}
-    mean(x)
-    ```</code></pre>
+<p>Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set.</p>
+<p>Important: If you want to run this example, copy the <a href="https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/SmallExample_sol.Rmd">Rmd file on Github</a>. Copy pasting the code below won’t work.</p>
+<pre><code>#&lt; ignore
+```{r "Create problem set files"}
+setwd("C:/folder_of_this_solution_file")
+ps.name = "SmallExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = NULL # character vector of all packages you load in the problem set
+create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
+```
+#&gt;
+
+## Exercise 1 -- Summary statistics
+
+a) We often want to compute some summary statistic of a vector.
+For example:
+```{r}
+#&lt; task
+x = 10:20
+# Computing the sum of x
+sum(x)
+#&gt;
+```
+Now compute the mean of x.
+```{r}
+mean(x)
+```</code></pre>
 <p>As in a normal RMarkdown down file we have text and code chunks intermingled. In addition RTutor recognizes several keywords with special meaning.</p>
 <p>In the example above, we have:</p>
 <ul>
@@ -140,10 +141,10 @@
 <li>There is an ignore block starting with the line <code>#&lt; ignore</code> and ending with the line <code>#&gt;</code>. Inside the ignore block we have the setup chunk.</li>
 <li>Inside the first real chunk we have a task block starting with the line <code>#&lt; task</code> and ending with the line <code>#&gt;</code> Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.</li>
 </ul>
-<p>Run the setup chunk and take a look at the empty problem set <code>Example.Rmd</code> that you can give to students. Places where students have to enter code will be marked by.</p>
-<pre><code>    ```{r }
-    # enter your code here ...
-    ```</code></pre>
+<p>Run the setup chunk and take a look at the empty problem set <code>SmallExample.Rmd</code> that you can give to students. Places where students have to enter code will be marked by.</p>
+<pre><code>```{r }
+# enter your code here ...
+```</code></pre>
 <p>Below we give an overview of the most important special keywords and blocks you can use to specify an RTutor problem set.</p>
 <div id="exercise-header" class="section level2">
 <h2 class="hasAnchor">
@@ -168,13 +169,13 @@
 <h2 class="hasAnchor">
 <a href="#task-blocks" class="anchor"></a>task blocks</h2>
 <p>Code inside a task block will be shown to the user. Here is an example:</p>
-<pre><code>    ```{r}
-    #&lt; task
-    x = 10:20
-    # Compute the mean of x
-    #&gt;
-    mean(x)
-    ```</code></pre>
+<pre><code>```{r}
+#&lt; task
+x = 10:20
+# Compute the mean of x
+#&gt;
+mean(x)
+```</code></pre>
 <p>The definition of <code>x</code> and the R comment describing is in the the task block and will be shown to the user. Yet the last line is outside the task block and will not be shown, but shall be entered by the user herself.</p>
 </div>
 <div id="task_notest-vs-task-blocks" class="section level2">
@@ -182,12 +183,12 @@
 <a href="#task_notest-vs-task-blocks" class="anchor"></a>task_notest vs task blocks</h2>
 <p>Code in a normal task block will still be checked by RTutor. This means if a user modifies the given code in a task block, RTutor will not accept the solution. This requirement is useful if the task block specifies variables that will be used in later computations.</p>
 <p>Other times, we just want to show some output and no harm is done if the user changes the code. You should then put such code in a task_notest block. Here is an example:</p>
-<pre><code>    ```{r}
-    #&lt; task_notest
-    # Here is a plot
-    plot(x=1:10,y= (1:10)^2)
-    #&gt;
-    ```</code></pre>
+<pre><code>```{r}
+#&lt; task_notest
+# Here is a plot
+plot(x=1:10,y= (1:10)^2)
+#&gt;
+```</code></pre>
 <p>Code in a task_notest block will never be checked and created variables will not be available in later blocks. This makes it also faster to evaluate task_notest blocks than task blocks.</p>
 </div>
 <div id="fill_in-blocks" class="section level2">
@@ -266,16 +267,16 @@
 <a href="#notes-or-info-blocks-that-can-contain-chunks" class="anchor"></a>Notes – Or info blocks that can contain chunks</h2>
 <p>Info blocks cannot include chunks that the user shall solve. Notes are a variant of info blocks that can contain chunks for the user to be solved.</p>
 <p>The syntax for note blocks is non-standard, since I never updated RTutor to a parser that generally handles nested <code>#&lt;</code> … <code>#&gt;</code> blocks. Here is an example:</p>
-<pre><code>    #! start_note "A note with a chunk"
-    This is a note.
-    
-    ```{r "1_1  6",optional=TRUE}
-    #&lt; task
-    # show that all integers between 0 and 10
-    #&gt;
-    1:10
-    ```
-    #! end_note </code></pre>
+<pre><code>#! start_note "A note with a chunk"
+This is a note.
+
+```{r "1_1  6",optional=TRUE}
+#&lt; task
+# show that all integers between 0 and 10
+#&gt;
+1:10
+```
+#! end_note </code></pre>
 <p>Everything between the lines</p>
 <p><code>#! start_note "Title"</code></p>
 <p>and</p>
@@ -315,10 +316,10 @@
 <h2 class="hasAnchor">
 <a href="#optional-chunks" class="anchor"></a>Optional chunks</h2>
 <p>By default you have to solve all chunks in an exercise in the given order. If you set the chunk option <code>optional=TRUE</code>, a chunk need not be solved in order to continue. Example:</p>
-<pre><code>    ```{r "1_b", optional = TRUE}
-    # Code here
-    
-    ```</code></pre>
+<pre><code>```{r "1_b", optional = TRUE}
+# Code here
+
+```</code></pre>
 <p>This is in particular useful if you use notes that contain chunks. Note that variables that have been computed in optional chunks will not be known in later chunks.</p>
 <p>Note that <code>optional</code> is not a chunk option known by <code>knitr</code> but only used for RTutor.</p>
 </div>
@@ -326,30 +327,30 @@
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-output" class="anchor"></a>Chunks with HTML output</h2>
 <p>You can specify chunks whose output is native HTML code, e.g. if you want to show an HTML table or show a motion plot. As in normal rmarkdown, you can do so by setting the chunk option <code>results= "asis"</code>. Here is an example from an interactive problem set that shows a motion plot:</p>
-<pre><code>    ```{r "2_1_a_example", results = 'asis'}
-    #&lt; task
-    library(googleVis)
-    mp = gvisMotionChart(Int.data,
-           idvar = "country", timevar = "year")
-    plot(mp, tag = "chart")
-    #&gt;
-    ```</code></pre>
+<pre><code>```{r "2_1_a_example", results = 'asis'}
+#&lt; task
+library(googleVis)
+mp = gvisMotionChart(Int.data,
+       idvar = "country", timevar = "year")
+plot(mp, tag = "chart")
+#&gt;
+```</code></pre>
 <p>There are a lot of R packages that help creating nice HTML tables, like <code>stargazer</code>, or <code>hwriter</code>.</p>
 </div>
 <div id="chunks-with-html-widgets-as-outputs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-widgets-as-outputs" class="anchor"></a>Chunks with HTML Widgets as outputs</h2>
 <p>It is also possible to have chunks that have HTML widgets as output. If you use the shiny based version of RTutor you then need some additional chunk options. Here is an example for the leaflet widget:</p>
-<pre><code>    ```{r output="htmlwidget", widget="leaflet"}
-    #&lt; task_notest
-    SFmap &lt;- leaflet() %&gt;% 
-      addTiles() %&gt;% 
-      setView(9.9620289,48.4251394, zoom = 11) %&gt;% 
-      addMarkers(9.963614702355699,48.42517242865929,
-        popup = 'RTutor was created here at Ulm University')
-    SFmap
-    #&gt;
-    ```</code></pre>
+<pre><code>```{r output="htmlwidget", widget="leaflet"}
+#&lt; task_notest
+SFmap &lt;- leaflet() %&gt;% 
+  addTiles() %&gt;% 
+  setView(9.9620289,48.4251394, zoom = 11) %&gt;% 
+  addMarkers(9.963614702355699,48.42517242865929,
+    popup = 'RTutor was created here at Ulm University')
+SFmap
+#&gt;
+```</code></pre>
 <p>The <code>widget</code> argument is typically the name of the R package in which the html widget is specified.</p>
 </div>
 <div id="customizing-data-frame-printer" class="section level2">
@@ -362,11 +363,11 @@
 <h2 class="hasAnchor">
 <a href="#specifying-figure-width-and-height-and-other-knitr-chunk-options" class="anchor"></a>Specifying figure width and height and other knitr chunk options</h2>
 <p>If your chunk plots a figure, you may want to specify the width and height of the resulting figure. You can do this like for normal RMarkdown files with the chunk options <code>fig.width</code> and <code>fig.height</code> that specify width and height in inches.</p>
-<pre><code>    ```{r "1_a", fig.width=12, fig.height=5}
-    #&lt; task
-    plot(1:10,(1:10)^2)
-    #&gt;
-    ```</code></pre>
+<pre><code>```{r "1_a", fig.width=12, fig.height=5}
+#&lt; task
+plot(1:10,(1:10)^2)
+#&gt;
+```</code></pre>
 <p>You can also specify other chunk options of the <code>knitr</code> package. An overview is given here:</p>
 <p><a href="http://yihui.name/knitr/options/">http://yihui.name/knitr/options/</a></p>
 </div>

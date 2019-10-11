@@ -14,13 +14,15 @@ knitr::opts_chunk$set(eval=FALSE, cache=FALSE)
 
 # Elements of Solution Files
 
-Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set, we would save in `Example_sol.Rmd`
+Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set.
+
+Important: If you want to run this example, copy the [Rmd file on Github](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/SmallExample_sol.Rmd). Copy pasting the code below won't work.
 
 ```
     #< ignore
     ```{r "Create problem set files"}`r ''`
     setwd("C:/folder_of_this_solution_file")
-    ps.name = "Example"; sol.file = paste0(ps.name,"_sol.Rmd")
+    ps.name = "SmallExample"; sol.file = paste0(ps.name,"_sol.Rmd")
     libs = NULL # character vector of all packages you load in the problem set
     create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
     ```
@@ -50,7 +52,7 @@ In the example above, we have:
   - There is an ignore block starting with the line `#< ignore` and ending with the line `#>`. Inside the ignore block we have the setup chunk.
   - Inside the first real chunk we have a task block starting with the line `#< task` and ending with the line `#>` Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.
 
-Run the setup chunk and take a look at the empty problem set `Example.Rmd` that you can give to students. Places where students have to enter code will be marked by.
+Run the setup chunk and take a look at the empty problem set `SmallExample.Rmd` that you can give to students. Places where students have to enter code will be marked by.
 ```
     ```{r }`r ''`
     # enter your code here ...

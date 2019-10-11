@@ -134,24 +134,24 @@
 </blockquote>
 <p>In a shiny app you should always make each exercise self contained. In an RStudio based problem set you may link exercises, in some instances. E.g. you have a very simple initial exercise (that every student should pass) that just loads a data set and all later exercises use the data set from that initial exercise.</p>
 <p>Here is an example:</p>
-<pre><code>    ## Exercise 2 -- Proceed with the data analysis
-    
-    ```{r}
-    #&lt; settings
-    import.var = list("1"="dat")
-    #&gt;
-    ```
-    a) Add a column `ones` to dat that only contains 1. Show dat.
-    ```{r}
-    dat$ones = 1
-    dat
-    ```</code></pre>
+<pre><code>## Exercise 2 -- Proceed with the data analysis
+
+```{r}
+#&lt; settings
+import.var = list("1"="dat")
+#&gt;
+```
+a) Add a column `ones` to dat that only contains 1. Show dat.
+```{r}
+dat$ones = 1
+dat
+```</code></pre>
 <p>As you see, in order to use variables from earlier exercises, you must add at the beginning of an exercise a settings block that defines a variable <code>import.var</code>, like</p>
-<pre><code>    ```{r}
-    #&lt; settings
-    import.var = list("1"="dat")
-    #&gt;
-    ```</code></pre>
+<pre><code>```{r}
+#&lt; settings
+import.var = list("1"="dat")
+#&gt;
+```</code></pre>
 <p>The variable <code>import.var</code> is a list whose element names correspond to the short exercise names (part of the name before –) from which you want to import variables. The list elements are character vectors of the variable names you want to import from the corresponding exercise.</p>
 </div>
 <div id="memoization-for-importing-same-data-set-in-several-exercises-in-a-shiny-based-problem-set" class="section level2">
@@ -165,10 +165,10 @@
 <h2 class="hasAnchor">
 <a href="#optional-chunks" class="anchor"></a>Optional chunks</h2>
 <p>If you set the chunk option <code>optional=TRUE</code>, a chunk needs not be solved in order to continue the exercise. Example:</p>
-<pre><code>    ```{r "1_b", optional = TRUE}
-    # Code here
-    
-    ```</code></pre>
+<pre><code>```{r "1_b", optional = TRUE}
+# Code here
+
+```</code></pre>
 <p>Variables generated in an optional chunk will <em>not</em> be available in later chunks of the exercise. That is because we cannot be sure whether these variables exist or not.</p>
 <p>The environment in which an optional chunk is tested will contain all variables created in non-optional chunks earlier in the exercise.</p>
 </div>
@@ -224,15 +224,8 @@
   var sc_project=12051162; 
   var sc_invisible=1; 
   var sc_security="60139410"; 
-  </script>
-  <script type="text/javascript"
-  src="https://www.statcounter.com/counter/counter.js"
-  async></script>
-  <noscript><div class="statcounter"><a title="Web Analytics
-  Made Easy - StatCounter" href="https://statcounter.com/"
-  target="_blank"><img class="statcounter"
-  src="https://c.statcounter.com/12051162/0/60139410/1/"
-  alt="Web Analytics Made Easy -
+  </script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="Web Analytics
+  Made Easy - StatCounter" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="Web Analytics Made Easy -
   StatCounter"></a></div></noscript>
   
   

@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.10.11</span>
       </span>
     </div>
 
@@ -124,95 +124,93 @@
 <h2 class="hasAnchor">
 <a href="#create-an-r-markdown-solution-file" class="anchor"></a>Create an R Markdown solution file</h2>
 <p>You create an interactive problem set by writing a solution file in R markdown format. In addition to the exercise description and a sample solution, the solution can contain manually adapted test, hints, quizzes or other commands e.g. to give awards. Where no manual hints or tests are specified, RTutor will automatically generate tests and hints.</p>
-<p>Some examples can be found <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">here in the example directory on Github</a>.</p>
-<p>Below is a simple example problem set that we name <code>myps</code>. (Obviously, you can replace <code>myps</code> everywhere in this manual by your chosen problem set name.) This code should be saved in a file named <code>myps_sol.Rmd</code>.</p>
-<pre><code>    #&lt; ignore
-    Save the file as `myps_sol.Rmd`.
-    Adapt the working directory below and then run setup chunk in RStudio.
+<p>Some examples can be found <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">here in the example directory on Github</a>. Below is the code of the example <a href="https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd">myps_sol.Rmd</a> a simple example problem set that we name <code>myps</code>.</p>
+<p><strong>Important:</strong> If you want to run this example, copy the <a href="https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd">Rmd file on Github</a>. Copy pasting the code below won’t work.</p>
+<pre><code>#&lt; ignore
+```{r "setup"}
+library(RTutor)
+# Adapt the working directory below and then run setup chunk in RStudio.
+setwd("C:/folder_of_this_solution_file")
+ps.name = "myps"; sol.file = paste0(ps.name,"_sol.Rmd")
+libs = c("ggplot2") # character vector of all packages you load in the problem set
 
-    ```{r "setup"}
-    library(RTutor)
-    setwd("C:/folder_of_this_solution_file")
-    ps.name = "myps"; sol.file = paste0(ps.name,"_sol.Rmd")
-    libs = c("ggplot2") # character vector of all packages you load in the problem set
+#name.rmd.chunks(sol.file)
+create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = "quiz")
+          
+# The following line directly shows the problem set 
+# in the browser
+show.ps(ps.name,launch.browser=TRUE,
+  auto.save.code=FALSE,sample.solution=FALSE)
 
-    #name.rmd.chunks(sol.file)
-    create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)
-              
-    # The following line directly shows the problem set 
-    # in the browser
-    show.ps(ps.name,launch.browser=TRUE,
-      auto.save.code=FALSE,sample.solution=FALSE)
+```
+#&gt;
+## Exercise 1 -- Summary statistics
 
-    ```
-    #&gt;
-    ## Exercise 1 -- Summary statistics
-    
-    a) We often want to compute some summary statistic of a vector.
-    For example:
-    ```{r "1 a)"}
-    #&lt; task_notest
-    x = 10:20
-    # Computing the sum of x
-    sum(x)
-    #&gt;
-    ```
-    
-    Now compute the mean of x.
-    ```{r "1 a) 2"}
-    mean(x)
-    #&lt; hint
-    display("Use Google, e.g. search for 'R compute mean'.")
-    #&gt;
-    ```
-    
-    #&lt; award "mean means mean"
-    Well, in some occasions one can just guess the name of an R function.
-    The function to compute the mean of a vector, or matrix is called 'mean'.
-    Usually, it is much quicker to goggle than to guess function names, however.
-    #&gt;
-    
-    
-    ## Exercise 2 -- Computing with vectors
-    a) Let y be a vector that contains the squared elements of x.
-       Then show y.
-    
-    ```{r "2 a)"}
-    #&lt; task
-    x = 1:5
-    #&gt;
-    y = x^2
-    y
-    ```
-    
-    We can also plot in a problem set
-    ```{r "2 a) 2"}
-    library(ggplot2)
-    qplot(x,y)
-    ```
-   
-    
-    #&lt; info "random numbers"
-    Here are examples for generating random numbers
-    ```{r "1 "}
-    runif(3,0,100)
-    sample(1:100,5)
-    ```
-    #&gt;
-    
-    Here is a quiz that will be nicely shown in the
-    shiny version.
-    #&lt; quiz "prime"
-    question: What is the 'oddest' prime?
-    sc:
-        - 2*
-        - 3
-        - 5
-        - 7
-    success: Well, of course the answer is debatable...
-    failure: Try again.
-    #&gt;
-    </code></pre>
+a) We often want to compute some summary statistic of a vector.
+For example:
+```{r "1 a)"}
+#&lt; task_notest
+x = 10:20
+# Computing the sum of x
+sum(x)
+#&gt;
+```
+
+Now compute the mean of x.
+```{r "1 a) 2"}
+mean(x)
+#&lt; hint
+display("Use Google, e.g. search for 'R compute mean'.")
+#&gt;
+```
+
+#&lt; award "mean means mean"
+Well, in some occasions one can just guess the name of an R function.
+The function to compute the mean of a vector, or matrix is called 'mean'.
+Usually, it is much quicker to goggle than to guess function names, however.
+#&gt;
+
+
+## Exercise 2 -- Computing with vectors
+a) Let y be a vector that contains the squared elements of x.
+   Then show y.
+
+```{r "2 a)"}
+#&lt; task
+x = 1:5
+#&gt;
+y = x^2
+y
+```
+
+We can also plot in a problem set
+```{r "2 a) 2"}
+library(ggplot2)
+qplot(x,y)
+```
+
+
+#&lt; info "random numbers"
+Here are examples for generating random numbers
+```{r "1 "}
+runif(3,0,100)
+sample(1:100,5)
+```
+#&gt;
+
+Here is a quiz that will be nicely shown in the
+shiny version.
+#&lt; quiz "prime"
+question: What is the 'oddest' prime?
+sc:
+    - 2*
+    - 3
+    - 5
+    - 7
+success: Well, of course the answer is debatable...
+failure: Try again.
+#&gt;
+</code></pre>
 <p>The lines starting with <code>## Exercise</code> are very important. Every RTutor problem set must have at least one exercise.</p>
 <p>The different blocks starting with <code>#&lt;</code> are described in <a href="https://skranz.github.io/RTutor/articles/02_ElementsSolutionFile.html">this manual</a> and further details on customizing tests and hints are given <a href="https://skranz.github.io/RTutor/articles/03_CustomHintsAndTests.html">here</a>.</p>
 <p>The functions <code>create.ps</code> and <code>show.ps</code> both have a large set of arguments that allow a lot of customization. Take a look at the corresponding help files.</p>
@@ -221,10 +219,10 @@
 <h2 class="hasAnchor">
 <a href="#generate-a-structure-file-and-empty-problem-set-for-students" class="anchor"></a>Generate a structure file and empty problem set for students</h2>
 <p>To create a problem copy the example above or <a href="https://github.com/skranz/RTutor/tree/master/inst/examples">another example</a>. Save it in <code>myps_sol.Rmd</code>. Then set the right working directory in the setup chunk.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb3-1" title="1">    setwd(<span class="st">"C:/folder_of_this_solution_file"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb3-1" title="1">setwd("C:/folder_of_this_solution_file")<span class="st">"C:/folder_of_this_solution_file"</span>)</a></code></pre></div>
 <p>Afterwards run the setup chunk in RStudio. (You may assign a keyboard shortcut to running the setup chunk.)</p>
 <p>The call to</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1">   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1">   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = <span class="st">"quiz"</span>)</a></code></pre></div>
 <p>generates several files:</p>
 <ul>
 <li><p>myps.rps: a binary representation of the problem set structure</p></li>
