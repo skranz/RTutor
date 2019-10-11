@@ -146,7 +146,7 @@ The functions `create.ps` and `show.ps` both have a large set of arguments that 
 
 ## Generate a structure file and empty problem set for students
 
-To create a problem copy the example above or [another example](https://github.com/skranz/RTutor/tree/master/inst/examples). Save it in `myps_sol.Rmd`. Then set the right working directory in the setup chunk.
+To create an example problem set copy the example from [here](https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd) and save it in `myps_sol.Rmd`. Then set the right working directory in the setup chunk.
 
 ```s
     setwd("C:/folder_of_this_solution_file")
