@@ -261,6 +261,14 @@ te.to.rps = function(te) {
   restore.point("te.to.rps")
   rps = new.env()
 
+  if (length(te$ex)==0) {
+    stop("I could not find any exercise in your solution file. An exercise must start with a new line starting EXACTLY with 
+      
+## Exercise YOUREXNAME
+
+(no spaces or tabs before the ##). You can pick some name or number for YOUREXNAME or use a short and long name separated by two dashes, like '1 -- My first exercise'.")
+  }
+
   copy.into.envir(source=te, dest=rps,
     names=c("ps.name","infos","awards")
   )
@@ -268,6 +276,8 @@ te.to.rps = function(te) {
 
   ex.ind = 3
 
+
+  
   # Create a data frame with chunk metadata
   li = lapply(seq_along(te$ex), function(ex.ind) {
     restore.point("te.to.rps.inner")
