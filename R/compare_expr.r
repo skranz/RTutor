@@ -178,7 +178,7 @@ same.data.frame.cols = function(x,y, check.cols=NULL, sort.cols=NULL,tol=1e-9, c
   return(TRUE)
 }
 
-is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check.attributes=FALSE, check.groups=TRUE, ignore.environment=TRUE) {
+is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=true(is.data.frame(x) | is.list(x)), check.attributes=FALSE, check.groups=TRUE, ignore.environment=TRUE) {
   #restore.point("is.same")
 
   if(identical(x,y,ignore.environment = ignore.environment))
@@ -194,6 +194,12 @@ is.same = function(x,y, tol=1e-9, check.all.equal=TRUE, check.names=FALSE, check
     }
   }
 
+  if (check.names) {
+    if (!true(identical(names(x), names(y)))) {
+      return(FALSE)
+    }
+  }
+  
   if (check.all.equal) {
     if (is.data.frame(x) & is.data.frame(y)) {
       if ((NROW(x) != NROW(y)) | (NCOL(x) != NCOL(y)))

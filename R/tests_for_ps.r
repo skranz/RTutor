@@ -396,7 +396,6 @@ check.assign = function(
   }
   
   if (length(other.sols)>0) {
-    restore.point("jhkfhkdhg")
     sol.list = c(other.sols, list(call))
     return(check.assign.with.multiple.sol(sol.list=sol.list, allow.extra.arg=allow.extra.arg,
       ignore.arg=ignore.arg, success.message=success.message, failure.message = failure.message,no.command.failure.message = no.command.failure.message, ok.if.same.val = ok.if.same.val, verbose=verbose, only.check.assign.exists=only.check.assign.exists, noeval=noeval, check.cols=check.cols, sort.cols=sort.cols))
@@ -435,7 +434,7 @@ check.assign = function(
     return(FALSE)
     
   # New: 2019-07-21
-  # Son't allow multiple assignments of the
+  # Don't allow multiple assignments of the
   # same variable
   } else if (length(stud.expr.li)>1) {
     if (is.null(failure.message))
