@@ -33,8 +33,13 @@ check.ps.addin = function(...) {
   
   cat("\n---------------------------\nSave and check problem set file ", doc$path," ...\n")
   
-  # Save file
-  suppressWarnings(writeLines(text = txt, doc$path))
+  # Save document via RStudio api
+  # Benefits compared to writeLines:
+  # Should ensure the same encoding as set in RStudio.
+  # Also should avoid message that the content of
+  # the file has been changed
+  try(rstudioapi::documentSave(doc$id))
+  #suppressWarnings(writeLines(text = txt, doc$path))
   
   user.name.line = which(str.starts.with(str.trim(txt),"user.name ="))
   if (length(user.name.line)==0) {
