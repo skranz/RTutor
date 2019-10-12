@@ -17,7 +17,7 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   = html.data.frame, table.max.rows = table.max.rows, round.digits =
   round.digits, signif.digits = signif.digits), e.points = 1,
   min.chunk.points = 0, chunk.points = 0, keep.fill.in.output.sol = TRUE,
-  hint.on.fail = FALSE)
+  hint.on.fail = FALSE, empty.task.txt = "# Enter your code here.")
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -57,6 +57,8 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{keep.fill.in.output.sol}{if TRUE (default) the original code with placeholders of a fill in block will be shown in the output solution Rmd file as a comment before the solution. If FALSE only the solution will be shown.}
 
 \item{hint.on.fail}{shall by default a hint be shown already if the correctness test fails. If FALSE (default) hints are only shown if the user types hint() or, in the shiny version, presses the hint button.}
+
+\item{empty.task.txt}{A text that will be shown in chunks without any task block. Default is \code{empty.task.txt = "# Enter your code here."}}
 }
 \description{
 Generates  .rps file, and .rmd files for empty ps , sample solution

@@ -40,10 +40,11 @@ examples.create.ps = function() {
 #' @param min.chunk.points minimal points for checking a chunk even if no none-task expression has to be entered. By default=0.5. I feel there may be a higher motivation to continue a problem set if there are may be some free point chunks farther below. Also it feels nice to get points, even if it is just for pressing the check button.
 #' @param keep.fill.in.output.sol if TRUE (default) the original code with placeholders of a fill in block will be shown in the output solution Rmd file as a comment before the solution. If FALSE only the solution will be shown.
 #' @param hint.on.fail shall by default a hint be shown already if the correctness test fails. If FALSE (default) hints are only shown if the user types hint() or, in the shiny version, presses the hint button.
+#' @param empty.task.txt A text that will be shown in chunks without any task block. Default is \code{empty.task.txt = "# Enter your code here."}
 #' 
 #'
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.") {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -60,7 +61,8 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   
   te = get.empty.te(Addons=Addons, extra.code.file=extra.code.file)
   te$keep.fill.in.output.sol = keep.fill.in.output.sol
-
+  te$empty.task.txt = empty.task.txt
+  
   te = parse.sol.rmd(txt=txt, te=te)
 
   te$knit.print.params = nlist(html.data.frame,table.max.rows, round.digits, signif.digits) 
@@ -805,6 +807,10 @@ add.te.code = function(te,ck) {
         !identical(te$task.txt[length(te$task.txt)], enter.code.str)) {
         ck$task.txt = c(ck$task.txt, enter.code.str)
       }
+      if (length(ck$task.txt) == 0 | identical(ck$task.txt,"")) {
+        ck$task.txt = te$empty.task.txt
+      } 
+      
     # Empty code.txt
     } else {
       te$last.e = NULL
