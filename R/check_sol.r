@@ -224,6 +224,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   ps$ex.ind = ck$ex.ind
   ps$chunk.ind = chunk.ind
   ps$chunk.name = chunk.name
+  ps$e.ind = 0
 
   #stop("analyse below")
   test.li = ck$test.expr[[1]]
