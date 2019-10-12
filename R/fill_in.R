@@ -12,25 +12,25 @@ mark.fill.in.lines = function(txt) {
   
   # If all lines in a fill_in block are
   # comments, remove the comments.
-  if (all(substring(txt,1,2)=="# " | nchar(trimws(txt))==0)) {
-    txt[nchar(trimws(txt))==0] = "# "
+  if (all(substring(txt,1,2)=="# " | nchar(trimws(txt))==0 | trimws(txt)=="#")) {
+    txt = substring(txt, 3)
   }
-  txt = paste0("#___",txt)
+  txt = paste0("#FI__ ",txt)
   txt
 }
 
 fill.in.lines.to.comment = function(txt) {
-  rows = startsWith(txt,"#___# ") 
-  txt[rows] = substring(txt[rows],5)
+  rows = startsWith(txt,"#FI__ ") 
+  txt[rows] = paste0("# ",substring(txt[rows],7))
   txt
 }
 fill.in.lines.to.code = function(txt) {
-  rows = startsWith(txt,"#___# ") 
+  rows = startsWith(txt,"#FI__ ") 
   txt[rows] = substring(txt[rows],7)
   txt
 }
 remove.fill.in.lines = function(txt) {
-  txt = txt[!startsWith(txt,"#___# ")]
+  txt = txt[!startsWith(txt,"#FI__ ")]
   txt
 }
 
