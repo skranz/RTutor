@@ -252,8 +252,6 @@ write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), 
 
 
 write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te,...) {
-
-
   task.txt = include.ps.extra.lines(task.txt, ps.file=file, ps.name=ps.name,te=te,...)
   writeLines(task.txt, file, useBytes=TRUE)
   invisible(task.txt)
@@ -1165,13 +1163,15 @@ get.empty.te = function(Addons=NULL, extra.code.file=NULL) {
 }
 
 include.ps.extra.lines = function(txt, ps.file, ps.name=te$ps.name,te=NULL,...) {
-  chunk.row = which(str.starts.with(txt,"# Problemset"))[1]
-  if (is.na(chunk.row))
-    chunk.row = 1
   str = ps.rtutor.chunk(ps.name=ps.name, ps.file=ps.file,...)
-  txt[chunk.row] = paste0(txt[chunk.row],"\n\n",paste0(str,collapse="\n"))
+  str = paste0(str,collapse="\n")
+  chunk.row = which(str.starts.with(txt,"# Problemset"))[1]
+  if (is.na(chunk.row)) {
+    txt[1] = paste0(str, "\n", txt[1])
+  } else {
+    txt[chunk.row] = paste0(txt[chunk.row],"\n",str)
+  }
   txt
-
 }
 
 ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(ps.name,".Rmd"), header="", user.name="ENTER A USER NAME HERE",...) {
@@ -1181,9 +1181,10 @@ ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(
 ",header,"
 user.name = '",user.name,"' # set to your user name
 
-# To check your problem set, save your file (Ctrl-S) and then run the RStudio Addin 'Check Problemset'
+# To check your problem set, run the 
+# RStudio Addin 'Check Problemset'
 
-# Alternatively run the following lines 
+# Alternatively run the following lines
 library(RTutor)
 ps.dir = getwd() # directory of this file
 ps.file = '", ps.name,".Rmd' # name of this file
