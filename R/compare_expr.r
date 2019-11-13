@@ -126,8 +126,9 @@ check.call.args = function(stud.call, check.call, compare.vals = !is.null(val.en
 
   if (compare.vals) {
     for (var in differ.arg) {
-      stud.val = eval(sarg[[var]],val.env)
-      check.val = eval(carg[[var]],val.env)
+      stud.val = try(eval(sarg[[var]],val.env), silent=TRUE)
+      check.val = try(eval(carg[[var]],val.env), silent=TRUE)
+      if (is(stud.val,"try-error") | is(check.val,"try-error")) return(FALSE)
       if (!is.same(stud.val,check.val))
         return(FALSE)
     }
@@ -283,15 +284,22 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
     }
     
     if (compare.vals) {
-      differ.detail = lapply(differ.arg, function(var) {
+      differ.detail = try(lapply(differ.arg, function(var) {
         stud.val = eval(sarg[[var]],val.env)
         check.val = eval(carg[[var]],val.env)
         paste0(compare.values(stud.val, check.val), collapse=", ")
-      })
-      names(differ.detail) = differ.arg
-      differs = sapply(differ.detail, function(x) nchar(x)>0)
-      differ.detail = unlist(differ.detail[differs])
-      differ.arg = names(differ.detail)
+      }),silent = TRUE)
+      
+      # We may in particular have a try error in
+      # dplyr or tidyr functions.
+      if (is(differ.detail, "try-error")) {
+        differ.detail = NULL  
+      } else {
+        names(differ.detail) = differ.arg
+        differs = sapply(differ.detail, function(x) nchar(x)>0)
+        differ.detail = unlist(differ.detail[differs])
+        differ.arg = names(differ.detail)
+      }
     } else {
       differ.detail = replicate(length(differ.arg),c("code"),simplify=FALSE)
       names(differ.detail) = differ.arg
