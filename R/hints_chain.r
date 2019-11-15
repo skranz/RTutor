@@ -11,18 +11,21 @@ inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, 
   
   sde.li = lapply(stud.expr.li, function(se) describe.call(call.obj=se))
   
-  is.chain = sapply(sde.li, function(sde) sde$type=="chain")
-  # Select student expressions that are chains
-  sde.li = sde.li[is.chain]
-  stud.expr.li = stud.expr.li[is.chain]
-  
+  if (length(sde.li)>0) {
+    is.chain = sapply(sde.li, function(sde) sde$type=="chain")
+    # Select student expressions that are chains
+    sde.li = sde.li[is.chain]
+    stud.expr.li = stud.expr.li[is.chain]
+  }  
   # The student has no chain command yet
   if (length(sde.li)==0) {
     chain.str = paste0(chain.na, " ...", collapse = paste0(" ",op,"\n  "))
     chain.str = paste0(assign.str, chain.str)
     
     txt = paste0("My solution consists of a pipe chain of the form:\n\n", chain.str,"\n\nI have not seeen any pipe operator ", op," in your solution, yet.")
-    return(list(same=FALSE, fail.step=1, same.until=0, descr=txt))
+    display(txt)
+    return(invisible())
+    #return(list(same=FALSE, fail.step=1, same.until=0, descr=txt))
     
   }
   
