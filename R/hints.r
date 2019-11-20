@@ -1,12 +1,12 @@
 info = function(info.name, ps = get.ps()) {
   restore.point("info")
   if (is.null(ps)) {
-    display("Please check your problem set once with Ctrl-Alt-R. Then you can see infos.")
+    hdisplay("Please check your problem set once with Ctrl-Alt-R. Then you can see infos.")
     return()
   }
   infos = ps$rps$infos
   if (! info.name %in% names(infos)) {
-    display("You problem set has not the info '", info.name, "'. Only the following infos are stored: ", paste0("'", names(infos),"'", collapse=", "))
+    hdisplay("You problem set has not the info '", info.name, "'. Only the following infos are stored: ", paste0("'", names(infos),"'", collapse=", "))
     return()
   }
   htmlFile <- tempfile(fileext=".html")
@@ -26,7 +26,7 @@ hint = function(..., ps=get.ps()) {
   restore.point("hint")
 
   if (is.null(ps$chunk.ind)) {
-    cat("Please test the chunk before you ask for a hint.")
+    cat("\nPlease test the chunk before you ask for a hint.")
     return(invisible(""))
   }
 
@@ -45,7 +45,7 @@ hint = function(..., ps=get.ps()) {
       if (is.expression(call)) call = call[[1]]
       new.call = substitute(capture.output(call), list(call=call))
       txt = RTutor::rtutor.eval.secure(new.call, envir=envir, silent.check=TRUE)
-      cat(paste0(txt, collapse="\n"))
+      hdisplay(paste0(txt, collapse="\n"))
     }
   } else {
     eval.fun = base::eval
@@ -77,9 +77,9 @@ hint = function(..., ps=get.ps()) {
     } else {
       do.log = FALSE
       if (ps$cdt$num.e[[ps$chunk.ind]]==0) {
-        cat("Sorry, but there is no hint for your current problem.")
+        cat("\nSorry, but there is no hint for your current problem.")
       } else {
-        cat("There is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
+        cat("\nThere is an error in your code chunk so that RTutor cannot evaluate your code. Before you can get a more detailed hint, write code that runs without error when you manually run your chunk. (One way to get no syntax error is to remove all your own code in your chunk.)")
       }
     }
 
@@ -114,7 +114,7 @@ hint = function(..., ps=get.ps()) {
         res = try(eval.fun(chunk.hint, hint.env))
         if (is("res","try-error")) {
           if (ps$e.ind==0) {
-            cat("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
+            hdisplay("\nI could not evaluate your chunk without error. The hint may therefore not have worked properly.")
           } else {
             cat("\nUps, there was some error when evaluating the hint.")
           }
@@ -172,7 +172,7 @@ hint.for.function = function(code, ..., ps = get.ps()) {
   restore.point("hint.for.function")
 
   if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
-    display("Sorry, the default hint for your function requires to evaluate your code, but this is forbidden for security reasons on this server.")
+    hdisplay("Sorry, the default hint for your function requires to evaluate your code, but this is forbidden for security reasons on this server.")
     return()
   }
 
@@ -185,22 +185,22 @@ hint.for.function = function(code, ..., ps = get.ps()) {
   sol.fun = get(fun.name,env)
 
   if (!exists(fun.name, stud.env)) {
-    display("You must assign a function to the variable ", fun.name)
+    hdisplay("You must assign a function to the variable ", fun.name)
     return()
   }
   stud.fun = get(fun.name, stud.env)
   if (!is.function(stud.fun)) {
-    display("You must assign a function to the variable ", fun.name)
+    hdisplay("You must assign a function to the variable ", fun.name)
     return()
   }
-  display("\nYou may want to take a look at the variables test.your.res and test.sol.res to compare the results of your function with the official solution from the test call that your function has failed.")
+  hdisplay("\nYou may want to take a look at the variables test.your.res and test.sol.res to compare the results of your function with the official solution from the test call that your function has failed.")
 
   args.sol = names(formals(sol.fun))
   args.stud = names(formals(stud.fun))
   if (!identical(args.sol, args.stud)) {
-    display("\nYour function ", fun.name, " has different arguments than the official solution:")
-    display("   Your fun.     :", paste0(args.stud, collapse=", "))
-    display("   Solution fun. :", paste0(args.sol, collapse=", "))
+    hdisplay("\nYour function ", fun.name, " has different arguments than the official solution:")
+    hdisplay("   Your fun.     :", paste0(args.stud, collapse=", "))
+    hdisplay("   Solution fun. :", paste0(args.sol, collapse=", "))
   }
   has.codetools = suppressWarnings(require(codetools, quietly=TRUE, warn.conflicts=FALSE))
   if (has.codetools) {
@@ -208,17 +208,17 @@ hint.for.function = function(code, ..., ps = get.ps()) {
     stud.glob = findGlobals(stud.fun, merge=FALSE)$variables
     if (length(stud.glob)>0) {
       stud.glob =  paste0(stud.glob,collapse=", ")
-      display("Warning: Your function uses the global variable(s) \n    ",stud.glob,
+      hdisplay("Warning: Your function uses the global variable(s) \n    ",stud.glob,
               "\nOften global variables in a function indicate a bug and you just have forgotten to assign values to ", stud.glob, " inside your function. Either correct your function or make sure that you truely want to use these global variables inside your function.")
     }
     stud.locals = findFuncLocals(NULL,body = body(stud.fun))
     overwritten = intersect(stud.locals, args.stud)
     if (length(overwritten)>0) {
-      display("Warning: Inside your function you assign new values to the function arguments ", paste0(overwritten, collapse=","),". This is typically a mistake.")
+      hdisplay("Warning: Inside your function you assign new values to the function arguments ", paste0(overwritten, collapse=","),". This is typically a mistake.")
     }
     
   } else {
-    display("Please call\n\ninstall.packages('codetools')\n\nin order to install from CRAN the package 'codetools'. This allows RTutor to get more information about possible errors in your function. After you have installed the package, type hint() again.")
+    hdisplay("Please call\n\ninstall.packages('codetools')\n\nin order to install from CRAN the package 'codetools'. This allows RTutor to get more information about possible errors in your function. After you have installed the package, type hint() again.")
     return()
   }
 }
@@ -255,18 +255,18 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       lib =  as.character(cde$arg[[1]])
       has.lib = suppressWarnings(require(lib, character.only=TRUE, quietly=TRUE))
       if (has.lib) {
-        display('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.')
+        hdisplay('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.')
       } else {
-        display('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.\n First you must install the package, however. For packages that are on the CRAN or for which you have a local zip or tar.gz file, you can do the installation in RStudio using the menu Tools -> Install Packages.\n(For packages that are only on Github, first load and install the package devtools from CRAN and then use its function install_github.)')
+        hdisplay('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.\n First you must install the package, however. For packages that are on the CRAN or for which you have a local zip or tar.gz file, you can do the installation in RStudio using the menu Tools -> Install Packages.\n(For packages that are only on Github, first load and install the package devtools from CRAN and then use its function install_github.)')
       }
       return(invisible())
     }
 
     if (length(stud.expr.li)==0) {
       if (!from.assign)
-        display("You must correctly call the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
+        hdisplay("You must correctly call the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       if (from.assign)
-        display("You must assign to '", lhs, "' a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
+        hdisplay("You must assign to '", lhs, "' a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
       return(invisible())
     }
 
@@ -304,12 +304,13 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       cat("\nI found problems with ", length(analyse.str)," of your calls:\n\n")
     }
     analyse.str = paste0(analyse.str, collapse = "\n")
-
+    ph = get.placeholder(ps)
+    analyse.str = gsub(".PH_._",ph, analyse.str, fixed=TRUE)
     if (!from.assign)
-      #display("Let's take a look at your call to the function '", check.na, "'",part.str,"\n", analyse.str,start.char=start.char, end.char=end.char)
+      #hdisplay("Let's take a look at your call to the function '", check.na, "'",part.str,"\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
     if (from.assign)
-      #display("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
+      #hdisplay("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))
@@ -318,31 +319,31 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
 
     if (from.assign) {
-      display("You have to assign a correct formula to the variable '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to assign a correct formula to the variable '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
-      display("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   } else if (cde$type == "fun" & scramble.fun) { 
     hint.str = scramble.text(deparse(call),"?",0.45, keep.char=c(" ",",","(",")"))
 
     if (from.assign) {
-      display("You have to assign a correct function call to '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to assign a correct function call to '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
-      display("You have to enter a correct function call to ", check.na," Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to enter a correct function call to ", check.na," Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   }  else if (cde$type == "var") {
     if (!from.assign)
-      display("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
+      hdisplay("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
   }  else if (cde$type == "subset") {
     hint.str = scramble.text(deparse(call),"?",0.6, keep.char=c("[","]", "$",","))
     if (from.assign) {
-      display("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
-      display("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   
   } else {
-    display("Sorry... I actually do not have a hint for you.", start.char=start.char, end.char=end.char)
+    hdisplay("Sorry... I actually do not have a hint for you.", start.char=start.char, end.char=end.char)
   }
 
   return(invisible())
@@ -397,9 +398,9 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
   restore.point("hint.for.compute")
 
   if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
-    display("Sorry, the default hint requires to evaluate your code, but this is forbidden for security reasons on this server. I show you the solution instead:")
+    hdisplay("Sorry, the default hint requires to evaluate your code, but this is forbidden for security reasons on this server. I show you the solution instead:")
     sol.txt = ps$cdt$sol.txt[[ps$chunk.ind]]
-    display(sol.txt)
+    hdisplay(sol.txt)
     return()
   }
 
@@ -414,7 +415,7 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
     e = expr.li[[i]]
     ret = FALSE
     if (!is.null(hints.txt[[i]])) {
-      display("Step ", i,". ",hints.txt[[i]],"...", end.char="")
+      hdisplay("Step ", i,". ",hints.txt[[i]],"...", end.char="")
     }
 
     var = deparse1(e[[2]],collapse="\n")
@@ -428,21 +429,33 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
     if (!ret) {
       #message = ps$failure.message
       cat("\n\nYou have not yet correctly created '",var,"'. ",sep="")
-      #display(ps$failure.message)
+      #hdisplay(ps$failure.message)
       hint.for.assign(expr.object=e, start.char="")
       break
     } else {
       cat(" looks good!\n")
       #message = ps$success.message
-      #display(message)
+      #hdisplay(message)
     }
   }
   if (ret==FALSE & i < length(expr.li) & !isTRUE(ps$is.shiny)) {
-    display("Note: If you have finished this step and want a hint for the next step. Check your problem set with Ctrl-Alt-R before you type hint() again.")
+    hdisplay("Note: If you have finished this step and want a hint for the next step. Check your problem set with Ctrl-Alt-R before you type hint() again.")
   }
   if (ret==TRUE) {
-    display("Great, all steps seem correct. Check your solution to proceed.")
+    hdisplay("Great, all steps seem correct. Check your solution to proceed.")
   }
+}
+
+hdisplay = function (..., collapse = "\n", sep = "", start.char="\n",end.char="\n") 
+{
+  restore.point("hdisplay")
+  
+  str = paste(start.char, paste(..., collapse = collapse, sep = sep), end.char, sep = "")
+  
+  # Substitute placeholder back to original term.
+  ph = get.placeholder()
+  str = gsub(".PH_._",ph, str, fixed=TRUE)
+  invisible(cat(str))
 }
 
 

@@ -343,7 +343,7 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
       } else if (isTRUE(is.null(differ.detail) | differ.detail[i] %in% c("values","code"))) {
         paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution.")
       } else {
-        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution in its ", differ.detail[i])
+        paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution", if(!is.null(differ.detail[i])) " in its ", differ.detail[i])
       }
     })
   }

@@ -255,10 +255,27 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
                 ps$failure.message=paste0("parser error: ",geterrmessage())
                 has.error <<- TRUE
               })
+    # Try again with replacing placeholders
+    if (has.error) {
+      placeholder = get.placeholder(ps)
+      if (!is.null(placeholder)) {
+        if (has.substr(stud.code, placeholder)) {
+          has.error = FALSE
+          stud.code = gsub(placeholder, ".PH_._", stud.code)
+   tryCatch( ps$stud.expr.li <- base::parse(text=stud.code, srcfile=NULL),
+              error = function(e) {
+                ps$failure.message=paste0("parser error: ",geterrmessage())
+                has.error <<- TRUE
+              })
+          
+        }
+      }
+    }
+    
   } else {
     ps$stud.expr.li <- base::parse(text=stud.code, srcfile=NULL)
   }
-  if (has.error)
+  if (has.error) 
     return(FALSE)
 
 
