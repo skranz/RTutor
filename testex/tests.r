@@ -10,7 +10,7 @@ create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE,user.na
 
 
 # 2. Check sample solution should run without error
-check.problem.set('fill_in_test', getwd(),"fill_in_test_sample_solution.Rmd", reset=FALSE, from.knitr = FALSE)
+check.problem.set('fill_in_test', getwd(),"fill_in_test_sample_solution.Rmd", reset=FALSE, from.knitr = FALSE, do.check=TRUE)
 
 hint()
 stats()
@@ -19,7 +19,7 @@ make.submission(from.knitr = FALSE)
 
 # 3. Check empty file
 
-check.problem.set('fill_in_test', getwd(),"fill_in_test.Rmd" , reset=FALSE,from.knitr = FALSE)
+check.problem.set('fill_in_test', getwd(),"fill_in_test.Rmd" , reset=FALSE,from.knitr = FALSE, do.check=TRUE)
 
 # Check if hint works
 hint()
