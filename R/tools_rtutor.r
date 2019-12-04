@@ -489,7 +489,7 @@ example=parse.text.with.source = function() {
 }
 
 
-parse.text.with.source = function(text) {
+parse.text.with.source = function(text, verbose=FALSE) {
   restore.point("parse.text.with.source")
   if (is.null(text))
     return(NULL)
@@ -500,11 +500,13 @@ parse.text.with.source = function(text) {
   
   if (length(str)<length(e)) {
     nstr = sapply(e, deparse1)
-    cat("\nparse.text.with.source does not return correct source:\n")
-    cat("is:\n")
-    cat(paste0(str, collapse="\n"))
-    cat("should be:\n")
-    cat(paste0(nstr, collapse="\n"))
+    if (verbose) {
+      cat("\nparse.text.with.source does not return correct source:\n")
+      cat("is:\n")
+      cat(paste0(str, collapse="\n"))
+      cat("should be:\n")
+      cat(paste0(nstr, collapse="\n"))
+    }
     str = nstr
   }
   list(expr = e, source = str) 

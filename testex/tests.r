@@ -13,7 +13,7 @@ create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE,user.na
 check.problem.set('fill_in_test', getwd(),"fill_in_test_sample_solution.Rmd" , reset=FALSE)
 
 hint()
-#stats()
+stats()
 awards()
 make.submission(from.knitr = FALSE)
 
