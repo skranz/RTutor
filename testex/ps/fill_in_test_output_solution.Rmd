@@ -1,0 +1,60 @@
+
+---
+title: Problem Set fill_in_test
+output: 
+  html_document: 
+    keep_md: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+# Load libraries and source extra code
+library(dplyr)
+library(RTutor)
+
+
+# Options for rendering data frames
+# If you knit to a Word docx file, try
+# 
+# data.frame.theme="word" 
+# 
+# (needs RStudio > 1.2.1)
+# 
+# You can also set the options like
+# table.max.cols as chunk options
+# Makes sense if there are too many, too wide
+# columns in some chunks
+
+RTutor::set.knit.print.opts(data.frame.theme="code", table.max.rows=25, table.max.cols=NULL, round.digits=5, signif.digits=8)
+
+
+# continue knitting even if there is an error
+knitr::opts_chunk$set(error = TRUE) 
+```
+
+# Problemset Fill In Example
+
+Note: Always save your solution files with UTF-8 Encoding!
+
+Adapt the working directory below and run the setup chunk in RStudio. This creates the problem set files and the sample solution from this solution file.
+
+## Exercise 1 -- Fill in the placeholders
+
+a) 
+
+```{r "1_a"}
+x = c(1,NA,5)
+# # Compute the mean ignoring NA
+# mean(x,___)
+
+mean(x, na.rm = TRUE) 
+```
+
+
+***
+
+### Award: You did it
+Great you solved the test!
+
+***
+

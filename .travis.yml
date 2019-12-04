@@ -1,0 +1,35 @@
+language: r
+warnings_are_errors: false
+sudo: false
+cache: packages
+
+repos:
+  CRAN: https://cloud.r-project.org
+  sebkranz: https://skranz-repo.github.io/drat/
+
+r_github_packages:
+  - skranz/testex
+
+notifications:
+  email:
+    recipients:
+      - sebkranz@gmail.com
+    on_success: always # default: change
+    on_failure: always # default: always
+
+script:
+  - echo "travis_fold:start:R_CMD_BUILD folding starts"
+  - R CMD build --no-build-vignettes --no-manual .
+#  - R CMD check *tar.gz
+  - R CMD INSTALL *.tar.gz
+#  - R CMD INSTALL --no-docs --no-html .
+  - echo "travis_fold:end:R_CMD_BUILD folding ends"
+  - echo "travis_fold:start:run_et folding starts"
+  - Rscript testex/run_et.r
+  - echo "travis_fold:end:run_et folding ends"
+
+after_failure:
+  - Rscript testex/report.r
+
+after_success:
+  - Rscript testex/report.r

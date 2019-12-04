@@ -1,0 +1,30 @@
+# Problemset Fill In Example
+
+```{r 'check_ps', include=FALSE}
+
+user.name = 'Jane Doe' # set to your user name
+
+# To check your problem set, run the 
+# RStudio Addin 'Check Problemset'
+
+# Alternatively run the following lines
+library(RTutor)
+ps.dir = getwd() # directory of this file
+ps.file = 'fill_in_test.Rmd' # name of this file
+check.problem.set('fill_in_test', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+```
+
+
+Note: Always save your solution files with UTF-8 Encoding!
+
+Adapt the working directory below and run the setup chunk in RStudio. This creates the problem set files and the sample solution from this solution file.
+
+## Exercise 1 -- Fill in the placeholders
+
+a) 
+
+```{r "1_a"}
+x = c(1,NA,5)
+mean(x, na.rm = TRUE) 
+```
+

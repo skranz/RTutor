@@ -1,0 +1,34 @@
+# Problemset Fill In Example
+
+Note: Always save your solution files with UTF-8 Encoding!
+
+Adapt the working directory below and run the setup chunk in RStudio. This creates the problem set files and the sample solution from this solution file.
+#< ignore
+```{r "create_ps"}
+library(RTutor)
+#setwd("D:/libraries/RTutor/RTutor/inst/examples")
+ps.name = "fill_in"; sol.file = paste0(ps.name,"_sol.Rmd")
+# character vector of all packages you load in the problem set
+libs = c("ggplot2") 
+create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE, addons="quiz")
+```
+#>
+
+## Exercise 1 -- Fill in the placeholders
+
+a) 
+
+```{r}
+#< task
+x = c(1,NA,5)
+#>
+#< fill_in
+# # Compute the mean ignoring NA
+# mean(x,___)
+#>
+mean(x, na.rm = TRUE) 
+```
+
+#< award "You did it"
+Great you solved the test!
+#>
