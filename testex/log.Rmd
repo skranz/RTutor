@@ -1,7 +1,7 @@
 # Comparison of examples
 
-2019-12-04 09:31:32 (new) vs
-2019-12-04 09:12:41 (old)
+2019-12-04 11:51:30 (new) vs
+2019-12-04 09:58:17 (old)
 
 ## testex/tests.r 
 

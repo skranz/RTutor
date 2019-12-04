@@ -1,3 +1,6 @@
+tibble(x=1:5,y=2:6)
+
+
 # 1. We create the problem set
 setwd("testex/ps")
 library(RTutor)
@@ -10,9 +13,9 @@ create.ps(sol.file=sol.file, ps.name=ps.name,libs=libs, rps.has.sol=TRUE,user.na
 check.problem.set('fill_in_test', getwd(),"fill_in_test_sample_solution.Rmd" , reset=FALSE)
 
 hint()
-stats()
+#stats()
 awards()
-make.submission()
+make.submission(from.knitr = FALSE)
 
 # 3. Check empty file
 
