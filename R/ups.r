@@ -191,16 +191,16 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get
     return(old.stats())
 
 
-
+  cdt = as_tibble(rps$cdt)
 
   # Results of chunks
-  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,ex.ind, points)))
+  cu = as_tibble(cbind(ups$cu, dplyr::select(cdt,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
 
   # Results of addons like quizes
 
   if (NROW(ups$aou)>0) {
-    aou = dplyr::as_data_frame(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
+    aou = as_tibble(cbind(ups$aou, dplyr::select(rps$ao.dt, max.points, ex.name)))
     aou$ex.ind = match(rps$ao.dt$ex.name, rps$edt$ex.name)
     idf = rbind(
       dplyr::select(aou,ex.ind,solved, num.hint, points, max.points),
