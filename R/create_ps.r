@@ -42,8 +42,13 @@ examples.create.ps = function() {
 #' @param hint.on.fail shall by default a hint be shown already if the correctness test fails. If FALSE (default) hints are only shown if the user types hint() or, in the shiny version, presses the hint button.
 #' @param empty.task.txt A text that will be shown in chunks without any task block. Default is \code{empty.task.txt = "# Enter your code here."}
 #' @param placeholder The string you use as placeholder in fill_in blocks. By default \code{"___"}. This should be a pattern that you don't use in your normal code. If a user's input cannot be parsed, we replace this pattern by an internal represenataion that is valid R syntax.
+#' @param html.data.frame shall data frames in shiny-based problem set be shown as html? Default is \code{TRUE}.
+#' @param table.max.rows How many rows of a printed data frame shall be shown? Default is 25.
+#' @param round.digits Digits for rounding of shown data frames.
+#' @param signif.digits Significant digits for  shown data frames.
+#' @param knitr.opts.chunk A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___") {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___") {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -133,6 +138,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   if (require(digest))
     rps$cdt.hash = digest(rps$cdt)
   
+  rps$knitr.opts.chunk = knitr.opts.chunk
   #rps$knit.print.opts = knit.print.opts
   
   save.rps(rps)

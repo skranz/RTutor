@@ -637,8 +637,14 @@ stepwise.eval.stud.expr = function(stud.expr, ps=get.ps(), stud.env = ps$stud.en
   has.error = FALSE
 
   err.fun = function(e) {
-    ps$failure.message = paste0("evaluation error in \n  ",
+    msg = paste0("evaluation error in \n  ",
         deparse1(part.expr),"\n  ",adapt.console.err.message(as.character(e)))
+    if (has.substr(msg,".PH_._")) {
+      placeholder = get.placeholder(ps)
+      #msg = paste0("You have not yet replaced all placeholders ", placeholder)
+      msg = gsub(".PH_._",placeholder,msg)
+    }
+    ps$failure.message = msg
     has.error <<- TRUE
   }
 

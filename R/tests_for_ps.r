@@ -139,16 +139,12 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
   return(TRUE)
 }
 
-
-
-
 # Simply shows a success message when this test is reached for the first time!
 # @export
 show.success.message = function(success.message,...) {
   add.success(success.message,...)
   return(TRUE)
 }
-
 
 #' Checks whether the user makes a particular function call in his code or call a particular R statement
 #'
@@ -162,7 +158,7 @@ show.success.message = function(success.message,...) {
 #' @param sort.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with \code{check.cols}.
 #' @export
 check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, ignore.arg=NULL, success.message=NULL, failure.message = NULL,no.command.failure.message = NULL, ok.if.same.val = NA,s3.method=NULL,
-  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail),check.cols=NULL, sort.cols=NULL, ...
+  ps=get.ps(),stud.env = ps$stud.env, part=ps$part, stud.expr.li = ps$stud.expr.li, verbose=FALSE, noeval=isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail),check.cols=NULL, sort.cols=NULL, is.ggplot=FALSE,...
 ) {
 
   expr = call = substitute(call)

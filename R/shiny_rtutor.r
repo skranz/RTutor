@@ -93,6 +93,11 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
   # We need now to explicitly call registerS3method
   register.knit.print.functions(knit.print.opts)
   
+  knitr.opts.chunk = ps$rps[["knitr.opts.chunk"]]
+  if (!is.null(knitr.opts.chunk)) {
+    do.call(knitr::opts_chunk$set,knitr.opts.chunk)
+  }
+  
   restore.point("show.shiny.ps")
 
   n = NROW(ps$cdt)

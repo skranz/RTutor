@@ -316,7 +316,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env))
   }  else if (cde$type == "math" | cde$type == "formula") {
     #restore.point("math.fail")
-    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=" ")
+    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=c(" ","\n"))
 
     if (from.assign) {
       hdisplay("You have to assign a correct formula to the variable '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
@@ -324,7 +324,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       hdisplay("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   } else if (cde$type == "fun" & scramble.fun) { 
-    hint.str = scramble.text(deparse(call),"?",0.45, keep.char=c(" ",",","(",")"))
+    hint.str = scramble.text(deparse(call),"?",0.45, keep.char=c(" ",",","(",")","\n"))
 
     if (from.assign) {
       hdisplay("You have to assign a correct function call to '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
@@ -335,7 +335,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (!from.assign)
       hdisplay("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
   }  else if (cde$type == "subset") {
-    hint.str = scramble.text(deparse(call),"?",0.6, keep.char=c("[","]", "$",","))
+    hint.str = scramble.text(deparse(call),"?",0.6, keep.char=c("[","]", "$",",","\n"))
     if (from.assign) {
       hdisplay("Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
@@ -350,7 +350,8 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
 
 }
 
-scramble.text = function(txt, scramble.char="?", share=0.5, keep.char=" ") {
+scramble.text = function(txt, scramble.char="?", share=0.5, keep.char=c(" ","\n")) {
+  txt = merge.lines(txt,"\n")
   vec = strsplit(txt, "")[[1]]
 
   keep = which(!(vec %in% keep.char))

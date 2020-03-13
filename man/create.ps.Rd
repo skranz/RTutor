@@ -15,10 +15,10 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
   signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
   = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits), e.points = 1,
-  min.chunk.points = 0, chunk.points = 0, keep.fill.in.output.sol = TRUE,
-  hint.on.fail = FALSE, empty.task.txt = "# Enter your code here.",
-  placeholder = "___")
+  round.digits, signif.digits = signif.digits), knitr.opts.chunk = list(dev =
+  "svg"), e.points = 1, min.chunk.points = 0, chunk.points = 0,
+  keep.fill.in.output.sol = TRUE, hint.on.fail = FALSE,
+  empty.task.txt = "# Enter your code here.", placeholder = "___")
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -48,6 +48,16 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{preknit}{shall sample solution of chunks be knitted when problem set is generated. Default = FALSE}
 
 \item{force.noeval}{shall problem set only be shown in noeval mode? (Used as a security against accidentially forgetting to set noeval=TRUE in show.ps, when showing the problem set in a web app.)}
+
+\item{html.data.frame}{shall data frames in shiny-based problem set be shown as html? Default is \code{TRUE}.}
+
+\item{table.max.rows}{How many rows of a printed data frame shall be shown? Default is 25.}
+
+\item{round.digits}{Digits for rounding of shown data frames.}
+
+\item{signif.digits}{Significant digits for  shown data frames.}
+
+\item{knitr.opts.chunk}{A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.}
 
 \item{e.points}{how many points does the user get per required expression in a chunk (expressions in a task do not count). Default=1}
 
