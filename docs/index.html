@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.3.13</span>
       </span>
     </div>
 
@@ -95,11 +95,24 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
+
 <div id="rtutor-interactive-r-problem-sets" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#rtutor-interactive-r-problem-sets" class="anchor"></a>RTutor: Interactive R Problem Sets</h1></div>
 <p><strong>Author: Sebastian Kranz, Ulm University</strong></p>
 <p>RTutor is an R package that allows to develop interactive R exercises. Problem sets can be solved off-line or can be hosted in the web with shinyapps.io. Problem sets can be designed as a Markdown .rmd file (to be solved directly in RStudio) or use a browser-based interface powered by RStudio’s Shiny. While the web interface looks nicer, I personally use problem sets in the Markdown format when teaching advanced economic classes.</p>
+</div>
+<div id="installation" class="section level1">
+<h1 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h1>
+<p>RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"RTutor"</span>,<span class="dt">repos =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"https://skranz-repo.github.io/drat/"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">getOption</a></span>(<span class="st">"repos"</span>)))</a></code></pre></div>
+<p><strong>Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.</strong></p>
+<div id="create-your-own-problem-sets" class="section level2">
+<h2 class="hasAnchor">
+<a href="#create-your-own-problem-sets" class="anchor"></a>Create your own problem sets</h2>
+<p>Take a look at the <a href="https://skranz.github.io/RTutor/articles">manuals</a> for documentation of how to create own problem sets. Also look at the examples below.</p>
+</div>
 <div id="trying-out-some-problem-sets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#trying-out-some-problem-sets" class="anchor"></a>Trying out some problem sets</h2>
@@ -299,13 +312,16 @@
 </ul>
 </div>
 </div>
+<div id="courses-that-use-rtutor-problem-sets" class="section level2">
+<h2 class="hasAnchor">
+<a href="#courses-that-use-rtutor-problem-sets" class="anchor"></a>Courses that use RTutor problem sets</h2>
+<p>If you a have course that uses RTutor that you want to share, just send me an email and I add your course to the list!</p>
+<ul>
+<li><p>RTutor is used in a data science project course taught by Alex Rieber for business and economics students at Ulm University. The problem sets teach basic skills in R, including tidyverse data wrangling, as well as econometric and machine learning basic with economic applications. Alex published the problem sets and other course material <a href="https://github.com/AlexRieber/datascience-teaching">here on Github</a>. You find on the Github pages also links that allow you to test the problem sets on the rstudio cloud. The course is in German but Alex already started to make an English version of the problem sets, which will be added once finished.</p></li>
+<li><p>Jade Benjamin-Chung from UC Berkeley School of Public Health has created with RTutor online tutorials for an <a href="https://ucb-epi-r.github.io/">introductory R course for epidemiologists</a>. If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.</p></li>
+<li><p>I have published the RTutor problem sets and other material from my course in empirical industrial organization class in this <a href="https://github.com/skranz/Empirical_IO_Course">Github repository</a>. You can directly work on the problem sets <a href="https://rstudio.cloud/project/1063712">here on rstudio.cloud</a>. The course focuses a lot on estimating demand functions, but the R problem sets also cover other material, like data wrangling with dplyr.</p></li>
+</ul>
 </div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<p>RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"RTutor"</span>,<span class="dt">repos =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"https://skranz-repo.github.io/drat/"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">getOption</a></span>(<span class="st">"repos"</span>)))</a></code></pre></div>
-<p><strong>Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.</strong></p>
 <div id="installing-rtutor-directly-from-github" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installing-rtutor-directly-from-github" class="anchor"></a>Installing RTutor directly from Github</h2>
@@ -321,13 +337,8 @@
 <a class="sourceLine" id="cb3-5" title="5">install.rtutor(update.github=TRUE)</a>
 <a class="sourceLine" id="cb3-6" title="6">library(RTutor)</a></code></pre></div>
 <p>If you only want to update the RTutor package (and have the other packages already installed). You can just type:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade_dependencies=FALSE)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</a></code></pre></div>
 <p>(You may have to restart your R session / RStudio for the update to work.)</p>
-</div>
-<div id="create-your-own-problem-sets" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-your-own-problem-sets" class="anchor"></a>Create your own problem sets</h2>
-<p>Take a look at the <a href="https://skranz.github.io/RTutor/articles">manuals</a> for documentation of how to create own problem sets.</p>
 </div>
 <div id="suggestions--feedback" class="section level2">
 <h2 class="hasAnchor">
@@ -353,7 +364,13 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/skranz/RTutor"><img src="https://travis-ci.org/skranz/RTutor.svg?branch=master" alt="Build Status"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
       <footer><div class="copyright">

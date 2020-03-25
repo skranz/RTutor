@@ -6,6 +6,21 @@
 
 RTutor is an R package that allows to develop interactive R exercises. Problem sets can be solved off-line or can be hosted in the web with shinyapps.io. Problem sets can be designed as a Markdown  .rmd file (to be solved directly in RStudio) or use a browser-based interface powered by RStudio's Shiny. While the web interface looks nicer, I personally use problem sets in the Markdown format when teaching advanced economic classes.
 
+# Installation
+
+RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:
+
+```r
+install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOption("repos")))
+```
+**Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.**
+
+
+## Create your own problem sets
+
+Take a look at the [manuals](https://skranz.github.io/RTutor/articles) for documentation of how to create own problem sets. Also look at the examples below.
+
+
 ## Trying out some problem sets
 
 You can try out the Rmarkdown version of RTutor via RStudio Cloud:
@@ -91,14 +106,16 @@ For the web-based interface, several students at Ulm University have created ver
 ### An interesting case study of a bank run (by Joachim Plath)
   - Github: https://github.com/skranz/RTutorBankRuns
 
-# Installation
 
-RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:
+## Courses that use RTutor problem sets
 
-```r
-install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOption("repos")))
-```
-**Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.**
+If you a have course that uses RTutor that you want to share, just send me an email and I add your course to the list! 
+
+- RTutor is used in a data science project course taught by Alex Rieber for business and economics students at Ulm University. The problem sets teach basic skills in R, including tidyverse data wrangling, as well as econometric and machine learning basic with economic applications. Alex published the problem sets and other course material [here on Github](https://github.com/AlexRieber/datascience-teaching). You find on the Github pages also links that allow you to test the problem sets on the rstudio cloud. The course is in German but Alex already started to make an English version of the problem sets, which will be added once finished.
+
+- Jade Benjamin-Chung from UC Berkeley School of Public Health has created with RTutor online tutorials for an [introductory R course for epidemiologists](https://ucb-epi-r.github.io/). If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.
+
+- I have published the RTutor problem sets and other material from my course in empirical industrial organization class in this [Github repository](https://github.com/skranz/Empirical_IO_Course). You can directly work on the problem sets [here on rstudio.cloud](https://rstudio.cloud/project/1063712). The course focuses a lot on estimating demand functions, but the R problem sets also cover other material, like data wrangling with dplyr.
 
 ## Installing RTutor directly from Github
 
@@ -128,10 +145,6 @@ devtools::install_github("skranz/RTutor", upgrade="ask")
 ```
 (You may have to restart your R session / RStudio for the update to work.)
 
-
-## Create your own problem sets
-
-Take a look at the [manuals](https://skranz.github.io/RTutor/articles) for documentation of how to create own problem sets.
 
 ## Suggestions & Feedback
 
