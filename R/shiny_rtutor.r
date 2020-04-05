@@ -216,7 +216,7 @@ init.shiny.ps = function(ps.name,dir=getwd(), user.name="default_user",  sav.fil
   
   ps$button.counter = list()
   
-  cdt =as_data_frame(ps$cdt)
+  cdt = as_tibble(ps$cdt)
   
   cdt$nali = replicate(n, list(), simplify=FALSE)
   cdt$ui = replicate(n, list(), simplify=FALSE)

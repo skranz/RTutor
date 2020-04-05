@@ -37,7 +37,7 @@ rtutor.make.frame.ps.te = function(txt,addons="quiz",filter.fun = NULL,...) {
   parent.types = c("frame","column","chunk","preknit","precompute","knit","compute","info")
   pt = get.levels.parents.by.types(df$level, df$type, parent.types)
 
-  bdf = cbind(data.frame(index = 1:NROW(df)),df,pt) %>% dplyr::as_data_frame
+  bdf = cbind(data.frame(index = 1:NROW(df)),df,pt) %>% as_tibble
   bdf$obj = bdf$ui = vector("list", NROW(bdf))
   bdf$prefixed = bdf$ui.in.parent = bdf$has.ui = bdf$is.addon =  FALSE
   

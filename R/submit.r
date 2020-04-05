@@ -87,9 +87,10 @@ make.submission = function(ps=get.ps(), user.name=get.user.name(),  ps.name=ps$n
   
   
   sub = as.list(ups)
+  sub$cu$stud.code = cdt$stud.code
   rps = ps$rps
   # Results of chunks
-  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
+  cu = as_tibble(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
   
   #sub$cu = as.data.frame(cu)
@@ -143,11 +144,13 @@ load.submission = function(file) {
 ups.to.sub.file = function(ups=get.ups(), ps=get.ps(), sub.file=NULL, rmd.code=NULL) {
   restore.point("ups.to.sub.file")
   sub = as.list(ups)
+  # Note we need show.ps(auto.save.code=TRUE)
+  #sub$cu$stud.code = ps$stud.code
   user.name = sub$user.name
   ps.name = ps$name
   rps = ps$rps
   # Results of chunks
-  cu = dplyr::as_data_frame(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
+  cu = dplyr::as_tibble(cbind(ups$cu, dplyr::select(rps$cdt,chunk.ps.ind,ex.ind, points)))
   cu = mutate(cu, type="chunk", max.points = points, points=max.points*solved)
   
   #sub$cu = as.data.frame(cu)
