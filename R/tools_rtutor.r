@@ -649,7 +649,7 @@ get.top.x.obs = function(v, top.x=5, digits=4) {
   restore.point("get.top.x.obs")
   uv = unique(v)
   
-  qu.df = dplyr::data_frame(v=v)
+  qu.df = tibble(v=v)
   counts.df = summarise(group_by(qu.df,v), counts = n())
   
   shares = counts.df[["counts"]] / length(v)

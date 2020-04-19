@@ -39,7 +39,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   cdt = ps$cdt
   if (isTRUE(ups.save$chunks)) {
     # Store chunk results
-    cu = dplyr::data_frame(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
+    cu = tibble(solved=rep(FALSE, NROW(cdt)), first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA))
   } else {
     cu = NULL
   }
@@ -47,7 +47,7 @@ init.ups = function(user.name=ps$user.name, ps = get.ps(), ups.save=ps$ups.save)
   # Store add-on results
   ao.dt = ps$rps$ao.dt
   if (NROW(ao.dt)>0 & isTRUE(ups.save$addons)) {
-    aou = dplyr::data_frame(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
+    aou = tibble(solved=rep(FALSE,NROW(ao.dt)) , first.check.date=as.POSIXct(NA),  num.failed=0, num.hint=0, solved.date=as.POSIXct(NA), points=0, score=NA_real_)
   } else {
     aou = NULL
   }
