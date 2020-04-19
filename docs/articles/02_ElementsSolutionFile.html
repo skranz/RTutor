@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.10.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.4.5</span>
       </span>
     </div>
 
@@ -110,30 +110,30 @@
 <a href="#elements-of-solution-files" class="anchor"></a>Elements of Solution Files</h1>
 <p>Let us dig a bit deeper into the structure of the RMarkdown file that specify an RTutor problem set. Here is the code of a simple problem set.</p>
 <p>Important: If you want to run this example, copy the <a href="https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/SmallExample_sol.Rmd">Rmd file on Github</a>. Copy pasting the code below won’t work.</p>
-<pre><code>#&lt; ignore
-```{r "Create problem set files"}
-setwd("C:/folder_of_this_solution_file")
-ps.name = "SmallExample"; sol.file = paste0(ps.name,"_sol.Rmd")
-libs = NULL # character vector of all packages you load in the problem set
-create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
-```
-#&gt;
-
-## Exercise 1 -- Summary statistics
-
-a) We often want to compute some summary statistic of a vector.
-For example:
-```{r}
-#&lt; task
-x = 10:20
-# Computing the sum of x
-sum(x)
-#&gt;
-```
-Now compute the mean of x.
-```{r}
-mean(x)
-```</code></pre>
+<pre><code>    #&lt; ignore
+    ```{r "Create problem set files"}
+    setwd("C:/folder_of_this_solution_file")
+    ps.name = "SmallExample"; sol.file = paste0(ps.name,"_sol.Rmd")
+    libs = NULL # character vector of all packages you load in the problem set
+    create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs)
+    ```
+    #&gt;
+    
+    ## Exercise 1 -- Summary statistics
+    
+    a) We often want to compute some summary statistic of a vector.
+    For example:
+    ```{r}
+    #&lt; task
+    x = 10:20
+    # Computing the sum of x
+    sum(x)
+    #&gt;
+    ```
+    Now compute the mean of x.
+    ```{r}
+    mean(x)
+    ```</code></pre>
 <p>As in a normal RMarkdown down file we have text and code chunks intermingled. In addition RTutor recognizes several keywords with special meaning.</p>
 <p>In the example above, we have:</p>
 <ul>
@@ -142,9 +142,9 @@ mean(x)
 <li>Inside the first real chunk we have a task block starting with the line <code>#&lt; task</code> and ending with the line <code>#&gt;</code> Chunk code inside a task block will be shown to students. Chunk code outside any block describes the sample solution that will not be shown.</li>
 </ul>
 <p>Run the setup chunk and take a look at the empty problem set <code>SmallExample.Rmd</code> that you can give to students. Places where students have to enter code will be marked by.</p>
-<pre><code>```{r }
-# enter your code here ...
-```</code></pre>
+<pre><code>    ```{r }
+    # enter your code here ...
+    ```</code></pre>
 <p>Below we give an overview of the most important special keywords and blocks you can use to specify an RTutor problem set.</p>
 <div id="exercise-header" class="section level2">
 <h2 class="hasAnchor">
@@ -169,13 +169,13 @@ mean(x)
 <h2 class="hasAnchor">
 <a href="#task-blocks" class="anchor"></a>task blocks</h2>
 <p>Code inside a task block will be shown to the user. Here is an example:</p>
-<pre><code>```{r}
-#&lt; task
-x = 10:20
-# Compute the mean of x
-#&gt;
-mean(x)
-```</code></pre>
+<pre><code>    ```{r}
+    #&lt; task
+    x = 10:20
+    # Compute the mean of x
+    #&gt;
+    mean(x)
+    ```</code></pre>
 <p>The definition of <code>x</code> and the R comment describing is in the the task block and will be shown to the user. Yet the last line is outside the task block and will not be shown, but shall be entered by the user herself.</p>
 </div>
 <div id="task_notest-vs-task-blocks" class="section level2">
@@ -183,12 +183,12 @@ mean(x)
 <a href="#task_notest-vs-task-blocks" class="anchor"></a>task_notest vs task blocks</h2>
 <p>Code in a normal task block will still be checked by RTutor. This means if a user modifies the given code in a task block, RTutor will not accept the solution. This requirement is useful if the task block specifies variables that will be used in later computations.</p>
 <p>Other times, we just want to show some output and no harm is done if the user changes the code. You should then put such code in a task_notest block. Here is an example:</p>
-<pre><code>```{r}
-#&lt; task_notest
-# Here is a plot
-plot(x=1:10,y= (1:10)^2)
-#&gt;
-```</code></pre>
+<pre><code>    ```{r}
+    #&lt; task_notest
+    # Here is a plot
+    plot(x=1:10,y= (1:10)^2)
+    #&gt;
+    ```</code></pre>
 <p>Code in a task_notest block will never be checked and created variables will not be available in later blocks. This makes it also faster to evaluate task_notest blocks than task blocks.</p>
 </div>
 <div id="fill_in-blocks" class="section level2">
@@ -203,16 +203,22 @@ plot(x=1:10,y= (1:10)^2)
 <a class="sourceLine" id="cb8-2" title="2">cat(<span class="st">"Just fill in the right values for x and y in the placeholders below."</span>)</a>
 <a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;</span></a>
 <a class="sourceLine" id="cb8-4" title="4"><span class="co">#&lt; fill_in</span></a>
-<a class="sourceLine" id="cb8-5" title="5"><span class="co"># ggplot(data, aes(x= ___, y = ___)) +</span></a>
-<a class="sourceLine" id="cb8-6" title="6"><span class="co">#  geom_point() +</span></a>
-<a class="sourceLine" id="cb8-7" title="7"><span class="co">#  ggtitle("My first ggplot!")</span></a>
+<a class="sourceLine" id="cb8-5" title="5">ggplot(data, aes(x= ___, y = ___)) +</a>
+<a class="sourceLine" id="cb8-6" title="6">  geom_point() +</a>
+<a class="sourceLine" id="cb8-7" title="7">  ggtitle(<span class="st">"My first ggplot!"</span>)</a>
 <a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt;</span></a>
 <a class="sourceLine" id="cb8-9" title="9"><span class="co"># Below the fill_in block put the sample solution</span></a>
 <a class="sourceLine" id="cb8-10" title="10">ggplot(data, aes(x=weight, y = height)) +</a>
 <a class="sourceLine" id="cb8-11" title="11">  geom_point() +</a>
 <a class="sourceLine" id="cb8-12" title="12">  ggtitle(<span class="st">"My first ggplot!"</span>)</a></code></pre></div>
-<p>The code with the place holders is not syntactically correct R code. That would cause <code>create.ps</code> to fail, if we would not have commented it out. For that reason fill_in blocks have the following special behavior. If <em>all</em> lines in a fill_in block start with <code>#</code> then these comments will be removed when shown to the student.</p>
-<p>Unfortunately, automatic hints don’t yet work very well with syntactically incorrect code. It can therefore be useful to add a custom hint at the beginning of the chunk. Such hints will always be shown if <code><a href="../reference/hint.html">hint()</a></code> is called, even if the student’s code is syntactically incorrect.</p>
+<p>Please use three underscores <code>___</code> as placeholders or change the argument <code>placeholder</code> in <code>create.ps</code> if you want another placeholder string for your problem set. The problem is that most nice placeholder strings create syntactically incorrect R code, which would mess up hints. The default placeholder <code>___</code> will be internally converted to a variable name to allow parsing a student’s expression that still contains placeholders.</p>
+<p>You should try to set your placeholders such that you get a syntactically R expression if the placeholder were a valid R variable name. If that is not possible, you should add a <code>#</code> in front of <em>every</em> line of your <code>fill_in</code> block so that <code>create.ps</code> can correctly parse your expression. Here is an example:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co">#&lt; fill_in</span></a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="co"># # Insert for ___ the correct operator to multiply x with y</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="co"># x ___ y</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="co">#&gt;</span></a>
+<a class="sourceLine" id="cb9-5" title="5">x<span class="op">*</span>y</a></code></pre></div>
+<p>The initial <code>#</code> will be removed when shown to the student.</p>
 </div>
 <div id="notest-blocks" class="section level2">
 <h2 class="hasAnchor">
@@ -248,17 +254,17 @@ plot(x=1:10,y= (1:10)^2)
 <a href="#info-blocks" class="anchor"></a>info blocks</h2>
 <p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. In the shiny version of the problem set the content of an info block is shown inside a collapsible note. In the RStudio version, info blocks are less useful.</p>
 <p>Info blocks are helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode md"><code class="sourceCode markdown"><a class="sourceLine" id="cb9-1" title="1">  #&lt; info "useful functions for numeric vectors"</a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="bn">    Here are examples for useful R functions</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="bn">    ```{r}</span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="bn">    max(c(1,5,2)) # returns maximum</span></a>
-<a class="sourceLine" id="cb9-5" title="5"><span class="bn">    min(c(1,5,2)) # returns minimum</span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="bn">    </span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="bn">    sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA</span></a>
-<a class="sourceLine" id="cb9-8" title="8"><span class="bn">    cumsum(c(1,5,2)) # returns cummulated sum</span></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="bn">    diff(c(1,5,2)) # returns the vector of differences</span></a>
-<a class="sourceLine" id="cb9-10" title="10"><span class="bn">    ``` </span></a>
-<a class="sourceLine" id="cb9-11" title="11">  #&gt;  </a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode md"><code class="sourceCode markdown"><a class="sourceLine" id="cb10-1" title="1">  #&lt; info "useful functions for numeric vectors"</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="bn">    Here are examples for useful R functions</span></a>
+<a class="sourceLine" id="cb10-3" title="3"><span class="bn">    ```{r}</span></a>
+<a class="sourceLine" id="cb10-4" title="4"><span class="bn">    max(c(1,5,2)) # returns maximum</span></a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="bn">    min(c(1,5,2)) # returns minimum</span></a>
+<a class="sourceLine" id="cb10-6" title="6"><span class="bn">    </span></a>
+<a class="sourceLine" id="cb10-7" title="7"><span class="bn">    sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA</span></a>
+<a class="sourceLine" id="cb10-8" title="8"><span class="bn">    cumsum(c(1,5,2)) # returns cummulated sum</span></a>
+<a class="sourceLine" id="cb10-9" title="9"><span class="bn">    diff(c(1,5,2)) # returns the vector of differences</span></a>
+<a class="sourceLine" id="cb10-10" title="10"><span class="bn">    ``` </span></a>
+<a class="sourceLine" id="cb10-11" title="11">  #&gt;  </a></code></pre></div>
 <p>An info block can contain normal text and also code chunks. When the problem set is created all info blocks will be compiled via the knitr and markdown packages to html text. Since info blocks will be complied already when the problem set is created, you cannot used any variables that are declared outside the info block in the info block code chunks.</p>
 <p>If you want info blocks with code chunks that the user can solve use a <em>note block</em>.</p>
 </div>
@@ -267,16 +273,16 @@ plot(x=1:10,y= (1:10)^2)
 <a href="#notes-or-info-blocks-that-can-contain-chunks" class="anchor"></a>Notes – Or info blocks that can contain chunks</h2>
 <p>Info blocks cannot include chunks that the user shall solve. Notes are a variant of info blocks that can contain chunks for the user to be solved.</p>
 <p>The syntax for note blocks is non-standard, since I never updated RTutor to a parser that generally handles nested <code>#&lt;</code> … <code>#&gt;</code> blocks. Here is an example:</p>
-<pre><code>#! start_note "A note with a chunk"
-This is a note.
-
-```{r "1_1  6",optional=TRUE}
-#&lt; task
-# show that all integers between 0 and 10
-#&gt;
-1:10
-```
-#! end_note </code></pre>
+<pre><code>    #! start_note "A note with a chunk"
+    This is a note.
+    
+    ```{r "1_1  6",optional=TRUE}
+    #&lt; task
+    # show that all integers between 0 and 10
+    #&gt;
+    1:10
+    ```
+    #! end_note </code></pre>
 <p>Everything between the lines</p>
 <p><code>#! start_note "Title"</code></p>
 <p>and</p>
@@ -316,10 +322,10 @@ This is a note.
 <h2 class="hasAnchor">
 <a href="#optional-chunks" class="anchor"></a>Optional chunks</h2>
 <p>By default you have to solve all chunks in an exercise in the given order. If you set the chunk option <code>optional=TRUE</code>, a chunk need not be solved in order to continue. Example:</p>
-<pre><code>```{r "1_b", optional = TRUE}
-# Code here
-
-```</code></pre>
+<pre><code>    ```{r "1_b", optional = TRUE}
+    # Code here
+    
+    ```</code></pre>
 <p>This is in particular useful if you use notes that contain chunks. Note that variables that have been computed in optional chunks will not be known in later chunks.</p>
 <p>Note that <code>optional</code> is not a chunk option known by <code>knitr</code> but only used for RTutor.</p>
 </div>
@@ -327,30 +333,30 @@ This is a note.
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-output" class="anchor"></a>Chunks with HTML output</h2>
 <p>You can specify chunks whose output is native HTML code, e.g. if you want to show an HTML table or show a motion plot. As in normal rmarkdown, you can do so by setting the chunk option <code>results= "asis"</code>. Here is an example from an interactive problem set that shows a motion plot:</p>
-<pre><code>```{r "2_1_a_example", results = 'asis'}
-#&lt; task
-library(googleVis)
-mp = gvisMotionChart(Int.data,
-       idvar = "country", timevar = "year")
-plot(mp, tag = "chart")
-#&gt;
-```</code></pre>
+<pre><code>    ```{r "2_1_a_example", results = 'asis'}
+    #&lt; task
+    library(googleVis)
+    mp = gvisMotionChart(Int.data,
+           idvar = "country", timevar = "year")
+    plot(mp, tag = "chart")
+    #&gt;
+    ```</code></pre>
 <p>There are a lot of R packages that help creating nice HTML tables, like <code>stargazer</code>, or <code>hwriter</code>.</p>
 </div>
 <div id="chunks-with-html-widgets-as-outputs" class="section level2">
 <h2 class="hasAnchor">
 <a href="#chunks-with-html-widgets-as-outputs" class="anchor"></a>Chunks with HTML Widgets as outputs</h2>
 <p>It is also possible to have chunks that have HTML widgets as output. If you use the shiny based version of RTutor you then need some additional chunk options. Here is an example for the leaflet widget:</p>
-<pre><code>```{r output="htmlwidget", widget="leaflet"}
-#&lt; task_notest
-SFmap &lt;- leaflet() %&gt;% 
-  addTiles() %&gt;% 
-  setView(9.9620289,48.4251394, zoom = 11) %&gt;% 
-  addMarkers(9.963614702355699,48.42517242865929,
-    popup = 'RTutor was created here at Ulm University')
-SFmap
-#&gt;
-```</code></pre>
+<pre><code>    ```{r output="htmlwidget", widget="leaflet"}
+    #&lt; task_notest
+    SFmap &lt;- leaflet() %&gt;% 
+      addTiles() %&gt;% 
+      setView(9.9620289,48.4251394, zoom = 11) %&gt;% 
+      addMarkers(9.963614702355699,48.42517242865929,
+        popup = 'RTutor was created here at Ulm University')
+    SFmap
+    #&gt;
+    ```</code></pre>
 <p>The <code>widget</code> argument is typically the name of the R package in which the html widget is specified.</p>
 </div>
 <div id="customizing-data-frame-printer" class="section level2">
@@ -363,11 +369,11 @@ SFmap
 <h2 class="hasAnchor">
 <a href="#specifying-figure-width-and-height-and-other-knitr-chunk-options" class="anchor"></a>Specifying figure width and height and other knitr chunk options</h2>
 <p>If your chunk plots a figure, you may want to specify the width and height of the resulting figure. You can do this like for normal RMarkdown files with the chunk options <code>fig.width</code> and <code>fig.height</code> that specify width and height in inches.</p>
-<pre><code>```{r "1_a", fig.width=12, fig.height=5}
-#&lt; task
-plot(1:10,(1:10)^2)
-#&gt;
-```</code></pre>
+<pre><code>    ```{r "1_a", fig.width=12, fig.height=5}
+    #&lt; task
+    plot(1:10,(1:10)^2)
+    #&gt;
+    ```</code></pre>
 <p>You can also specify other chunk options of the <code>knitr</code> package. An overview is given here:</p>
 <p><a href="http://yihui.name/knitr/options/">http://yihui.name/knitr/options/</a></p>
 </div>
@@ -437,8 +443,15 @@ plot(1:10,(1:10)^2)
   var sc_project=12051162; 
   var sc_invisible=1; 
   var sc_security="60139410"; 
-  </script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="Web Analytics
-  Made Easy - StatCounter" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="Web Analytics Made Easy -
+  </script>
+  <script type="text/javascript"
+  src="https://www.statcounter.com/counter/counter.js"
+  async></script>
+  <noscript><div class="statcounter"><a title="Web Analytics
+  Made Easy - StatCounter" href="https://statcounter.com/"
+  target="_blank"><img class="statcounter"
+  src="https://c.statcounter.com/12051162/0/60139410/1/"
+  alt="Web Analytics Made Easy -
   StatCounter"></a></div></noscript>
   
   

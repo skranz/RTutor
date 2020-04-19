@@ -411,15 +411,15 @@ One option would be to just provide the plotting commands in a `task_notest` blo
 An alternative would be to specify in your solution  a fill in block, like:
 ```s
 #< fill_in
-# # Fill in the ???
-# ggplot(data = counties,aes(x=???, y=population, colour=???)) +
-#  geom_point()+
-#  xlim(c(0, 0.1)) + 
-#  ylim(c(0, 500000)) + 
-#  labs(title="Area vs Population", 
-#       y="Population", 
-#       x="Area") +
-#  theme_bw()
+# Fill in the ___
+ggplot(data = counties,aes(x=___, y=population, colour=___)) +
+  geom_point()+
+  xlim(c(0, 0.1)) + 
+  ylim(c(0, 500000)) + 
+  labs(title="Area vs Population", 
+       y="Population", 
+       x="Area") +
+  theme_bw()
 #>
 # Sample solution
 ggplot(data = counties,aes(x=area, y=population, colour=state)) +
@@ -430,29 +430,6 @@ ggplot(data = counties,aes(x=area, y=population, colour=state)) +
        y="Population", 
        x="Area") +
   theme_bw()
-#< test_arg
-ok.if.same.val = FALSE
-#>
 ```
-Here the student only has to fill in the two mising aesthetics. RTutor accepts the solution only if the student has the exact sample solution, but since only blanks have to be filled in that should be possible.
 
-We put the code in the `fill_in` block in comments, since due to the `???` this is not syntactically correct R code and `create.ps` would fail otherwise. The student will directly see the code without comments, however:
-
-```s
-# Fill in the ???
-ggplot(data = counties,aes(x=???, y=population, colour=???)) +
-  geom_point()+
-  xlim(c(0, 0.1)) + 
-  ylim(c(0, 500000)) + 
-  labs(title="Area vs Population", 
-    y="Population", 
-  x="Area") +
-  theme_bw()
-```
-The block
-```s
-#< test_arg
-ok.if.same.val = FALSE
-#>
-```
-is optional. It has the effect that when checking the student's solution RTutor does not need to evaluate the sample solution or the student's solution but just compares the arguments of the function call with the student solution. This makes checking the the problem set faster.
+Here the student only has to fill in the two mising aesthetics. Please use as placeholders the `___`, since RTutor's hints have special treatment that internally replaces the `___` with a syntactically valid R variable name in order to parse and analyse students solutions. 

@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.4.5</span>
       </span>
     </div>
 
@@ -110,7 +110,7 @@
 <a href="#ways-to-distribute-a-rtutor-problem-set" class="anchor"></a>Ways to distribute a RTutor problem set</h2>
 <p>Once you have created and tested one or several RTutor problem sets, you want to distribute them to users. There are different ways for doing so.</p>
 <ol style="list-style-type: decimal">
-<li><p>Just provide the users the .rps (and possible .rmd file for markdown based problem sets) and additional material and let them manually copy the files in their working directory.</p></li>
+<li><p>Just provide the users a zip file that contains the .rps, and for RMarkdown based problem sets the .rmd file, as well as needed data sets. Let users manually extract those files in their working directory. It can also be nice to put everything into a folder to which you add a RStudio project file, and then zip the folder.</p></li>
 <li><p>Create an R package that contains one or more problem sets (including supplementary data) and host it on Github or CRAN.</p></li>
 <li><p>Host the problem set directly in the web using shinyapps.io or another web server that runs shiny server.</p></li>
 </ol>
@@ -165,7 +165,7 @@
 <h3 class="hasAnchor">
 <a href="#step-3-add-data-sets-and-other-files" class="anchor"></a>Step 3 Add data sets and other files</h3>
 <p>If you want to distribute the data sets used in your problem set directly with your problem sets, copy those data sets into the following subfolder of your package folder:</p>
-<pre><code>/inst/ps/problemset_name/material/</code></pre>
+<pre><code>    /inst/ps/problemset_name/material/</code></pre>
 <p>Also take a look at the /inst/ps/problemset_name folder. It should contain at least the .rps, _sol.rmd file. If your problem set uses an extra.code.file or var.text.file, those files should also be there, to be able to rebuild the .rps file from the solution file.</p>
 </div>
 <div id="if-you-want-no-open-access-to-the-sample-solution" class="section level3">
@@ -305,8 +305,15 @@
   var sc_project=12051162; 
   var sc_invisible=1; 
   var sc_security="60139410"; 
-  </script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="Web Analytics
-  Made Easy - StatCounter" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="Web Analytics Made Easy -
+  </script>
+  <script type="text/javascript"
+  src="https://www.statcounter.com/counter/counter.js"
+  async></script>
+  <noscript><div class="statcounter"><a title="Web Analytics
+  Made Easy - StatCounter" href="https://statcounter.com/"
+  target="_blank"><img class="statcounter"
+  src="https://c.statcounter.com/12051162/0/60139410/1/"
+  alt="Web Analytics Made Easy -
   StatCounter"></a></div></noscript>
   
   

@@ -128,9 +128,9 @@ You specification in your solution file would look like
 cat("Just fill in the right values for x and y in the placeholders below.")
 #>
 #< fill_in
-# ggplot(data, aes(x= ___, y = ___)) +
-#  geom_point() +
-#  ggtitle("My first ggplot!")
+ggplot(data, aes(x= ___, y = ___)) +
+  geom_point() +
+  ggtitle("My first ggplot!")
 #>
 # Below the fill_in block put the sample solution
 ggplot(data, aes(x=weight, y = height)) +
@@ -138,9 +138,19 @@ ggplot(data, aes(x=weight, y = height)) +
   ggtitle("My first ggplot!")
 ```
 
-The code with the place holders is not syntactically correct R code. That would cause `create.ps` to fail, if we would not have commented it out. For that reason fill_in blocks have the following special behavior. If *all* lines in a fill_in block start with `# ` then these comments will be removed when shown to the student.
+Please use three underscores `___` as placeholders or change the argument `placeholder` in `create.ps` if you want another placeholder string for your problem set. The problem is that most nice placeholder strings create syntactically incorrect R code, which would mess up hints. The default placeholder `___` will be internally converted to a variable name to allow parsing a student's expression that still contains placeholders.
 
-Unfortunately, automatic hints don't yet work very well with syntactically incorrect code. It can therefore be useful to add a custom hint at the beginning of the chunk. Such hints will always be shown if `hint()` is called, even if the student's code is syntactically incorrect.
+You should try to set your placeholders such that you get a syntactically R expression if the placeholder were a valid R variable name. If that is not possible, you should add a `# ` in front of *every* line of your `fill_in` block so that `create.ps` can correctly parse your expression. Here is an example:
+
+```{r}
+#< fill_in
+# # Insert for ___ the correct operator to multiply x with y
+# x ___ y
+#>
+x*y
+```
+
+The initial `# ` will be removed when shown to the student.
 
 ## notest blocks
 

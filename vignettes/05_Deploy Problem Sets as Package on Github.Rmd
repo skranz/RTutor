@@ -11,7 +11,7 @@ output:
 
 Once you have created and tested one or several RTutor problem sets, you want to distribute them to users. There are different ways for doing so.
 
-  1. Just provide the users the .rps (and possible .rmd file for markdown based problem sets) and additional material and let them manually copy the files in their working directory.
+  1. Just provide the users a zip file that contains the .rps, and for RMarkdown based problem sets the .rmd file, as well as needed data sets. Let users manually extract those files in their working directory. It can also be nice to put everything into a folder to which you add a RStudio project file, and then zip the folder.
   
   2. Create an R package that contains one or more problem sets (including supplementary data) and host it on Github or CRAN.
   
