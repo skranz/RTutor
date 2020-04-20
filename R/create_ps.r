@@ -1424,6 +1424,10 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file, warn=FALSE)) {
         keep.row[i] = FALSE
       } else {
         #dt$html[[i]] = withMathJax(HTML(markdownToHTML(text=code, fragment.only=!TRUE)))
+        if (length(code)>0) {
+          if (startsWith(code[1], "## Exercise "))
+            code[1] = paste0("## ",substring(code[1], 13))
+        }
         dt$html[[i]] = HTML(markdownToHTML(text=code, fragment.only=CREATE.PS.ENV$fragment.only))
       }
     } else if (dt$type[i]=="info") {
