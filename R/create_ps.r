@@ -947,6 +947,11 @@ add.te.precompute = function(te) {
 add.te.addon = function(te,type,args=NULL) {
   restore.point("add.te.addon")
   #stop()
+
+  if (length(args)==0) {
+    msg = paste0("You did not specify a name for your ", type, " with code\n\n", paste0(te$block.txt, collapse="\n"), "\nWrite e.g. \n#< ", type, ' "my_name"\nwhere you replace "my_name" with a unique name.')
+    stop(msg)
+  }
   name = args[[1]]
 
   txt = te$block.txt
