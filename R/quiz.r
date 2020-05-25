@@ -275,8 +275,10 @@ quiz.ui = function(qu, solution=FALSE) {
 }
 
 quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnId)) {
+  question = rmdtools::md2html(part$question)
+  
   head = list(
-    HTML(paste0("<p>",part$question,"</p>"))
+    HTML(paste0("<p>",question,"</p>"))
   )
   if (solution) {
     if (part$type=="numeric") {
@@ -388,10 +390,10 @@ click.check.quiz = function(app=getApp(), part.ind, qu, quiz.handler=NULL, ...) 
   }
   if (correct) {
     cat("Correct!")
-    setUI(part$resultId,HTML(part$success))
+    setUI(part$resultId,withMathJax(HTML(part$success)))
   } else {
     cat("Wrong")
-    setUI(part$resultId,HTML(part$failure))
+    setUI(part$resultId,withMathJax(HTML(part$failure)))
   }
   qu$state$part.solved[part.ind] = correct
   qu$state$solved = all(qu$state$part.solved)
