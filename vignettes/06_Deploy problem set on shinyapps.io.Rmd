@@ -17,7 +17,7 @@ However, if you want to host problem sets on shinyapps.io, all packages have to 
 
 Hence, if you have not done so, follow the corresponding installation instructions on 
 
-[https://github.com/skranz/RTutor](https://github.com/skranz/RTutor)
+[https://github.com/skranz/RTutor#user-content-installing-rtutor-directly-from-github](https://github.com/skranz/RTutor#user-content-installing-rtutor-directly-from-github)
 
 to reinstall your packages correspondingly.
 
