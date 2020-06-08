@@ -263,26 +263,26 @@ rtutor.ex.tab.change = function(value,...) {
 }
 
 
-observe.nextExBtns = function(session, ps=get.ps()) {
-  restore.point("observe.nextExBtns")
-  cdt = ps$cdt
-  ex.inds = setdiff(unique(cdt$ex.ind),0)
-  if (!is.null(ps$shiny.ex.inds))
-    ex.inds = intersect(ex.inds, ps$shiny.ex.inds)
-
-
-  ex.ind = 1
-  for (ex.ind in setdiff(ex.inds,max(ex.inds))) {
-    btn = paste0(paste0("nextExBtn", ex.ind))
-    observe({
-      #cat("observe ", btn)
-      if (has.counter.increased(btn, session$input[[btn]])) {
-        #cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
-        updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
-      }
-    })
-  }
-}
+# observe.nextExBtns = function(session, ps=get.ps()) {
+#   restore.point("observe.nextExBtns")
+#   cdt = ps$cdt
+#   ex.inds = setdiff(unique(cdt$ex.ind),0)
+#   if (!is.null(ps$shiny.ex.inds))
+#     ex.inds = intersect(ex.inds, ps$shiny.ex.inds)
+# 
+# 
+#   ex.ind = 1
+#   for (ex.ind in setdiff(ex.inds,max(ex.inds))) {
+#     btn = paste0(paste0("nextExBtn", ex.ind))
+#     observe({
+#       #cat("observe ", btn)
+#       if (has.counter.increased(btn, session$input[[btn]])) {
+#         #cat("Go to exercise ",paste0("exPanel",ex.ind+1),"...")
+#         updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
+#       }
+#     })
+#   }
+# }
 
 
 rtutor.eval.to.string = function(code, envir=parent.frame(), convert=TRUE, check.whitelist=isTRUE(ps$check.whitelist), ps=get.ps()) {
