@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/skranz/RTutor.svg?branch=master)](https://travis-ci.org/skranz/RTutor)
-
 # RTutor: Interactive R Problem Sets
 
 **Author: Sebastian Kranz, Ulm University** 
