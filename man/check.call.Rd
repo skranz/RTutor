@@ -10,7 +10,7 @@ check.call(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
   s3.method = NULL, ps = get.ps(), stud.env = ps$stud.env,
   part = ps$part, stud.expr.li = ps$stud.expr.li, verbose = FALSE,
   noeval = isTRUE(ps$noeval), hint.on.fail = isTRUE(ps$rps$hint.on.fail),
-  check.cols = NULL, sort.cols = NULL, ...)
+  check.cols = NULL, sort.cols = NULL, is.ggplot = FALSE, ...)
 }
 \arguments{
 \item{call}{the correct function call that shall be checked (not a quoted call)}
