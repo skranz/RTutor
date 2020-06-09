@@ -18,8 +18,8 @@ if (FALSE) {
   install_github("skranz/stringtools",ref = "master")
 
   # Pick master or development version of RTutor
-  install_github("LeverageData/RTutor",ref = "master")  
-  #install_github("LeverageData/RTutor",ref = "develop")
+  install_github("skranz/RTutor",ref = "master")  
+  #install_github("skranz/RTutor",ref = "develop")
 
   # You need to install your own package from your github account
   install_github("GITHUB_USERNAME/PACKAGE_NAME",ref = "master") 
