@@ -281,6 +281,7 @@ example.rtutor.app.skel = function() {
 #' @param app.dir Your local directory to which you want to deploy your app files
 #' @param rps.app locgical. If TRUE create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.
 #' @param pkg.name If you create the app from a package this is the name of your package.
+#' @param github.user If you create the app from a package this is the name of your Github user name.
 #' @param rps.file The name of your rps file without directory if you create the app from a .rps file
 #' @param rps.dir the folder of your rps.file 
 rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", libs=NULL, ...) {
