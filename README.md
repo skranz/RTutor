@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/skranz/RTutor.svg?branch=master)](https://travis-ci.org/skranz/RTutor)
-
 # RTutor: Interactive R Problem Sets
 
 **Author: Sebastian Kranz, Ulm University** 
@@ -82,6 +80,11 @@ For the web-based interface, several students at Ulm University have created ver
 ### Air pollution and house prices (by Moritz Sporer)
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
   - shinyapps.io: [https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/](https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/)
+
+### Predicting Effects of Carbon Pricing on US Electricity Production (by Daniel Dreyer)
+
+  - Github: [(https://github.com/danieldreyer/RTutorCO2ReductionCosts]((https://github.com/danieldreyer/RTutorCO2ReductionCosts)
+  - shinyapps.io: [https://danieldreyer.shinyapps.io/RTutorCO2ReductionCosts/](https://danieldreyer.shinyapps.io/RTutorCO2ReductionCosts/)
 
 ### A macroeconomic study of credit booms and busts (by Thomas Clausing)
   - Github: https://github.com/tcl89/creditboomsgonebust

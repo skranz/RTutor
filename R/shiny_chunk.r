@@ -547,12 +547,19 @@ edit.shiny.chunk = function(chunk.ind, ...,session=ps$session, ps=get.ps()) {
     # Just run all required previous chunks
     num.prev.chunks = sum(cdt$ex.ind %in% ck$ex.ind & cdt$chunk.ps.ind < (ck$chunk.ps.ind) & cdt$optional == FALSE & !cdt$is.solved)
     
-    timedMessage(nali$alertOut, html=colored.html(paste0("Try to run all ", num.prev.chunks," required earlier chunks..."),color = "#000088"), millis=Inf)
-      
-    res = run.required.previous.shiny.chunks(ps=ps, chunk.ind = chunk.ind,update.chunk.ui = TRUE, use.sample.solution = isTRUE(ps$show.sample.solution))
+    use.sample.solution = isTRUE(ps$prev.chunks.sample.solution)
+    
+    tmsg = if (use.sample.solution) {
+      paste0("Run all ", num.prev.chunks," required earlier chunks with sample solution...")
+    } else {
+      paste0("Try to run all ", num.prev.chunks," required earlier chunks...")
+    }
+    timedMessage(nali$alertOut, html=colored.html(tmsg,color = "#000088"), millis=Inf)
+
+    res = run.required.previous.shiny.chunks(ps=ps, chunk.ind = chunk.ind,update.chunk.ui = TRUE, use.sample.solution = use.sample.solution)
 
     if (res$ok) {
-      timedMessage(nali$alertOut, html=colored.html("Try to run all required earlier chunks... success!",color = "#000088"), millis=5000)
+      timedMessage(nali$alertOut, html=colored.html(paste0(tmsg, " success!"),color = "#000088"), millis=5000)
       # Don't run: otherwise code will vanish...
       #update.chunk.ui(chunk.ind, mode="input")
       #set.shiny.chunk(chunk.ind,input.code = ck$stud.code)

@@ -88,12 +88,13 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session, view.in.contain
   # Button for next exercise
   if (ex.ind < max(ps$cdt$ex.ind)) {
     btnId = paste0("nextExBtn", ex.ind)
-    nextExBtn = actionButton(btnId,"Go to next exercise...")
+    nextExBtn = simpleButton(btnId,"Go to next exercise...", class.add="nextExBtn")
+    #nextExBtn = actionButton(btnId,"Go to next exercise...")
     li = c(li, list(nextExBtn))    
-    buttonHandler(btnId, ex.ind=ex.ind, function(session=app$session,ex.ind, app=getApp(),...) {
-      cat("\nnextExBtn pressed...")
-      updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
-    })
+    # buttonHandler(btnId, ex.ind=ex.ind, function(session=app$session,ex.ind, app=getApp(),...) {
+    #   cat("\nnextExBtn pressed...")
+    #   updateTabsetPanel(session, inputId="exTabsetPanel", selected = paste0("exPanel",ex.ind+1))
+    # })
   }
   
   do.call("tabPanel", 
@@ -151,11 +152,15 @@ make.rtutor.page.ui = function(inner, ps = get.ps(), title="RTutor") {
   dir = paste0(system.file('www', package='RTutor'),"/highlightjs")
   addResourcePath('highlightjs', paste0(system.file('www', package='RTutor'),"/highlightjs"))
 
+  addResourcePath('rtutor', paste0(system.file('www', package='RTutor')))
+
   ret = navbarPage(title, header=
     tags$head(
       tags$script(src = 'highlightjs/highlight.min.js',
                   type = 'text/javascript'),
       tags$script(src = 'highlightjs/languages/r.min.js',
+                  type = 'text/javascript'),
+      tags$script(src = 'rtutor/rtutor.js',
                   type = 'text/javascript'),
       tags$link(rel = 'stylesheet', type = 'text/css',
                 href = 'highlightjs/styles/github.min.css'),
