@@ -459,10 +459,17 @@ run.required.previous.shiny.chunks = function(ps = get.ps(),chunk.ind, update.ch
     org.code = ps$cdt$stud.code
   }
   for (prev.chunk.ind in prev.chunk.inds) {
-    if (org.mode[prev.chunk.ind] != "input" | use.sample.solution) {
+    # We change input if we set it to sample solution
+    change.input = !identical(org.code[prev.chunk.ind], ps$cdt$stud.code[prev.chunk.ind])
+    if (change.input) {
+      ps$cdt$stud.code[[prev.chunk.ind]] = org.code[prev.chunk.ind]
       ok = check.shiny.chunk(chunk.ind = prev.chunk.ind, input.code=org.code[prev.chunk.ind])
     } else {
-      ok = check.shiny.chunk(chunk.ind = prev.chunk.ind)
+      if (org.mode[prev.chunk.ind] != "input") {
+        ok = check.shiny.chunk(chunk.ind = prev.chunk.ind, input.code=org.code[prev.chunk.ind])
+      } else {
+        ok = check.shiny.chunk(chunk.ind = prev.chunk.ind)
+      }
     }
     if (!ok) break
   }
