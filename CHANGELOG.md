@@ -1,5 +1,9 @@
 # RTutor (main)
 
+## 2020-06-10
+
+* Allow option for shiny based problem sets that one can start editing any chunk and previous 
+
 ## 2019-07-31
 
 * Allow adaptive custom hints.
