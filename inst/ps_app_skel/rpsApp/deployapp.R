@@ -18,8 +18,8 @@ if (FALSE) {
   install_github("skranz/stringtools",ref = "master")
 
   # Pick master or development version of RTutor
-  install_github("skranz/RTutor",ref = "master")  
-  #install_github("skranz/RTutor",ref = "develop")
+  install_github("FORK_DEFAULT/RTutor",ref = "master")  
+  #install_github("FORK_DEFAULT/RTutor",ref = "develop")
 
  }
 

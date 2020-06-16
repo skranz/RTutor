@@ -124,7 +124,7 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 #' @param clear.user If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.
 #' @param sample.solution If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.
 #' @param show.solution.btn If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.
-#' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
+#' @param launch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param dir your working directory for the problem set
 #' @param pkg.dir the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package
 #' @param rps.dir directory of rps.files. Will be set to default for current package
@@ -282,10 +282,11 @@ example.rtutor.app.skel = function() {
 #' @param rps.app logical. If `TRUE` create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.
 #' @param pkg.name If you create the app from a package this is the name of your package.
 #' @param github.user If you create the app from a package this is the name of your Github user name.
+#' @param rtutor.fork Note that shinyapps.io only works with R packages directly installed from Github or CRAN. It is therefore not possible to locally change RTutor and use the adapted version for your own problemsets. This option however allows you to refer to your fork on github. Default is the main package under skranz. 
 #' @param rps.file The name of your rps file without directory if you create the app from a .rps file
 #' @param rps.dir the folder of your rps.file 
 #' @param ps.show.opts ps.show() arguments which are added to the generated ps.show. Has to be given as a named list, e.g. `ps.show.opts=list(show.solution.btn=FALSE)` if one wants to create an app which does not show the solution button. By default only the necessary options are set. If those are provided, they are overwritten. This way, one can for example set the user.name to something different than Guest.
-rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", libs=NULL, ps.show.opts=NULL, ...) {
+rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", rtutor.fork="skranz", libs=NULL, ps.show.opts=NULL, ...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.app.skel")
 
@@ -353,6 +354,7 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
     txt = gsub("APP_PATH",app.dir,txt, fixed=TRUE)
     txt = gsub("GITHUB_USERNAME",github.user,txt, fixed=TRUE)
     txt = gsub("PS_OPTIONS",ps.show.opts.string,txt, fixed=TRUE)
+    txt = gsub("FORK_DEFAULT",rtutor.fork,txt,fixed=TRUE)
     writeLines(txt,file)
   }
   
