@@ -89,7 +89,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   rps$force.noeval = force.noeval
   rps$hint.on.fail = hint.on.fail
-  
+
   # Store information about empty problem set in order to easily export
   # an html problem set into it
   task.txt = sep.lines(task.txt)

@@ -1,8 +1,6 @@
 library(PACKAGE_NAME)
 setwd("./work") 
-app = run.ps(user.name = "Guest",deploy.local = FALSE,
-	         make.web.app = TRUE, save.nothing=FALSE,
-	         offline=FALSE,sample.solution = FALSE)
+app = run.ps(PS_OPTIONS)
 
 app$verbose = FALSE
 appReadyToRun(app)
