@@ -35,9 +35,9 @@ if (DIRECT_EXECUTION) {
   #  http://shiny.rstudio.com/articles/shinyapps.html 
 
   rsconnect::setAccountInfo(
-  	      name='<SHINYAPPS_USERNAME>',
-  		  token='<TOKEN>',
-		  secret='<SECRET>')
+    name='SHINYAPPS_USERNAME',
+    token='SHINYAPPS_TOKEN',
+    secret='SHINYAPPS_SECRET')
 
   library(rsconnect)
   

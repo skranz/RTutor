@@ -36,11 +36,10 @@ if (DIRECT_EXECUTION) {
   # You must adapt the following lines to your account as explained in
   #  http://shiny.rstudio.com/articles/shinyapps.html 
 
-  shinyapps::setAccountInfo(
-    name='<SHINYAPPS_USERNAME>',
-  	token='<TOKEN>',
-		secret='<SECRET>'
-  )
+  rsconnect::setAccountInfo(
+    name='SHINYAPPS_USERNAME',
+    token='SHINYAPPS_TOKEN',
+    secret='SHINYAPPS_SECRET')
 
   library(shinyapps)
   

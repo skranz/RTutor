@@ -287,7 +287,8 @@ example.rtutor.app.skel = function() {
 #' @param rps.dir the folder of your rps.file 
 #' @param ps.show.opts ps.show() arguments which are added to the generated ps.show. Has to be given as a named list, e.g. `ps.show.opts=list(show.solution.btn=FALSE)` if one wants to create an app which does not show the solution button. By default only the necessary options are set. If those are provided, they are overwritten. This way, one can for example set the user.name to something different than Guest.
 #' @param direct.execution If TRUE the generated file deployapp.R is directly executably in the sense that the safety checks within the file are off (i.e. the saving `if` clauses are set to TRUE). Use with care! Default is `FALSE`.
-rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", rtutor.fork="skranz", libs=NULL, ps.show.opts=NULL, direct.execution=FALSE, ...) {
+#' @param shinyapps.account.info Expects a List with the account info according to http://shiny.rstudio.com/articles/shinyapps.html . Default is list(name='<SHINYAPPS_USERNAME>', token='<TOKEN>',secret='<SECRET>'), i.e. the example from that site.
+rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", rtutor.fork="skranz", libs=NULL, ps.show.opts=NULL, direct.execution=FALSE, shinyapps.account.info=list(name='<SHINYAPPS_USERNAME>', token='<TOKEN>',secret='<SECRET>'), ...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.app.skel")
 
@@ -357,6 +358,9 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
     txt = gsub("PS_OPTIONS",ps.show.opts.string,txt, fixed=TRUE)
     txt = gsub("FORK_DEFAULT",rtutor.fork,txt,fixed=TRUE)
     txt = gsub("DIRECT_EXECUTION",direct.execution,txt,fixed=TRUE)
+    txt = gsub("SHINYAPPS_USERNAME",shinyapps.account.info$name, txt, fixed=TRUE)
+    txt = gsub("SHINYAPPS_TOKEN",shinyapps.account.info$token, txt, fixed=TRUE)
+    txt = gsub("SHINYAPPS_SECRET",shinyapps.account.info$secret, txt, fixed=TRUE)
     
     writeLines(txt,file)
   }
