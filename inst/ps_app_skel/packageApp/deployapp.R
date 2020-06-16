@@ -9,7 +9,7 @@
 # 3. All packages that are used must have be installed in your
 #    RStudio from CRAN or GITHUB (a local build of a package does not work)
 
-if (FALSE) {
+if (DIRECT_EXECUTION) {
   # Run this code if you need to install some packages	
   library(devtools)
   install_github("skranz/shinyEvents",ref = "master")  
@@ -30,7 +30,7 @@ if (FALSE) {
 #    http://shiny.rstudio.com/articles/shinyapps.html
 
 #    Then adapt and run the lines below
-if (FALSE) {
+if (DIRECT_EXECUTION) {
 
 
   # You must adapt the following lines to your account as explained in
