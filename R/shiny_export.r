@@ -1,6 +1,16 @@
 export.ui = function(ps=get.ps()) {
   restore.point("export.ui")
   make.export.handlers()
+  
+  if (ps$show.download.rmarkdown) {
+    rmarkdown.ui = list(
+      downloadButton("downloadRmdBtn","Download as RMarkdown"),
+      helpText("You can download the problem set with your current solution as an RMarkdown text file. Save it in a directory and open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution. (Note: If you directly open the file with RStudio without saving it first, the file is probably stored in a directory to which you have no write access and RStudio gives the error 'Access denied' if you want to knit the file.)"),
+      br())
+  } else {
+    rmarkdown.ui = NULL
+  } 
+  
   if (file.exists("downloads.zip")) {
     zip.ui = list(
       downloadButton("downloadZipBtn","Download additional material"),
@@ -18,9 +28,7 @@ export.ui = function(ps=get.ps()) {
   
   list(
     br(),
-    downloadButton("downloadRmdBtn","Download as RMarkdown"),
-    helpText("You can download the problem set with your current solution as an RMarkdown text file. Save it in a directory and open it with RStudio, to run freely the code on your computer and to create HTML, Word or PDF files from your solution. (Note: If you directly open the file with RStudio without saving it first, the file is probably stored in a directory to which you have no write access and RStudio gives the error 'Access denied' if you want to knit the file.)"),
-    br(),
+    rmarkdown.ui,
     sub.ui,
     zip.ui
   )
@@ -28,16 +36,19 @@ export.ui = function(ps=get.ps()) {
 
 
 make.export.handlers = function(session=ps$session,ps=get.ps(), app=getApp()) {
-  setDownloadHandler("downloadRmdBtn", 
-    filename = paste0(ps$name, ".Rmd"),
-    content = function(file) {
-      restore.point("downLoadAsRmdHandler")
-      txt = shiny.to.rmd.txt()
-      Encoding(txt) <- "UTF-8"
-      writeLines(txt, file,useBytes = TRUE)
-    },
-    contentType = "text/Rmd"
-  )
+  
+  if(ps$show.download.rmarkdown){
+    setDownloadHandler("downloadRmdBtn", 
+                       filename = paste0(ps$name, ".Rmd"),
+                       content = function(file) {
+                         restore.point("downLoadAsRmdHandler")
+                         txt = shiny.to.rmd.txt()
+                         Encoding(txt) <- "UTF-8"
+                         writeLines(txt, file,useBytes = TRUE)
+                       },
+                       contentType = "text/Rmd"
+    )
+  }
   
   setDownloadHandler("downloadSubBtn", 
     filename = paste0(ps$name,"__",ps$user.name,".sub"),
