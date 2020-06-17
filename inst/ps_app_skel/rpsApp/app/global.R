@@ -2,10 +2,7 @@ library(RTutor)
 DEPENDS_LIBRARIES
 
 setwd("./work")
-app =  show.ps(user.name = "Guest",
-			   ps.name = "PS_NAME",
-	           make.web.app = TRUE, save.nothing=FALSE,
-	           offline=FALSE,sample.solution = FALSE)
+app =  show.ps(PS_OPTIONS)
 
 app$verbose = FALSE
 appReadyToRun(app)

@@ -4,13 +4,25 @@
 \alias{run.ps}
 \title{Run a problem set from a package in the browser}
 \usage{
-run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
-  auto.save.code = FALSE, clear.user = FALSE, run.solved = FALSE,
-  sample.solution = FALSE, show.solution.btn = NA, launch.browser = TRUE,
-  info = get.package.info(package), deploy.local = !make.web.app,
-  make.web.app = FALSE, pkg.dir = path.package(info$package),
+run.ps(
+  user.name,
+  ps.name = info$ps[1],
+  dir = getwd(),
+  package = NULL,
+  auto.save.code = FALSE,
+  clear.user = FALSE,
+  run.solved = FALSE,
+  sample.solution = FALSE,
+  show.solution.btn = NA,
+  launch.browser = TRUE,
+  info = get.package.info(package),
+  deploy.local = !make.web.app,
+  make.web.app = FALSE,
+  pkg.dir = path.package(info$package),
   rps.dir = find.pkg.rps.dir(ps.name, pkg.dir),
-  material.dir = find.pkg.material.dir(ps.name, pkg.dir), ...)
+  material.dir = find.pkg.material.dir(ps.name, pkg.dir),
+  ...
+)
 }
 \arguments{
 \item{user.name}{Your user name}
@@ -31,6 +43,8 @@ run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
 
 \item{show.solution.btn}{If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.}
 
+\item{launch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
+
 \item{pkg.dir}{the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package}
 
 \item{rps.dir}{directory of rps.files. Will be set to default for current package}
@@ -38,8 +52,6 @@ run.ps(user.name, ps.name = info$ps[1], dir = getwd(), package = NULL,
 \item{material.dir}{directory of additional problem set files. Will be set to default for current package}
 
 \item{...}{additional arguments of show.ps}
-
-\item{lauch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 }
 \description{
 Only works if a package for the problem set is loaded.

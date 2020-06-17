@@ -124,7 +124,7 @@ find.pkg.material.dir = function(ps.name, pkg.dir) {
 #' @param clear.user If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.
 #' @param sample.solution If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.
 #' @param show.solution.btn If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.
-#' @param lauch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
+#' @param launch.browser if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane
 #' @param dir your working directory for the problem set
 #' @param pkg.dir the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package
 #' @param rps.dir directory of rps.files. Will be set to default for current package
@@ -279,11 +279,16 @@ example.rtutor.app.skel = function() {
 #' @param ps.name Name of the problem set
 #' @param app.name Name of your app. Should have no white spaces or special characters
 #' @param app.dir Your local directory to which you want to deploy your app files
-#' @param rps.app locgical. If TRUE create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.
+#' @param rps.app logical. If `TRUE` create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.
 #' @param pkg.name If you create the app from a package this is the name of your package.
+#' @param github.user If you create the app from a package this is the name of your Github user name.
+#' @param rtutor.fork Note that shinyapps.io only works with R packages directly installed from Github or CRAN. It is therefore not possible to locally change RTutor and use the adapted version for your own problemsets. This option however allows you to refer to your fork on github. Default is the main package under skranz. 
 #' @param rps.file The name of your rps file without directory if you create the app from a .rps file
 #' @param rps.dir the folder of your rps.file 
-rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", libs=NULL, ...) {
+#' @param ps.show.opts ps.show() arguments which are added to the generated ps.show. Has to be given as a named list, e.g. `ps.show.opts=list(show.solution.btn=FALSE)` if one wants to create an app which does not show the solution button. By default only the necessary options are set. If those are provided, they are overwritten. This way, one can for example set the user.name to something different than Guest.
+#' @param direct.execution If TRUE the generated file deployapp.R is directly executably in the sense that the safety checks within the file are off (i.e. the saving `if` clauses are set to TRUE). Use with care! Default is `FALSE`.
+#' @param shinyapps.account.info Expects a List with the account info according to http://shiny.rstudio.com/articles/shinyapps.html . Default is list(name='<SHINYAPPS_USERNAME>', token='<TOKEN>',secret='<SECRET>'), i.e. the example from that site.
+rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(rps.dir), pkg.name=NULL, rps.file = paste0(ps.name,".rps"), rps.dir=NULL, overwrite=FALSE, github.user = "GITHUB_USERNAME", rtutor.fork="skranz", libs=NULL, ps.show.opts=NULL, direct.execution=FALSE, shinyapps.account.info=list(name='<SHINYAPPS_USERNAME>', token='<TOKEN>',secret='<SECRET>'), ...) {
   #create.ps(sol.file=sol.file, ps.name=ps.name, user.name=NULL,libs=libs, extra.code.file = "extracode.r", var.txt.file = "variables.txt")
   restore.point("rtutor.app.skel")
 
@@ -303,10 +308,22 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   if (!rps.app) {
     base.dir = path.package("RTutor", quiet = FALSE)
     skel.dir = paste0(base.dir,"/ps_app_skel/packageApp")
+    ps.show.opts.string = rtutor.skel.show.opts.string(mandatory=list(user.name = "Guest",
+                                                                      deploy.local = FALSE,
+                                                                      make.web.app = TRUE, 
+                                                                      save.nothing=FALSE,
+                                                                      offline=FALSE),
+                                                       optional=ps.show.opts)
   } else {
     base.dir = path.package("RTutor", quiet = FALSE)
-    skel.dir = paste0(base.dir,"/ps_app_skel/rpsApp")    
-
+    skel.dir = paste0(base.dir,"/ps_app_skel/rpsApp")
+    ps.show.opts.string = rtutor.skel.show.opts.string(mandatory=list(user.name = "Guest",
+                                                                      ps.name = ps.name,
+                                                                      make.web.app = TRUE, 
+                                                                      save.nothing=FALSE,
+                                                                      offline=FALSE),
+                                                       optional=ps.show.opts)
+    
     file.copy(from = paste0(rps.dir,"/",rps.file),to = work.dir,
               overwrite=overwrite, recursive = TRUE)
   }
@@ -316,7 +333,6 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   long.skel.files = list.files(skel.dir,full.names = TRUE)
   file.copy(from = long.skel.files,to = app.dir, overwrite=overwrite, recursive = TRUE)
   
-
   
   # Replace placeholder strings
   dest.files = c("deployapp.R","app/global.R")
@@ -335,11 +351,17 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
     txt = readLines(file, warn=FALSE)
     if (!is.null(pkg.name))
       txt = gsub("PACKAGE_NAME",pkg.name,txt, fixed=TRUE)
-    txt = gsub("PS_NAME",ps.name,txt, fixed=TRUE)
     txt = gsub("DEPENDS_LIBRARIES",lib.txt,txt, fixed=TRUE)
     txt = gsub("APP_NAME",app.name,txt, fixed=TRUE)
     txt = gsub("APP_PATH",app.dir,txt, fixed=TRUE)
     txt = gsub("GITHUB_USERNAME",github.user,txt, fixed=TRUE)
+    txt = gsub("PS_OPTIONS",ps.show.opts.string,txt, fixed=TRUE)
+    txt = gsub("FORK_DEFAULT",rtutor.fork,txt,fixed=TRUE)
+    txt = gsub("DIRECT_EXECUTION",direct.execution,txt,fixed=TRUE)
+    txt = gsub("SHINYAPPS_USERNAME",shinyapps.account.info$name, txt, fixed=TRUE)
+    txt = gsub("SHINYAPPS_TOKEN",shinyapps.account.info$token, txt, fixed=TRUE)
+    txt = gsub("SHINYAPPS_SECRET",shinyapps.account.info$secret, txt, fixed=TRUE)
+    
     writeLines(txt,file)
   }
   
@@ -348,5 +370,33 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   
 }
   
-
+#' Intermediary Function helping to build the ps.show() Options string
+#' 
+#' Expects two lists with arguments. 
+#' 
+#' @param mandatory Are always set but may be overwritten by optional
+#' @param optional Are intended to be set by the user. May overwrite mandatory ones if set explicitely. 
+rtutor.skel.show.opts.string = function(mandatory, optional){
+  restore.point("rtutor.skel.show.opts.string")
+  
+  if(!is.null(optional)){
+    #Testing
+    if(length(names(optional))!=length(optional)){
+      stop("It is necessary to provide a list where each element is named to generate a ps.show() option list!")
+    }
+    
+    mandatory.remain = mandatory[!(names(mandatory) %in% names(optional))]
+    all.list = c(mandatory.remain,optional)
+  } else {
+    all.list = mandatory
+  }
+  
+  chars = sapply(all.list,FUN=is.character)
+  
+  if(any(chars)) all.list[chars] = paste("\"",all.list[chars],"\"", sep="")
+  
+  arg.string = paste(names(all.list),all.list,sep="=",collapse=", ")
+  
+  return(arg.string)
+}
 

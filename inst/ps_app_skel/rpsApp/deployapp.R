@@ -9,7 +9,7 @@
 # 3. All packages that are used must have be installed in your
 #    RStudio from CRAN or GITHUB (a local build of a package does not work)
 
-if (FALSE) {
+if (DIRECT_EXECUTION) {
   # Run this code if you need to install some packages	
   library(devtools)
   install_github("skranz/shinyEvents",ref = "master")  
@@ -18,8 +18,8 @@ if (FALSE) {
   install_github("skranz/stringtools",ref = "master")
 
   # Pick master or development version of RTutor
-  install_github("skranz/RTutor",ref = "master")  
-  #install_github("skranz/RTutor",ref = "develop")
+  install_github("FORK_DEFAULT/RTutor",ref = "master")  
+  #install_github("FORK_DEFAULT/RTutor",ref = "develop")
 
  }
 
@@ -28,16 +28,16 @@ if (FALSE) {
 #    http://shiny.rstudio.com/articles/shinyapps.html
 
 #    Then adapt and run the lines below
-if (FALSE) {
+if (DIRECT_EXECUTION) {
 
 
   # You must adapt the following lines to your account as explained in
   #  http://shiny.rstudio.com/articles/shinyapps.html 
 
   rsconnect::setAccountInfo(
-  	      name='<SHINYAPPS_USERNAME>',
-  		  token='<TOKEN>',
-		  secret='<SECRET>')
+    name='SHINYAPPS_USERNAME',
+    token='SHINYAPPS_TOKEN',
+    secret='SHINYAPPS_SECRET')
 
   library(rsconnect)
   

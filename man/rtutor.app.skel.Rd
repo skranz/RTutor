@@ -4,10 +4,24 @@
 \alias{rtutor.app.skel}
 \title{Generate a skeleton for a shinyapps.io app of a problem set}
 \usage{
-rtutor.app.skel(ps.name, app.name = ps.name, app.dir,
-  rps.app = !is.null(rps.dir), pkg.name = NULL, rps.file = paste0(ps.name,
-  ".rps"), rps.dir = NULL, overwrite = FALSE,
-  github.user = "GITHUB_USERNAME", libs = NULL, ...)
+rtutor.app.skel(
+  ps.name,
+  app.name = ps.name,
+  app.dir,
+  rps.app = !is.null(rps.dir),
+  pkg.name = NULL,
+  rps.file = paste0(ps.name, ".rps"),
+  rps.dir = NULL,
+  overwrite = FALSE,
+  github.user = "GITHUB_USERNAME",
+  rtutor.fork = "skranz",
+  libs = NULL,
+  ps.show.opts = NULL,
+  direct.execution = FALSE,
+  shinyapps.account.info = list(name = "<SHINYAPPS_USERNAME>", token = "<TOKEN>",
+    secret = "<SECRET>"),
+  ...
+)
 }
 \arguments{
 \item{ps.name}{Name of the problem set}
@@ -16,13 +30,23 @@ rtutor.app.skel(ps.name, app.name = ps.name, app.dir,
 
 \item{app.dir}{Your local directory to which you want to deploy your app files}
 
-\item{rps.app}{locgical. If TRUE create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.}
+\item{rps.app}{logical. If `TRUE` create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.}
 
 \item{pkg.name}{If you create the app from a package this is the name of your package.}
 
 \item{rps.file}{The name of your rps file without directory if you create the app from a .rps file}
 
 \item{rps.dir}{the folder of your rps.file}
+
+\item{github.user}{If you create the app from a package this is the name of your Github user name.}
+
+\item{rtutor.fork}{Note that shinyapps.io only works with R packages directly installed from Github or CRAN. It is therefore not possible to locally change RTutor and use the adapted version for your own problemsets. This option however allows you to refer to your fork on github. Default is the main package under skranz.}
+
+\item{ps.show.opts}{ps.show() arguments which are added to the generated ps.show. Has to be given as a named list, e.g. `ps.show.opts=list(show.solution.btn=FALSE)` if one wants to create an app which does not show the solution button. By default only the necessary options are set. If those are provided, they are overwritten. This way, one can for example set the user.name to something different than Guest.}
+
+\item{direct.execution}{If TRUE the generated file deployapp.R is directly executably in the sense that the safety checks within the file are off (i.e. the saving `if` clauses are set to TRUE). Use with care! Default is `FALSE`.}
+
+\item{shinyapps.account.info}{Expects a List with the account info according to http://shiny.rstudio.com/articles/shinyapps.html . Default is list(name='<SHINYAPPS_USERNAME>', token='<TOKEN>',secret='<SECRET>'), i.e. the example from that site.}
 }
 \description{
 Generate a skeleton for a shinyapps.io app of a problem set

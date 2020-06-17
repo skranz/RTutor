@@ -5,8 +5,15 @@
 \title{Checks an assignment to a variable with up to 5
 possibly correct solutions}
 \usage{
-check.assign.with.multiple.sol(sol1, sol2, sol3, sol4, sol5, ...,
-  sol.list = list())
+check.assign.with.multiple.sol(
+  sol1,
+  sol2,
+  sol3,
+  sol4,
+  sol5,
+  ...,
+  sol.list = list()
+)
 }
 \arguments{
 \item{sol1}{An assignment that needs to be checked, e.g. x<-5. Similar for sol2, sol3, sol4, sol5.}

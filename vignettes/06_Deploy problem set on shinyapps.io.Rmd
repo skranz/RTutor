@@ -43,6 +43,12 @@ Here is an example fore creating an app based on an .rps file:
 
 You must just adapt the names and directories in the example above.
 
-### 2. Open `deployapp.r` and follow the described steps
+#### Additional Options of rtutor.app.skel
+
+It is possible to use the parameter `ps.show.opts` within `rtutor.app.skel` to change the behavior of the generated problem set. `ps.show.opts = list(show.solution.btn=FALSE)` for example transfers sets the option `show.solution.btn` to `FALSE` just as when using `ps.show` locally.
+
+Providing the parameter `shinyapps.account.info` as a list holding the shinyapps.io Account info, i.e. `shinyapps.account.info=list(name = "<SHINYAPPS_USERNAME>", token = "<TOKEN>", secret = "<SECRET>")` the created deployapps.R file already holds the desired info - otherwise it has to be changed in deployapps.R to upload.
+
+### 3. Open `deployapp.r` and follow the described steps
 
 Now in your app directory, e.g. "D:/libraries/RTutor/examples/ExampleApp" a file `deployapp.r` is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.
