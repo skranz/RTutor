@@ -114,11 +114,12 @@ For the web-based interface, several students at Ulm University have created ver
 
 If you a have course that uses RTutor that you want to share, just send me an email and I add your course to the list! 
 
-- RTutor is used in a data science project course taught by Alex Rieber for business and economics students at Ulm University. The problem sets teach basic skills in R, including tidyverse data wrangling, as well as econometric and machine learning basic with economic applications. Alex published the problem sets and other course material [here on Github](https://github.com/AlexRieber/datascience-teaching). You find on the Github pages also links that allow you to test the problem sets on the rstudio cloud. The course is in German but Alex already started to make an English version of the problem sets, which will be added once finished.
+- During the Cororona semester, I made an online course [Market Analysis with Econometrics and Machine Learning](https://github.com/skranz/MarketAnalysis). It consists of online shiny apps with videos and quizzes and many RTutor problem sets.
 
-- Jade Benjamin-Chung from UC Berkeley School of Public Health has created with RTutor online tutorials for an [introductory R course for epidemiologists](https://ucb-epi-r.github.io/). If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.
+- [Jade Benjamin-Chung](https://www.ocf.berkeley.edu/~jadebc/) from UC Berkeley School of Public Health has created with RTutor online tutorials for an [introductory R course for epidemiologists](https://ucb-epi-r.github.io/). If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.
 
-- I have published the RTutor problem sets and other material from my course in empirical industrial organization class in this [Github repository](https://github.com/skranz/Empirical_IO_Course). You can directly work on the problem sets [here on rstudio.cloud](https://rstudio.cloud/project/1063712). The course focuses a lot on estimating demand functions, but the R problem sets also cover other material, like data wrangling with dplyr.
+- RTutor is also used in a compulsory [data science project course](https://github.com/AlexRieber/datascience-teaching) taught by [Alex Rieber](https://github.com/AlexRieber/) for business and economics students at Ulm University. The problem sets teach basic skills in R, including tidyverse data wrangling, as well as econometric and machine learning basic with economic applications. Alex published the problem sets and other course material [here on Github](https://github.com/AlexRieber/datascience-teaching). You find on the Github pages also links that allow you to test the problem sets on the rstudio cloud. The course is in German but Alex already started to make an English version of the problem sets, which will be added once finished.
+
 
 ## Installing RTutor directly from Github
 
