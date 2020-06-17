@@ -4,9 +4,18 @@
 \alias{hint.for.compute}
 \title{Default hint for a compute block}
 \usage{
-hint.for.compute(expr, hints.txt = NULL, var = "", ps = get.ps(),
-  env = ps$stud.env, stud.expr.li = ps$stud.expr.li, part = ps$part,
-  start.char = "\\n", end.char = "\\n", ...)
+hint.for.compute(
+  expr,
+  hints.txt = NULL,
+  var = "",
+  ps = get.ps(),
+  env = ps$stud.env,
+  stud.expr.li = ps$stud.expr.li,
+  part = ps$part,
+  start.char = "\\n",
+  end.char = "\\n",
+  ...
+)
 }
 \description{
 Default hint for a compute block

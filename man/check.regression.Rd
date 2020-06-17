@@ -4,11 +4,17 @@
 \alias{check.regression}
 \title{Check whether an object from a call to lm, glm or some other regression function is correct}
 \usage{
-check.regression(var, str.expr, part = NULL, ps = get.ps(),
-  stud.env = ps$stud.env, verbose = FALSE,
-  failure.message = paste0("Hmm... your regression ", var,
-  " seems incorrect."), success.message = paste0("Great, your regression ",
-  var, " looks correct."), tol = 1e-10)
+check.regression(
+  var,
+  str.expr,
+  part = NULL,
+  ps = get.ps(),
+  stud.env = ps$stud.env,
+  verbose = FALSE,
+  failure.message = paste0("Hmm... your regression ", var, " seems incorrect."),
+  success.message = paste0("Great, your regression ", var, " looks correct."),
+  tol = 1e-10
+)
 }
 \description{
 Check whether an object from a call to lm, glm or some other regression function is correct

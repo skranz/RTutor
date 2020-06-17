@@ -4,21 +4,46 @@
 \alias{create.ps}
 \title{Generate a problem set from a solution file}
 \usage{
-create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
-  sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
-  libs = NULL, stop.when.finished = FALSE, extra.code.file = NULL,
-  var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = TRUE,
-  add.enter.code.here = FALSE, add.shiny = TRUE, addons = NULL,
-  whitelist.report = FALSE, wl = rtutor.default.whitelist(),
-  use.memoise = FALSE, memoise.funs = rtutor.default.memoise.funs(),
-  precomp = FALSE, preknit = FALSE, force.noeval = FALSE,
-  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
-  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
-  = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits), knitr.opts.chunk = list(dev =
-  "svg"), e.points = 1, min.chunk.points = 0, chunk.points = 0,
-  keep.fill.in.output.sol = TRUE, hint.on.fail = FALSE,
-  empty.task.txt = "# Enter your code here.", placeholder = "___")
+create.ps(
+  sol.file,
+  ps.name = NULL,
+  user.name = "ENTER A USER NAME HERE",
+  sol.user.name = "Jane Doe",
+  dir = getwd(),
+  header = "",
+  footer = "",
+  libs = NULL,
+  stop.when.finished = FALSE,
+  extra.code.file = NULL,
+  var.txt.file = NULL,
+  rps.has.sol = TRUE,
+  fragment.only = TRUE,
+  add.enter.code.here = FALSE,
+  add.shiny = TRUE,
+  addons = NULL,
+  whitelist.report = FALSE,
+  wl = rtutor.default.whitelist(),
+  use.memoise = FALSE,
+  memoise.funs = rtutor.default.memoise.funs(),
+  precomp = FALSE,
+  preknit = FALSE,
+  force.noeval = FALSE,
+  html.data.frame = TRUE,
+  table.max.rows = 25,
+  round.digits = 8,
+  signif.digits = 8,
+  knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
+    table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+    signif.digits),
+  knitr.opts.chunk = list(dev = "svg"),
+  e.points = 1,
+  min.chunk.points = 0,
+  chunk.points = 0,
+  keep.fill.in.output.sol = TRUE,
+  hint.on.fail = FALSE,
+  empty.task.txt = "# Enter your code here.",
+  placeholder = "___"
+)
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}

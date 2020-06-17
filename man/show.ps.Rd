@@ -4,26 +4,56 @@
 \alias{show.ps}
 \title{Run a shiny based problem set in the browser}
 \usage{
-show.ps(ps.name, user.name = "default_user", auto.save.code = FALSE,
-  clear.user = FALSE, run.solved = FALSE, sample.solution = FALSE,
-  prev.chunks.sample.solution = show.solution.btn, launch.browser = TRUE,
-  catch.errors = TRUE, dir = getwd(), rps.dir = dir,
-  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
-  is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
-  save.nothing = FALSE, show.revert.btn = FALSE, show.solution.btn = NA,
-  show.data.exp = TRUE, disable.graphics.dev = TRUE,
-  check.whitelist = !is.null(wl), wl = NULL, verbose = FALSE,
-  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
-  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
-  = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits, print.data.frame.fun =
-  print.data.frame.fun, print.matrix.fun = print.matrix.fun),
-  print.data.frame.fun = NULL, print.matrix.fun = NULL, precomp = FALSE,
-  noeval = FALSE, need.login = FALSE, login.dir = paste0(dir, "/login"),
-  show.points = TRUE, stop.app.if.window.closes = !make.session.ps,
-  sav.file = paste0(user.name, "_", ps.name, ".sav"), load.sav = FALSE,
-  show.save.btn = FALSE, import.rmd = FALSE, rmd.file = paste0(ps.name,
-  "_", user.name, "_export.rmd"), ...)
+show.ps(
+  ps.name,
+  user.name = "default_user",
+  auto.save.code = FALSE,
+  clear.user = FALSE,
+  run.solved = FALSE,
+  sample.solution = FALSE,
+  prev.chunks.sample.solution = show.solution.btn,
+  launch.browser = TRUE,
+  catch.errors = TRUE,
+  dir = getwd(),
+  rps.dir = dir,
+  offline = !can.connect.to.MathJax(),
+  left.margin = 2,
+  right.margin = 2,
+  is.solved,
+  make.web.app = FALSE,
+  make.session.ps = make.web.app,
+  save.nothing = FALSE,
+  show.revert.btn = FALSE,
+  show.solution.btn = NA,
+  show.data.exp = TRUE,
+  show.download.rmarkdown = TRUE,
+  disable.graphics.dev = TRUE,
+  check.whitelist = !is.null(wl),
+  wl = NULL,
+  verbose = FALSE,
+  html.data.frame = TRUE,
+  table.max.rows = 25,
+  round.digits = 8,
+  signif.digits = 8,
+  knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
+    table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+    signif.digits, print.data.frame.fun = print.data.frame.fun, print.matrix.fun =
+    print.matrix.fun),
+  print.data.frame.fun = NULL,
+  print.matrix.fun = NULL,
+  precomp = FALSE,
+  noeval = FALSE,
+  need.login = FALSE,
+  login.dir = paste0(dir, "/login"),
+  show.points = TRUE,
+  stop.app.if.window.closes = !make.session.ps,
+  sav.file = paste0(user.name, "_", ps.name, ".sav"),
+  load.sav = FALSE,
+  show.save.btn = FALSE,
+  import.rmd = FALSE,
+  rmd.file = paste0(ps.name, "_", user.name, "_export.rmd"),
+  ...
+)
 }
 \arguments{
 \item{ps.name}{Name of the problem set}
@@ -32,13 +62,15 @@ show.ps(ps.name, user.name = "default_user", auto.save.code = FALSE,
 
 \item{auto.save.code}{If TRUE all entered code will be automatically saved for the user. If FALSE (default) no entered code is saved. The user statistics (how many chunks are solved) are still saved, however.}
 
-\item{clear.user}{If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.}
+\item{clear.user}{If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for development or for resetting things.}
 
-\item{run.solved}{If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.}
+\item{run.solved}{If TRUE and also sample.solution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.}
 
 \item{sample.solution}{If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.}
 
 \item{prev.chunks.sample.solution}{If TRUE and a user edits a chunk without having checked all previous chunks then previous chunks will be automatically be checked with the sample solution. If FALSE previous chunks will be checked with the user's entered solutions. Has by default the same value as show.solution.btn.}
+
+\item{launch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 
 \item{catch.errors}{by default TRUE only set FALSE for debugging purposes in order to get a more informative traceback()}
 
@@ -50,13 +82,13 @@ show.ps(ps.name, user.name = "default_user", auto.save.code = FALSE,
 
 \item{show.solution.btn}{If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available. By default TRUE if a sample solution is available in the problem set.}
 
+\item{show.download.rmarkdown}{If TRUE the user is able to download the R-Markdown file of their solution in the submissions-tab. If FALSE the corresponding button is not rendered. By default set to \code{TRUE}.}
+
 \item{html.data.frame}{shall data.frames and matrices be printed as html table if a chunk is checked? (Default=TRUE)}
 
 \item{table.max.rows}{the maximum number of rows that is shown if a data.frame is printed as html.table}
 
 \item{round.digits}{the number of digits that printed data.frames shall be rounded to}
-
-\item{lauch.browser}{if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane}
 }
 \description{
 Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below.

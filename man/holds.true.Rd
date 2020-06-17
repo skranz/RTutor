@@ -4,11 +4,17 @@
 \alias{holds.true}
 \title{To be used in a test block}
 \usage{
-holds.true(cond, short.message = failure.message,
+holds.true(
+  cond,
+  short.message = failure.message,
   failure.message = "Failure in holds.true",
   success.message = "Great, the condition {{cond}} holds true in your solution!",
-  part = NULL, ps = get.ps(), stud.env = ps$stud.env, cond.str = NULL,
-  ...)
+  part = NULL,
+  ps = get.ps(),
+  stud.env = ps$stud.env,
+  cond.str = NULL,
+  ...
+)
 }
 \arguments{
 \item{cond}{The condition to be checked}
