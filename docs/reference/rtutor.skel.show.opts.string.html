@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calls a function with a specified random.seed — with.random.seed • RTutor</title>
+<title>Intermediary Function helping to build the ps.show() Options string — rtutor.skel.show.opts.string • RTutor</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Calls a function with a specified random.seed — with.random.seed" />
+<meta property="og:title" content="Intermediary Function helping to build the ps.show() Options string — rtutor.skel.show.opts.string" />
 
-<meta property="og:description" content="Calls a function with a specified random.seed" />
+<meta property="og:description" content="Expects two lists with arguments." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -129,30 +129,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calls a function with a specified random.seed</h1>
+    <h1>Intermediary Function helping to build the ps.show() Options string</h1>
     
-    <div class="hidden name"><code>with.random.seed.Rd</code></div>
+    <div class="hidden name"><code>rtutor.skel.show.opts.string.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calls a function with a specified random.seed</p>
+    <p>Expects two lists with arguments.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for random.seed</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/with'>with</a></span>(<span class='no'>expr</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='fl'>1234567890</span>)</pre>
+    <pre class="usage"><span class='fu'>rtutor.skel.show.opts.string</span>(<span class='no'>mandatory</span>, <span class='no'>optional</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>expr</th>
-      <td><p>the expression to be evaluated</p></td>
+      <th>mandatory</th>
+      <td><p>Are always set but may be overwritten by optional</p></td>
     </tr>
     <tr>
-      <th>seed</th>
-      <td><p>the seed as integer</p></td>
+      <th>optional</th>
+      <td><p>Are intended to be set by the user. May overwrite mandatory ones if set explicitely.</p></td>
     </tr>
     </table>
     

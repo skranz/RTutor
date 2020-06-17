@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
       </span>
     </div>
 
@@ -142,11 +142,12 @@
 
     <pre class="usage"><span class='fu'>show.ps</span>(<span class='no'>ps.name</span>, <span class='kw'>user.name</span> <span class='kw'>=</span> <span class='st'>"default_user"</span>, <span class='kw'>auto.save.code</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>clear.user</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>run.solved</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sample.solution</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>launch.browser</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>catch.errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(),
-  <span class='kw'>rps.dir</span> <span class='kw'>=</span> <span class='no'>dir</span>, <span class='kw'>offline</span> <span class='kw'>=</span> !<span class='fu'>can.connect.to.MathJax</span>(), <span class='kw'>left.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>right.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='no'>is.solved</span>, <span class='kw'>make.web.app</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>make.session.ps</span> <span class='kw'>=</span> <span class='no'>make.web.app</span>, <span class='kw'>save.nothing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>show.revert.btn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.solution.btn</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>show.data.exp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>prev.chunks.sample.solution</span> <span class='kw'>=</span> <span class='no'>show.solution.btn</span>, <span class='kw'>launch.browser</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>catch.errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(), <span class='kw'>rps.dir</span> <span class='kw'>=</span> <span class='no'>dir</span>,
+  <span class='kw'>offline</span> <span class='kw'>=</span> !<span class='fu'>can.connect.to.MathJax</span>(), <span class='kw'>left.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>right.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='no'>is.solved</span>, <span class='kw'>make.web.app</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>make.session.ps</span> <span class='kw'>=</span> <span class='no'>make.web.app</span>,
+  <span class='kw'>save.nothing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.revert.btn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.solution.btn</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>show.data.exp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>show.download.rmarkdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>disable.graphics.dev</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>check.whitelist</span> <span class='kw'>=</span> !<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/NULL'>is.null</a></span>(<span class='no'>wl</span>), <span class='kw'>wl</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='fl'>25</span>,
   <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>,
@@ -178,15 +179,23 @@
     </tr>
     <tr>
       <th>clear.user</th>
-      <td><p>If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for developlmen or for resetting things.</p></td>
+      <td><p>If TRUE all previously saved data for the user is removed if the problem set starts. Can be useful for development or for resetting things.</p></td>
     </tr>
     <tr>
       <th>run.solved</th>
-      <td><p>If TRUE and also sample.soulution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.</p></td>
+      <td><p>If TRUE and also sample.solution=TRUE all previously solved chunks will be run when the problem set is newly shown. This can be very time consuming. I would suggest in most cases to keep the default run.solved=FALSE.</p></td>
     </tr>
     <tr>
       <th>sample.solution</th>
       <td><p>If TRUE the sample solution is shown in all chunks. Can be useful when developing a problem set. Note that one can create a problem set such that the sample solution is not available, e.g. if one wants to avoid that students just look at the sample solution.</p></td>
+    </tr>
+    <tr>
+      <th>prev.chunks.sample.solution</th>
+      <td><p>If TRUE and a user edits a chunk without having checked all previous chunks then previous chunks will be automatically be checked with the sample solution. If FALSE previous chunks will be checked with the user's entered solutions. Has by default the same value as show.solution.btn.</p></td>
+    </tr>
+    <tr>
+      <th>launch.browser</th>
+      <td><p>if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane</p></td>
     </tr>
     <tr>
       <th>catch.errors</th>
@@ -206,7 +215,11 @@
     </tr>
     <tr>
       <th>show.solution.btn</th>
-      <td><p>If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.</p></td>
+      <td><p>If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available. By default TRUE if a sample solution is available in the problem set.</p></td>
+    </tr>
+    <tr>
+      <th>show.download.rmarkdown</th>
+      <td><p>If TRUE the user is able to download the R-Markdown file of their solution in the submissions-tab. If FALSE the corresponding button is not rendered. By default set to <code>TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>html.data.frame</th>
@@ -219,10 +232,6 @@
     <tr>
       <th>round.digits</th>
       <td><p>the number of digits that printed data.frames shall be rounded to</p></td>
-    </tr>
-    <tr>
-      <th>lauch.browser</th>
-      <td><p>if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane</p></td>
     </tr>
     </table>
     

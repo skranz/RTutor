@@ -4,7 +4,8 @@
 \alias{display}
 \title{Displays the given text}
 \usage{
-display(..., collapse = "\\n", sep = "", start.char = "\\n", end.char = "\\n")
+display(..., collapse = "\\n", sep = "", start.char = "\\n",
+  end.char = "\\n")
 }
 \description{
 Displays the given text

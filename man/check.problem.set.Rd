@@ -4,20 +4,11 @@
 \alias{check.problem.set}
 \title{Checks a student problem set}
 \usage{
-check.problem.set(
-  ps.name,
-  stud.path,
-  stud.short.file,
-  reset = FALSE,
-  set.warning.1 = TRUE,
-  user.name = "GUEST",
-  do.check = interactive(),
-  verbose = FALSE,
-  catch.errors = TRUE,
+check.problem.set(ps.name, stud.path, stud.short.file, reset = FALSE,
+  set.warning.1 = TRUE, user.name = "GUEST", do.check = interactive(),
+  verbose = FALSE, catch.errors = TRUE,
   from.knitr = isTRUE(getOption("knitr.in.progress")) | !interactive(),
-  use.null.device = TRUE,
-  just.init = FALSE
-)
+  use.null.device = TRUE, just.init = FALSE)
 }
 \description{
 The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.

@@ -4,18 +4,9 @@
 \alias{check.function}
 \title{Checks a function written by the student}
 \usage{
-check.function(
-  code,
-  ...,
-  check.args = TRUE,
-  check.defaults = FALSE,
-  check.args.order = TRUE,
-  allow.extra.arg = TRUE,
-  ps = get.ps(),
-  stud.env = ps$stud.env,
-  verbose = FALSE,
-  part = NULL
-)
+check.function(code, ..., check.args = TRUE, check.defaults = FALSE,
+  check.args.order = TRUE, allow.extra.arg = TRUE, ps = get.ps(),
+  stud.env = ps$stud.env, verbose = FALSE, part = NULL)
 }
 \arguments{
 \item{code}{code of the form {fun_name = function(x,y) {#body of function}}. It is important to wrap the code in {} and to assign the function name with = (don't use <-). See example below.}

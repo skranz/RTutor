@@ -133,10 +133,16 @@
 <a class="sourceLine" id="cb1-10" title="10">                  <span class="dt">app.dir=</span>app.dir, <span class="dt">rps.dir =</span> rps.dir,</a>
 <a class="sourceLine" id="cb1-11" title="11">                  <span class="dt">rps.app =</span> <span class="ot">TRUE</span>, <span class="dt">libs=</span>libs,<span class="dt">overwrite=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p>You must just adapt the names and directories in the example above.</p>
+<div id="additional-options-of-rtutor-app-skel" class="section level4">
+<h4 class="hasAnchor">
+<a href="#additional-options-of-rtutor-app-skel" class="anchor"></a>Additional Options of rtutor.app.skel</h4>
+<p>It is possible to use the parameter <code>ps.show.opts</code> within <code>rtutor.app.skel</code> to change the behavior of the generated problem set. <code>ps.show.opts = list(show.solution.btn=FALSE)</code> for example transfers sets the option <code>show.solution.btn</code> to <code>FALSE</code> just as when using <code>ps.show</code> locally.</p>
+<p>Providing the parameter <code>shinyapps.account.info</code> as a list holding the shinyapps.io Account info, i.e. <code>shinyapps.account.info=list(name = "&lt;SHINYAPPS_USERNAME&gt;", token = "&lt;TOKEN&gt;", secret = "&lt;SECRET&gt;")</code> the created deployapps.R file already holds the desired info - otherwise it has to be changed in deployapps.R to upload.</p>
+</div>
 </div>
 <div id="open-deployapp-r-and-follow-the-described-steps" class="section level3">
 <h3 class="hasAnchor">
-<a href="#open-deployapp-r-and-follow-the-described-steps" class="anchor"></a>2. Open <code>deployapp.r</code> and follow the described steps</h3>
+<a href="#open-deployapp-r-and-follow-the-described-steps" class="anchor"></a>3. Open <code>deployapp.r</code> and follow the described steps</h3>
 <p>Now in your app directory, e.g. “D:/libraries/RTutor/examples/ExampleApp” a file <code>deployapp.r</code> is created. Follow the steps described in this file to deploy your app on shinyapps.io. The file also contains the links that describe how to create a user account on shinyapps.io.</p>
 </div>
   </div>
@@ -164,8 +170,15 @@
   var sc_project=12051162; 
   var sc_invisible=1; 
   var sc_security="60139410"; 
-  </script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="Web Analytics
-  Made Easy - StatCounter" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="Web Analytics Made Easy -
+  </script>
+  <script type="text/javascript"
+  src="https://www.statcounter.com/counter/counter.js"
+  async></script>
+  <noscript><div class="statcounter"><a title="Web Analytics
+  Made Easy - StatCounter" href="https://statcounter.com/"
+  target="_blank"><img class="statcounter"
+  src="https://c.statcounter.com/12051162/0/60139410/1/"
+  alt="Web Analytics Made Easy -
   StatCounter"></a></div></noscript>
   
   

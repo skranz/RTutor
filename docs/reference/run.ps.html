@@ -64,7 +64,7 @@ For problem sets stored in a local .rps file, use show.ps() instead" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
       </span>
     </div>
 
@@ -190,6 +190,10 @@ For problem sets stored in a local .rps file, use show.ps() instead</p>
       <td><p>If TRUE add a button to each chunk to show the sample solution. Note that one can create a problem set such that the sample solution is never available.</p></td>
     </tr>
     <tr>
+      <th>launch.browser</th>
+      <td><p>if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane</p></td>
+    </tr>
+    <tr>
       <th>pkg.dir</th>
       <td><p>the package directory under which problem set files are searched under pkg.dir/ps/ps.name/. Will be set by default to currently loaded RTutorProblemSet package</p></td>
     </tr>
@@ -204,10 +208,6 @@ For problem sets stored in a local .rps file, use show.ps() instead</p>
     <tr>
       <th>...</th>
       <td><p>additional arguments of show.ps</p></td>
-    </tr>
-    <tr>
-      <th>lauch.browser</th>
-      <td><p>if TRUE (default) show the problem set in the browser. Otherwise it is shown in the RStudio viewer pane</p></td>
     </tr>
     </table>
     

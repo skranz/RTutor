@@ -4,30 +4,14 @@
 \alias{check.assign}
 \title{Checks an assignment to a variable}
 \usage{
-check.assign(
-  call,
-  check.arg.by.value = TRUE,
-  allow.extra.arg = FALSE,
-  ignore.arg = NULL,
-  success.message = NULL,
-  failure.message = NULL,
- 
-    no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
-  ok.if.same.val = TRUE,
-  call.object = NULL,
-  s3.method = NULL,
-  ps = get.ps(),
-  stud.env = ps$stud.env,
-  part = ps$part,
-  stud.expr.li = ps$stud.expr.li,
-  verbose = FALSE,
-  only.check.assign.exists = FALSE,
-  noeval = isTRUE(ps$noeval),
-  other.sols = NULL,
-  check.cols = NULL,
-  sort.cols = NULL,
-  ...
-)
+check.assign(call, check.arg.by.value = TRUE, allow.extra.arg = FALSE,
+  ignore.arg = NULL, success.message = NULL, failure.message = NULL,
+  no.command.failure.message = "You have not yet included correctly, all required R commands in your code...",
+  ok.if.same.val = TRUE, call.object = NULL, s3.method = NULL,
+  ps = get.ps(), stud.env = ps$stud.env, part = ps$part,
+  stud.expr.li = ps$stud.expr.li, verbose = FALSE,
+  only.check.assign.exists = FALSE, noeval = isTRUE(ps$noeval),
+  other.sols = NULL, check.cols = NULL, sort.cols = NULL, ...)
 }
 \arguments{
 \item{call}{the correct assignment that shall be checked (not a quoted call)}
@@ -36,7 +20,7 @@ check.assign(
 
 \item{ignore.arg}{a vector of argument names that will be ignored when checking correctness}
 
-\item{ok.if.same.val}{if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.}
+\item{ok.if.same.val}{if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.}
 
 \item{call.object}{alternatively to call a quoted call (call object)}
 

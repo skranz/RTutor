@@ -4,23 +4,11 @@
 \alias{test.H0}
 \title{Helper function for custom test blocks. Check whether a certain null hypothesis is not significantly rejected}
 \usage{
-test.H0(
-  test.expr,
-  p.value,
-  test.name = "",
-  alpha.warning = 0.05,
-  alpha.failure = 0.001,
-  short.message,
-  warning.message,
-  failure.message,
- 
-    success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
-  check.warning = TRUE,
-  part = NULL,
-  ps = get.ps(),
-  stud.env = ps$stud.env,
-  ...
-)
+test.H0(test.expr, p.value, test.name = "", alpha.warning = 0.05,
+  alpha.failure = 0.001, short.message, warning.message, failure.message,
+  success.message = "Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!",
+  check.warning = TRUE, part = NULL, ps = get.ps(),
+  stud.env = ps$stud.env, ...)
 }
 \arguments{
 \item{test.expr}{an expression that calls a test which will be evaluated in stud.env. The test must return a list that contains a field "p.value"}

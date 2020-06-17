@@ -64,7 +64,7 @@ and output solution" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
       </span>
     </div>
 
@@ -153,9 +153,10 @@ and output solution</p>
   <span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='fl'>25</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>,
   <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>knit.print.opts</span> <span class='kw'>=</span> <span class='fu'>make.knit.print.opts</span>(<span class='kw'>html.data.frame</span>
   <span class='kw'>=</span> <span class='no'>html.data.frame</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='no'>table.max.rows</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span>
-  <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='no'>signif.digits</span>), <span class='kw'>e.points</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='no'>signif.digits</span>), <span class='kw'>knitr.opts.chunk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>dev</span> <span class='kw'>=</span>
+  <span class='st'>"svg"</span>), <span class='kw'>e.points</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>empty.task.txt</span> <span class='kw'>=</span> <span class='st'>"# Enter your code here."</span>, <span class='kw'>placeholder</span> <span class='kw'>=</span> <span class='st'>"___"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -217,6 +218,26 @@ and output solution</p>
       <td><p>shall problem set only be shown in noeval mode? (Used as a security against accidentially forgetting to set noeval=TRUE in show.ps, when showing the problem set in a web app.)</p></td>
     </tr>
     <tr>
+      <th>html.data.frame</th>
+      <td><p>shall data frames in shiny-based problem set be shown as html? Default is <code>TRUE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>table.max.rows</th>
+      <td><p>How many rows of a printed data frame shall be shown? Default is 25.</p></td>
+    </tr>
+    <tr>
+      <th>round.digits</th>
+      <td><p>Digits for rounding of shown data frames.</p></td>
+    </tr>
+    <tr>
+      <th>signif.digits</th>
+      <td><p>Significant digits for  shown data frames.</p></td>
+    </tr>
+    <tr>
+      <th>knitr.opts.chunk</th>
+      <td><p>A list of global knitr chunk options for shiny problem set, see https://yihui.org/knitr/options/. By default <code><a href='https://www.rdocumentation.org/packages/base/topics/list'>list(dev="svg")</a></code>. Has the same effect as if you would call <code><a href='https://www.rdocumentation.org/packages/knitr/topics/opts_chunk'>knitr::opts_chunk</a></code> with those options before you call <code>show.ps</code>.</p></td>
+    </tr>
+    <tr>
       <th>e.points</th>
       <td><p>how many points does the user get per required expression in a chunk (expressions in a task do not count). Default=1</p></td>
     </tr>
@@ -235,6 +256,14 @@ and output solution</p>
     <tr>
       <th>hint.on.fail</th>
       <td><p>shall by default a hint be shown already if the correctness test fails. If FALSE (default) hints are only shown if the user types hint() or, in the shiny version, presses the hint button.</p></td>
+    </tr>
+    <tr>
+      <th>empty.task.txt</th>
+      <td><p>A text that will be shown in chunks without any task block. Default is <code>empty.task.txt = "# Enter your code here."</code></p></td>
+    </tr>
+    <tr>
+      <th>placeholder</th>
+      <td><p>The string you use as placeholder in fill_in blocks. By default <code>"___"</code>. This should be a pattern that you don't use in your normal code. If a user's input cannot be parsed, we replace this pattern by an internal represenataion that is valid R syntax.</p></td>
     </tr>
     </table>
     

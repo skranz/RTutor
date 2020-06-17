@@ -4,56 +4,27 @@
 \alias{show.ps}
 \title{Run a shiny based problem set in the browser}
 \usage{
-show.ps(
-  ps.name,
-  user.name = "default_user",
-  auto.save.code = FALSE,
-  clear.user = FALSE,
-  run.solved = FALSE,
-  sample.solution = FALSE,
-  prev.chunks.sample.solution = show.solution.btn,
-  launch.browser = TRUE,
-  catch.errors = TRUE,
-  dir = getwd(),
-  rps.dir = dir,
-  offline = !can.connect.to.MathJax(),
-  left.margin = 2,
-  right.margin = 2,
-  is.solved,
-  make.web.app = FALSE,
-  make.session.ps = make.web.app,
-  save.nothing = FALSE,
-  show.revert.btn = FALSE,
-  show.solution.btn = NA,
-  show.data.exp = TRUE,
-  show.download.rmarkdown = TRUE,
-  disable.graphics.dev = TRUE,
-  check.whitelist = !is.null(wl),
-  wl = NULL,
-  verbose = FALSE,
-  html.data.frame = TRUE,
-  table.max.rows = 25,
-  round.digits = 8,
-  signif.digits = 8,
+show.ps(ps.name, user.name = "default_user", auto.save.code = FALSE,
+  clear.user = FALSE, run.solved = FALSE, sample.solution = FALSE,
+  prev.chunks.sample.solution = show.solution.btn, launch.browser = TRUE,
+  catch.errors = TRUE, dir = getwd(), rps.dir = dir,
+  offline = !can.connect.to.MathJax(), left.margin = 2, right.margin = 2,
+  is.solved, make.web.app = FALSE, make.session.ps = make.web.app,
+  save.nothing = FALSE, show.revert.btn = FALSE, show.solution.btn = NA,
+  show.data.exp = TRUE, show.download.rmarkdown = TRUE,
+  disable.graphics.dev = TRUE, check.whitelist = !is.null(wl), wl = NULL,
+  verbose = FALSE, html.data.frame = TRUE, table.max.rows = 25,
+  round.digits = 8, signif.digits = 8,
   knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
-    table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
-    signif.digits, print.data.frame.fun = print.data.frame.fun, print.matrix.fun =
-    print.matrix.fun),
-  print.data.frame.fun = NULL,
-  print.matrix.fun = NULL,
-  precomp = FALSE,
-  noeval = FALSE,
-  need.login = FALSE,
-  login.dir = paste0(dir, "/login"),
-  show.points = TRUE,
-  stop.app.if.window.closes = !make.session.ps,
-  sav.file = paste0(user.name, "_", ps.name, ".sav"),
-  load.sav = FALSE,
-  show.save.btn = FALSE,
-  import.rmd = FALSE,
-  rmd.file = paste0(ps.name, "_", user.name, "_export.rmd"),
-  ...
-)
+  table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+  signif.digits, print.data.frame.fun = print.data.frame.fun, print.matrix.fun =
+  print.matrix.fun), print.data.frame.fun = NULL, print.matrix.fun = NULL,
+  precomp = FALSE, noeval = FALSE, need.login = FALSE,
+  login.dir = paste0(dir, "/login"), show.points = TRUE,
+  stop.app.if.window.closes = !make.session.ps, sav.file = paste0(user.name,
+  "_", ps.name, ".sav"), load.sav = FALSE, show.save.btn = FALSE,
+  import.rmd = FALSE, rmd.file = paste0(ps.name, "_", user.name,
+  "_export.rmd"), ...)
 }
 \arguments{
 \item{ps.name}{Name of the problem set}

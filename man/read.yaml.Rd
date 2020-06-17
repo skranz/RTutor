@@ -4,17 +4,9 @@
 \alias{read.yaml}
 \title{Reads a yaml file and returns as a list}
 \usage{
-read.yaml(
-  file = NULL,
-  verbose = FALSE,
-  keep.quotes = TRUE,
-  quote.char = "__QUOTE__",
-  text = NULL,
-  catch.error = TRUE,
-  check.by.row = FALSE,
-  space.after.colon = FALSE,
-  utf8 = TRUE
-)
+read.yaml(file = NULL, verbose = FALSE, keep.quotes = TRUE,
+  quote.char = "__QUOTE__", text = NULL, catch.error = TRUE,
+  check.by.row = FALSE, space.after.colon = FALSE, utf8 = TRUE)
 }
 \description{
 Reads a yaml file and returns as a list

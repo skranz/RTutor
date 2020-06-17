@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2019.7.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
       </span>
     </div>
 
@@ -143,7 +143,10 @@
     <pre class="usage"><span class='fu'>rtutor.app.skel</span>(<span class='no'>ps.name</span>, <span class='kw'>app.name</span> <span class='kw'>=</span> <span class='no'>ps.name</span>, <span class='no'>app.dir</span>,
   <span class='kw'>rps.app</span> <span class='kw'>=</span> !<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/NULL'>is.null</a></span>(<span class='no'>rps.dir</span>), <span class='kw'>pkg.name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rps.file</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='no'>ps.name</span>,
   <span class='st'>".rps"</span>), <span class='kw'>rps.dir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>github.user</span> <span class='kw'>=</span> <span class='st'>"GITHUB_USERNAME"</span>, <span class='kw'>libs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>github.user</span> <span class='kw'>=</span> <span class='st'>"GITHUB_USERNAME"</span>, <span class='kw'>rtutor.fork</span> <span class='kw'>=</span> <span class='st'>"skranz"</span>, <span class='kw'>libs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>ps.show.opts</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>direct.execution</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>shinyapps.account.info</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"&lt;SHINYAPPS_USERNAME&gt;"</span>, <span class='kw'>token</span> <span class='kw'>=</span>
+  <span class='st'>"&lt;TOKEN&gt;"</span>, <span class='kw'>secret</span> <span class='kw'>=</span> <span class='st'>"&lt;SECRET&gt;"</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,7 +165,7 @@
     </tr>
     <tr>
       <th>rps.app</th>
-      <td><p>locgical. If TRUE create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.</p></td>
+      <td><p>logical. If `TRUE` create an app based on an .rps file. Otherwise create the app based on a problem set package that is hosted on Github.</p></td>
     </tr>
     <tr>
       <th>pkg.name</th>
@@ -175,6 +178,26 @@
     <tr>
       <th>rps.dir</th>
       <td><p>the folder of your rps.file</p></td>
+    </tr>
+    <tr>
+      <th>github.user</th>
+      <td><p>If you create the app from a package this is the name of your Github user name.</p></td>
+    </tr>
+    <tr>
+      <th>rtutor.fork</th>
+      <td><p>Note that shinyapps.io only works with R packages directly installed from Github or CRAN. It is therefore not possible to locally change RTutor and use the adapted version for your own problemsets. This option however allows you to refer to your fork on github. Default is the main package under skranz.</p></td>
+    </tr>
+    <tr>
+      <th>ps.show.opts</th>
+      <td><p>ps.show() arguments which are added to the generated ps.show. Has to be given as a named list, e.g. `ps.show.opts=list(show.solution.btn=FALSE)` if one wants to create an app which does not show the solution button. By default only the necessary options are set. If those are provided, they are overwritten. This way, one can for example set the user.name to something different than Guest.</p></td>
+    </tr>
+    <tr>
+      <th>direct.execution</th>
+      <td><p>If TRUE the generated file deployapp.R is directly executably in the sense that the safety checks within the file are off (i.e. the saving `if` clauses are set to TRUE). Use with care! Default is `FALSE`.</p></td>
+    </tr>
+    <tr>
+      <th>shinyapps.account.info</th>
+      <td><p>Expects a List with the account info according to http://shiny.rstudio.com/articles/shinyapps.html . Default is list(name='&lt;SHINYAPPS_USERNAME&gt;', token='&lt;TOKEN&gt;',secret='&lt;SECRET&gt;'), i.e. the example from that site.</p></td>
     </tr>
     </table>
     

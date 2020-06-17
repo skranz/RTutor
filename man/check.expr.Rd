@@ -4,21 +4,13 @@
 \alias{check.expr}
 \title{Test: Compare the expression check.expr evaluated in the student's environment with the solution correct.expr}
 \usage{
-check.expr(
-  check.expr,
-  correct.expr,
+check.expr(check.expr, correct.expr,
   failure.message = "{{check_expr}} has the wrong values!",
-  success.message = "Great, {{check_expr}} seems correct.",
-  part = NULL,
-  ps = get.ps(),
-  stud.env = ps$stud.env,
-  verbose = FALSE,
-  unsubst.check.expr = NULL,
-  unsubst.correct.expr = NULL,
-  str.check.expr = NULL,
-  str.correct.expr = NULL,
-  tol = .Machine$double.eps^0.5
-)
+  success.message = "Great, {{check_expr}} seems correct.", part = NULL,
+  ps = get.ps(), stud.env = ps$stud.env, verbose = FALSE,
+  unsubst.check.expr = NULL, unsubst.correct.expr = NULL,
+  str.check.expr = NULL, str.correct.expr = NULL,
+  tol = .Machine$double.eps^0.5)
 }
 \arguments{
 \item{check.expr}{the expression to be checked}

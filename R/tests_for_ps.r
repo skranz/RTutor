@@ -375,7 +375,7 @@ standardize.assign = function(call, null.if.no.assign=TRUE) {
 #' @param call.object alternatively to call a quoted call (call object)
 #' @param allow.extra.arg if TRUE (not default) the student is allowed to supply additional arguments to the call that were not in the solution. Useful, e.g. if the student shall plot something and is allowed to customize her plot with additional arguments.
 #' @param ignore.arg a vector of argument names that will be ignored when checking correctness
-#' @param ok.if.same.val if TRUE (not default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
+#' @param ok.if.same.val if TRUE (default) the call will be considered as correct, if it yields the same resulting value as the solution, even if its arguments differ.
 #' @param other.sols a list of quoted assignments, e.g. \code{list(quote(x<-5), quote(x<-10))} of other solutions that are also correct. 
 #' @param check.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided only check whether those columns are correctly computed but ignore other columns. Only works if \code{compare.vals = TRUE} (default).
 #' @param sort.cols only relevant if a data frame (or tibble) is computed. An optional character vector of column names. If provided sort the sample solution and student's solution by these columns before comparing. This means that also solutions that are originally sorted in a different fashion are accepted. Useful in combination with \code{check.cols}.
