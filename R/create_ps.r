@@ -480,7 +480,7 @@ parse.no.change.line = function(row,str,txt, te) {
         te$part = str.right.of(str.left.of(str,")"),"#' ",not.found = NA)
     }
 
-  # Normal line of code without beeing in a block
+  # Normal line of code without being in a block
   # Treat as a "chunk" block
   } else if (te$in.chunk & !te$in.block) {
     te$block.txt = c(te$block.txt, str)
@@ -1229,11 +1229,12 @@ install.header.txt = function() {
 #'
 name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), only.empty.chunks=FALSE, keep.options=TRUE, valid.file.name = FALSE) {
   restore.point("name.rmd.chunks")
-  ex.name = ""
+  #ex.name = ""
   part.name = ""
   in.code = FALSE
   i = 2
   counter = 1
+  ex.counter = 0
 
   used.chunk.names = NULL
     
@@ -1246,7 +1247,11 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
 
     if (str.starts.with(str, "```{r")) {
       if ((!only.empty.chunks) | str.trim(str) == "```{r }" | str.trim(str) == "```{r}") {
-        counter.str = ifelse(counter==1,"", paste0(" ",counter))
+        if (part.name=="") {
+          counter.str = counter
+        } else {
+          counter.str = ifelse(counter==1,"", paste0(" ",counter))
+        }
         
         # preserve chunk options
         if (has.substr(str,"=")) {
@@ -1254,7 +1259,7 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
         } else {
           rhs.str = ""
         }
-        chunk.name = paste0(ex.name,' ',part.name, counter.str)
+        chunk.name = paste0(ex.counter,'_',part.name, counter.str)
 
         chunk.name = str.to.valid.chunk.name(str.trim(chunk.name))
           
@@ -1269,11 +1274,12 @@ name.rmd.chunks = function(rmd.file=NULL, txt=readLines(rmd.file, warn=FALSE), o
       }
       counter = counter+1
     } else if (str.starts.with(str,"## Exercise ")) {
-      ex.name = str.right.of(str,"## Exercise ")
-      ex.name = gsub("#","", ex.name, fixed=TRUE)
-      #ex.name = str.left.of(ex.name," --", not.found="all")
-      ex.name = str.left.of(ex.name," --", not.found=ex.name)
-      ex.name = substring(str.to.valid.chunk.name(ex.name),1,20)
+      #ex.name = str.right.of(str,"## Exercise ")
+      #ex.name = gsub("#","", ex.name, fixed=TRUE)
+      #ex.name = str.left.of(ex.name," --", not.found=ex.name)
+      #ex.name = substring(str.to.valid.chunk.name(ex.name),1,20)
+      ex.counter = ex.counter+1
+      #ex.name = paste0("ex", ex.counter)
       if (!valid.file.name)
         counter = 1
       part.name = ""
