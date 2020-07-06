@@ -76,10 +76,16 @@ For the web-based interface, several students at Ulm University have created ver
 ### Wall Street and the Housing Bubble (by Marius Wentz)
   - Github: https://github.com/mwentz93/RTutorWallStreet
   - shinyapps.io: https://mwentz93.shinyapps.io/RTutorWallStreet/
+
+### How much less effective are publicly assigned lawyers? (by Artemij Cadov)
+  - Github: [https://github.com/KendamaQQ/LawyersLemon](https://github.com/KendamaQQ/LawyersLemon)
+  - shinyapps.io: [https://kendamaqq.shinyapps.io/RTutorLawyers/](https://kendamaqq.shinyapps.io/RTutorLawyers/)
   
 ### Air pollution and house prices (by Moritz Sporer)
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
   - shinyapps.io: [https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/](https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/)
+
+
 
 ### Predicting Effects of Carbon Pricing on US Electricity Production (by Daniel Dreyer)
 

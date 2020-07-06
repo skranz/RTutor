@@ -105,7 +105,7 @@
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
 <p>RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"RTutor"</span>,<span class="dt">repos =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"https://skranz-repo.github.io/drat/"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">getOption</a></span>(<span class="st">"repos"</span>)))</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"RTutor"</span>,<span class="dt">repos =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"https://skranz-repo.github.io/drat/"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">getOption</a></span>(<span class="st">"repos"</span>)))</span></code></pre></div>
 <p><strong>Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.</strong></p>
 <div id="create-your-own-problem-sets" class="section level2">
 <h2 class="hasAnchor">
@@ -242,6 +242,16 @@
 </li>
 </ul>
 </div>
+<div id="how-much-less-effective-are-publicly-assigned-lawyers-by-artemij-cadov" class="section level3">
+<h3 class="hasAnchor">
+<a href="#how-much-less-effective-are-publicly-assigned-lawyers-by-artemij-cadov" class="anchor"></a>How much less effective are publicly assigned lawyers? (by Artemij Cadov)</h3>
+<ul>
+<li>Github: <a href="https://github.com/KendamaQQ/LawyersLemon">https://github.com/KendamaQQ/LawyersLemon</a>
+</li>
+<li>shinyapps.io: <a href="https://kendamaqq.shinyapps.io/RTutorLawyers/">https://kendamaqq.shinyapps.io/RTutorLawyers/</a>
+</li>
+</ul>
+</div>
 <div id="air-pollution-and-house-prices-by-moritz-sporer" class="section level3">
 <h3 class="hasAnchor">
 <a href="#air-pollution-and-house-prices-by-moritz-sporer" class="anchor"></a>Air pollution and house prices (by Moritz Sporer)</h3>
@@ -336,16 +346,16 @@
 <p>To install RTutor and required packages directly from Github and CRAN, you can use the small function in the following gist:</p>
 <p><a href="https://gist.github.com/skranz/fad6062e5462c9d0efe4">https://gist.github.com/skranz/fad6062e5462c9d0efe4</a></p>
 <p>Copy the code in the link into your R console and then run:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">install.rtutor</span>(<span class="dt">update.github=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">install.rtutor</span>(<span class="dt">update.github=</span><span class="ot">TRUE</span>)</span></code></pre></div>
 <p>Depending on your devtools version, also the following code may work directly (yet source_gist is buggy in some devtools versions):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb3-1" title="1">if (!require(devtools)) </a>
-<a class="sourceLine" id="cb3-2" title="2">  install.packages(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb3-3" title="3"></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</a>
-<a class="sourceLine" id="cb3-5" title="5">install.rtutor(update.github=TRUE)</a>
-<a class="sourceLine" id="cb3-6" title="6">library(RTutor)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1"></a>if (!require(devtools)) </span>
+<span id="cb3-2"><a href="#cb3-2"></a>  install.packages(<span class="st">"devtools"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>install.rtutor(update.github=TRUE)</span>
+<span id="cb3-6"><a href="#cb3-6"></a>library(RTutor)</span></code></pre></div>
 <p>If you only want to update the RTutor package (and have the other packages already installed). You can just type:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</span></code></pre></div>
 <p>(You may have to restart your R session / RStudio for the update to work.)</p>
 </div>
 <div id="suggestions--feedback" class="section level2">
