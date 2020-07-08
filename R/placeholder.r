@@ -3,3 +3,10 @@ get.placeholder = function(ps=get.ps()) {
   if (is.null(ph)) return("___")
   ph
 }
+
+has.call.placeholder = function(call) {
+  if (!is.character(call)) {
+    call = deparse1(call)
+  }
+  has.substr(call,".PH_._")
+}

@@ -1,7 +1,7 @@
 # This file contains code used 
 # for creating automatic hint for dplyr chains
 
-inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n", env=ps$stud.env, details.of.wrong..call = TRUE, compare.vals= !(isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)),...) {
+inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n", env=ps$stud.env, details.of.wrong..call = TRUE, compare.vals= !(isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)), call=NULL,...) {
 
   restore.point("inner.hint.for.call.chain")
 
@@ -29,21 +29,48 @@ inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, 
     
   }
   
+  # Cannot correctly evaluate if there are errors
+  has.place.holders = sapply(sde.li, has.call.placeholder)
+  if (any(has.place.holders)) {
+    txt = paste0("Here is a scrambled solution:\n", scramble.call.chain(call))
+    display(txt)
+    return(invisible())
+  }
+
   if (compare.vals) {
     check.res.li = eval.chain.steps(de=cde, envir=env)
   } else {
     check.res.li = NULL
   }
   
-  compare.li = lapply(seq_along(sde.li), function(i) {
-    compare.pipe.chains(
+  has.error = FALSE
+  compare.li = vector("list", length(sde.li))
+  
+  for (i in seq_along(sde.li)) {
+    res = try(compare.pipe.chains(
       check.chain = ce, cde=cde,
       stud.chain = stud.expr.li[[i]],
       sde = sde.li[[i]],
       envir = env,
       check.res.li = check.res.li
-    )
-  })
+    ),silent = TRUE)
+    if (is(res, "try-error")) {
+     txt = paste0("I could not evaluate all your code without error. Here is a scrambled solution:\n", scramble.call.chain(call))
+      display(txt)
+      return(invisible())
+    }
+    compare.li[[i]] = res
+  }
+  
+  # compare.li = lapply(seq_along(sde.li), function(i) {
+  #   res = try(compare.pipe.chains(
+  #     check.chain = ce, cde=cde,
+  #     stud.chain = stud.expr.li[[i]],
+  #     sde = sde.li[[i]],
+  #     envir = env,
+  #     check.res.li = check.res.li
+  #   ))
+  # })
   
   # If student wrote several pipe chains
   # select student solution that fails last
@@ -210,4 +237,10 @@ eval.next.chain.call = function(x, call, envir=parent.frame(), eval.fun = eval, 
   
   eval.fun(new.call, cenv)
   
+}
+
+scramble.call.chain = function(call) {
+  call.str = deparse1(call)
+  call.str = gsub("%>%","%>%\n\t", call.str, fixed=TRUE)
+  scramble.text(call.str,"?",0.5, keep.char=c(" ","\n",">","%","(",")","=", "\t"))
 }
