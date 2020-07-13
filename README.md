@@ -100,6 +100,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/ArthurS90/RTutorEmissionTrading
   - shinyapps.io: https://arthurs90.shinyapps.io/RTutorEmissionTrading/
 
+### Social Spillovers in Movie Consumption (by Lara Santak)
+  - Github: https://github.com/larasantak/RTutorSomethingToTalkAbout
+  - shinyapps.io: https://lara-santak.shinyapps.io/RTutorSomethingToTalkAbout/
+
 ### Building Codes and Energy Efficiency (2 versions, by Simon Hertle and Lisa Eilts)
   - Github (Simon Hertle): https://github.com/simonhertle/RTutorBuildingCodes
   - shinyapps.io (Simon Hertle): https://shertle.shinyapps.io/RTutorBuildingCodes/
