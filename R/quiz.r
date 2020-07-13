@@ -17,6 +17,73 @@
 #   text: You solved the quiz!
 # #>
 
+answer.quiz = function(name, ps = get.ps()) {
+  restore.point("answer.quiz")
+  
+  qu = ps$rps$addons[[paste0("addon__quiz__", name)]]
+  if (is.null(qu)) {
+    message(paste0("Cannot find quiz ", name,". Check the problem set at least once before calling this function."))
+    return(invisible())
+  }
+  
+  if (length(qu$parts)>1) {
+    stop("Sorry, multi part quizzes cannot yet be solved inside RStudio.")
+  }
+  part = qu$parts[[1]]
+  
+  if (part$type == "sc") {
+    msg = paste0("Type the answer's number (1-",length(part$choices),") and then press Enter: ")
+  } else if (part$type != "mc") {
+    msg = paste0("Type the answer and then press Enter: ")
+  } else {
+    stop("Multiple choice quizzes with more than one solution are not yet supported in the RStudio environment.")
+  }
+  # Give focus to console
+  try(rstudioapi::sendToConsole("", execute=FALSE, echo=TRUE),silent = TRUE)
+  
+  # Collect answer
+  answer <- readline(prompt=msg)
+  
+  
+  if (part$type =="numeric") {
+    answer = as.numeric(answer)
+    correct = is.true(abs(answer-part$answer)<part$roundto)
+  } else if (part$type == "sc"){
+    answer = as.numeric(answer)
+    if (is.na(answer)) {
+      cat("\nYou have to enter the number of the correct answer.")
+      return(invisible())
+    }
+    correct = isTRUE(answer==part$correct.choices)
+  } else {
+    correct = setequal(answer,part$answer)
+  }
+  
+  if (correct) {
+    ans.msg = part$success
+    ans.msg = gsub("<p><font color='black'>","",ans.msg, fixed=TRUE)
+    ans.msg = gsub("</font></p>","",ans.msg, fixed=TRUE)
+    cat(paste0("\n",ans.msg))
+  } else {
+    ans.msg = part$failure
+    ans.msg = gsub("<p><font color='red'>","",ans.msg, fixed=TRUE)
+    ans.msg = gsub("</font></p>","",ans.msg, fixed=TRUE)
+    message(paste0(ans.msg))
+  }
+  
+  # Update state
+  qu$state$part.solved[1] = correct
+  qu$state$solved = all(qu$state$part.solved)
+
+  
+  rta = qu$rta; state=qu$state
+  rta$solved = state$solved
+  rta$points = (sum(state$part.solved) / length(state$part.solved))*rta$max.points
+  
+  # Save ups with correctly answered quiz
+  process.checked.addon(rta,from.shiny=FALSE)
+  return(invisible())
+}
 
 
 rtutor.addon.quiz = function() {
@@ -310,17 +377,17 @@ quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnI
   list(head,answer,uiOutput(part$resultId),button)
 }
 
-quiz.md = function(qu, solution=FALSE) {
+quiz.md = function(qu, solution=FALSE, add.numbers=FALSE) {
   restore.point("quiz.md")
   li = lapply(seq_along(qu$parts), function(i) {
     part = qu$parts[[i]]
-    quiz.part.md(part, solution=solution)
+    quiz.part.md(part, solution=solution, add.numbers=add.numbers)
   })
   paste0(li, collapse="\n")
 }
 
 
-quiz.part.md = function(part, solution=FALSE) {
+quiz.part.md = function(part, solution=FALSE, add.numbers=FALSE) {
   restore.point("quiz.part.md")
   
   head = paste0("\nQuiz: ",part$question,"\n")
@@ -338,7 +405,11 @@ quiz.part.md = function(part, solution=FALSE) {
       answer = "Answer: "
     } else if (part$type=="mc" | part$type=="sc") {
       ans = part$choices
-      answer = paste0("- ", ans, "[   ]\n", collapse="\n")
+      if (add.numbers) {
+        answer = paste0("[", seq_along(ans),"]: ", ans, collapse="\n")
+      } else {
+        answer = paste0("- ", ans, " [   ]\n", collapse="\n")
+      }
     }
   }
   paste0(head,"\n", answer)

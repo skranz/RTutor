@@ -30,6 +30,8 @@ examples.create.ps = function() {
 #' @param extra.code.file the name of an r file that contains own functions that will be accessible in the problme set
 #' @param var.txt.file name of the file that contains variable descriptions (see thee vignette for an explanation of the file format)
 #' @param rps.has.sol shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily
+#' @param add.shiny shall we compile the ps so that it can be shown as a web-based shiny app. Default is TRUE. Set FALSE if not needed to speed up compilation
+#' @param make.rmd Shall a Rmd problem set file and sample solution file be generated. Default is TRUE You can set to FALSE if you only want a shiny version to slightly speed up compilation and avoid file clutter.
 #' @param use.memoise shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.
 #' @param memoise.funs character vector of function names that will be memoised when use.memoise = TRUE. By default a list of functions that load data from a file.
 #' @param preknit shall sample solution of chunks be knitted when problem set is generated. Default = FALSE
@@ -48,7 +50,7 @@ examples.create.ps = function() {
 #' @param signif.digits Significant digits for  shown data frames.
 #' @param knitr.opts.chunk A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___") {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___") {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -79,12 +81,12 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
   if (!is.null(ps.name))
     te$ps.name = ps.name
 
-  write.sample.solution(te=te, header=header,footer=footer,
-                        user.name=sol.user.name, ps.dir=dir)
-
-
-  task.txt = write.empty.ps(te=te,  header=header,footer=footer,
-                            user.name=user.name, ps.dir=dir)
+  if (make.rmd) {
+    write.sample.solution(te=te, header=header,footer=footer, user.name=sol.user.name, ps.dir=dir)
+  }
+  task.txt = write.empty.ps(te=te,  header=header,footer=footer, user.name=user.name, ps.dir=dir, save=make.rmd)
+  
+  
   rps = te.to.rps(te=te)
 
   rps$force.noeval = force.noeval
@@ -256,12 +258,39 @@ write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), 
   writeLines(out.txt, file, useBytes=TRUE)
 }
 
-
-write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te,...) {
+write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te, save=TRUE,...) {
   task.txt = include.ps.extra.lines(task.txt, ps.file=file, ps.name=ps.name,te=te,...)
-  writeLines(task.txt, file, useBytes=TRUE)
+  restore.point("write.empty.ps")
+  if (save) {
+    adapted.txt = adapt.empty.ps.rmd(task.txt, te=te)
+    writeLines(adapted.txt, file, useBytes=TRUE)
+  }
   invisible(task.txt)
 }
+
+adapt.empty.ps.rmd = function(txt, te) {
+  restore.point("adapt.empty.ps.rmd")
+  # Replace info lines
+  lines = which((str.starts.with(txt,"info(")))
+  if (length(lines)>0) {
+    txt[lines] = paste0("```{r eval=FALSE}\n# Run for additional info in the Viewer pane\n",txt[lines],"\n```")
+  }
+  
+  # Replace quiz lines
+  lines = which((str.starts.with(txt,"#! addon__quiz__")))
+  if (length(lines)>0) {
+    
+    for (line in lines) {
+      id = substring(txt[line],4)
+      quiz.name = substring(id, 14)
+      qu= te$addons[[id]]
+      md = quiz.md(qu,add.numbers=TRUE)
+      txt[line] = paste0(md,"\n\n```{r eval=FALSE}\n# Run line to answer the quiz above\nanswer.quiz(\"",quiz.name,"\")\n```")
+    }
+  }
+  txt
+}
+
 
 te.to.rps = function(te) {
   restore.point("te.to.rps")
@@ -912,7 +941,7 @@ add.te.info = function(te, as.note=TRUE, info.name=NULL) {
   }
   info = list(info.name=info.name,type="html", html=html, rmd=txt, as.note=as.note)
   
-  str = paste0('info("', info.name,'") # Run this line (Strg-Enter) to show info')
+  str = paste0('info("', info.name,'")')
   if (as.note) {
     te$task.txt = c(te$task.txt,str)
     te$sol.txt = c(te$sol.txt, str)

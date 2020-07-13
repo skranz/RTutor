@@ -1,7 +1,7 @@
 info = function(info.name, ps = get.ps()) {
   restore.point("info")
   if (is.null(ps)) {
-    hdisplay("Please check your problem set once with Ctrl-Alt-R. Then you can see infos.")
+    hdisplay("Please check your problem set once. Then you can see infos.")
     return()
   }
   infos = ps$rps$infos
@@ -440,7 +440,7 @@ hint.for.compute = function(expr, hints.txt=NULL,var="", ps=get.ps(), env = ps$s
     }
   }
   if (ret==FALSE & i < length(expr.li) & !isTRUE(ps$is.shiny)) {
-    hdisplay("Note: If you have finished this step and want a hint for the next step. Check your problem set with Ctrl-Alt-R before you type hint() again.")
+    hdisplay("Note: If you have finished this step and want a hint for the next step. Check your problem set before you type hint() again.")
   }
   if (ret==TRUE) {
     hdisplay("Great, all steps seem correct. Check your solution to proceed.")

@@ -8,17 +8,18 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
   sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
   libs = NULL, stop.when.finished = FALSE, extra.code.file = NULL,
   var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = TRUE,
-  add.enter.code.here = FALSE, add.shiny = TRUE, addons = NULL,
-  whitelist.report = FALSE, wl = rtutor.default.whitelist(),
-  use.memoise = FALSE, memoise.funs = rtutor.default.memoise.funs(),
-  precomp = FALSE, preknit = FALSE, force.noeval = FALSE,
-  html.data.frame = TRUE, table.max.rows = 25, round.digits = 8,
-  signif.digits = 8, knit.print.opts = make.knit.print.opts(html.data.frame
-  = html.data.frame, table.max.rows = table.max.rows, round.digits =
-  round.digits, signif.digits = signif.digits), knitr.opts.chunk = list(dev =
-  "svg"), e.points = 1, min.chunk.points = 0, chunk.points = 0,
-  keep.fill.in.output.sol = TRUE, hint.on.fail = FALSE,
-  empty.task.txt = "# Enter your code here.", placeholder = "___")
+  add.enter.code.here = FALSE, add.shiny = TRUE, make.rmd = TRUE,
+  addons = NULL, whitelist.report = FALSE,
+  wl = rtutor.default.whitelist(), use.memoise = FALSE,
+  memoise.funs = rtutor.default.memoise.funs(), precomp = FALSE,
+  preknit = FALSE, force.noeval = FALSE, html.data.frame = TRUE,
+  table.max.rows = 25, round.digits = 8, signif.digits = 8,
+  knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
+  table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+  signif.digits), knitr.opts.chunk = list(dev = "svg"), e.points = 1,
+  min.chunk.points = 0, chunk.points = 0, keep.fill.in.output.sol = TRUE,
+  hint.on.fail = FALSE, empty.task.txt = "# Enter your code here.",
+  placeholder = "___")
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -38,6 +39,10 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{var.txt.file}{name of the file that contains variable descriptions (see thee vignette for an explanation of the file format)}
 
 \item{rps.has.sol}{shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily}
+
+\item{add.shiny}{shall we compile the ps so that it can be shown as a web-based shiny app. Default is TRUE. Set FALSE if not needed to speed up compilation}
+
+\item{make.rmd}{Shall a Rmd problem set file and sample solution file be generated. Default is TRUE You can set to FALSE if you only want a shiny version to slightly speed up compilation and avoid file clutter.}
 
 \item{use.memoise}{shall functions like read.csv be memoised? Data sets then only have to be loaded once. This can make problem sets run faster. Debugging may be more complicated, however.}
 

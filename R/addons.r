@@ -7,7 +7,7 @@ make.addons.list = function(addons="quiz") {
   li
 }
 
-process.checked.addon = function(rta, ps = get.ps(), ups=get.ups()) {
+process.checked.addon = function(rta, ps = get.ps(), ups=get.ups(), from.shiny=TRUE) {
   ao.dt = ps$rps$ao.dt
   row = which(ao.dt$id == rta$id)
   
@@ -16,7 +16,8 @@ process.checked.addon = function(rta, ps = get.ps(), ups=get.ups()) {
     award.name = ao.dt$award.name[row]
     if (!is.na(award.name)) {
       give.award(award.name, ps=ps)
-      show.shiny.award(award.name = award.name)
+      if (from.shiny)
+        show.shiny.award(award.name = award.name)
     }
     rta$was.solved=TRUE
     
