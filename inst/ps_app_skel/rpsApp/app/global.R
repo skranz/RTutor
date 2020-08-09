@@ -1,7 +1,8 @@
 library(RTutor)
 DEPENDS_LIBRARIES
 
-setwd("./work")
+# does not seem to work anymore on shinyapps.io
+#setwd("./work") 
 app =  show.ps(PS_OPTIONS)
 
 app$verbose = FALSE

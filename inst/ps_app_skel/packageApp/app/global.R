@@ -1,5 +1,6 @@
 library(PACKAGE_NAME)
-setwd("./work") 
+# does not seem to work anymore on shinyapps.io
+# setwd("./work") 
 app = run.ps(PS_OPTIONS)
 
 app$verbose = FALSE

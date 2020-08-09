@@ -3,7 +3,7 @@
 # 1. Make sure you have generated a package for your problem set and 
 #    have it hosted on github
 
-# 2. Install in the subfolder ./app/work all the data sets that are used by
+# 2. Install in the subfolder ./app all the data sets that are used by
 #    your problem set.
 
 # 3. All packages that are used must have be installed in your
