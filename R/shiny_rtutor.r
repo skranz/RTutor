@@ -76,6 +76,10 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
     auto.save.code=auto.save.code, ...
   )
   
+  if (is.null(ps$rps$cdt$task.html)) {
+    stop("This problem set has been compiled without any HTML information. It cannot be solved in the web browser by calling show.ps(). You need the empty problem set Rmd file and solve it inside RStudio.")
+  }
+
   
   ps$show.points = show.points
   ps$need.login = need.login
