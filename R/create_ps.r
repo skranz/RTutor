@@ -370,9 +370,18 @@ te.to.rps = function(te) {
       dt$chunk.ex.ind = 1:NROW(dt)
     dt
   })
-  cdt = do.call(rbind,li)
+  
+  #If at least one exercise contained a chunk, cdt has all correct rows otherwise they have to be created
+  if(!is.null(unlist(li))){
+    cdt = do.call(rbind,li)
+  } else {
+    cdt = data.table(ex.ind=integer(), ex.name=character(), chunk.ps.ind=numeric(), chunk.ex.ind=integer(), chunk.name=character(), chunk.opt=vector(0, mode="list"), part=vector(0, mode="list"), num.e = integer(), num.e.task=numeric(), has.test=logical(), e.li=vector(0, mode="list"), e.source.li=vector(0, mode="list"), test.exp=vector(0, mode="list"), hint.expr=vector(0, mode="list"), task.txt=character(), sol.txt=character(), optional=logical(), chunk.hint=vector(0,mode="list"))
+  }  
 
-  cdt$chunk.ps.ind = 1:NROW(cdt)
+  if(nrow(cdt)>0){
+    cdt$chunk.ps.ind = 1:NROW(cdt)
+  }
+  
   # Add has.passed for each test
   # See https://stackoverflow.com/questions/32054302/data-table-add-list-as-column-when-only-one-row
   # For why we have 3 nested lists here
@@ -1351,10 +1360,14 @@ get.chunk.lines = function(txt) {
   chunk.start = which(chunk.start)
   chunk.end = remove.verbatim.end.chunks(chunk.start,chunk.end)
 
-  header = txt[chunk.start]
-  chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, keep.name=TRUE)[[1]])
-
-  quick.df(chunk.name=chunk.name, start.line=chunk.start, end.line=chunk.end)
+  if(length(chunk.start)>0) {
+    header = txt[chunk.start]
+    chunk.name = sapply(header,USE.NAMES=FALSE, function(str) chunk.opt.string.to.list(str, keep.name=TRUE)[[1]])
+    chunk.df = quick.df(chunk.name=chunk.name, start.line=chunk.start, end.line=chunk.end)
+  } else {
+    chunk.df = data.frame(chunk.name=character(), start.line=chunk.start, end.line=chunk.end)
+  }
+  chunk.df
 }
 
 make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file, warn=FALSE)) {
@@ -1408,8 +1421,10 @@ make.shiny.dt = function(rps, rmd.file, txt = readLines(rmd.file, warn=FALSE)) {
   df = df[!duplicated(df$start),]
   df = arrange(df, start)
   df$end = c(df$start[-1]-1, length(txt))
-  df
-
+  #?? Not obvious whats happening here, but having a task start after the txt file ends leads to errors, so we will remove those
+  df = df[df$start<=length(txt),]
+  
+  
   in.note = cumsum(df$type=="note.start") - cumsum(df$type=="note.end")
   df$note.ind = cumsum(df$type=="note.start")*in.note
   df$note.label = ""

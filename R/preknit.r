@@ -144,7 +144,11 @@ create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTR
 
 create.cdt.task.html = function(cdt) {
   restore.point("create.cdt.task.html")
-  task.html = sapply(1:NROW(cdt), create.task.chunk.html, cdt=cdt)
+  if(length(cdt$chunk.name)>0){
+    task.html = sapply(1:length(cdt$chunk.name), create.task.chunk.html, cdt=cdt)
+  } else {
+    task.html = character()
+  }    
   task.html
 }
 

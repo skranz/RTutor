@@ -13,9 +13,13 @@ copy.ps.for.session = function(ps, empty.stud.env=TRUE) {
   ps$edt = copy(ops$edt)
 
   cdt = ps$cdt; edt = ps$edt
-  cdt[["stud.env"]] = lapply(1:NROW(cdt), function(chunk.ind) {
-    new.stud.env(chunk.ind)
-  })
+  if(NROW(cdt)>0){
+    cdt[["stud.env"]] = lapply(1:NROW(cdt), function(chunk.ind) {
+      new.stud.env(chunk.ind)
+    })
+  } else {
+    cdt[["stud.env"]] = NULL
+  }
   env.li  = replicate(NROW(edt),list(new.stud.env(chunk.ind=0)), simplify=FALSE)
   edt$ex.final.env = env.li
   return(ps)
@@ -123,9 +127,13 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   }
 
   if (!ps$precomp) {
-    cdt[["stud.env"]] =lapply(1:NROW(cdt), function(chunk.ind) {
-      new.stud.env(chunk.ind)
-    })
+    if(nrow(cdt)>0){
+      cdt[["stud.env"]] =lapply(1:NROW(cdt), function(chunk.ind) {
+        new.stud.env(chunk.ind)
+      })
+    } else {
+      cdt = bind_cols(cdt, stud.env=logical())
+    }    
   } 
   cdt$old.stud.code = cdt$task.txt
 

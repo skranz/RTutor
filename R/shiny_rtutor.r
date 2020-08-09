@@ -76,6 +76,7 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
     auto.save.code=auto.save.code, ...
   )
   
+  
   ps$show.points = show.points
   ps$need.login = need.login
   ps$login.dir = login.dir
@@ -116,7 +117,7 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
   for (ex.ind in ex.inds)
     show.ex.ui(ex.ind)
 
-  for (chunk.ind in 1:n) {
+  for (chunk.ind in seq_len(n)) {
     make.chunk.handlers(chunk.ind=chunk.ind)
   }
   make.load.save.handlers()
@@ -137,7 +138,9 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
       ps$input = input
       ps$output = output
       # autocomplete in first open chunk
-      set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+      if(NROW(ps$cdt)>0){
+        set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+      }
 
     }
   } else {
@@ -150,7 +153,9 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
       ps$output = output
       
       # autocomplete in first open chunk
-      set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+      if(NROW(ps$cdt)>0){
+        set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+      }
       if (stop.app.if.window.closes) {
         session$onSessionEnded(function() {stopApp()})
       }

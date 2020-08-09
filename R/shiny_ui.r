@@ -86,7 +86,7 @@ make.ex.ui = function(ex.ind, ps = get.ps(), session=ps$session, view.in.contain
   
   
   # Button for next exercise
-  if (ex.ind < max(ps$cdt$ex.ind)) {
+  if (nrow(cdt)>0 && (ex.ind < max(ps$cdt$ex.ind))) {
     btnId = paste0("nextExBtn", ex.ind)
     nextExBtn = simpleButton(btnId,"Go to next exercise...", class.add="nextExBtn")
     #nextExBtn = actionButton(btnId,"Go to next exercise...")

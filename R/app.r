@@ -99,7 +99,9 @@ RTutorPSApp = function(ps.name, user.name="default_user", sample.solution=FALSE,
     
     
     # autocomplete in first open chunk
-    set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+    if(nrow(ps$cdt)>0){
+      set.chunk.autocomp.observer(inputId = ps$cdt$nali[[1]]$editor, chunk.ind = 1)
+    }
     
     rtutor.observe.html.query(app=app, ps=ps, session.timeout.sec=session.timeout.sec)
   }
