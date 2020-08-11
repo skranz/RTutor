@@ -754,12 +754,22 @@ add.te.block = function(te) {
     var = args
     add.te.compute(te,ck,var)
   } else if (type == "hint") {
-    restore.point("shfkjdkfhdkhfurhui")
-
+    #restore.point("shfkjdkfhdkhfurhui")
+    btxt = trimws(btxt)
+    alines = which(btxt=="auto.hint()")
+    elines  = which(btxt=="auto.hint.else()")
+    if (length(alines)+length(elines)>0) {
+      auto.hint.txt = hint.code.for.e(te$last.e)
+      btxt[alines] = auto.hint.txt
+      if (length(elines)>0) {
+        btxt[elines] = paste0("if (!true(get.ps()$shown.custom.hints > 0)) ", auto.hint.txt)
+      }
+    }
+    hint.txt = paste0(btxt,collapse="\n")
     if (length(ck$hint.txt) == 0) {
-      ck$chunk.hint.txt =  paste0(btxt,collapse="\n")
+      ck$chunk.hint.txt =  hint.txt
     } else {
-      ck$hint.txt[length(ck$hint.txt)] <- paste0(btxt,collapse="\n")
+      ck$hint.txt[length(ck$hint.txt)] <- hint.txt
     }
   } else if (type == "add_to_hint") {
     hint.txt = hint.code.for.e(te$last.e,extra.code = btxt)

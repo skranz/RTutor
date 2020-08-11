@@ -1,5 +1,9 @@
 # RTutor (main)
 
+## 2020-08-11
+
+* More convenient adaptive hints using `hint.stud.call` and `hint.stud.assign` and also more flexible combination of custom and auto hints using `auto.hint()` and `auto.hint.else()`.
+
 ## 2020-06-10
 
 * Allow option for shiny based problem sets that one can start editing any chunk and previous 

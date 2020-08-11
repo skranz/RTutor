@@ -25,6 +25,9 @@ info = function(info.name, ps = get.ps()) {
 hint = function(..., ps=get.ps()) {
   restore.point("hint")
 
+  ps$shown.custom.hints = 0
+  ps$stud.expr.li.info = NULL
+  
   if (is.null(ps$chunk.ind)) {
     cat("\nPlease test the chunk before you ask for a hint.")
     return(invisible(""))
@@ -463,3 +466,100 @@ hdisplay = function (..., collapse = "\n", sep = "", start.char="\n",end.char="\
 is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
+
+make.stud.expr.li.info = function(stud.expr.li = get.ps()$stud.expr.li) {
+  restore.point("make.stud.expr.li.info")
+  
+  n = length(stud.expr.li)
+  is.assign = sapply(stud.expr.li, is.assignment)
+  
+  matched.stud.expr.li = vector("list",n)
+  var = rep("",n)
+  
+  for (row in seq_len(n)) {
+    stud.expr = stud.expr.li[[row]]
+    if (is.assign[row]) {
+      matched.stud.expr.li[[row]] = match.call.object(stud.expr[[3]])
+      var[row] = deparse.assign.var(stud.expr)                         
+    } else {
+      matched.stud.expr.li[[row]] = match.call.object(stud.expr)
+    }
+  }
+
+  tibble(
+    matched.stud.expr = matched.stud.expr.li,
+    var = var,
+    is.assign = is.assign
+  )
+}
+
+deparse.assign.var = function(call) {
+  deparse1(call[[2]],collapse="\n")
+}
+
+#' Show the hint if the student made the specified wrong assignment
+#' 
+#' @param var name of the to be assigned variable as character
+#' @param call an unquoted call that we check whether the student makes it
+#' @param msg a string that shall be shown as hint if the student made the call in his code
+hint.stud.assign = function(var, call,msg , ps=get.ps(), env=parent.frame()) {
+  call = substitute(call)
+  hint.stud.call(qcall=call, msg=msg, ps=ps, env=env, var=var)
+}
+
+
+#' Show the hint if the student made the specified wrong call
+#' 
+#' @param call an unquoted call that we check whether the student makes it
+#' @param msg a string that shall be shown as hint if the student made the call in his code
+hint.stud.call = function(call, msg="", ps=get.ps(), env=parent.frame(), qcall, var=NULL) {
+  if (missing(qcall)) {
+    call = substitute(call)
+  } else {
+    call = qcall
+  }
+  call = match.call.object(call)
+  restore.point("hint_stud_call_inner")
+  
+  if (is.null(ps$stud.expr.li.info)) {
+    ps$stud.expr.li.info =  make.stud.expr.li.info(ps$stud.expr.li)
+  }
+  
+  stud.expr.li.info = ps$stud.expr.li.info
+  from.assign = !is.null(var)
+  if (from.assign) {
+    rows = which(stud.expr.li.info$is.assign & stud.expr.li.info$var == var)
+  } else {
+    rows = which(!stud.expr.li.info$is.assign)
+  }
+  if (length(rows)==0) return(invisible())
+
+  stud.expr.li = ps$stud.expr.li.info$matched.stud.expr[rows]
+
+  has.call = FALSE
+  for (scall in stud.expr.li) {
+    if (identical(call, scall)) has.call = TRUE
+  }
+  if (has.call) {
+    cat(paste0("\n",msg,"\n"))
+    ps$shown.custom.hints = ps$shown.custom.hints+1 
+  }
+}
+
+#' This is just a place holder in a hint block
+#' 
+#' It says that the automatic hint should be shown unless
+#' some hint with hint.stud.call has been shown (or ps$shown.custom.hints has been manually assigned a value above 0.)
+auto.hint.else = function() {
+ cat("\nOh, this looks like an error. The function auto.hint.else() should have been replaced in the hint block. If you design the problem set, make sure that you write it in a separate line and have no spaces between the ().") 
+}
+
+#' This is just a place holder in a hint block
+#' 
+#' It says that the automatic hint shall be shown. This
+#' makes sense if you want to show the automatic hint in
+#' addition to a custom hint. Also see auto_hint_else()
+auto.hint = function() {
+ cat("\nOh, this looks like an error. The function call auto.hint() should have been replaced in the hint block.  If you design the problem set, make sure that you write it in a separate line and have no spaces between the ().") 
+}
+

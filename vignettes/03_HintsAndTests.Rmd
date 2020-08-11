@@ -91,9 +91,43 @@ cat("Use Google, e.g. search for 'R compute mean'.")
 m
 ```
 
-## Adaptive Custom Hints
+## Adaptive custom hints for specific user calls
 
-The hints described above always show the same message, independent of the student's code. Automatic hints already adapt to the student's input and from RTutor version 2019.07.23 it is also more simple to make custom hints adaptive.
+If you use [RTutorSAGI](https://github.com/skranz/RTutorSAGI/) you may find that repeatedly many users make some specific errors. You can create custom hints that are only shown if a user made a specific call using `hint.stud.assign`. Here is an example: 
+
+```s
+#< task_notest
+# Draw a vector of 10 normally distributed random variables with mean 0 and variance 4.
+#>
+rnorm(10,0,2)
+#< hint
+hint.stud.call(rnorm(10,0,4),"Remember that R expects the standard deviation, not the variance, as 3rd argument of rnorm.")
+
+hint.stud.call(rnorm(10,mean=0),"You did not specify the standard deviation.")
+
+auto.hint.else()
+#>
+```
+So whenever the student mixes up variance and standard deviation in his call, the customized hint is shown. If she forgot to specify the standard deviation another customized hint is shown. (Whether arguments are named or not does not matter when comparing to the student's solution.). 
+
+The line `auto.hint.else()` means that if no customized hint is shown, the automatic hint is shown.
+
+There is also a function `hint.stud.assign` that works similarly for assignments.
+
+```s
+#< task_notest
+# Let x be a vector of 10 normally distributed random variables with mean 0 and variance 4.
+#>
+x = rnorm(10,0,2)
+#< hint
+hint.stud.assign("x",rnorm(10,0,4),"Remember that R uses the standard deviation not the variance as 3rd argument of rnorm.")
+#>
+```
+Here we will never show an automatic hint. Note that `hint.stud.assign` compares the call expression not the resulting value.
+
+## More flexible adaptive custom hints
+
+You can also define more flexible adaptive hints that evaluate the value of a student's assignment:
 
 Here is an example, where the task is to assign the first 100 square numbers to the variable `z`.
 ```s
@@ -119,9 +153,21 @@ The code in the hint block will be evaluated in an environment in which all vari
 This means whether whether `z` exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. 
 The function `true` is a robust version of `isTRUE` that never throws an error. This means even if `z` does not exist and thus the expression cannot be evaluated, we just get a `FALSE`.
 
-## add_to_hint blocks to combine automatic and custom hints
+## Combine automatic and custom hints
 
-There are many situations were you want to keep the automatic hint but just add some additional hint. Then write your hint code in an `add_to_hint`block.
+To combine automatic and custom hints, you can add a line that only contains
+
+`auto.hint()`
+
+in your hint block (possibly inside an if block). Then also the automatic hint is shown.
+
+If you add a line
+
+`auto.hint.else()`
+
+then the automatic hint is only shown if no `hint.stud.call` or `hint.stud.assign` above showed a hint. Internally, we just check the condition `!true(get.ps()$shown.custom.hints==0)` to determine whether the auto hint shall be shown. You can manually check this condition if you want to check whether such an adaptive custom hint has been shown or not.
+
+There is also an alternative way carried over from previous RTutor versions to combine custom and automatic hints. It is simpler if you just always want to combine automatic hint with an additional custom hint. Then write your hint code in an `add_to_hint`block.
 
 Here is an example for an adaptive custom hint in an `#< add_to_hint` block from one of my problem sets:
 
