@@ -467,27 +467,27 @@ is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
 
-make.stud.expr.li.info = function(stud.expr.li = get.ps()$stud.expr.li) {
-  restore.point("make.stud.expr.li.info")
+make.expr.li.info = function(expr.li) {
+  restore.point("make.expr.li.info")
   
-  n = length(stud.expr.li)
-  is.assign = sapply(stud.expr.li, is.assignment)
+  n = length(expr.li)
+  is.assign = sapply(expr.li, is.assignment)
   
-  matched.stud.expr.li = vector("list",n)
+  matched.expr.li = vector("list",n)
   var = rep("",n)
   
   for (row in seq_len(n)) {
-    stud.expr = stud.expr.li[[row]]
+    expr = expr.li[[row]]
     if (is.assign[row]) {
-      matched.stud.expr.li[[row]] = match.call.object(stud.expr[[3]])
-      var[row] = deparse.assign.var(stud.expr)                         
+      matched.expr.li[[row]] = match.call.object(expr[[3]])
+      var[row] = deparse.assign.var(expr)                         
     } else {
-      matched.stud.expr.li[[row]] = match.call.object(stud.expr)
+      matched.expr.li[[row]] = match.call.object(expr)
     }
   }
 
   tibble(
-    matched.stud.expr = matched.stud.expr.li,
+    matched.expr = matched.expr.li,
     var = var,
     is.assign = is.assign
   )
@@ -522,7 +522,7 @@ hint.stud.call = function(call, msg="", ps=get.ps(), env=parent.frame(), qcall, 
   restore.point("hint_stud_call_inner")
   
   if (is.null(ps$stud.expr.li.info)) {
-    ps$stud.expr.li.info =  make.stud.expr.li.info(ps$stud.expr.li)
+    ps$stud.expr.li.info =  make.expr.li.info(ps$stud.expr.li)
   }
   
   stud.expr.li.info = ps$stud.expr.li.info
@@ -534,7 +534,7 @@ hint.stud.call = function(call, msg="", ps=get.ps(), env=parent.frame(), qcall, 
   }
   if (length(rows)==0) return(invisible())
 
-  stud.expr.li = ps$stud.expr.li.info$matched.stud.expr[rows]
+  stud.expr.li = ps$stud.expr.li.info$matched.expr[rows]
 
   has.call = FALSE
   for (scall in stud.expr.li) {
