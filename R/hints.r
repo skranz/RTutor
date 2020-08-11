@@ -548,6 +548,8 @@ hint.stud.call = function(call, msg="", ps=get.ps(), env=parent.frame(), qcall, 
 
 #' This is just a place holder in a hint block
 #' 
+#' Only used inside a hint block.
+#' 
 #' It says that the automatic hint should be shown unless
 #' some hint with hint.stud.call has been shown (or ps$shown.custom.hints has been manually assigned a value above 0.)
 auto.hint.else = function() {
@@ -555,6 +557,8 @@ auto.hint.else = function() {
 }
 
 #' This is just a place holder in a hint block
+#' 
+#' Only used inside a hint block.
 #' 
 #' It says that the automatic hint shall be shown. This
 #' makes sense if you want to show the automatic hint in

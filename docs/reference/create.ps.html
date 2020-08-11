@@ -64,7 +64,7 @@ and output solution" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
       </span>
     </div>
 
@@ -146,17 +146,18 @@ and output solution</p>
   <span class='kw'>sol.user.name</span> <span class='kw'>=</span> <span class='st'>"Jane Doe"</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(), <span class='kw'>header</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>footer</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='kw'>libs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>stop.when.finished</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>extra.code.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>var.txt.file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rps.has.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fragment.only</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>add.enter.code.here</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>add.shiny</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>addons</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>whitelist.report</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>wl</span> <span class='kw'>=</span> <span class='fu'>rtutor.default.whitelist</span>(),
-  <span class='kw'>use.memoise</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>memoise.funs</span> <span class='kw'>=</span> <span class='fu'>rtutor.default.memoise.funs</span>(),
-  <span class='kw'>precomp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>preknit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>force.noeval</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='fl'>25</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-  <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>knit.print.opts</span> <span class='kw'>=</span> <span class='fu'>make.knit.print.opts</span>(<span class='kw'>html.data.frame</span>
-  <span class='kw'>=</span> <span class='no'>html.data.frame</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='no'>table.max.rows</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span>
-  <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='no'>signif.digits</span>), <span class='kw'>knitr.opts.chunk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>dev</span> <span class='kw'>=</span>
-  <span class='st'>"svg"</span>), <span class='kw'>e.points</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>empty.task.txt</span> <span class='kw'>=</span> <span class='st'>"# Enter your code here."</span>, <span class='kw'>placeholder</span> <span class='kw'>=</span> <span class='st'>"___"</span>)</pre>
+  <span class='kw'>add.enter.code.here</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>add.shiny</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>make.rmd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>addons</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>whitelist.report</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>wl</span> <span class='kw'>=</span> <span class='fu'>rtutor.default.whitelist</span>(), <span class='kw'>use.memoise</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>memoise.funs</span> <span class='kw'>=</span> <span class='fu'>rtutor.default.memoise.funs</span>(), <span class='kw'>precomp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>preknit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>force.noeval</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='fl'>25</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>,
+  <span class='kw'>knit.print.opts</span> <span class='kw'>=</span> <span class='fu'>make.knit.print.opts</span>(<span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='no'>html.data.frame</span>,
+  <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='no'>table.max.rows</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span>
+  <span class='no'>signif.digits</span>), <span class='kw'>knitr.opts.chunk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/list'>list</a></span>(<span class='kw'>dev</span> <span class='kw'>=</span> <span class='st'>"svg"</span>), <span class='kw'>e.points</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>min.chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>chunk.points</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>keep.fill.in.output.sol</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>hint.on.fail</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>empty.task.txt</span> <span class='kw'>=</span> <span class='st'>"# Enter your code here."</span>,
+  <span class='kw'>placeholder</span> <span class='kw'>=</span> <span class='st'>"___"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,6 +197,14 @@ and output solution</p>
     <tr>
       <th>rps.has.sol</th>
       <td><p>shall the sample solution be stored in the .rps file. Set this option to FALSE if you use problem sets in courses and don't want to assess students the sample solution easily</p></td>
+    </tr>
+    <tr>
+      <th>add.shiny</th>
+      <td><p>shall we compile the ps so that it can be shown as a web-based shiny app. Default is TRUE. Set FALSE if not needed to speed up compilation</p></td>
+    </tr>
+    <tr>
+      <th>make.rmd</th>
+      <td><p>Shall a Rmd problem set file and sample solution file be generated. Default is TRUE You can set to FALSE if you only want a shiny version to slightly speed up compilation and avoid file clutter.</p></td>
     </tr>
     <tr>
       <th>use.memoise</th>
