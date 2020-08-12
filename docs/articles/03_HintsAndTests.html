@@ -209,27 +209,39 @@ differs from my solution, where I call the function mean.</code></pre>
 <span id="cb8-15"><a href="#cb8-15"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>The adaptive hints will still be matched to a particular command in the sample solution. The command <code>hint.else</code> allows to show a custom hint instead of the automatic hint in case that no previous adaptive custom hint was triggered. (You could also add an additional line <code>auto.hint.else</code> to show both.)</p>
 <p>Note that <code>hint.stud.assign</code> compares the call expression not the resulting value.</p>
+<p>If you just want to give a hint if the student uses some function in its code irrespective of the function arguments, you can use <code>hint.stud.fun</code> instead. Here is an example:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">#&lt; task_notest</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co"># Add the vectors x and y together</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>x =<span class="st"> </span><span class="dv">2</span><span class="op">:</span><span class="dv">3</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>y =<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">2</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>x<span class="op">+</span>y</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&lt; hint</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="kw"><a href="../reference/hint.stud.fun.html">hint.stud.fun</a></span>(<span class="st">"sum"</span>,<span class="st">"Please don't use the function 'sum'. A simple plus sign '+' is enough."</span>)</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="kw"><a href="../reference/auto.hint.else.html">auto.hint.else</a></span>()</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt;</span></span></code></pre></div>
+<p>Note that it also works if the function is called in an assignment. If you have nested function calls, it only looks at the outer call.</p>
 </div>
 <div id="more-flexible-adaptive-custom-hints" class="section level2">
 <h2 class="hasAnchor">
 <a href="#more-flexible-adaptive-custom-hints" class="anchor"></a>More flexible adaptive custom hints</h2>
-<p>You can also define more flexible adaptive hints that evaluate the value of a student’s assignment:</p>
+<p>You can also define more flexible adaptive hints that evaluate the value of a student’s assignment.</p>
 <p>Here is an example, where the task is to assign the first 100 square numbers to the variable <code>z</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb9-1"><a href="#cb9-1"></a>z = <span class="kw">1:</span><span class="dv">100</span> * <span class="kw">1:</span><span class="dv">100</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="co">#&lt; hint</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a>if (true(identical(z,<span class="kw">1:</span><span class="dv">10</span>*<span class="kw">1:</span><span class="dv">10</span>))) {</span>
-<span id="cb9-4"><a href="#cb9-4"></a>  cat(<span class="st">"Huh, you made a common mistake. Read the task precisely.</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a>  You shall assign to z the first <span class="dv">100</span> square numbers,</span>
-<span id="cb9-6"><a href="#cb9-6"></a>not only all square numbers that are less or equal to <span class="dv">100</span><span class="st">")</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a>} else if (true(length(z)!=<span class="dv">100</span>)) {</span>
-<span id="cb9-8"><a href="#cb9-8"></a>  cat(<span class="st">"Your variable z must have 100 elements,</span></span>
-<span id="cb9-9"><a href="#cb9-9"></a>  but in your solution z has<span class="st">", length(z),"</span>elements.<span class="st">")  </span></span>
-<span id="cb9-10"><a href="#cb9-10"></a>} else {</span>
-<span id="cb9-11"><a href="#cb9-11"></a>  cat(<span class="st">"There is a simple one-line formula to compute the first 100 square numbers.</span></span>
-<span id="cb9-12"><a href="#cb9-12"></a>  Just combine what you have learned in exercise <span class="dv">2</span> f) and in exercise <span class="dv">3</span> b).</span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="st">")</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a>}</span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb10-1"><a href="#cb10-1"></a>z = <span class="kw">1:</span><span class="dv">100</span> * <span class="kw">1:</span><span class="dv">100</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&lt; hint</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>if (true(identical(z,<span class="kw">1:</span><span class="dv">10</span>*<span class="kw">1:</span><span class="dv">10</span>))) {</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  cat(<span class="st">"Huh, you made a common mistake. Read the task precisely.</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>  You shall assign to z the first <span class="dv">100</span> square numbers,</span>
+<span id="cb10-6"><a href="#cb10-6"></a>not only all square numbers that are less or equal to <span class="dv">100</span><span class="st">")</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>} else if (true(length(z)!=<span class="dv">100</span>)) {</span>
+<span id="cb10-8"><a href="#cb10-8"></a>  cat(<span class="st">"Your variable z must have 100 elements,</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>  but in your solution z has<span class="st">", length(z),"</span>elements.<span class="st">")  </span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>} else {</span>
+<span id="cb10-11"><a href="#cb10-11"></a>  cat(<span class="st">"There is a simple one-line formula to compute the first 100 square numbers.</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>  Just combine what you have learned in exercise <span class="dv">2</span> f) and in exercise <span class="dv">3</span> b).</span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="st">")</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>}</span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>The code in the hint block will be evaluated in an environment in which all variables defined in earlier solved chunks are known. Also (at least if you use the default tests) the student’s current code has been already be evaluated in the hint environment.</p>
 <p>This means whether whether <code>z</code> exists in the hint environment depends on whether the user has defined it in her solution for the chunk or not. The function <code>true</code> is a robust version of <code>isTRUE</code> that never throws an error. This means even if <code>z</code> does not exist and thus the expression cannot be evaluated, we just get a <code>FALSE</code>.</p>
 </div>
@@ -247,54 +259,54 @@ differs from my solution, where I call the function mean.</code></pre>
 <blockquote>
 <p>Task: Using the command <code>cbind</code>, generate the matrix X of explanatory variable whose first column consists of 1 and the second column consists of p.</p>
 </blockquote>
-<div class="sourceCode" id="cb10"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb10-1"><a href="#cb10-1"></a>X = cbind(<span class="dv">1</span>,p)</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#&lt; add_to_hint</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a>if (exists(<span class="st">"x"</span>) &amp; !exists(<span class="st">"X"</span>)) {</span>
-<span id="cb10-4"><a href="#cb10-4"></a>  cat(<span class="st">"It looks like you assigned the value to 'x' (lowercase), but you shall assign the value to 'X' (uppercase)."</span>)</span>
-<span id="cb10-5"><a href="#cb10-5"></a>}</span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co">#&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb11-1"><a href="#cb11-1"></a>X = cbind(<span class="dv">1</span>,p)</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="co">#&lt; add_to_hint</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>if (exists(<span class="st">"x"</span>) &amp; !exists(<span class="st">"X"</span>)) {</span>
+<span id="cb11-4"><a href="#cb11-4"></a>  cat(<span class="st">"It looks like you assigned the value to 'x' (lowercase), but you shall assign the value to 'X' (uppercase)."</span>)</span>
+<span id="cb11-5"><a href="#cb11-5"></a>}</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>Looking at the logs of students’ solution, it became apparent that many mixed up X with x. The automatic hint did not help for this problem, yet in other cases, it was helpful. So I just wanted to add this specific custom hint to the automatic hint.</p>
 </div>
 <div id="hints-at-the-beginning-of-chunk" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hints-at-the-beginning-of-chunk" class="anchor"></a>Hints at the beginning of chunk</h2>
 <p>If you place a hint at the beginning of a chunk, the hint text will be added to all the hints of the individual commands.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">#&lt; hint</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a>cat(<span class="st">"This hint will be added to the automatic hints</span></span>
-<span id="cb11-3"><a href="#cb11-3"></a>of all commands below.<span class="st">")</span></span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co">#&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a>x = <span class="kw">1:</span><span class="dv">10</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a>y = x^<span class="dv">2</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">#&lt; hint</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>cat(<span class="st">"This hint will be added to the automatic hints</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a>of all commands below.<span class="st">")</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co">#&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>x = <span class="kw">1:</span><span class="dv">10</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>y = x^<span class="dv">2</span></span></code></pre></div>
 </div>
-<div id="an-example-combining-everything" class="section level2">
+<div id="a-complex-example" class="section level2">
 <h2 class="hasAnchor">
-<a href="#an-example-combining-everything" class="anchor"></a>An example combining everything</h2>
-<p>The following example combines many of the aspects above. It also uses the function <code><a href="../reference/hint.else.active.html">hint.else.active()</a></code> to manually set whether an <code>hint.else</code> or <code>auto.hint.else</code> shall be shown. If you want to construct such complex hints (often there is no need, you can just go with the automatic hints), you may perhaps want to debug your code. For this you can use <a href="https://skranz.github.io/r/2015/02/15/restorepoint.html">restorepoints</a>, which you should later remove.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">#&lt; hint</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="co"># This sentence will always be shown at the bottom of each hint</span></span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="co"># for this chunk</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Note that you should be able to solve this exercise in an exam."</span>)</span>
-<span id="cb12-5"><a href="#cb12-5"></a><span class="co">#&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6"></a><span class="co">#&lt; task_notest</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a><span class="co"># Let x be a vector of 10 normally distributed random variables with mean 0 and variance 4.</span></span>
-<span id="cb12-8"><a href="#cb12-8"></a><span class="co"># </span></span>
-<span id="cb12-9"><a href="#cb12-9"></a><span class="co"># Let y be a transformation of x that is lognormally distributed.</span></span>
-<span id="cb12-10"><a href="#cb12-10"></a><span class="co">#&gt;</span></span>
-<span id="cb12-11"><a href="#cb12-11"></a>x =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="dv">2</span>)</span>
-<span id="cb12-12"><a href="#cb12-12"></a><span class="co">#&lt; hint</span></span>
-<span id="cb12-13"><a href="#cb12-13"></a><span class="kw"><a href="../reference/hint.stud.assign.html">hint.stud.assign</a></span>(<span class="st">"x"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="dv">4</span>),<span class="st">"Remember that R uses the standard deviation not the variance as 3rd argument of rnorm."</span>)</span>
-<span id="cb12-14"><a href="#cb12-14"></a><span class="kw"><a href="../reference/auto.hint.else.html">auto.hint.else</a></span>()</span>
-<span id="cb12-15"><a href="#cb12-15"></a><span class="co">#&gt;</span></span>
-<span id="cb12-16"><a href="#cb12-16"></a>y =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(x)</span>
-<span id="cb12-17"><a href="#cb12-17"></a><span class="co">#&lt; hint</span></span>
-<span id="cb12-18"><a href="#cb12-18"></a><span class="kw">restore.point</span>(<span class="st">"myhint"</span>) <span class="co"># for debugging purposes</span></span>
-<span id="cb12-19"><a href="#cb12-19"></a><span class="kw"><a href="../reference/hint.stud.assign.html">hint.stud.assign</a></span>(<span class="st">"y"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(x),<span class="st">"Yeah, looks intuitive to take the log of x. But that is how you transform a log-normally distributed variable to a normally distributed one. Here you have to use the inverse operation."</span>)</span>
-<span id="cb12-20"><a href="#cb12-20"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="../reference/true.html">true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">is.numeric</a></span>(y))) { <span class="co"># also triggers if y does not exist</span></span>
-<span id="cb12-21"><a href="#cb12-21"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">You should generate a numeric variable y."</span>)</span>
-<span id="cb12-22"><a href="#cb12-22"></a>  <span class="kw"><a href="../reference/hint.else.active.html">hint.else.active</a></span>(<span class="ot">FALSE</span>) <span class="co"># turn off hint.else</span></span>
-<span id="cb12-23"><a href="#cb12-23"></a>}</span>
-<span id="cb12-24"><a href="#cb12-24"></a><span class="kw"><a href="../reference/hint.else.html">hint.else</a></span>(<span class="st">"Take a look at the Wikipedia page of the log normal distribution."</span>)</span>
-<span id="cb12-25"><a href="#cb12-25"></a><span class="co">#&gt;</span></span></code></pre></div>
+<a href="#a-complex-example" class="anchor"></a>A complex example</h2>
+<p>The following example combines several of the aspects above. It also uses the function <code><a href="../reference/hint.else.active.html">hint.else.active()</a></code> to manually set whether an <code>hint.else</code> or <code>auto.hint.else</code> shall be shown. If you want to construct such complex hints (often there is no need, you can just go with the automatic hints), you may perhaps want to debug your code. For this you can use <a href="https://skranz.github.io/r/2015/02/15/restorepoint.html">restorepoints</a>, which you should later remove.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">#&lt; hint</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># This sentence will always be shown at the bottom of each hint</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="co"># for this chunk</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Note that you should be able to solve this exercise in an exam."</span>)</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">#&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">#&lt; task_notest</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="co"># Let x be a vector of 10 normally distributed random variables with mean 0 and variance 4.</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="co"># </span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="co"># Let y be a transformation of x that is lognormally distributed.</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="co">#&gt;</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>x =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="dv">2</span>)</span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="co">#&lt; hint</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="kw"><a href="../reference/hint.stud.assign.html">hint.stud.assign</a></span>(<span class="st">"x"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Normal">rnorm</a></span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="dv">4</span>),<span class="st">"Remember that R uses the standard deviation not the variance as 3rd argument of rnorm."</span>)</span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="kw"><a href="../reference/auto.hint.else.html">auto.hint.else</a></span>()</span>
+<span id="cb13-15"><a href="#cb13-15"></a><span class="co">#&gt;</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a>y =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(x)</span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="co">#&lt; hint</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="kw">restore.point</span>(<span class="st">"myhint"</span>) <span class="co"># for debugging purposes</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="kw"><a href="../reference/hint.stud.assign.html">hint.stud.assign</a></span>(<span class="st">"y"</span>,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log</a></span>(x),<span class="st">"Yeah, looks intuitive to take the log of x. But that is how you transform a log-normally distributed variable to a normally distributed one. Here you have to use the inverse operation."</span>)</span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="../reference/true.html">true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">is.numeric</a></span>(y))) { <span class="co"># also triggers if y does not exist</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a>  <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="st">"</span><span class="ch">\n</span><span class="st">You should generate a numeric variable y."</span>)</span>
+<span id="cb13-22"><a href="#cb13-22"></a>  <span class="kw"><a href="../reference/hint.else.active.html">hint.else.active</a></span>(<span class="ot">FALSE</span>) <span class="co"># turn off hint.else</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a>}</span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="kw"><a href="../reference/hint.else.html">hint.else</a></span>(<span class="st">"Take a look at the Wikipedia page of the log normal distribution."</span>)</span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="co">#&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div id="customizing-tests" class="section level1">
@@ -321,17 +333,17 @@ differs from my solution, where I call the function mean.</code></pre>
 <blockquote>
 <p>Task: Let x contain the square roots of 4</p>
 </blockquote>
-<div class="sourceCode" id="cb14"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb14-1"><a href="#cb14-1"></a>x = c(-<span class="dv">2</span>,<span class="dv">2</span>)</span>
-<span id="cb14-2"><a href="#cb14-2"></a><span class="co">#&lt; test_arg</span></span>
-<span id="cb14-3"><a href="#cb14-3"></a>other.sols = list(quote(</span>
-<span id="cb14-4"><a href="#cb14-4"></a>  x&lt;-c(<span class="dv">2</span>,-<span class="dv">2</span>)</span>
-<span id="cb14-5"><a href="#cb14-5"></a>))</span>
-<span id="cb14-6"><a href="#cb14-6"></a><span class="co">#&gt;</span></span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="co">#&lt; add_to_hint</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a>if (true(identical(x,<span class="dv">2</span>) | identical(x,-<span class="dv">2</span>))) {</span>
-<span id="cb14-9"><a href="#cb14-9"></a>  cat(<span class="st">"Recall that 4 has two square roots: a positive and a negative one.)</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a>}</span>
-<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb15-1"><a href="#cb15-1"></a>x = c(-<span class="dv">2</span>,<span class="dv">2</span>)</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="co">#&lt; test_arg</span></span>
+<span id="cb15-3"><a href="#cb15-3"></a>other.sols = list(quote(</span>
+<span id="cb15-4"><a href="#cb15-4"></a>  x&lt;-c(<span class="dv">2</span>,-<span class="dv">2</span>)</span>
+<span id="cb15-5"><a href="#cb15-5"></a>))</span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="co">#&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&lt; add_to_hint</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a>if (true(identical(x,<span class="dv">2</span>) | identical(x,-<span class="dv">2</span>))) {</span>
+<span id="cb15-9"><a href="#cb15-9"></a>  cat(<span class="st">"Recall that 4 has two square roots: a positive and a negative one.)</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a>}</span>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>The argument <code>other.sols</code> of the default test function <code>check.assign</code> takes a list of quoted assignments that consitute alternative correct solutions. In the example above, we don’t care about the order of the solution vector. Note that you must assign with <code>&lt;-</code> instead of <code>=</code> inside the <code>quote</code> function.</p>
 </div>
 <div id="testing-only-selected-columns-in-a-data-frame" class="section level2">
@@ -339,16 +351,16 @@ differs from my solution, where I call the function mean.</code></pre>
 <a href="#testing-only-selected-columns-in-a-data-frame" class="anchor"></a>Testing only selected columns in a data frame</h2>
 <p>Consider a data set <code>dat</code> were we observe the sales quantity <code>q</code> of all car models for different years and regions. The student has the task to create a new data frame <code>dat1</code> with an additional column that contains the market <code>share</code> of each car model in each year and region. We don’t care with which exact commands <code>share</code> is computed, however.</p>
 <p>Below is the specification in the solution file:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>dat1 =<span class="st"> </span>dat <span class="op">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="st">  </span><span class="kw">group_by</span>(year,region) <span class="op">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="st">  </span><span class="kw">mutate</span>(</span>
-<span id="cb15-4"><a href="#cb15-4"></a>    <span class="dt">Q =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(q), <span class="co"># Total sales</span></span>
-<span id="cb15-5"><a href="#cb15-5"></a>    <span class="dt">share =</span> q <span class="op">/</span><span class="st"> </span>Q   <span class="co"># Market share of each car</span></span>
-<span id="cb15-6"><a href="#cb15-6"></a>  )</span>
-<span id="cb15-7"><a href="#cb15-7"></a><span class="co">#&lt; test_arg</span></span>
-<span id="cb15-8"><a href="#cb15-8"></a>check.cols =<span class="st"> "share"</span></span>
-<span id="cb15-9"><a href="#cb15-9"></a>sort.cols =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"year"</span>,<span class="st">"market"</span>,<span class="st">"car_model"</span>)</span>
-<span id="cb15-10"><a href="#cb15-10"></a><span class="co">#&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>dat1 =<span class="st"> </span>dat <span class="op">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span><span class="kw">group_by</span>(year,region) <span class="op">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="st">  </span><span class="kw">mutate</span>(</span>
+<span id="cb16-4"><a href="#cb16-4"></a>    <span class="dt">Q =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(q), <span class="co"># Total sales</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a>    <span class="dt">share =</span> q <span class="op">/</span><span class="st"> </span>Q   <span class="co"># Market share of each car</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>  )</span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="co">#&lt; test_arg</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>check.cols =<span class="st"> "share"</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a>sort.cols =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"year"</span>,<span class="st">"market"</span>,<span class="st">"car_model"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>In the sample solution, we compute an intermediate variable <code>Q</code>, which is not really neccessary to solve the exercise. The test argument <code>check.cols</code> can specify a subset of columns that will be checked. Here we only want to check the column <code>share</code>. The argument <code>sort.cols</code> specifies that both the sample solution and the student’s solution shall be sorted by the given columns. If the sort columns uniquely identify each row, this guarantees that solution is also accepted if the student has ordered the data frame in a different way than the sample solution. (If the student deletes one of the sort columns, the test will return <code>FALSE</code>.)</p>
 <p>While the correctness checks accept many different solutions, the automatic hints when <code><a href="../reference/hint.html">hint()</a></code> is typed will guide the student along the concrete given sample solution.</p>
 <p>Note that <code>check.cols</code> and <code>sort.cols</code> are only used if the sample solution computes a <code>data.frame</code> or <code>tibble</code>.</p>
@@ -383,16 +395,16 @@ check.variable("u",c(3,6,7,99),values=FALSE)
 <blockquote>
 <p>Task: Simulate a vector p of T prices that are correlated (but not perfectly correlated) with the weather w but uncorrelated with the demand shock u.</p>
 </blockquote>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>p =<span class="st"> </span><span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w</span>
-<span id="cb18-2"><a href="#cb18-2"></a><span class="co">#&lt; test</span></span>
-<span id="cb18-3"><a href="#cb18-3"></a><span class="kw"><a href="../reference/check.variable.html">check.variable</a></span>(<span class="st">"p"</span>,<span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w,<span class="dt">values=</span><span class="ot">FALSE</span>)</span>
-<span id="cb18-4"><a href="#cb18-4"></a><span class="kw"><a href="../reference/test.H0.rejected.html">test.H0.rejected</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,w),<span class="dt">failure.message=</span><span class="st">"I don't find a significant correlation between p and w (p-value=={{p_value}})"</span>)</span>
-<span id="cb18-5"><a href="#cb18-5"></a><span class="kw"><a href="../reference/holds.true.html">holds.true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor">cor</a></span>(p,w)<span class="op">&lt;</span><span class="dv">1</span><span class="fl">-1e-14</span>, <span class="dt">failure.message=</span><span class="st">"p and w shall not be perfectly correlated!"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6"></a><span class="kw"><a href="../reference/test.H0.html">test.H0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,u),<span class="dt">failure.message=</span><span class="st">"I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated."</span>)</span>
-<span id="cb18-7"><a href="#cb18-7"></a><span class="co">#&gt;</span></span>
-<span id="cb18-8"><a href="#cb18-8"></a><span class="co">#&lt; hint</span></span>
-<span id="cb18-9"><a href="#cb18-9"></a><span class="kw"><a href="../reference/display.html">display</a></span>(<span class="st">"To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks."</span>)</span>
-<span id="cb18-10"><a href="#cb18-10"></a><span class="co">#&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>p =<span class="st"> </span><span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co">#&lt; test</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="kw"><a href="../reference/check.variable.html">check.variable</a></span>(<span class="st">"p"</span>,<span class="fl">1.1</span><span class="op">*</span>c <span class="op">+</span><span class="st"> </span><span class="fl">0.5</span><span class="op">*</span>w,<span class="dt">values=</span><span class="ot">FALSE</span>)</span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="kw"><a href="../reference/test.H0.rejected.html">test.H0.rejected</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,w),<span class="dt">failure.message=</span><span class="st">"I don't find a significant correlation between p and w (p-value=={{p_value}})"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="kw"><a href="../reference/holds.true.html">holds.true</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor">cor</a></span>(p,w)<span class="op">&lt;</span><span class="dv">1</span><span class="fl">-1e-14</span>, <span class="dt">failure.message=</span><span class="st">"p and w shall not be perfectly correlated!"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6"></a><span class="kw"><a href="../reference/test.H0.html">test.H0</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/cor.test">cor.test</a></span>(p,u),<span class="dt">failure.message=</span><span class="st">"I do find a significant correlation between p and u (p-value=={{p_value}}), but they shall be uncorrelated."</span>)</span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co">#&gt;</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="co">#&lt; hint</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="kw"><a href="../reference/display.html">display</a></span>(<span class="st">"To make your prices correlated with w, you have to make w appear in the formula of p. To make p not perfectly correlated with p, there must also be other random factors that influence p, like cost c or some newly drawn vector of random price shocks."</span>)</span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="co">#&gt;</span></span></code></pre></div>
 <p>We still provide a sample solution <code>p = 1.1*c + 0.5*w</code>, but many other solutions are possible here.</p>
 <p>A feasible solution must pass all 4 tests in the test block to be accepted. The function <code>holds.true</code> is a quite general tool that can be used in custom tests.</p>
 <p>The functions <code>test.H0.rejected</code>, and <code>test.H0</code> are just examples for special purpose convenience test functions.</p>
@@ -403,28 +415,28 @@ check.variable("u",c(3,6,7,99),values=FALSE)
 <a href="#testing-a-function-written-by-the-student" class="anchor"></a>Testing a function written by the student</h2>
 <p>Personally, I find it very valuable if students learn to write own functions. However, it is not easy to nicely test functions and students with little programming experience can get stuck easily.</p>
 <p>Assume, you would like students to write an OLS function</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb19-1"><a href="#cb19-1"></a>ols = function(y,X) {</span>
-<span id="cb19-2"><a href="#cb19-2"></a>  Xt = t(X)</span>
-<span id="cb19-3"><a href="#cb19-3"></a>  invXtX = solve(Xt %*% X)</span>
-<span id="cb19-4"><a href="#cb19-4"></a>  beta.hat = invXtX %*% Xt %*% y</span>
-<span id="cb19-5"><a href="#cb19-5"></a>  as.numeric(beta.hat)</span>
-<span id="cb19-6"><a href="#cb19-6"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb20-1"><a href="#cb20-1"></a>ols = function(y,X) {</span>
+<span id="cb20-2"><a href="#cb20-2"></a>  Xt = t(X)</span>
+<span id="cb20-3"><a href="#cb20-3"></a>  invXtX = solve(Xt %*% X)</span>
+<span id="cb20-4"><a href="#cb20-4"></a>  beta.hat = invXtX %*% Xt %*% y</span>
+<span id="cb20-5"><a href="#cb20-5"></a>  as.numeric(beta.hat)</span>
+<span id="cb20-6"><a href="#cb20-6"></a>}</span></code></pre></div>
 <p>Directly asking them to correctly write such a function will probably fail for many students.</p>
 <p>But you could first create one or several chunks, were students first develop the function body for an example. A solved chunk may look like</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># Example arguments</span></span>
-<span id="cb20-2"><a href="#cb20-2"></a>x1 = <span class="kw">1:</span>T </span>
-<span id="cb20-3"><a href="#cb20-3"></a>y = <span class="dv">100</span> + <span class="dv">2</span>*x1 + rnorm(<span class="dv">1</span>)</span>
-<span id="cb20-4"><a href="#cb20-4"></a>X = cbind(<span class="dv">1</span>,x1)</span>
-<span id="cb20-5"><a href="#cb20-5"></a></span>
-<span id="cb20-6"><a href="#cb20-6"></a><span class="co"># Code that we will put inside the function</span></span>
-<span id="cb20-7"><a href="#cb20-7"></a>Xt = t(X)</span>
-<span id="cb20-8"><a href="#cb20-8"></a>invXtX = solve(Xt %*% X)</span>
-<span id="cb20-9"><a href="#cb20-9"></a>beta.hat = invXtX %*% Xt %*% y</span>
-<span id="cb20-10"><a href="#cb20-10"></a>as.numeric(beta.hat)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Example arguments</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>x1 = <span class="kw">1:</span>T </span>
+<span id="cb21-3"><a href="#cb21-3"></a>y = <span class="dv">100</span> + <span class="dv">2</span>*x1 + rnorm(<span class="dv">1</span>)</span>
+<span id="cb21-4"><a href="#cb21-4"></a>X = cbind(<span class="dv">1</span>,x1)</span>
+<span id="cb21-5"><a href="#cb21-5"></a></span>
+<span id="cb21-6"><a href="#cb21-6"></a><span class="co"># Code that we will put inside the function</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>Xt = t(X)</span>
+<span id="cb21-8"><a href="#cb21-8"></a>invXtX = solve(Xt %*% X)</span>
+<span id="cb21-9"><a href="#cb21-9"></a>beta.hat = invXtX %*% Xt %*% y</span>
+<span id="cb21-10"><a href="#cb21-10"></a>as.numeric(beta.hat)</span></code></pre></div>
 <p>Then provide a function stub like</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb21-1"><a href="#cb21-1"></a>ols = function(y,X) {</span>
-<span id="cb21-2"><a href="#cb21-2"></a>  <span class="co"># Insert your code here</span></span>
-<span id="cb21-3"><a href="#cb21-3"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb22-1"><a href="#cb22-1"></a>ols = function(y,X) {</span>
+<span id="cb22-2"><a href="#cb22-2"></a>  <span class="co"># Insert your code here</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a>}</span></code></pre></div>
 <p>and let students insert their code here.</p>
 <p>Here is an example how you might specify the second chunk in your solution file:</p>
 <pre><code>#&lt; fill_in
@@ -482,7 +494,7 @@ runif.square = function(n,min,max) {
 <li>Include all intermediate steps as part of the problem set</li>
 </ol>
 <p>A <code>#&lt; compute ... #&gt;</code> block allows an intermediate approach. Here is an example from a problem set of mine that asks a student to compute a matrix of choice probabilities from a conditional logit model.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb25-1"><a href="#cb25-1"></a>#&lt; compute P
+<div class="sourceCode" id="cb26"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb26-1"><a href="#cb26-1"></a>#&lt; compute P
 
 ## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.
 
@@ -495,18 +507,18 @@ sum.exp.V = rowSums(exp.V)
 ## Compute P as ratio of the numerator and the denominator
 P = exp.V / sum.exp.V
 #&gt;<span class="co">#&lt; compute P</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>    </span>
-<span id="cb25-3"><a href="#cb25-3"></a>    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></span>
-<span id="cb25-4"><a href="#cb25-4"></a>    </span>
-<span id="cb25-5"><a href="#cb25-5"></a>    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a>    exp.V = exp(V/scale)</span>
-<span id="cb25-7"><a href="#cb25-7"></a>    </span>
-<span id="cb25-8"><a href="#cb25-8"></a>    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></span>
-<span id="cb25-9"><a href="#cb25-9"></a>    sum.exp.V = rowSums(exp.V)</span>
-<span id="cb25-10"><a href="#cb25-10"></a>    </span>
-<span id="cb25-11"><a href="#cb25-11"></a>    <span class="co">## Compute P as ratio of the numerator and the denominator</span></span>
-<span id="cb25-12"><a href="#cb25-12"></a>    P = exp.V / sum.exp.V</span>
-<span id="cb25-13"><a href="#cb25-13"></a>    <span class="co">#&gt;</span></span></code></pre></div>
+<span id="cb26-2"><a href="#cb26-2"></a>    </span>
+<span id="cb26-3"><a href="#cb26-3"></a>    <span class="co">## Take a look at the formula for the choice probabilities P.nj of the logit discrete choice model in the slides.</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a>    </span>
+<span id="cb26-5"><a href="#cb26-5"></a>    <span class="co">## Let exp.V be a matrix that contains the numerators of P.nj (use scale as sigma in your formula)</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a>    exp.V = exp(V/scale)</span>
+<span id="cb26-7"><a href="#cb26-7"></a>    </span>
+<span id="cb26-8"><a href="#cb26-8"></a>    <span class="co">## Let sum.exp.V be a vector that contains for each person n the denominator in P.nj. You can use the function 'rowSums'. </span></span>
+<span id="cb26-9"><a href="#cb26-9"></a>    sum.exp.V = rowSums(exp.V)</span>
+<span id="cb26-10"><a href="#cb26-10"></a>    </span>
+<span id="cb26-11"><a href="#cb26-11"></a>    <span class="co">## Compute P as ratio of the numerator and the denominator</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a>    P = exp.V / sum.exp.V</span>
+<span id="cb26-13"><a href="#cb26-13"></a>    <span class="co">#&gt;</span></span></code></pre></div>
 <p>The solution will pass as correct if the final values of <code>P</code> are correct. The student is not obliged to perform the particular intermediate computations like <code>exp.V</code>. Yet, if the student has not yet correctly computed <code>P</code> and types <code><a href="../reference/hint.html">hint()</a></code>, the hint function tries to steer the student step by step through the sample solution described in the block. The comments starting with <code>##</code> will be transformed into text that will be shown in the hint.</p>
 </div>
 <div id="testing-ggplot-commands-or-other-plot-commands" class="section level1">
@@ -514,36 +526,36 @@ P = exp.V / sum.exp.V
 <a href="#testing-ggplot-commands-or-other-plot-commands" class="anchor"></a>Testing ggplot commands (or other plot commands)</h1>
 <p>RTutor is not good at providing sensible hints or automatic tests that allow a user build long ggplot chains from scratch.</p>
 <p>Assume you want to show in a problem set the following ggplot:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb26-1"><a href="#cb26-1"></a>ggplot(data = counties,aes(x=area, y=population, col=state)) +</span>
-<span id="cb26-2"><a href="#cb26-2"></a>  geom_point()+</span>
-<span id="cb26-3"><a href="#cb26-3"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
-<span id="cb26-4"><a href="#cb26-4"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
-<span id="cb26-5"><a href="#cb26-5"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
-<span id="cb26-6"><a href="#cb26-6"></a>       y=<span class="st">"Population"</span>, </span>
-<span id="cb26-7"><a href="#cb26-7"></a>       x=<span class="st">"Area"</span>) +</span>
-<span id="cb26-8"><a href="#cb26-8"></a>  theme_bw()</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb27-1"><a href="#cb27-1"></a>ggplot(data = counties,aes(x=area, y=population, col=state)) +</span>
+<span id="cb27-2"><a href="#cb27-2"></a>  geom_point()+</span>
+<span id="cb27-3"><a href="#cb27-3"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
+<span id="cb27-4"><a href="#cb27-4"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
+<span id="cb27-5"><a href="#cb27-5"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
+<span id="cb27-6"><a href="#cb27-6"></a>       y=<span class="st">"Population"</span>, </span>
+<span id="cb27-7"><a href="#cb27-7"></a>       x=<span class="st">"Area"</span>) +</span>
+<span id="cb27-8"><a href="#cb27-8"></a>  theme_bw()</span></code></pre></div>
 <p>One option would be to just provide the plotting commands in a <code>task_notest</code> block and don’t force the student to write anything.</p>
 <p>An alternative would be to specify in your solution a fill in block, like:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb27-1"><a href="#cb27-1"></a><span class="co">#&lt; fill_in</span></span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="co"># Fill in the ___</span></span>
-<span id="cb27-3"><a href="#cb27-3"></a>ggplot(data = counties,aes(x=___, y=population, colour=___)) +</span>
-<span id="cb27-4"><a href="#cb27-4"></a>  geom_point()+</span>
-<span id="cb27-5"><a href="#cb27-5"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
-<span id="cb27-6"><a href="#cb27-6"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
-<span id="cb27-7"><a href="#cb27-7"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
-<span id="cb27-8"><a href="#cb27-8"></a>       y=<span class="st">"Population"</span>, </span>
-<span id="cb27-9"><a href="#cb27-9"></a>       x=<span class="st">"Area"</span>) +</span>
-<span id="cb27-10"><a href="#cb27-10"></a>  theme_bw()</span>
-<span id="cb27-11"><a href="#cb27-11"></a><span class="co">#&gt;</span></span>
-<span id="cb27-12"><a href="#cb27-12"></a><span class="co"># Sample solution</span></span>
-<span id="cb27-13"><a href="#cb27-13"></a>ggplot(data = counties,aes(x=area, y=population, colour=state)) +</span>
-<span id="cb27-14"><a href="#cb27-14"></a>  geom_point()+</span>
-<span id="cb27-15"><a href="#cb27-15"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
-<span id="cb27-16"><a href="#cb27-16"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
-<span id="cb27-17"><a href="#cb27-17"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
-<span id="cb27-18"><a href="#cb27-18"></a>       y=<span class="st">"Population"</span>, </span>
-<span id="cb27-19"><a href="#cb27-19"></a>       x=<span class="st">"Area"</span>) +</span>
-<span id="cb27-20"><a href="#cb27-20"></a>  theme_bw()</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb28-1"><a href="#cb28-1"></a><span class="co">#&lt; fill_in</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="co"># Fill in the ___</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a>ggplot(data = counties,aes(x=___, y=population, colour=___)) +</span>
+<span id="cb28-4"><a href="#cb28-4"></a>  geom_point()+</span>
+<span id="cb28-5"><a href="#cb28-5"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
+<span id="cb28-6"><a href="#cb28-6"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
+<span id="cb28-7"><a href="#cb28-7"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
+<span id="cb28-8"><a href="#cb28-8"></a>       y=<span class="st">"Population"</span>, </span>
+<span id="cb28-9"><a href="#cb28-9"></a>       x=<span class="st">"Area"</span>) +</span>
+<span id="cb28-10"><a href="#cb28-10"></a>  theme_bw()</span>
+<span id="cb28-11"><a href="#cb28-11"></a><span class="co">#&gt;</span></span>
+<span id="cb28-12"><a href="#cb28-12"></a><span class="co"># Sample solution</span></span>
+<span id="cb28-13"><a href="#cb28-13"></a>ggplot(data = counties,aes(x=area, y=population, colour=state)) +</span>
+<span id="cb28-14"><a href="#cb28-14"></a>  geom_point()+</span>
+<span id="cb28-15"><a href="#cb28-15"></a>  xlim(c(<span class="dv">0</span>, <span class="dv">0</span>.1)) + </span>
+<span id="cb28-16"><a href="#cb28-16"></a>  ylim(c(<span class="dv">0</span>, <span class="dv">500000</span>)) + </span>
+<span id="cb28-17"><a href="#cb28-17"></a>  labs(title=<span class="st">"Area vs Population"</span>, </span>
+<span id="cb28-18"><a href="#cb28-18"></a>       y=<span class="st">"Population"</span>, </span>
+<span id="cb28-19"><a href="#cb28-19"></a>       x=<span class="st">"Area"</span>) +</span>
+<span id="cb28-20"><a href="#cb28-20"></a>  theme_bw()</span></code></pre></div>
 <p>Here the student only has to fill in the two mising aesthetics. Please use as placeholders the <code>___</code>, since RTutor’s hints have special treatment that internally replaces the <code>___</code> with a syntactically valid R variable name in order to parse and analyse students solutions.</p>
 </div>
   </div>
@@ -566,7 +578,7 @@ P = exp.V / sum.exp.V
       <li><a href="#more-flexible-adaptive-custom-hints">More flexible adaptive custom hints</a></li>
       <li><a href="#combine-automatic-and-custom-hints">Combine automatic and custom hints</a></li>
       <li><a href="#hints-at-the-beginning-of-chunk">Hints at the beginning of chunk</a></li>
-      <li><a href="#an-example-combining-everything">An example combining everything</a></li>
+      <li><a href="#a-complex-example">A complex example</a></li>
       </ul>
 </li>
       <li>

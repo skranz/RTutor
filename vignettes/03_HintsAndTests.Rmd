@@ -112,6 +112,7 @@ So whenever the student mixes up variance and standard deviation in his call, th
 
 The line `auto.hint.else()` means that if no customized hint is shown, the automatic hint is shown.
 
+
 There is also a function `hint.stud.assign` that works similarly for assignments. Look at the following example that also illustrates some other features.
 
 ```s
@@ -136,9 +137,25 @@ The adaptive hints will still be matched to a particular command in the sample s
 
 Note that `hint.stud.assign` compares the call expression not the resulting value.
 
+If you just want to give a hint if the student uses some function in its code irrespective of the function arguments, you can use `hint.stud.fun` instead. Here is an example:
+```{r}
+#< task_notest
+# Add the vectors x and y together
+x = 2:3
+y = 1:2
+#>
+x+y
+#< hint
+hint.stud.fun("sum","Please don't use the function 'sum'. A simple plus sign '+' is enough.")
+auto.hint.else()
+#>
+```
+
+Note that it also works if the function is called in an assignment. If you have nested function calls, it only looks at the outer call. 
+
 ## More flexible adaptive custom hints
 
-You can also define more flexible adaptive hints that evaluate the value of a student's assignment:
+You can also define more flexible adaptive hints that evaluate the value of a student's assignment.
 
 Here is an example, where the task is to assign the first 100 square numbers to the variable `z`.
 ```s
@@ -206,9 +223,9 @@ x = 1:10
 y = x^2
 ```
 
-## An example combining everything
+## A complex example
 
-The following example combines many of the aspects above. It also uses the function `hint.else.active()` to manually set whether an `hint.else` or `auto.hint.else` shall be shown. If you want to construct such complex hints (often there is no need, you can just go with the automatic hints), you may perhaps want to debug your code. For this you can use [restorepoints](https://skranz.github.io/r/2015/02/15/restorepoint.html), which you should later remove. 
+The following example combines several of the aspects above. It also uses the function `hint.else.active()` to manually set whether an `hint.else` or `auto.hint.else` shall be shown. If you want to construct such complex hints (often there is no need, you can just go with the automatic hints), you may perhaps want to debug your code. For this you can use [restorepoints](https://skranz.github.io/r/2015/02/15/restorepoint.html), which you should later remove. 
 
 ```{r "2_2"}
 #< hint

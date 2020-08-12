@@ -509,6 +509,38 @@ hint.stud.assign = function(var, call,msg , ps=get.ps(), env=parent.frame()) {
   hint.stud.call(qcall=call, msg=msg, ps=ps, env=env, var=var)
 }
 
+#' Show the hint if the student calls a specific function
+#' 
+#' Show the hint message if the student has called
+#' a certain function (not nested in another function)
+#' somewhere in the chunk. If you also want to consider
+#' the call arguments use hint.stud.call or hint.stud.assign
+#' instead. 
+#' 
+#' @param fun.name the function name as string.
+#' @param msg a string that shall be shown as hint if the student made the call in his code
+hint.stud.fun = function(fun.name, msg, ps=get.ps(), env=parent.frame()) {
+  restore.point("hint.stud.fun")
+  has.fun = FALSE
+  for (call in ps$stud.expr.li) {
+    if (!is.call(call)) next
+    stud.fun = as.character(call[1])
+    if (stud.fun == "=" | stud.fun == "<-") {
+      call = call[[3]]
+      if (!is.call(call)) next
+      stud.fun = as.character(call[1])
+    }
+    if (identical(fun.name,stud.fun)) {
+      has.fun = TRUE
+      break
+    }
+  }
+  if (has.fun) {
+    cat(paste0("\n",msg,"\n"))
+    ps$shown.custom.hints = ps$shown.custom.hints+1 
+  }
+
+}
 
 #' Show the hint if the student made the specified wrong call
 #' 
