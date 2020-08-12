@@ -112,18 +112,29 @@ So whenever the student mixes up variance and standard deviation in his call, th
 
 The line `auto.hint.else()` means that if no customized hint is shown, the automatic hint is shown.
 
-There is also a function `hint.stud.assign` that works similarly for assignments.
+There is also a function `hint.stud.assign` that works similarly for assignments. Look at the following example that also illustrates some other features.
 
 ```s
 #< task_notest
 # Let x be a vector of 10 normally distributed random variables with mean 0 and variance 4.
+# 
+# Let y be a transformation of x that is lognormally distributed.
 #>
 x = rnorm(10,0,2)
 #< hint
 hint.stud.assign("x",rnorm(10,0,4),"Remember that R uses the standard deviation not the variance as 3rd argument of rnorm.")
+auto.hint.else()
 #>
+y = exp(x)
+#< hint
+hint.stud.assign("y",log(x),"Yeah, looks intuitive to take the log of x. But that is how you transform a log-normally distributed variable to a normally distributed one. Here you have to use the inverse operation.")
+hint.else("Take a look at the Wikipedia page of the log normal distribution.")
+#>
+
 ```
-Here we will never show an automatic hint. Note that `hint.stud.assign` compares the call expression not the resulting value.
+The adaptive hints will still be matched to a particular command in the sample solution. The command `hint.else` allows to show a custom hint instead of the automatic hint in case that no previous adaptive custom hint was triggered. (You could also add an additional line `auto.hint.else` to show both.)
+
+Note that `hint.stud.assign` compares the call expression not the resulting value.
 
 ## More flexible adaptive custom hints
 
@@ -165,7 +176,7 @@ If you add a line
 
 `auto.hint.else()`
 
-then the automatic hint is only shown if no `hint.stud.call` or `hint.stud.assign` above showed a hint. Internally, we just check the condition `!true(get.ps()$shown.custom.hints==0)` to determine whether the auto hint shall be shown. You can manually check this condition if you want to check whether such an adaptive custom hint has been shown or not.
+then the automatic hint is only shown if no `hint.stud.call` or `hint.stud.assign` above showed a hint.
 
 There is also an alternative way carried over from previous RTutor versions to combine custom and automatic hints. It is simpler if you just always want to combine automatic hint with an additional custom hint. Then write your hint code in an `add_to_hint`block.
 
@@ -194,6 +205,39 @@ of all commands below.")
 x = 1:10
 y = x^2
 ```
+
+## An example combining everything
+
+The following example combines many of the aspects above. It also uses the function `hint.else.active()` to manually set whether an `hint.else` or `auto.hint.else` shall be shown. If you want to construct such complex hints (often there is no need, you can just go with the automatic hints), you may perhaps want to debug your code. For this you can use [restorepoints](https://skranz.github.io/r/2015/02/15/restorepoint.html), which you should later remove. 
+
+```{r "2_2"}
+#< hint
+# This sentence will always be shown at the bottom of each hint
+# for this chunk
+cat("\nNote that you should be able to solve this exercise in an exam.")
+#>
+#< task_notest
+# Let x be a vector of 10 normally distributed random variables with mean 0 and variance 4.
+# 
+# Let y be a transformation of x that is lognormally distributed.
+#>
+x = rnorm(10,0,2)
+#< hint
+hint.stud.assign("x",rnorm(10,0,4),"Remember that R uses the standard deviation not the variance as 3rd argument of rnorm.")
+auto.hint.else()
+#>
+y = exp(x)
+#< hint
+restore.point("myhint") # for debugging purposes
+hint.stud.assign("y",log(x),"Yeah, looks intuitive to take the log of x. But that is how you transform a log-normally distributed variable to a normally distributed one. Here you have to use the inverse operation.")
+if (!true(is.numeric(y))) { # also triggers if y does not exist
+  cat("\nYou should generate a numeric variable y.")
+  hint.else.active(FALSE) # turn off hint.else
+}
+hint.else("Take a look at the Wikipedia page of the log normal distribution.")
+#>
+```
+
 
 # Customizing Tests
 

@@ -467,9 +467,11 @@ is.dplyr.fun = function(na) {
   na %in% c("mutate","filter","select","arrange","summarise","summarize")
 }
 
-make.expr.li.info = function(expr.li) {
+make.expr.li.info = function(expr.li, do.unlist=FALSE) {
   restore.point("make.expr.li.info")
   
+  if (do.unlist)
+    expr.li = unlist(as.list(expr.li))
   n = length(expr.li)
   is.assign = sapply(expr.li, is.assignment)
   
@@ -545,6 +547,40 @@ hint.stud.call = function(call, msg="", ps=get.ps(), env=parent.frame(), qcall, 
     ps$shown.custom.hints = ps$shown.custom.hints+1 
   }
 }
+
+#' Get or set whether hint.else or
+#' auto.hint.else would be triggered.
+#' 
+#' If a hint.stud.call or hint.stud.assign is shown
+#' then a hint.else or auto.hint.else would not be
+#' triggered. This function returns TRUE if hint.else
+#' would still be triggered or otherwise FALSE.
+#' 
+#' If you set the argument activate you can change this status. 
+hint.else.active = function(activate=NULL, ps = get.ps()) {
+  if (is.null(activate)) {
+     return(true(ps$shown.custom.hints==0))
+  } else {
+    if (activate) {
+      ps$shown.custom.hints=0
+    } else {
+      ps$shown.custom.hints=1
+    }
+    return(activate)
+  }
+}
+
+#' Show a hint only if no hint.stud.call or hint.stud.assign 
+#' was triggered.
+#' 
+#' It says that the automatic hint should be shown unless
+#' some hint with hint.stud.call has been shown (or ps$shown.custom.hints has been manually assigned a value above 0.)
+hint.else = function(msg,add.line.breaks=TRUE, ps = get.ps()) {
+  if (hint.else.active()) {
+    cat(paste0(if (add.line.breaks) "\n",msg, if (add.line.breaks) "\n")) 
+  }
+}
+
 
 #' This is just a place holder in a hint block
 #' 
