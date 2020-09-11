@@ -190,6 +190,10 @@ stats = function(do.display = TRUE, use.old.stats=FALSE, ups = get.ups(), ps=get
   if (use.old.stats)
     return(old.stats())
 
+  if (is.null(ups)) {
+    display("No user name was specified. Then no stats can be saved or analysed.")
+    return(invisible())
+  }
 
   cdt = as_tibble(rps$cdt)
 

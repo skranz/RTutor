@@ -4,6 +4,8 @@
 
 * More convenient adaptive hints using `hint.stud.call` and `hint.stud.assign` and also more flexible combination of custom and auto hints using `auto.hint()` and `auto.hint.else()`.
 
+* Better interface for quizzes if students solve the problem set as Rmd file 
+
 ## 2020-06-10
 
 * Allow option for shiny based problem sets that one can start editing any chunk and previous 
