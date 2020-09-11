@@ -118,3 +118,103 @@
 ,
 {"type":["hint"],"time":["2019-12-04 14:04:21"],"user":["GUEST"],"umph":[1575464661.0132],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
 ,
+{"type":["init_ps"],"time":["2019-12-04 14:30:04"],"user":["GUEST"],"umph":[1575466204.4536],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:05"],"user":["GUEST"],"umph":[1575466205.3652],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["hint"],"time":["2019-12-04 14:30:05"],"user":["GUEST"],"umph":[1575466205.6574],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["grade_ps"],"time":["2019-12-04 14:30:05"],"user":["GUEST"],"umph":[1575466205.6914],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:30:05"],"user":["GUEST"],"umph":[1575466205.7664],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:05"],"user":["GUEST"],"umph":[1575466205.9235],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["check_ps"],"time":["2019-12-04 14:30:06"],"user":["GUEST"],"umph":[1575466206.1707],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:30:06"],"user":["GUEST"],"umph":[1575466206.2278],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:06"],"user":["GUEST"],"umph":[1575466206.4709],"ok":[false],"chunk":[1],"ex":[1],"e.ind":[2],"code":["x = c(1,NA,5)\n# Compute the mean ignoring NA\nmean(x,.PH_._)"],"message":["\nYou have not yet entered all correct commands in chunk 1_a."]}
+,
+{"type":["hint"],"time":["2019-12-04 14:30:06"],"user":["GUEST"],"umph":[1575466206.5069],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:30:22"],"user":["GUEST"],"umph":[1575466222.9718],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:23"],"user":["GUEST"],"umph":[1575466223.3981],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["hint"],"time":["2019-12-04 14:30:23"],"user":["GUEST"],"umph":[1575466223.5192],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["grade_ps"],"time":["2019-12-04 14:30:23"],"user":["GUEST"],"umph":[1575466223.7093],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:30:23"],"user":["GUEST"],"umph":[1575466223.7884],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:24"],"user":["GUEST"],"umph":[1575466224.0015],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["check_ps"],"time":["2019-12-04 14:30:24"],"user":["GUEST"],"umph":[1575466224.2747],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:30:24"],"user":["GUEST"],"umph":[1575466224.4628],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:30:24"],"user":["GUEST"],"umph":[1575466224.5719],"ok":[false],"chunk":[1],"ex":[1],"e.ind":[2],"code":["x = c(1,NA,5)\n# Compute the mean ignoring NA\nmean(x,.PH_._)"],"message":["\nYou have not yet entered all correct commands in chunk 1_a."]}
+,
+{"type":["hint"],"time":["2019-12-04 14:30:24"],"user":["GUEST"],"umph":[1575466224.699],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:59:48"],"user":["GUEST"],"umph":[1575467988.1938],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:59:48"],"user":["GUEST"],"umph":[1575467988.6241],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["hint"],"time":["2019-12-04 14:59:49"],"user":["GUEST"],"umph":[1575467989.0543],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["grade_ps"],"time":["2019-12-04 14:59:49"],"user":["GUEST"],"umph":[1575467989.3806],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:59:49"],"user":["GUEST"],"umph":[1575467989.7428],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:59:50"],"user":["GUEST"],"umph":[1575467990.7214],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["check_ps"],"time":["2019-12-04 14:59:51"],"user":["GUEST"],"umph":[1575467991.2828],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 14:59:51"],"user":["GUEST"],"umph":[1575467991.4679],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 14:59:51"],"user":["GUEST"],"umph":[1575467991.7301],"ok":[false],"chunk":[1],"ex":[1],"e.ind":[2],"code":["x = c(1,NA,5)\n# Compute the mean ignoring NA\nmean(x,.PH_._)"],"message":["\nYou have not yet entered all correct commands in chunk 1_a."]}
+,
+{"type":["hint"],"time":["2019-12-04 14:59:52"],"user":["GUEST"],"umph":[1575467992.6888],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:10:14"],"user":["GUEST"],"umph":[1575468614.4621],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:10:14"],"user":["GUEST"],"umph":[1575468614.7493],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["hint"],"time":["2019-12-04 15:10:14"],"user":["GUEST"],"umph":[1575468614.9915],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["grade_ps"],"time":["2019-12-04 15:10:15"],"user":["GUEST"],"umph":[1575468615.4808],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:10:15"],"user":["GUEST"],"umph":[1575468615.5528],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:10:15"],"user":["GUEST"],"umph":[1575468615.789],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["check_ps"],"time":["2019-12-04 15:10:16"],"user":["GUEST"],"umph":[1575468616.0952],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:10:16"],"user":["GUEST"],"umph":[1575468616.3314],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:10:16"],"user":["GUEST"],"umph":[1575468616.6966],"ok":[false],"chunk":[1],"ex":[1],"e.ind":[2],"code":["x = c(1,NA,5)\n# Compute the mean ignoring NA\nmean(x,.PH_._)"],"message":["\nYou have not yet entered all correct commands in chunk 1_a."]}
+,
+{"type":["hint"],"time":["2019-12-04 15:10:16"],"user":["GUEST"],"umph":[1575468616.7336],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:45:59"],"user":["GUEST"],"umph":[1575470759.2633],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:45:59"],"user":["GUEST"],"umph":[1575470759.9487],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["hint"],"time":["2019-12-04 15:46:00"],"user":["GUEST"],"umph":[1575470760.45],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,
+{"type":["grade_ps"],"time":["2019-12-04 15:46:00"],"user":["GUEST"],"umph":[1575470760.5321],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:46:00"],"user":["GUEST"],"umph":[1575470760.5971],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:46:00"],"user":["GUEST"],"umph":[1575470760.7613],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[0],"code":["x = c(1,NA,5)\nmean(x, na.rm = TRUE) "],"message":[""]}
+,
+{"type":["check_ps"],"time":["2019-12-04 15:46:00"],"user":["GUEST"],"umph":[1575470760.8873],"ok":[true]}
+,
+{"type":["init_ps"],"time":["2019-12-04 15:46:01"],"user":["GUEST"],"umph":[1575470761.0074],"ok":[true]}
+,
+{"type":["check_chunk"],"time":["2019-12-04 15:46:01"],"user":["GUEST"],"umph":[1575470761.0945],"ok":[false],"chunk":[1],"ex":[1],"e.ind":[2],"code":["x = c(1,NA,5)\n# Compute the mean ignoring NA\nmean(x,.PH_._)"],"message":["\nYou have not yet entered all correct commands in chunk 1_a."]}
+,
+{"type":["hint"],"time":["2019-12-04 15:46:01"],"user":["GUEST"],"umph":[1575470761.1345],"ok":[true],"chunk":[1],"ex":[1],"e.ind":[2]}
+,

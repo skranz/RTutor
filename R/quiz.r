@@ -343,7 +343,7 @@ quiz.ui = function(qu, solution=FALSE) {
 
 quiz.part.ui = function(part, solution=FALSE, add.button=!is.null(part$checkBtnId)) {
   #question = rmdtools::md2html(part$question)
-  question = markdownToHTML(text=part$question, fragment.only=FALSE,encoding="UTF-8")
+  question = markdownToHTML(text=part$question, fragment.only=TRUE,encoding="UTF-8")
   head = list(
     HTML(paste0("<p>",question,"</p>"))
   )
