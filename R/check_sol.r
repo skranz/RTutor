@@ -214,7 +214,8 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
 
   ck = ps$cdt[chunk.ind,]
   chunk.name = ck$chunk.name
-
+  ps$stud.env = stud.env
+  
   ps$current.hint.on.fail = isTRUE(ps$rps$hint.on.fail)
   
   ps$cdt$old.stud.code[chunk.ind] = stud.code
@@ -290,11 +291,7 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   }
 
 
-  if (verbose) {
-    display("make.chunk.stud.env...")
-  }
   has.error = FALSE
-  ps$stud.env = stud.env
   if (!isTRUE(ps$precomp))
     ps$cdt[["stud.env"]][[chunk.ind]] = stud.env
 

@@ -1,7 +1,7 @@
 # This file contains code used 
 # for creating automatic hint for dplyr chains
 
-inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str=assign.str,start.char="\n", end.char="\n", env=ps$stud.env, details.of.wrong..call = TRUE, compare.vals= !(isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)), call=NULL,...) {
+inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, assign.str="",start.char="\n", end.char="\n", env=ps$stud.env, details.of.wrong..call = TRUE, compare.vals= !(isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)), call=NULL,...) {
 
   restore.point("inner.hint.for.call.chain")
 
@@ -22,7 +22,7 @@ inner.hint.for.call.chain = function(stud.expr.li, cde, ps = get.ps(), ce=NULL, 
     chain.str = paste0(chain.na, " ...", collapse = paste0(" ",op,"\n  "))
     chain.str = paste0(assign.str, chain.str)
     
-    txt = paste0("My solution consists of a pipe chain of the form:\n\n", chain.str,"\n\nI have not seeen any pipe operator ", op," in your solution, yet.")
+    txt = paste0("My solution consists of a pipe chain of the form:\n\n", chain.str,"\n\nI have not seen any pipe operator ", op," in your solution, yet.")
     display(txt)
     return(invisible())
     #return(list(same=FALSE, fail.step=1, same.until=0, descr=txt))
@@ -242,9 +242,9 @@ eval.next.chain.call = function(x, call, envir=parent.frame(), eval.fun = eval, 
 scramble.call.chain = function(cde, assign.str="") {
   parts = sapply(cde$args, function(call) {
     call.str = deparse1(call)
-    scramble.text(call.str,"?",0.6, keep.char=c(" ","\n",">","%","(",")","=", "\t"))
+    scramble.text(call.str,"?",0.5, keep.char=c(" ","\n",">","%","(",")","=", "\t"))
   })
   str = paste0(parts, collapse = " %>%\n\t")
-  str = paste0(assign.str, " = ", str)
+  str = paste0(assign.str, str)
   str
 }

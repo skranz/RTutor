@@ -245,10 +245,15 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   stud.na = sapply(stud.expr.li,  name.of.call)
   stud.expr.li = stud.expr.li[which(stud.na == check.na)]
 
+  has.place.holder = any(sapply(stud.expr.li, has.call.placeholder))
+  
   # For filter we show a scrambled version of the 
   # sample solution since arguments are not named
   # and the order does not matter
-  scramble.fun = isTRUE(check.na == "filter")
+  
+  # We also show a scrambled version if there
+  # are placeholders
+  scramble.fun = isTRUE(check.na == "filter") | has.place.holder
   
   assign.str = ifelse(from.assign,paste0(" ",lhs, " = "),"")
   if (cde$type == "fun" & !scramble.fun) {
@@ -258,9 +263,9 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       lib =  as.character(cde$arg[[1]])
       has.lib = suppressWarnings(require(lib, character.only=TRUE, quietly=TRUE))
       if (has.lib) {
-        hdisplay('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.')
+        hdisplay('Add the command ', deparse1(ce), ' to load the package ',lib,'. It contains functions that we need.')
       } else {
-        hdisplay('Add the command ', deparse1(ce), ' to load the the package ',lib,'. It contains functions that we need.\n First you must install the package, however. For packages that are on the CRAN or for which you have a local zip or tar.gz file, you can do the installation in RStudio using the menu Tools -> Install Packages.\n(For packages that are only on Github, first load and install the package devtools from CRAN and then use its function install_github.)')
+        hdisplay('Add the command ', deparse1(ce), ' to load the package ',lib,'. It contains functions that we need.\n First you must install the package, however. For packages that are on the CRAN or for which you have a local zip or tar.gz file, you can do the installation in RStudio using the menu Tools -> Install Packages.\n(For packages that are only on Github, first load and install the package devtools from CRAN and then use its function install_github.)')
       }
       return(invisible())
     }
@@ -273,7 +278,8 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       return(invisible())
     }
 
-    # Environment in which argument values shall be evaluated. Is a data frame
+    # Environment in which argument values shall be evaluated. 
+    # Is a data frame
     # if the function is a dplyr function like mutate(dat,...)
     if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
       val.env = NULL
@@ -319,7 +325,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env, call=call))
   }  else if (cde$type == "math" | cde$type == "formula") {
     #restore.point("math.fail")
-    hint.str = scramble.text(deparse(call),"?",0.4, keep.char=c(" ","\n"))
+    hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ","\n","+","(",")"))
 
     if (from.assign) {
       hdisplay("You have to assign a correct formula to the variable '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
@@ -327,12 +333,12 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       hdisplay("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   } else if (cde$type == "fun" & scramble.fun) { 
-    hint.str = scramble.text(deparse(call),"?",0.45, keep.char=c(" ",",","(",")","\n"))
+    hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ",",","(",")","=", "\n"))
 
     if (from.assign) {
-      hdisplay("You have to assign a correct function call to '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to make a correct assignment to '",lhs,"'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
-      hdisplay("You have to enter a correct function call to ", check.na," Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+      hdisplay("You have to enter a correct call to '", check.na,"'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   }  else if (cde$type == "var") {
     if (!from.assign)
@@ -378,8 +384,9 @@ hint.for.assign = function(expr, ps=get.ps(), env = ps$stud.env, stud.expr.li = 
   ce = match.call.object(expr,s3.method=s3.method, envir=match.call.object.env())
   ce = standardize.assign(ce)
 
-  ce.rhs = match.call.object(ce[[3]],s3.method=s3.method, envir=match.call.object.env())
-  dce.rhs = describe.call(call.obj=ce.rhs)
+  #ce.rhs = match.call.object(ce[[3]],s3.method=s3.method, envir=match.call.object.env())
+  ce.rhs = ce[[3]]
+  #dce.rhs = describe.call(call.obj=ce.rhs)
 
   stud.expr.li = lapply(stud.expr.li, standardize.assign)
   stud.expr.li = stud.expr.li[(!sapply(stud.expr.li,is.null))]

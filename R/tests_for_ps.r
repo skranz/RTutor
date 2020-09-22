@@ -134,7 +134,7 @@ check.function = function(code, ..., check.args = TRUE, check.defaults=FALSE, ch
     }
   }
 
-  success.message = paste0("Great, I good not find an error in your function ", fun.name, "!")
+  success.message = paste0("Great, I could not find an error in your function ", fun.name, "!")
   add.success(success.message)
   return(TRUE)
 }
@@ -212,7 +212,7 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
       if (true(check.na %in% find.funs(se) | (!substring(check.na,1,1) %in% c(letters,LETTERS))) ) {
         # Student already uses desired function
         # but not directly. Or we have an operator
-        failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But you shall directly use the the function '",check.na,"', by just writing \n\n    ", deparse1(expr), "\n\nPlease change your code.")
+        failure.message = paste0("Ok,",part.str," your command\n\n    ", deparse1(se),"\n\nindeed yields the correct result. But you shall directly use the function '",check.na,"', by just writing \n\n    ", deparse1(expr), "\n\nPlease change your code.")
         ps$current.hint.on.fail = FALSE        
       } else {
         # Student does not yet use desired function
