@@ -36,6 +36,12 @@ For the web-based interface, several students at Ulm University have created ver
   - shinyapps.io: https://felsti.shinyapps.io/RTutorECars
   - rstudio.cloud: https://rstudio.cloud/project/139129
 
+### The causal effects of Sweden's CO2 Tax (by Theresa Graefe)
+
+  - Github: [https://github.com/TheresaGraefe/RTutorCarbonTax](https://github.com/TheresaGraefe/RTutorCarbonTax)
+  - shinyapps.io: [https://theresagraefe.shinyapps.io/RTutorCarbonTaxesAndCO2Emissions/](https://theresagraefe.shinyapps.io/RTutorCarbonTaxesAndCO2Emissions/)
+
+
 ### Public Procurement Auctions: Design, Outcomes and Adaption Costs (by Frederik Collin)
   - Github: https://github.com/Fcolli/RTutorProcurementAuction
   - shinyapps.io: https://fcolli.shinyapps.io/RTutorProcurementAuction
