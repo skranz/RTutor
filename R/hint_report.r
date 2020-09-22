@@ -3,6 +3,12 @@ examples.hint.report = function() {
   setwd("C:/libraries/RTutor/examples")
   ps.name = "myps"
   make.hint.report(ps.name)
+  
+  library(RTutor)
+  setwd("C:/lehre/empecon/rtutor")
+  ps.name = "ps2_ml"
+  make.hint.report(ps.name)
+  
 }
 
 #' Helper function when developing problem sets
@@ -10,6 +16,7 @@ examples.hint.report = function() {
 #' Tries to check all chunks with given solution and shows
 #' the corresponding hint.
 make.hint.report = function(ps.name, out.file = paste0(ps.name, "_hint_report.Rmd")) {
+  restore.point("make.hint.report")
   ps = init.ps(ps.name)
   set.ps(ps)
   chunk.ind = 1
@@ -19,15 +26,17 @@ make.hint.report = function(ps.name, out.file = paste0(ps.name, "_hint_report.Rm
   org.code = ps$cdt$old.stud.code
   for (chunk.ind in 1:n) {
     stud.code = org.code[[chunk.ind]]
+    #ps$stud.env = make.chunk.stud.env(chunk.ind, ps)
     check.chunk(chunk.ind = chunk.ind,stud.code = stud.code)
+    copy.into.env(ps$stud.env, .GlobalEnv)
     hint.txt[chunk.ind] = merge.lines(capture.output(hint()))
     stud.code = ps$cdt$sol.txt[[chunk.ind]]
     check.chunk(chunk.ind = chunk.ind,stud.code = stud.code)
   }
   
   txt = paste0(
-    "```{r sol",1:n,"}\n", ps$cdt$sol.txt,"\n```",
-    "\n```{r chunk",1:n,"}\n", org.code,"\n```",
+    "```{r \"sol_",ps$cdt$chunk.name,"\"}\n", ps$cdt$sol.txt,"\n```",
+    "\n```{r \"",ps$cdt$chunk.name,"\"}\n", org.code,"\n```",
     "\nHint: ", hint.txt,
     collapse="\n---------------------------\n"
   )
