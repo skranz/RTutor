@@ -11,7 +11,7 @@ install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOpt
 if (!require(devtools))
   install.packages("devtools")
 
-devtools::install_github("GITHUB_USERNAME/PACKAGE_NAME", upgrade_dependencies=FALSE)
+devtools::install_github("GITHUB_USERNAME/PACKAGE_NAME")
 ```
 
 ## 2. Show and work on the problem set
