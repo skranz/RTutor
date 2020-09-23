@@ -255,6 +255,19 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   # are placeholders
   scramble.fun = isTRUE(check.na == "filter") | has.place.holder
   
+  ggplot.chain = FALSE
+  # Check possible ggplot chain
+  if (isTRUE(cde$type == "math" & identical(cde$name,"+"))) {
+    check.code = deparse1(call)
+    if (has.substr(check.code, "ggplot(") | has.substr(check.code, "+ geom_")) {
+      ggplot.chain = TRUE
+    }
+  }
+  if (ggplot.chain) {
+    cde$type = "fun"
+    scramble.fun = TRUE
+  }
+
   assign.str = ifelse(from.assign,paste0(" ",lhs, " = "),"")
   if (cde$type == "fun" & !scramble.fun) {
 
@@ -279,8 +292,8 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     }
 
     # Environment in which argument values shall be evaluated. 
-    # Is a data frame
-    # if the function is a dplyr function like mutate(dat,...)
+    # Is a data frame if the function is a dplyr function
+    # like mutate(dat,...)
     if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
       val.env = NULL
     } else {
@@ -321,24 +334,55 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (from.assign)
       #hdisplay("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
+  } else if ( (cde$type == "fun" | (cde$type=="chain" & length(stud.expr.li)==1)) & scramble.fun) {
+    restore.point("jdhfjhdkfslfj")
+    # Only scramble wrong parts if we have a single student
+    # expression
+    ph.txt = ""
+    if (length(stud.expr.li)==1) {
+      if (isTRUE(ps$noeval) | isTRUE(ps$hint.noeval)) {
+        val.env = NULL
+      } else {
+        val.env = env
+        if (is.dplyr.fun(check.na)) {
+          val.env = eval(cde$arg[[".data"]],env)
+        }
+      }
+      
+      stud.call = stud.expr.li[[1]]
+      res = scramble.call.diffs(stud.call = stud.call,check.call = call,val.env = val.env,ph.max = 1,share = 0.5)
+      
+      if (res$ph.count > res$ph.max) {
+        ph.txt = paste0("and ", get.placeholder())
+      }
+      
+      hint.str = res$scode
+      if (cde$type == "chain") {
+        hint.str = gsub("%>%","%>%\n\t",hint.str)
+      }
+    } else {
+      hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ",",","(",")","=", "\n"))
+    }
+    if (from.assign) {
+      hdisplay("You have to make a correct assignment to '",lhs,"'. Here is a scrambled solution with some unrevealed ? ",ph.txt,":\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
+    } else {
+      if (ggplot.chain | cde$type=="chain") {
+        start.str = ""
+      } else {
+        start.str = paste0("You have to enter a correct call to '", check.na,"'. ")
+      }
+      hdisplay(start.str,"Here is a scrambled solution with some unrevealed ? ",ph.txt,":\n\n  ", hint.str, start.char=start.char, end.char=end.char)
+    }
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env, call=call))
   }  else if (cde$type == "math" | cde$type == "formula") {
     #restore.point("math.fail")
     hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ","\n","+","(",")"))
-
+    
     if (from.assign) {
       hdisplay("You have to assign a correct formula to the variable '", lhs, "'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
     } else {
       hdisplay("You have to enter a correct formula... Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
-    }
-  } else if (cde$type == "fun" & scramble.fun) { 
-    hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ",",","(",")","=", "\n"))
-
-    if (from.assign) {
-      hdisplay("You have to make a correct assignment to '",lhs,"'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n ",lhs ," = ", hint.str, start.char=start.char, end.char=end.char)
-    } else {
-      hdisplay("You have to enter a correct call to '", check.na,"'. Here is a scrambled version of my solution with some characters being hidden by ?:\n\n  ", hint.str, start.char=start.char, end.char=end.char)
     }
   }  else if (cde$type == "var") {
     if (!from.assign)
@@ -360,6 +404,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
 }
 
 scramble.text = function(txt, scramble.char="?", share=0.5, keep.char=c(" ","\n")) {
+  #restore.point("scramble.text")
   txt = merge.lines(txt,"\n")
   vec = strsplit(txt, "")[[1]]
 
