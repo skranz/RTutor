@@ -1,12 +1,13 @@
 examples.hint.report = function() {
   library(RTutor)
+  undebug(scramble.call.diffs)
   setwd("C:/libraries/RTutor/examples")
   ps.name = "myps"
   make.hint.report(ps.name)
   
   library(RTutor)
   setwd("C:/lehre/empecon/rtutor")
-  ps.name = "ps2_ml"
+  ps.name = "ps1_wine"
   make.hint.report(ps.name)
   
 }

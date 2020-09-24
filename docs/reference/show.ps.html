@@ -8,21 +8,29 @@
 
 <title>Run a shiny based problem set in the browser — show.ps • RTutor</title>
 
-<!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<!-- jquery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<!-- Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,10 +38,10 @@
 
 
 
-<meta property="og:title" content="Run a shiny based problem set in the browser — show.ps" />
 
+<meta property="og:title" content="Run a shiny based problem set in the browser — show.ps" />
 <meta property="og:description" content="Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -47,9 +55,10 @@
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -63,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.6.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
       </span>
     </div>
 
@@ -75,41 +84,13 @@
      
   </a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Manuals
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/01_RTutorOverview.html">1 RTutor Overview</a>
-    </li>
-    <li>
-      <a href="../articles/02_ElementsSolutionFile.html">2 Elements of a Solution File</a>
-    </li>
-    <li>
-      <a href="../articles/03_HintsAndTests.html">3 Hints and Tests</a>
-    </li>
-    <li>
-      <a href="../articles/04_Evaluation.html">4 Evaluation Order and Environments</a>
-    </li>
-    <li>
-      <a href="../articles/05_Deploy Problem Sets as Package on Github.html">5 Deploy RTutor Problem Set as a Package on Github</a>
-    </li>
-    <li>
-      <a href="../articles/06_Deploy problem set on shinyapps.io.html">6 Deploy a problem set on shinyapps.io</a>
-    </li>
-    <li>
-      <a href="../articles/FAQ_and_Sneaky_Errors.html">Sneaky Errors</a>
-    </li>
-  </ul>
+<li>
+  <a href="../articles/index.html">Manuals</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/skranz/RTutor">
@@ -124,6 +105,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -135,33 +117,31 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>show.ps</span>(<span class='no'>ps.name</span>, <span class='kw'>user.name</span> <span class='kw'>=</span> <span class='st'>"default_user"</span>, <span class='kw'>auto.save.code</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>clear.user</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>run.solved</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>sample.solution</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>prev.chunks.sample.solution</span> <span class='kw'>=</span> <span class='no'>show.solution.btn</span>, <span class='kw'>launch.browser</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>catch.errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/getwd'>getwd</a></span>(), <span class='kw'>rps.dir</span> <span class='kw'>=</span> <span class='no'>dir</span>,
-  <span class='kw'>offline</span> <span class='kw'>=</span> !<span class='fu'>can.connect.to.MathJax</span>(), <span class='kw'>left.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>right.margin</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='no'>is.solved</span>, <span class='kw'>make.web.app</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>make.session.ps</span> <span class='kw'>=</span> <span class='no'>make.web.app</span>,
-  <span class='kw'>save.nothing</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.revert.btn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.solution.btn</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>show.data.exp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>show.download.rmarkdown</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>disable.graphics.dev</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>check.whitelist</span> <span class='kw'>=</span> !<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/NULL'>is.null</a></span>(<span class='no'>wl</span>), <span class='kw'>wl</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='fl'>25</span>,
-  <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-  <span class='kw'>knit.print.opts</span> <span class='kw'>=</span> <span class='fu'>make.knit.print.opts</span>(<span class='kw'>html.data.frame</span> <span class='kw'>=</span> <span class='no'>html.data.frame</span>,
-  <span class='kw'>table.max.rows</span> <span class='kw'>=</span> <span class='no'>table.max.rows</span>, <span class='kw'>round.digits</span> <span class='kw'>=</span> <span class='no'>round.digits</span>, <span class='kw'>signif.digits</span> <span class='kw'>=</span>
-  <span class='no'>signif.digits</span>, <span class='kw'>print.data.frame.fun</span> <span class='kw'>=</span> <span class='no'>print.data.frame.fun</span>, <span class='kw'>print.matrix.fun</span> <span class='kw'>=</span>
-  <span class='no'>print.matrix.fun</span>), <span class='kw'>print.data.frame.fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>print.matrix.fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>precomp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>noeval</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>need.login</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>login.dir</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='no'>dir</span>, <span class='st'>"/login"</span>), <span class='kw'>show.points</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>stop.app.if.window.closes</span> <span class='kw'>=</span> !<span class='no'>make.session.ps</span>, <span class='kw'>sav.file</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='no'>user.name</span>,
-  <span class='st'>"_"</span>, <span class='no'>ps.name</span>, <span class='st'>".sav"</span>), <span class='kw'>load.sav</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.save.btn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>import.rmd</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rmd.file</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/paste'>paste0</a></span>(<span class='no'>ps.name</span>, <span class='st'>"_"</span>, <span class='no'>user.name</span>,
-  <span class='st'>"_export.rmd"</span>), <span class='no'>...</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>show.ps</span>(<span class='kw'>ps.name</span>, user.name = <span class='st'>"default_user"</span>, auto.save.code = <span class='fl'>FALSE</span>,
+  clear.user = <span class='fl'>FALSE</span>, run.solved = <span class='fl'>FALSE</span>, sample.solution = <span class='fl'>FALSE</span>,
+  prev.chunks.sample.solution = <span class='kw'>show.solution.btn</span>, launch.browser = <span class='fl'>TRUE</span>,
+  catch.errors = <span class='fl'>TRUE</span>, dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(), rps.dir = <span class='kw'>dir</span>,
+  offline = <span class='op'>!</span><span class='fu'>can.connect.to.MathJax</span>(), left.margin = <span class='fl'>2</span>, right.margin = <span class='fl'>2</span>,
+  <span class='kw'>is.solved</span>, make.web.app = <span class='fl'>FALSE</span>, make.session.ps = <span class='kw'>make.web.app</span>,
+  save.nothing = <span class='fl'>FALSE</span>, show.revert.btn = <span class='fl'>FALSE</span>, show.solution.btn = <span class='fl'>NA</span>,
+  show.data.exp = <span class='fl'>TRUE</span>, show.download.rmarkdown = <span class='fl'>TRUE</span>,
+  disable.graphics.dev = <span class='fl'>TRUE</span>, check.whitelist = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>wl</span>), wl = <span class='kw'>NULL</span>,
+  verbose = <span class='fl'>FALSE</span>, html.data.frame = <span class='fl'>TRUE</span>, table.max.rows = <span class='fl'>25</span>,
+  round.digits = <span class='fl'>8</span>, signif.digits = <span class='fl'>8</span>,
+  knit.print.opts = <span class='fu'>make.knit.print.opts</span>(html.data.frame = <span class='kw'>html.data.frame</span>,
+  table.max.rows = <span class='kw'>table.max.rows</span>, round.digits = <span class='kw'>round.digits</span>, signif.digits =
+  <span class='kw'>signif.digits</span>, print.data.frame.fun = <span class='kw'>print.data.frame.fun</span>, print.matrix.fun =
+  <span class='kw'>print.matrix.fun</span>), print.data.frame.fun = <span class='kw'>NULL</span>, print.matrix.fun = <span class='kw'>NULL</span>,
+  precomp = <span class='fl'>FALSE</span>, noeval = <span class='fl'>FALSE</span>, need.login = <span class='fl'>FALSE</span>,
+  login.dir = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>dir</span>, <span class='st'>"/login"</span>), show.points = <span class='fl'>TRUE</span>,
+  stop.app.if.window.closes = <span class='op'>!</span><span class='kw'>make.session.ps</span>, sav.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>user.name</span>,
+  <span class='st'>"_"</span>, <span class='kw'>ps.name</span>, <span class='st'>".sav"</span>), load.sav = <span class='fl'>FALSE</span>, show.save.btn = <span class='fl'>FALSE</span>,
+  import.rmd = <span class='fl'>FALSE</span>, rmd.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>"_"</span>, <span class='kw'>user.name</span>,
+  <span class='st'>"_export.rmd"</span>), <span class='kw'>...</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -234,17 +214,16 @@
       <td><p>the number of digits that printed data.frames shall be rounded to</p></td>
     </tr>
     </table>
-    
+
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-                </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -252,13 +231,16 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

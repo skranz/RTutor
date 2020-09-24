@@ -20,7 +20,7 @@ example.scramble.call.diffs = function() {
 # only replaces the differences with scramble.text
 #
 # By default only the first placeholder will be replaced
-scramble.call.diffs = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ph.max=1,  share=0.5, keep.char=c(" ","(",")",",","+","[","]"), placeholder=get.placeholder()) {
+scramble.call.diffs = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, ph.max=1,  share=0.5, keep.char=c(" ","(",")",",","+","[","]","="), placeholder=get.placeholder()) {
   
   stud.call = match.call.object(stud.call)
   #check.call = match.call.object(check.call)
@@ -97,7 +97,7 @@ scramble.call.diffs.inner = function(stud.call, check.call, compare.vals = !is.n
   list(same=same, scall=scall, ph.count=ph.count)
 }
 
-scramble.call.object = function(call, share=0.501, keep.char=c(" ","(",")",",","+","[","]")) {
+scramble.call.object = function(call, share=0.501, keep.char=c(" ","(",")",",","+","[","]","=")) {
   restore.point("scramble.call.object")
   if(is.character(call)) {
     scall = scramble.text(call,share = share,keep.char = keep.char)
