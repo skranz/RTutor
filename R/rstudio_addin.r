@@ -29,8 +29,15 @@ check.ps.addin = function(...) {
   library(RTutor)
   doc = rstudioapi::getSourceEditorContext()
   restore.point("check.ps.addin")
+  
+  # Work around to get active Rmd file by focusing on console
   if (is.null(doc)) {
-    return(check.ps.addin.no.active.doc())
+    sendToConsole("", execute = FALSE, echo = TRUE, focus = TRUE)
+    doc = rstudioapi::getSourceEditorContext()
+  }
+  
+  if (is.null(doc)) {
+      return(check.ps.addin.no.active.doc())
   }
   
   file = basename(doc$path)
@@ -39,7 +46,6 @@ check.ps.addin = function(...) {
     return()
   }
   dir = dirname(doc$path)
-  txt = doc$contents
   
   cat("\n---------------------------\nSave and check problem set file ", doc$path," ...\n")
   
@@ -49,7 +55,11 @@ check.ps.addin = function(...) {
   # Also should avoid message that the content of
   # the file has been changed
   try(rstudioapi::documentSave(doc$id))
-  #suppressWarnings(writeLines(text = txt, doc$path))
+
+  #doc$contents does not yet work well with visual markdown
+  #txt = doc$contents
+  txt = readLines(doc$path, warn=FALSE)
+  restore.point("check.ps.addin2")
   
   user.name.line = which(str.starts.with(str.trim(txt),"user.name ="))
   if (length(user.name.line)==0) {
@@ -64,7 +74,7 @@ check.ps.addin = function(...) {
   if (is.na(ps.name)) return()
 
   err = NULL
-  tryCatch(check.problem.set(ps.name, dir, file, user.name=user.name), error=function(e) {err<<-paste0(as.character(e),collapse="\n")})
+  tryCatch(check.problem.set(ps.name, dir, file, user.name=user.name, stud.code=txt), error=function(e) {err<<-paste0(as.character(e),collapse="\n")})
     
   if (!is.null(err)) {
     err = gsub("Error in stop.without.error(message): ","",err,fixed=TRUE)
