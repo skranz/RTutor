@@ -49,8 +49,9 @@ examples.create.ps = function() {
 #' @param round.digits Digits for rounding of shown data frames.
 #' @param signif.digits Significant digits for  shown data frames.
 #' @param knitr.opts.chunk A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.
+#' @param short.first.chunk If \code{TRUE} (default) the first chunk is more compact and only contains the user name line. Otherwise it also contains the calls to check.problem.set which would allow to check the problem set also without the RStudio Addin.
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___") {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___", short.first.chunk = TRUE) {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -82,9 +83,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     te$ps.name = ps.name
 
   if (make.rmd) {
-    write.sample.solution(te=te, header=header,footer=footer, user.name=sol.user.name, ps.dir=dir)
+    write.sample.solution(te=te, header=header,footer=footer, user.name=sol.user.name, ps.dir=dir, short.first.chunk = short.first.chunk)
   }
-  task.txt = write.empty.ps(te=te,  header=header,footer=footer, user.name=user.name, ps.dir=dir, save=make.rmd)
+  task.txt = write.empty.ps(te=te,  header=header,footer=footer, user.name=user.name, ps.dir=dir, save=make.rmd, short.first.chunk= short.first.chunk)
   
   
   rps = te.to.rps(te=te)
@@ -1221,7 +1222,7 @@ get.empty.te = function(Addons=NULL, extra.code.file=NULL) {
   te
 }
 
-include.ps.extra.lines = function(txt, ps.file, ps.name=te$ps.name,te=NULL,...) {
+include.ps.extra.lines = function(txt, ps.file, ps.name=te$ps.name,te=NULL, ...) {
   str = ps.rtutor.chunk(ps.name=ps.name, ps.file=ps.file,...)
   str = paste0(str,collapse="\n")
   chunk.row = which(str.starts.with(txt,"# Problemset"))[1]
@@ -1233,13 +1234,14 @@ include.ps.extra.lines = function(txt, ps.file, ps.name=te$ps.name,te=NULL,...) 
   txt
 }
 
-ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(ps.name,".Rmd"), header="", user.name="ENTER A USER NAME HERE",...) {
+ps.rtutor.chunk = function(ps.name,ps.dir = "C:/problemsets/", ps.file = paste0(ps.name,".Rmd"), header="", user.name="ENTER A USER NAME HERE",short.first.chunk=TRUE,...) {
 
   str = paste0("
 ```{r 'check_ps', include=FALSE}
 ",header,"
-user.name = '",user.name,"' # set to your user name
-
+user.name = '",user.name,"'",
+if (!isTRUE(short.first.chunk)) 
+paste0("
 # To check your problem set, run the 
 # RStudio Addin 'Check Problemset'
 
@@ -1247,7 +1249,8 @@ user.name = '",user.name,"' # set to your user name
 library(RTutor)
 ps.dir = getwd() # directory of this file
 ps.file = '", ps.name,".Rmd' # name of this file
-check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+check.problem.set('",ps.name,"', ps.dir, ps.file, user.name=user.name, reset=FALSE)"),
+"
 ```
 ")
   str
