@@ -1,5 +1,5 @@
-Name: Check solution
-Description: Check your solution
+Name: Check Problemset
+Description: Check your problemset
 Binding: check.ps.addin
 Interactive: false
 

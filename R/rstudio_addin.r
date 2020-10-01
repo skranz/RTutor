@@ -28,9 +28,11 @@ check.ps.addin = function(...) {
   library(rstudioapi)
   library(RTutor)
   doc = rstudioapi::getSourceEditorContext()
-  #doc = rstudioapi::getActiveDocumentContext()
-  #cat("Found document: ", doc$path)
   restore.point("check.ps.addin")
+  if (is.null(doc)) {
+    return(check.ps.addin.no.active.doc())
+  }
+  
   file = basename(doc$path)
   if (tolower(tools::file_ext(file)) != "rmd") {
     message("No .Rmd file selected. Select your problem set file in the editor window and try again.")
@@ -41,7 +43,7 @@ check.ps.addin = function(...) {
   
   cat("\n---------------------------\nSave and check problem set file ", doc$path," ...\n")
   
-  # Save document via RStudio api
+  # Save document via RStudio API
   # Benefits compared to writeLines:
   # Should ensure the same encoding as set in RStudio.
   # Also should avoid message that the content of
@@ -70,6 +72,13 @@ check.ps.addin = function(...) {
   }
 
 }
+
+check.ps.addin.no.active.doc = function() {
+  msg = "The active problem set RMD file could not be detected. This can currently happen in the visual RMarkdown editor mode.\nPlease set the cursor inside a code chunk or in the R console and check your solution again."
+  message(msg)
+  return(invisible())
+  
+} 
 
 guess.ps.name = function(txt, dir, file) {
   restore.point("guess.ps.name")
@@ -124,4 +133,5 @@ check.ps.addin.old = function(...) {
     message(err)
   }
 }
+
 
