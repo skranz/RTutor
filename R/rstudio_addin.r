@@ -1,3 +1,4 @@
+# Not used anymore
 rmd.to.latex.addin = function(...) {
   library(rstudioapi)
   library(RTutor)
@@ -18,10 +19,17 @@ rmd.to.latex.addin = function(...) {
   }
 }
 
+rtutor.hint.addin = function(...) {
+  library(RTutor)
+  hint()
+}
+
 check.ps.addin = function(...) {
   library(rstudioapi)
   library(RTutor)
-  doc = rstudioapi::getActiveDocumentContext()
+  doc = rstudioapi::getSourceEditorContext()
+  #doc = rstudioapi::getActiveDocumentContext()
+  #cat("Found document: ", doc$path)
   restore.point("check.ps.addin")
   file = basename(doc$path)
   if (tolower(tools::file_ext(file)) != "rmd") {

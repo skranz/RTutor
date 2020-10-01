@@ -1,9 +1,9 @@
-Name: Check Problemset
-Description: Check your solution of the RTutor problem set
+Name: Check solution
+Description: Check your solution
 Binding: check.ps.addin
 Interactive: false
 
-Name: Convert to Latex
-Description: Convert your RTutor ..._output_solution.Rmd file to Latex
-Binding: rmd.to.latex.addin
+Name: Hint
+Description: Get a hint
+Binding: rtutor.hint.addin
 Interactive: false
