@@ -51,10 +51,10 @@ examples.create.ps = function() {
 #' @param knitr.opts.chunk A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.
 #' @param short.first.chunk If \code{TRUE} (default) the first chunk is more compact and only contains the user name line. Otherwise it also contains the calls to check.problem.set which would allow to check the problem set also without the RStudio Addin.
 #' @param  stop.if.visual.mode.garbling If \code{TRUE} (default) stops the creation of the problem set and shows an informative error message if it looks as if the solution file was shown in the new visual mode for markdown files. The new visual mode markdown feature of RStudio is cool for solving RTutor problem sets. But you should never view the solution file from which you generate the problem set in visual mode, since it rewrites the code in an unparseable way.
-#' @param escape.part.counters if TRUE change lines that start with a) or b) etc to a\\) and b\\). That makes problem sets look nicer in visual markdown mode.
+#' @param bolden.part.counters if TRUE change lines that start with a) or b) etc to **a)** and **b)**. This turns-off auto enumeration and makes problem sets look nicer in visual markdown mode.
 #'   
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___", short.first.chunk = TRUE, stop.if.visual.mode.garbling = TRUE, escape.part.counters = FALSE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___", short.first.chunk = TRUE, stop.if.visual.mode.garbling = TRUE, bolden.part.counters = FALSE) {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -94,9 +94,9 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     te$ps.name = ps.name
 
   if (make.rmd) {
-    write.sample.solution(te=te, header=header,footer=footer, user.name=sol.user.name, ps.dir=dir, short.first.chunk = short.first.chunk, escape.part.counters=escape.part.counters)
+    write.sample.solution(te=te, header=header,footer=footer, user.name=sol.user.name, ps.dir=dir, short.first.chunk = short.first.chunk, bolden.part.counters=bolden.part.counters)
   }
-  task.txt = write.empty.ps(te=te,  header=header,footer=footer, user.name=user.name, ps.dir=dir, save=make.rmd, short.first.chunk= short.first.chunk, escape.part.counters=escape.part.counters)
+  task.txt = write.empty.ps(te=te,  header=header,footer=footer, user.name=user.name, ps.dir=dir, save=make.rmd, short.first.chunk= short.first.chunk, bolden.part.counters=bolden.part.counters)
   
   
   rps = te.to.rps(te=te)
@@ -147,7 +147,7 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
     rps = preknit.rps(rps=rps,precomp=precomp, knit.print.opts=knit.print.opts)
   }
 
-  write.output.solution(te=te,rps=rps,escape.part.counters=escape.part.counters)
+  write.output.solution(te=te,rps=rps,bolden.part.counters=bolden.part.counters)
 
   if (require(digest))
     rps$cdt.hash = digest(rps$cdt)
@@ -207,9 +207,9 @@ parse.sol.rmd = function(sol.file=NULL, txt=NULL, te = get.empty.te()) {
 }
 
 
-write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), sol.txt=te$sol.txt,ps.name=te$ps.name, te,escape.part.counters=FALSE,...) {
+write.sample.solution = function(file = paste0(ps.name,"_sample_solution.Rmd"), sol.txt=te$sol.txt,ps.name=te$ps.name, te,bolden.part.counters=FALSE,...) {
   restore.point("write.sample.solution")
-  if (escape.part.counters) sol.txt = escape.part.counters(sol.txt)
+  if (bolden.part.counters) sol.txt = bolden.part.counters(sol.txt)
   
   sol.txt = include.ps.extra.lines(sol.txt, ps.file=file, ps.name=ps.name,te=te,...)
   writeLines(sol.txt, file, useBytes=TRUE)
@@ -261,9 +261,9 @@ knitr::opts_chunk$set(error = TRUE)
   header  
 }
 
-write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps, escape.part.counters = FALSE,...) {
+write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), out.txt=te$out.txt,ps.name=te$ps.name, te, rps, bolden.part.counters = FALSE,...) {
   restore.point("write.output.solution")
-  if (escape.part.counters) out.txt = escape.part.counters(out.txt)
+  if (bolden.part.counters) out.txt = bolden.part.counters(out.txt)
   
   header = output.solution.header(rps=rps, te=te, ps.name=ps.name)
   
@@ -273,18 +273,18 @@ write.output.solution = function(file = paste0(ps.name,"_output_solution.Rmd"), 
   writeLines(out.txt, file, useBytes=TRUE)
 }
 
-escape.part.counters = function(txt) {
-  lines = grepl("^[a-z]\\)",txt)
-  txt[lines] = paste0(substring(txt[lines],1,1),"\\", substring(txt[lines],2))
+bolden.part.counters = function(txt) {
+  lines = grepl("^[a-z]\\) ",txt)
+  txt[lines] = paste0("**",substring(txt[lines],1,2),"**", substring(txt[lines],3))
   txt
 }
 
-write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te, save=TRUE, escape.part.counters=FALSE,...) {
+write.empty.ps = function(file = paste0(te$ps.name,".Rmd"), task.txt=te$task.txt,ps.name=te$ps.name, te, save=TRUE, bolden.part.counters=FALSE,...) {
   task.txt = include.ps.extra.lines(task.txt, ps.file=file, ps.name=ps.name,te=te,...)
   restore.point("write.empty.ps")
   if (save) {
     adapted.txt = adapt.empty.ps.rmd(task.txt, te=te)
-    if (escape.part.counters) adapted.txt = escape.part.counters(adapted.txt)
+    if (bolden.part.counters) adapted.txt = bolden.part.counters(adapted.txt)
     
     writeLines(adapted.txt, file, useBytes=TRUE)
   }

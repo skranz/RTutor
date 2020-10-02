@@ -30,7 +30,7 @@ check.ps.addin = function(...) {
   doc = rstudioapi::getSourceEditorContext()
   restore.point("check.ps.addin")
   
-  # Work around to get active Rmd file by focusing on console
+  # Work-around to get active Rmd file by focusing on console
   if (is.null(doc)) {
     sendToConsole("", execute = FALSE, echo = TRUE, focus = TRUE)
     doc = rstudioapi::getSourceEditorContext()
