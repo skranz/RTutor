@@ -81,7 +81,8 @@ Note: use / instead of \\ to separate folders in 'ps.dir'")
   ex.check.order = unique(c(which(ex.changed),ps$ex.last.mod, which(!edt$ex.solved)))
 
   if (! any(cdt$chunk.changed)) {
-    code.change.message = "\nBTW: I see no changes in your code... did you forget to save your file?"
+    #code.change.message = "\nBTW: I see no changes in your code... did you forget to save your file?"
+    code.change.message = NULL
   } else {
     code.change.message = NULL
   }
@@ -341,12 +342,11 @@ check.chunk = function(chunk.ind,ps=get.ps(), verbose=FALSE,stud.code=ps$cdt$stu
   tdt.ind = which(ps$tdt$chunk.ps.ind == chunk.ind)[1]-1
 
   # Turn graphics device off
-
   if (isTRUE(ps$use.null.device)) {
     try(png("NUL"), silent=TRUE)
+    # Back to normal graphics device
     on.exit(try(dev.off(), silent=TRUE),add = TRUE)
   }
-  # Back to normal graphics device
 
 
   for (e.ind in seq_along(ck$e.li[[1]])) {
