@@ -50,8 +50,9 @@ examples.create.ps = function() {
 #' @param signif.digits Significant digits for  shown data frames.
 #' @param knitr.opts.chunk A list of global knitr chunk options for shiny problem set, see \link{https://yihui.org/knitr/options/}. By default \code{list(dev="svg")}. Has the same effect as if you would call \code{knitr::opts_chunk} with those options before you call \code{show.ps}.
 #' @param short.first.chunk If \code{TRUE} (default) the first chunk is more compact and only contains the user name line. Otherwise it also contains the calls to check.problem.set which would allow to check the problem set also without the RStudio Addin.
+#' @param  stop.if.visual.mode.garbling If \code{TRUE} (default) stops the creation of the problem set and shows an informative error message if it looks as if the solution file was shown in the new visual mode for markdown files. The new visual mode markdown feature of RStudio is cool for solving RTutor problem sets. But you should never view the solution file from which you generate the problem set in visual mode, since it rewrites the code in an unparseable way.  
 #' @export
-create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___", short.first.chunk = TRUE) {
+create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE", sol.user.name="Jane Doe", dir = getwd(), header="", footer="", libs=NULL, stop.when.finished=FALSE, extra.code.file = NULL, var.txt.file = NULL, rps.has.sol=TRUE, fragment.only=TRUE, add.enter.code.here=FALSE, add.shiny=TRUE, make.rmd=TRUE, addons=NULL, whitelist.report=FALSE, wl=rtutor.default.whitelist(),use.memoise=FALSE, memoise.funs = rtutor.default.memoise.funs(), precomp=FALSE, preknit=FALSE, force.noeval=FALSE,  html.data.frame=TRUE,table.max.rows=25, round.digits=8, signif.digits=8, knit.print.opts=make.knit.print.opts(html.data.frame=html.data.frame,table.max.rows=table.max.rows, round.digits=round.digits, signif.digits=signif.digits),knitr.opts.chunk = list(dev="svg"), e.points = 1, min.chunk.points=0, chunk.points=0, keep.fill.in.output.sol=TRUE, hint.on.fail=FALSE, empty.task.txt = "# Enter your code here.", placeholder="___", short.first.chunk = TRUE, stop.if.visual.mode.garbling = TRUE) {
   restore.point("create.ps")
   
   # Clear current problem set
@@ -63,6 +64,14 @@ create.ps = function(sol.file, ps.name=NULL, user.name= "ENTER A USER NAME HERE"
 
   setwd(dir)
   txt = readLines(sol.file, warn=FALSE,encoding = "UTF-8")
+  
+  if (stop.if.visual.mode.garbling) {
+    if (any(startsWith(txt, "\\#\\< ignore"))) {
+      line = which(startsWith(txt, "\\#\\< ignore"))[1]
+      stop(paste0("\nIt looks like you openend your solution Rmd file in the new markdown visual mode (or you set the global option 'Write canonical visual mode markdown in source mode', which you must turn off).\n\nUnfortunately, visual mode automatically rewrites the Rmd file so that it cannot be properly parsed as an RTutor solution file.\n\nGo back to the source editor mode. Line ", line," should look like \n\n\\#\\< ignore\n\nChoose in RStudio\n\nEdit -> Undo\n\nIf you made several edits in visual mode you have to undo more than one step until that line looks again like\n\n#< ignore\n\nThen the Rmd file can be parsed as RTutor solution file.\n\nNote that the problem set Rmd file that is generated and given to students CAN be viewed and edited in the new visual mode. It is only the solution file where the automatic code rewrite is problematic."))  
+    }
+  }
+  
   txt =  name.rmd.chunks(txt=txt)
   txt = mark_utf8(txt)
   
