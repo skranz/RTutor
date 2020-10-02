@@ -96,10 +96,14 @@ guess.ps.name = function(txt, dir, file) {
   if (file.exists(file.path(dir, paste0(rmd.guess,".rps")))) {
     return(rmd.guess)
   }
+  rmd.guess = gsub("_sample_solution","",rmd.guess,fixed = TRUE)  
+  if (file.exists(file.path(dir, paste0(rmd.guess,".rps")))) {
+    return(rmd.guess)
+  }
   
   line = which(str.starts.with(str.trim(txt),"check.problem.set("))
   if (length(line)==0) {
-    message("I could not identify a problem set name. Try again to select your .Rmd file and choose Addins->Check Problemset. Also make sure that your directory contains the binary problem set file that has the same name as your .Rmd file but the file type .rps")
+    message("I could not verify the problem set name. Try again to select your .Rmd file and choose Addins->Check Problemset. Also make sure that your directory contains the binary problem set file with ending .rps and that your Rmd file has the same name just with file type .Rmd.")
     return(NA)
   }
   ps.name = str.remove.ends(str.trim(str.between(txt[line[1]], "(",",")),1,1)
