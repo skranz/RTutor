@@ -104,6 +104,20 @@ show.ps = function(ps.name, user.name="default_user", auto.save.code = FALSE,cle
   register.knit.print.functions(knit.print.opts)
   
   knitr.opts.chunk = ps$rps[["knitr.opts.chunk"]]
+  
+  # Try to avoid problem if X-Quartz is missing on Mac 
+  if (isTRUE(knitr.opts.chunk[["dev"]] == "svg")) {
+    svg.works = !is(try({svg(); dev.off()}, silent=TRUE), "try-error" )
+    if (!svg.works) {
+      if (require("svglite")) {
+        knitr.opts.chunk$dev = "svglite"
+      } else {
+        knitr.opts.chunk$dev = "png"
+        warning("Cannot use the default SVG device. Chunks will output PNG graphs instead. Try to install the package 'svglite' by typing\n\ninstall.packages('svglit')\n\nAlternatively, if you are using a Mac, try to install X-Quartz (a link is given on the R installation page for Mac).")
+      }
+    }
+  }
+  
   if (!is.null(knitr.opts.chunk)) {
     do.call(knitr::opts_chunk$set,knitr.opts.chunk)
   }
