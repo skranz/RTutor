@@ -19,13 +19,6 @@ show.ps(ps.name, round.digits=4, table.max.rows=20)
 stop()
 ```
 
-Load libraries so that knit HTML also works
-```{r}
-library(yaml)
-library(magrittr)
-library(leaflet)
-```
-
 #>
 
 ## Exercise 1 -- Table outputs
