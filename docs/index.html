@@ -169,6 +169,16 @@
 </li>
 </ul>
 </div>
+<div id="the-impact-of-competition-policy-and-industrial-policy-on-economic-development-by-julian-latzko" class="section level3">
+<h3 class="hasAnchor">
+<a href="#the-impact-of-competition-policy-and-industrial-policy-on-economic-development-by-julian-latzko" class="anchor"></a>The impact of competition policy and industrial policy on economic development (by Julian Latzko)</h3>
+<ul>
+<li>Github: <a href="https://github.com/julianlatzko/RTutorCompetitionPolicy" class="uri">https://github.com/julianlatzko/RTutorCompetitionPolicy</a>
+</li>
+<li>shinyapps.io: <a href="https://julianlatzko.shinyapps.io/RTutorCompetitionPolicy" class="uri">https://julianlatzko.shinyapps.io/RTutorCompetitionPolicy</a>
+</li>
+</ul>
+</div>
 <div id="assessing-free-trade-agreements-by-tobias-fischer" class="section level3">
 <h3 class="hasAnchor">
 <a href="#assessing-free-trade-agreements-by-tobias-fischer" class="anchor"></a>Assessing Free Trade Agreements (by Tobias Fischer)</h3>
@@ -347,14 +357,14 @@
 <span class="fu">install.rtutor</span>(update.github=<span class="fl">TRUE</span>)
 </pre></div>
 <p>Depending on your devtools version, also the following code may work directly (yet source_gist is buggy in some devtools versions):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1"></a>if (!require(devtools)) </span>
-<span id="cb3-2"><a href="#cb3-2"></a>  install.packages(<span class="st">"devtools"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5"></a>install.rtutor(update.github=TRUE)</span>
-<span id="cb3-6"><a href="#cb3-6"></a>library(RTutor)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>if (!require(devtools)) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  install.packages(<span class="st">"devtools"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>install.rtutor(update.github=TRUE)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>library(RTutor)</span></code></pre></div>
 <p>If you only want to update the RTutor package (and have the other packages already installed). You can just type:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</span></code></pre></div>
 <p>(You may have to restart your R session / RStudio for the update to work.)</p>
 </div>
 <div id="suggestions--feedback" class="section level2">

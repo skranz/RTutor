@@ -22,6 +22,8 @@ rmd.to.latex.addin = function(...) {
 rtutor.hint.addin = function(...) {
   library(RTutor)
   hint()
+  #txt = capture.output(hint())
+  #rstudioapi::showQuestion(title="Hint", paste0(txt, collapse = "\n"))
 }
 
 check.ps.addin = function(...) {

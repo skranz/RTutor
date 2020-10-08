@@ -59,6 +59,10 @@ For the web-based interface, several students at Ulm University have created ver
   - shinyapps.io: https://clamasch.shinyapps.io/RTutorIncentiveContracts
   - rstudio cloud: https://rstudio.cloud/project/137023
 
+### The impact of competition policy and industrial policy on economic development (by Julian Latzko)
+  - Github: https://github.com/julianlatzko/RTutorCompetitionPolicy
+  - shinyapps.io: https://julianlatzko.shinyapps.io/RTutorCompetitionPolicy
+
 ### Assessing Free Trade Agreements (by Tobias Fischer)
   - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
   - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
