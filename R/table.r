@@ -65,7 +65,7 @@ html.table = function(df, sel.row=NULL, col.names=TRUE, row.names=FALSE, border=
     " td.data-frame-td {", td.style,"}\n",
     " td.data-frame-td-bottom {", td.style," border-bottom: solid 1px black;}\n",
     " th.data-frame-th {", th.style,"}\n",
-    " tbody>tr:last-child>td {
+    " table.data-frame-table tbody>tr:last-child>td {
       border-bottom: solid 1px black;
     }\n",
     "</style>",tab
