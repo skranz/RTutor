@@ -236,11 +236,11 @@ check.call = function(call, check.arg.by.value=TRUE, allow.extra.arg=FALSE, igno
 
   # Check if a student call with the same name has the same return value
   if (ok.if.same.val & length(stud.expr.li)>0) {
-    check.val <- eval(ce, stud.env)
+    capture.output(check.val <- eval(ce, stud.env))
     ok = FALSE
     for (se in stud.expr.li) {
       tryCatch({
-        sval <- eval(se,stud.env)
+        capture.output(sval <- eval(se,stud.env))
         if (is.same(check.val,sval)) {
           ok <- TRUE
           break
@@ -302,7 +302,7 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
     if (check.arg.by.value) {
       val.env = stud.env
       if (is.dplyr.fun(check.na)) {
-        val.env = eval(dce$arg[[".data"]],val.env)
+        capture.output(val.env <- eval(dce$arg[[".data"]],val.env))
       }
     } else {
       val.env = NULL
@@ -327,14 +327,14 @@ internal.check.call = function(ce,dce, stud.expr.li,stud.env, allow.extra.arg=FA
       return(list(FALSE, "not found"))
     }
 
-    check.val = eval(ce, stud.env)
+    capture.output(check.val <- eval(ce, stud.env))
 
     se = stud.expr.li[[1]]
     for (se in stud.expr.li) {
       has.error = FALSE
-      tryCatch( stud.val <- eval(se, stud.env),
+      capture.output(tryCatch( stud.val <- eval(se, stud.env),
         error = function(e) has.error <<- TRUE
-      )
+      ))
       if (!has.error) {
         if (is.data.frame(check.val) & (!is.null(sort.cols) | (!is.null(check.cols)))) {
           ok = same.data.frame.cols(stud.val, check.val, check.cols=check.cols, sort.cols=sort.cols)
