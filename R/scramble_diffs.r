@@ -30,6 +30,7 @@ scramble.call.diffs = function(stud.call, check.call, compare.vals = !is.null(va
   res$ph.max = ph.max
   
   scode = deparse1(res$scall)
+  scode = gsub('\\"','"',scode, fixed=TRUE)
   if (!res$same) {
     scode = gsub('"YyQ','',scode,fixed=TRUE)
     scode = gsub('QyY"','',scode,fixed=TRUE)

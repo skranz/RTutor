@@ -335,7 +335,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
       #hdisplay("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
   } else if ( (cde$type == "fun" | (cde$type=="chain" & length(stud.expr.li)==1)) & scramble.fun) {
-    restore.point("jdhfjhdkfslfj")
+    #restore.point("jdhfjhdkfslfj")
     # Only scramble wrong parts if we have a single student
     # expression
     ph.txt = ""
