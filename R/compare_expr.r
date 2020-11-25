@@ -328,11 +328,11 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
       cde = describe.call(call.obj = carg[[arg.name]])
       if (cde$type == "formula") {
         ok = FALSE
-        if (check.call.name == "lm") {
-          res = try(compare.regression.formula(sarg[[arg.name]],carg[[arg.name]], from="lm"), silent=TRUE)
+        if (check.call.name %in% c("lm","ivreg","glm")) {
+          res = try(compare.regression.formula(sarg[[arg.name]],carg[[arg.name]], from=check.call.name), silent=TRUE)
           if (!is("res","try-error"))
             return(res$descr)
-        }  
+        }
         scramble = scramble.text(deparse1(carg[[arg.name]]),"?",0.5, keep.char=c(" ","~","|"))
         paste0(arg.txt, sarg[differ.arg[i]], " differs from my solution. Here is a scrambled version of my solution:\n  ",scramble)
       } else if (cde$type == "math") {
