@@ -134,7 +134,7 @@ For the web-based interface, several students at Ulm University have created ver
 
 If you a have course that uses RTutor that you want to share, just send me an email and I add your course to the list! 
 
-- During the Cororona semester, I made an online course [Market Analysis with Econometrics and Machine Learning](https://github.com/skranz/MarketAnalysis). It consists of online shiny apps with videos and quizzes and many RTutor problem sets.
+- Two courses from me: [Empirical Economics with R](https://github.com/skranz/empecon) and [Market Analysis with Econometrics and Machine Learning](https://github.com/skranz/MarketAnalysis). Both consists of online shiny apps with videos and quizzes and many RTutor problem sets.
 
 - [Jade Benjamin-Chung](https://www.ocf.berkeley.edu/~jadebc/) from UC Berkeley School of Public Health has created with RTutor online tutorials for an [introductory R course for epidemiologists](https://ucb-epi-r.github.io/). If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.
 
