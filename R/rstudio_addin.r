@@ -61,6 +61,7 @@ check.ps.addin = function(...) {
   #doc$contents does not yet work well with visual markdown
   #txt = doc$contents
   txt = readLines(doc$path, warn=FALSE)
+  txt = enc2native(txt)
   #restore.point("check.ps.addin2")
   
   user.name.line = which(str.starts.with(str.trim(txt),"user.name ="))
