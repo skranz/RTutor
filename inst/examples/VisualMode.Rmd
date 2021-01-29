@@ -1,4 +1,5 @@
 ```{r 'check_ps', include=FALSE}
+
 user.name = 'Test'
 ```
 
@@ -14,18 +15,21 @@ eps = rnorm(n,0,1)
 x2 = rnorm(n,0,1)
 x1 = rnorm(n,0,1) +x2
 beta0 = 100; beta1 = 0; beta2 = 1;
-y = beta0+beta1*x1+beta2*x2
+y = beta0+beta1*x1+beta2*x2+eps
 ```
 
-Estimate the following *short regression*:
+Estimate the following **short regression**:
 
 $$y = \beta_0 + \beta_1 x_1 + u$$
 
 ```{r "1_2"}
 # Complete the code
-lm(y~x1+u)
+lm(___)
+
 ```
 
 What do we learn?
 
-<img src="https://imgs.xkcd.com/comics/correlation.png" title="Correlation doesn&apos;t imply causation, but it does waggle its eyebrows suggestively and gesture furtively while mouthing &apos;look over there&apos;."/> (Source: [xkcd](https://xkcd.com/552/))
+<img src="https://imgs.xkcd.com/comics/correlation.png" title="Correlation doesn&apos;t imply causation, but it does waggle its eyebrows suggestively and gesture furtively while mouthing &apos;look over there&apos;."/>
+
+(Source: [xkcd](https://xkcd.com/552/))

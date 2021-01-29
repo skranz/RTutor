@@ -24,7 +24,7 @@ eps = rnorm(n,0,1)
 x2 = rnorm(n,0,1)
 x1 = rnorm(n,0,1) +x2
 beta0 = 100; beta1 = 0; beta2 = 1;
-y = beta0+beta1*x1+beta2*x2
+y = beta0+beta1*x1+beta2*x2+eps
 #>
 ```
 
@@ -45,6 +45,6 @@ Great, you have run your first regression...
 What do we learn?
 
 <img src="https://imgs.xkcd.com/comics/correlation.png" title="Correlation doesn't imply causation, but it does waggle its eyebrows suggestively and gesture furtively while mouthing 'look over there'.">
-(Source: [xkcd](https://xkcd.com/552/))
 
+(Source: [xkcd](https://xkcd.com/552/))
 
