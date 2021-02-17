@@ -151,7 +151,7 @@ get.chain.failure.results = function(step=1, sde, cde, compare.vals=TRUE, same.u
   
   fail = step
   stud.na = name.of.call(sde$arg[[step]])
-  check.na = name.of.call(sde$arg[[step]])
+  check.na = name.of.call(cde$arg[[step]])
 
   child.sde = describe.call(call.obj = sde$arg[[step]])
   
