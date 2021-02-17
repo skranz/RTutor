@@ -253,6 +253,7 @@ compare.calls = function(stud.call, check.call, compare.vals = !is.null(val.env)
 }
 
 
+
 compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.env), val.env=NULL, from.pipe=FALSE, ...) {
   
   org.check.call = check.call
@@ -269,6 +270,8 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   extra.arg = setdiff(names(sarg), names(carg))
   overlap.arg = intersect(names(sarg), names(carg))
 
+  
+  
   if (length(overlap.arg)>0) {
     differs = sapply(overlap.arg, function(na) !identical(sarg[[na]],carg[[na]]))
     differ.arg = overlap.arg[differs]
@@ -353,7 +356,35 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   if (length(missing.arg)>0) {
     s = c(s,paste0("You don't use the argument ", missing.arg))
   }
-
+  
+  # Special message for particular calls
+  call.name = name.of.call(check.call)
+  if (isTRUE(call.name %in% c("group_by","arrange"))) {
+    if (length(sarg) > length(carg)) {
+      s = paste0("The solution has fewer arguments in the ", call.name, " call.")
+    } else if (length(sarg) < length(carg)) {
+      s = paste0("The solution has more arguments in the ", call.name, " call.")
+    } else {
+      txt.sargs = unlist(lapply(sarg, deparse1))
+      txt.cargs = unlist(lapply(carg, deparse1))
+      
+      sd1 = setdiff(txt.sargs, txt.cargs)
+      if (length(sd1)>0) {
+        s = paste0("The solution does not use the argument(s) ", paste0(sd1, collapse=","), " in the ", call.name, " call but some other variable(s).")
+      } 
+      sd2 = setdiff(txt.cargs, txt.sargs)
+      if (length(sd2)==0 & !identical(txt.cargs, txt.sargs)) {
+        s = paste0("You should write the arguments in your ", call.name, " call in the order: ", paste0(txt.cargs, collapse=", "))
+      }
+    }
+  }
+  # For common dplyr verbs a scrambled version is often
+  # better suited since we don't check nested calls inside
+  if (isTRUE(call.name %in% c("mutate","transmute","summarize","summarise", "filter","select"))) {
+    call.str = deparse1(check.call)
+    s = paste0("Your arguments are not corrent. Below is a scrambled version of the sample solution:\n\n",scramble.text(call.str,"?",0.5, keep.char=c(" ","\n",">","%","(",")","=", "\t")))
+  }
+  
 
   nlist(differ.arg,differ.detail,missing.arg,extra.arg,same.arg, overlap.arg, stud.arg=sarg, check.arg=carg, descr=s)
 }
