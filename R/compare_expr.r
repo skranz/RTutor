@@ -382,7 +382,15 @@ compare.call.args = function(stud.call, check.call, compare.vals = !is.null(val.
   # better suited since we don't check nested calls inside
   if (isTRUE(call.name %in% c("mutate","transmute","summarize","summarise", "filter","select"))) {
     call.str = deparse1(check.call)
-    s = paste0("Your arguments are not corrent. Below is a scrambled version of the sample solution:\n\n",scramble.text(call.str,"?",0.5, keep.char=c(" ","\n",">","%","(",")","=", "\t")))
+    call.str = gsub("(.data = ","(", call.str, fixed=TRUE)
+    
+    if (startsWith(call.str,call.name)) {
+      scramble = paste0(call.name,scramble.text(substring(call.str, nchar(call.name)+1),"?",0.5, keep.char=c(",", " ","\n",">","%","(",")","=", "\t")))
+      
+    } else {
+      scramble = scramble.text(call.str,"?",0.5, keep.char=c(",", " ","\n",">","%","(",")","=", "\t"))
+    }
+    s = paste0("Your arguments are not correct. Below is a scrambled version of the sample solution:\n\n",scramble)
   }
   
 
