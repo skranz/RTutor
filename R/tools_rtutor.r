@@ -1,3 +1,25 @@
+# overwrite knit
+
+rt.knit = function(text,...) {
+  res = try(knit(text=text,...),silent = TRUE)
+  restore.point("rt.knit")
+  if (is(res,"try-error")) {
+    msg = merge.lines(as.character(res))
+    if (has.substr(msg,"Encoding")) {
+      stop(paste0("There was an encoding error when knitting:\n\n", paste0(text, collapse="\n"),"\n\nNote that there is a bug in the interaction of knitr and and RStudio in an RMarkdown document that shows output inline. There are two ways to fix to this proiblem:
+
+1. Go in RStudio -> Tools -> Global Option -> R Markdown
+   There turn off the option 'Show output inline for all R Markdown documents'
+   
+2. If you don't want to change those global options, put the code to create your RTutor problem set into a separate R file and run it there.
+"))
+    } else {
+     stop(paste0("There was an error when knitting\n\nyour code:\n\n", paste0(text, collapse="\n"),"\n\nThe error message was\n", paste0(as.character(msg), collapse="")))
+    }
+  }
+  res
+}
+
 
 parse.block.args = function(header, arg.str=NULL, add.type = TRUE, type = "", allow.unquoted.title=FALSE) {
   restore.point("parse.block.args")

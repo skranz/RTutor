@@ -973,7 +973,9 @@ add.te.info = function(te, as.note=TRUE, info.name=NULL) {
   }
 
   #ktxt = knit(text=txt, envir=new.env(parent=te$.precompute.env))
-  ktxt = knit(text=txt, envir=te$.precompute.env, quiet=FALSE)
+  #txt = iconv(txt, to="UTF-8")
+  ktxt = rt.knit(text=txt, envir=te$.precompute.env, quiet=TRUE)
+  
   html= markdownToHTML(text=ktxt, fragment.only=CREATE.PS.ENV$fragment.only)
 
   if (FALSE) {
@@ -1011,7 +1013,7 @@ add.te.precompute = function(te) {
   restore.point("add.te.precompute")
   if (is.null(te$.precompute.env))
     te$.precompute.env = new.env(parent=globalenv())
-  knit(text=te$block.txt,envir = te$.precompute.env,quiet = TRUE)
+  rt.knit(text=te$block.txt,envir = te$.precompute.env,quiet = TRUE)
 }
 
 
@@ -1067,7 +1069,7 @@ add.te.award = function(te) {
   
   txt = te$block.txt
   txt = c(paste0("### Award: ",name,"\n"), txt)
-  ktxt = knit(text=txt)
+  ktxt = rt.knit(text=txt)
   html= markdownToHTML(text=ktxt, fragment.only=CREATE.PS.ENV$fragment.only)
   if (FALSE) {
     htmlFile <- tempfile(fileext=".html")
