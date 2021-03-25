@@ -4,8 +4,13 @@
 \alias{stats}
 \title{Shows your progress}
 \usage{
-stats(do.display = TRUE, use.old.stats = FALSE, ups = get.ups(),
-  ps = get.ps(), rps = ps$rps)
+stats(
+  do.display = TRUE,
+  use.old.stats = FALSE,
+  ups = get.ups(),
+  ps = get.ps(),
+  rps = ps$rps
+)
 }
 \description{
 Shows your progress

@@ -4,8 +4,14 @@
 \alias{hint.stud.call}
 \title{Show the hint if the student made the specified wrong call}
 \usage{
-hint.stud.call(call, msg = "", ps = get.ps(), env = parent.frame(), qcall,
-  var = NULL)
+hint.stud.call(
+  call,
+  msg = "",
+  ps = get.ps(),
+  env = parent.frame(),
+  qcall,
+  var = NULL
+)
 }
 \arguments{
 \item{call}{an unquoted call that we check whether the student makes it}

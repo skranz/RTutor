@@ -4,12 +4,24 @@
 \alias{rtutor.package.skel}
 \title{Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package}
 \usage{
-rtutor.package.skel(sol.file, ps.name, pkg.name, pkg.parent.dir,
-  author = "AUTHOR_NAME", github.user = "GITHUB_USERNAME",
-  date = format(Sys.time(), "\%Y-\%d-\%m"), source.dir = getwd(),
-  rps.file = paste0(ps.name, ".rps"), libs = NULL, extra.code.file = NULL,
-  var.txt.file = NULL, ps.file = paste0(ps.name, ".Rmd"),
-  overwrite = FALSE, overwrite.ps = TRUE, ...)
+rtutor.package.skel(
+  sol.file,
+  ps.name,
+  pkg.name,
+  pkg.parent.dir,
+  author = "AUTHOR_NAME",
+  github.user = "GITHUB_USERNAME",
+  date = format(Sys.time(), "\%Y-\%d-\%m"),
+  source.dir = getwd(),
+  rps.file = paste0(ps.name, ".rps"),
+  libs = NULL,
+  extra.code.file = NULL,
+  var.txt.file = NULL,
+  ps.file = paste0(ps.name, ".Rmd"),
+  overwrite = FALSE,
+  overwrite.ps = TRUE,
+  ...
+)
 }
 \description{
 Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package

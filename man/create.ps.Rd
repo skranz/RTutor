@@ -4,22 +4,50 @@
 \alias{create.ps}
 \title{Generate a problem set from a solution file}
 \usage{
-create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
-  sol.user.name = "Jane Doe", dir = getwd(), header = "", footer = "",
-  libs = NULL, stop.when.finished = FALSE, extra.code.file = NULL,
-  var.txt.file = NULL, rps.has.sol = TRUE, fragment.only = TRUE,
-  add.enter.code.here = FALSE, add.shiny = TRUE, make.rmd = TRUE,
-  addons = NULL, whitelist.report = FALSE,
-  wl = rtutor.default.whitelist(), use.memoise = FALSE,
-  memoise.funs = rtutor.default.memoise.funs(), precomp = FALSE,
-  preknit = FALSE, force.noeval = FALSE, html.data.frame = TRUE,
-  table.max.rows = 25, round.digits = 8, signif.digits = 8,
+create.ps(
+  sol.file,
+  ps.name = NULL,
+  user.name = "ENTER A USER NAME HERE",
+  sol.user.name = "Jane Doe",
+  dir = getwd(),
+  header = "",
+  footer = "",
+  libs = NULL,
+  stop.when.finished = FALSE,
+  extra.code.file = NULL,
+  var.txt.file = NULL,
+  rps.has.sol = TRUE,
+  fragment.only = TRUE,
+  add.enter.code.here = FALSE,
+  add.shiny = TRUE,
+  make.rmd = TRUE,
+  addons = NULL,
+  whitelist.report = FALSE,
+  wl = rtutor.default.whitelist(),
+  use.memoise = FALSE,
+  memoise.funs = rtutor.default.memoise.funs(),
+  precomp = FALSE,
+  preknit = FALSE,
+  force.noeval = FALSE,
+  html.data.frame = TRUE,
+  table.max.rows = 25,
+  round.digits = 8,
+  signif.digits = 8,
   knit.print.opts = make.knit.print.opts(html.data.frame = html.data.frame,
-  table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
-  signif.digits), knitr.opts.chunk = list(dev = "svg"), e.points = 1,
-  min.chunk.points = 0, chunk.points = 0, keep.fill.in.output.sol = TRUE,
-  hint.on.fail = FALSE, empty.task.txt = "# Enter your code here.",
-  placeholder = "___")
+    table.max.rows = table.max.rows, round.digits = round.digits, signif.digits =
+    signif.digits),
+  knitr.opts.chunk = list(dev = "svg"),
+  e.points = 1,
+  min.chunk.points = 0,
+  chunk.points = 0,
+  keep.fill.in.output.sol = TRUE,
+  hint.on.fail = FALSE,
+  empty.task.txt = "# Enter your code here.",
+  placeholder = "___",
+  short.first.chunk = TRUE,
+  stop.if.visual.mode.garbling = TRUE,
+  bolden.part.counters = FALSE
+)
 }
 \arguments{
 \item{sol.file}{file name of the _sol.rmd file that specifies the problem set}
@@ -77,6 +105,12 @@ create.ps(sol.file, ps.name = NULL, user.name = "ENTER A USER NAME HERE",
 \item{empty.task.txt}{A text that will be shown in chunks without any task block. Default is \code{empty.task.txt = "# Enter your code here."}}
 
 \item{placeholder}{The string you use as placeholder in fill_in blocks. By default \code{"___"}. This should be a pattern that you don't use in your normal code. If a user's input cannot be parsed, we replace this pattern by an internal represenataion that is valid R syntax.}
+
+\item{short.first.chunk}{If \code{TRUE} (default) the first chunk is more compact and only contains the user name line. Otherwise it also contains the calls to check.problem.set which would allow to check the problem set also without the RStudio Addin.}
+
+\item{stop.if.visual.mode.garbling}{If \code{TRUE} (default) stops the creation of the problem set and shows an informative error message if it looks as if the solution file was shown in the new visual mode for markdown files. The new visual mode markdown feature of RStudio is cool for solving RTutor problem sets. But you should never view the solution file from which you generate the problem set in visual mode, since it rewrites the code in an unparseable way.}
+
+\item{bolden.part.counters}{if TRUE change lines that start with a) or b) etc to **a)** and **b)**. This turns-off auto enumeration and makes problem sets look nicer in visual markdown mode.}
 }
 \description{
 Generates  .rps file, and .rmd files for empty ps , sample solution

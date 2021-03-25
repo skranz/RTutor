@@ -492,10 +492,12 @@ check.assign = function(
 #'
 #' @param sol1 An assignment that needs to be checked, e.g. x<-5. Similar for sol2, sol3, sol4, sol5.
 #' @examples
+#' \donttest{
 #' # Assume the task is that x shall be a number 
 #' # below 11 and divisible by 5
 #' 
 #' check.assign.with.multiple.sol(x<-5, x<-10)
+#' }
 #' @export
 check.assign.with.multiple.sol = function(sol1, sol2, sol3, sol4, sol5, ..., sol.list=list()) {
   if (!missing(sol1)) {

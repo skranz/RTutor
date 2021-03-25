@@ -5,8 +5,15 @@
 \title{Checks an assignment to a variable with up to 5
 possibly correct solutions}
 \usage{
-check.assign.with.multiple.sol(sol1, sol2, sol3, sol4, sol5, ...,
-  sol.list = list())
+check.assign.with.multiple.sol(
+  sol1,
+  sol2,
+  sol3,
+  sol4,
+  sol5,
+  ...,
+  sol.list = list()
+)
 }
 \arguments{
 \item{sol1}{An assignment that needs to be checked, e.g. x<-5. Similar for sol2, sol3, sol4, sol5.}
@@ -15,8 +22,10 @@ check.assign.with.multiple.sol(sol1, sol2, sol3, sol4, sol5, ...,
 Can be called in a #< test block for a custom test.
 }
 \examples{
+\donttest{
 # Assume the task is that x shall be a number 
 # below 11 and divisible by 5
 
 check.assign.with.multiple.sol(x<-5, x<-10)
+}
 }

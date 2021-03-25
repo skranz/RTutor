@@ -4,13 +4,24 @@
 \alias{rtutor.app.skel}
 \title{Generate a skeleton for a shinyapps.io app of a problem set}
 \usage{
-rtutor.app.skel(ps.name, app.name = ps.name, app.dir,
-  rps.app = !is.null(rps.dir), pkg.name = NULL, rps.file = paste0(ps.name,
-  ".rps"), rps.dir = NULL, overwrite = FALSE,
-  github.user = "GITHUB_USERNAME", rtutor.fork = "skranz", libs = NULL,
-  ps.show.opts = NULL, direct.execution = FALSE,
-  shinyapps.account.info = list(name = "<SHINYAPPS_USERNAME>", token =
-  "<TOKEN>", secret = "<SECRET>"), ...)
+rtutor.app.skel(
+  ps.name,
+  app.name = ps.name,
+  app.dir,
+  rps.app = !is.null(rps.dir),
+  pkg.name = NULL,
+  rps.file = paste0(ps.name, ".rps"),
+  rps.dir = NULL,
+  overwrite = FALSE,
+  github.user = "GITHUB_USERNAME",
+  rtutor.fork = "skranz",
+  libs = NULL,
+  ps.show.opts = NULL,
+  direct.execution = FALSE,
+  shinyapps.account.info = list(name = "<SHINYAPPS_USERNAME>", token = "<TOKEN>",
+    secret = "<SECRET>"),
+  ...
+)
 }
 \arguments{
 \item{ps.name}{Name of the problem set}
