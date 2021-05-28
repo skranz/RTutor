@@ -87,7 +87,10 @@ hint = function(..., ps=get.ps()) {
     }
 
   # hint for expression ps$e.ind
-  } else {
+  } 
+ 
+  # Particular expression set   
+  if (e.ind > 0) {
     hint.expr = ps$cdt$hint.expr[[ps$chunk.ind]][[e.ind]]
     if (length(hint.expr)==0) {
       if (!is.null(chunk.hint)) {
@@ -375,7 +378,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     }
   } else if (cde$type == "chain") {
     return(inner.hint.for.call.chain(stud.expr.li=stud.expr.li, cde=cde,ce=ce, assign.str=assign.str, ps = ps, env=env, call=call))
-  }  else if (cde$type == "math" | cde$type == "formula") {
+  }  else if (cde$type == "math" | cde$type == "formula" | cde$type =="comp") {
     #restore.point("math.fail")
     hint.str = scramble.text(deparse(call),"?",0.5, keep.char=c(" ","\n","+","(",")"))
     

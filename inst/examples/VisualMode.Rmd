@@ -1,14 +1,15 @@
+
 ```{r 'check_ps', include=FALSE}
 
-user.name = 'Test'
+user.name = 'ENTER A USER NAME HERE'
 ```
+
 
 ## Exercise 1
 
 This problem set is designed to be solved in RStudio's new [Visual Mode](https://rstudio.github.io/visual-markdown-editing). The solution file should be kept in the default source mode, since some RTutor syntax, like the start of a block with `#<` will be rewritten in visual mode. In the visual mode, HTML links, images and Latex fomulas will be nicely displayed. Let us look at an example...
 
 Consider the following simulated code:
-
 ```{r "1_1"}
 n = 1000
 eps = rnorm(n,0,1)
@@ -21,7 +22,6 @@ y = beta0+beta1*x1+beta2*x2+eps
 Estimate the following **short regression**:
 
 $$y = \beta_0 + \beta_1 x_1 + u$$
-
 ```{r "1_2"}
 # Complete the code
 lm(___)
@@ -30,6 +30,7 @@ lm(___)
 
 What do we learn?
 
-<img src="https://imgs.xkcd.com/comics/correlation.png" title="Correlation doesn&apos;t imply causation, but it does waggle its eyebrows suggestively and gesture furtively while mouthing &apos;look over there&apos;."/>
+<img src="https://imgs.xkcd.com/comics/correlation.png" title="Correlation doesn't imply causation, but it does waggle its eyebrows suggestively and gesture furtively while mouthing 'look over there'.">
 
 (Source: [xkcd](https://xkcd.com/552/))
+
