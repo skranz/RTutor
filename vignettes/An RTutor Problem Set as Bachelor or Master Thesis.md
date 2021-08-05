@@ -71,7 +71,7 @@ for which already a RTutor problem set has been created.
 (Note: You can swap steps 2 or 3) 
 On the Github page of RTutor [https://github.com/skranz/RTutor](https://github.com/skranz/RTutor) you find links to several RTutor problem sets that have been created as part of a Bachelor- or Master thesis. Try installing one or more problem sets from their Github page and try them out. This helps you to get an idea, how problems could be structured, which elements you like, and which you like less. Also you can learn a bit more R. For starts, I would recommend:
 
-[https://github.com/Fcolli/RTutorProcurementAuction](https://github.com/Fcolli/RTutorProcurementAuction)
+[https://github.com/brigittepeter/RTutorWaterPollutionChina](https://github.com/brigittepeter/RTutorWaterPollutionChina)
 
 You can also download the whole Github package as ZIP file and take a look at the source code of the problem set. If the problem set is called `myps`, the source code of the problem set is in the file `myps_sol.rmd` in the folder `/inst/ps/myps/`.
 
@@ -131,11 +131,11 @@ You typically need to manually adapt the resulting files. For example, HTML tabl
 
 If you have finished a first or later version of your problem set, you can already put it on the web (you can always update the web versions). I would recommend to host it as an R package on Github. How to do it, is explained in detail here:
 
-[Deploy RTutor problem sets on Github](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20Problem%20Sets%20as%20Package%20on%20Github.Rmd)
+[Deploy RTutor problem sets on Github](https://skranz.github.io/RTutor/articles/05_Deploy%20Problem%20Sets%20as%20Package%20on%20Github.html)
 
 Furthermore, I would recommend to also host your problem set on shinyapps.io. This allows users to directly solve your problem set in the web without having to install R. (The free service is restricted to 30 access hours per month, however). This is described here:
 
-[Deploy RTutor problem sets on shinyapps.io](https://github.com/skranz/RTutor/blob/master/vignettes/Deploy%20problem%20set%20on%20shinyapps.io.Rmd)
+[Deploy RTutor problem sets on shinyapps.io](https://skranz.github.io/RTutor/articles/06_Deploy%20problem%20set%20on%20shinyapps.io.html)
 
 
 # Part 2: General Principles for Your Thesis
