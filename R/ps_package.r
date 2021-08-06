@@ -307,7 +307,7 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
   
   if (!rps.app) {
     base.dir = path.package("RTutor", quiet = FALSE)
-    skel.dir = paste0(base.dir,"/ps_app_skel/packageApp")
+    skel.dir = system.file("ps_app_skel/packageApp", package="RTutor")
     ps.show.opts.string = rtutor.skel.show.opts.string(mandatory=list(user.name = "Guest",
                                                                       deploy.local = FALSE,
                                                                       make.web.app = TRUE, 
@@ -316,7 +316,7 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
                                                        optional=ps.show.opts)
   } else {
     base.dir = path.package("RTutor", quiet = FALSE)
-    skel.dir = paste0(base.dir,"/ps_app_skel/rpsApp")
+    skel.dir = system.file("ps_app_skel/rpsApp", package="RTutor")
     ps.show.opts.string = rtutor.skel.show.opts.string(mandatory=list(user.name = "Guest",
                                                                       ps.name = ps.name,
                                                                       make.web.app = TRUE, 
@@ -325,6 +325,8 @@ rtutor.app.skel = function(ps.name, app.name=ps.name, app.dir,rps.app=!is.null(r
                                                        optional=ps.show.opts)
     
     file.copy(from = paste0(rps.dir,"/",rps.file),to = work.dir,
+              overwrite=overwrite, recursive = TRUE)
+    file.copy(from = paste0(rps.dir,"/",rps.file),to = app.app.dir,
               overwrite=overwrite, recursive = TRUE)
   }
   

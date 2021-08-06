@@ -1,13 +1,11 @@
 # Deploying an interactive RTutor problem set on shinyapps.io
 
-# 1. Make sure you have generated a package for your problem set and 
-#    have it hosted on github
-
-# 2. Install in the subfolder ./app all the data sets that are used by
+# 1. Install in the subfolder ./app all the data sets that are used by
 #    your problem set.
 
-# 3. All packages that are used must have be installed in your
+# 2. All packages that are used must have be installed in your
 #    RStudio from CRAN or GITHUB (a local build of a package does not work)
+
 
 if (DIRECT_EXECUTION) {
   # Run this code if you need to install some packages	
