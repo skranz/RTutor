@@ -31,6 +31,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/brigittepeter/RTutorWaterPollutionChina
   - shinyapps.io: https://brigittepeter.shinyapps.io/RTutorWaterPollutionChina/
 
+### Economic Impact of Covid-19 (by Alexandra Aehle)
+  - Github: https://github.com/alexaehle/RTutorEconomicImpactsofCOVID19
+  - shinyapps.io: https://alexaehle.shinyapps.io/RTutorEconomicImpactsOfCOVID19
+
 ### Comparing the Environmental Damages of Driving Electric or Gasoline Cars (by Felix Stickel)
   - Github: https://github.com/felsti/RTutorECars
   - shinyapps.io: https://felsti.shinyapps.io/RTutorECars
@@ -70,6 +74,10 @@ For the web-based interface, several students at Ulm University have created ver
 ### CO2 Trading and Risk of Firm Relocation (by Benjamin Lux)
   - Github: https://github.com/b-lux/RTutorCarbonLeakage
   - shinyapps.io: https://b-lux.shinyapps.io/RTutorCarbonLeakage/
+
+### Insurance and the Church (by Adidti Malani)
+  - Github: https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay 
+  - shinyapps.io: https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/ 
 
 ### On the optimal taxation of top incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
