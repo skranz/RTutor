@@ -6,10 +6,12 @@ RTutor is an R package that allows to develop interactive R exercises. Problem s
 
 # Installation
 
-RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:
+RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). You can install it from my [r-universe repository](https://skranz.r-universe.dev/ui#builds) by using the following code:
 
 ```r
-install.packages("RTutor",repos = c("https://skranz-repo.github.io/drat/",getOption("repos")))
+options(repos = c(skranz = 'https://skranz.r-universe.dev',
+    CRAN = 'https://cloud.r-project.org'))
+install.packages("RTutor")
 ```
 **Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.**
 
