@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,14 +120,30 @@
     <p>By default a solution is considered correct if the assignment yields the same value than the sample solution, or has the same rhs (e.g. a call runif(1,0,1)), even if the value differs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.assign</span>(<span class='kw'>call</span>, check.arg.by.value = <span class='fl'>TRUE</span>, allow.extra.arg = <span class='fl'>FALSE</span>,
-  ignore.arg = <span class='kw'>NULL</span>, success.message = <span class='kw'>NULL</span>, failure.message = <span class='kw'>NULL</span>,
-  no.command.failure.message = <span class='st'>"You have not yet included correctly, all required R commands in your code..."</span>,
-  ok.if.same.val = <span class='fl'>TRUE</span>, call.object = <span class='kw'>NULL</span>, s3.method = <span class='kw'>NULL</span>,
-  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(), stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, part = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>part</span>,
-  stud.expr.li = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.expr.li</span>, verbose = <span class='fl'>FALSE</span>,
-  only.check.assign.exists = <span class='fl'>FALSE</span>, noeval = <span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span>(<span class='kw'>ps</span><span class='op'>$</span><span class='kw'>noeval</span>),
-  other.sols = <span class='kw'>NULL</span>, check.cols = <span class='kw'>NULL</span>, sort.cols = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>check.assign</span>(
+  <span class='kw'>call</span>,
+  check.arg.by.value = <span class='fl'>TRUE</span>,
+  allow.extra.arg = <span class='fl'>FALSE</span>,
+  ignore.arg = <span class='kw'>NULL</span>,
+  success.message = <span class='kw'>NULL</span>,
+  failure.message = <span class='kw'>NULL</span>,
+ 
+    no.command.failure.message = <span class='st'>"You have not yet included correctly, all required R commands in your code..."</span>,
+  ok.if.same.val = <span class='fl'>TRUE</span>,
+  call.object = <span class='kw'>NULL</span>,
+  s3.method = <span class='kw'>NULL</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  part = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>part</span>,
+  stud.expr.li = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.expr.li</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  only.check.assign.exists = <span class='fl'>FALSE</span>,
+  noeval = <span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span>(<span class='kw'>ps</span><span class='op'>$</span><span class='kw'>noeval</span>),
+  other.sols = <span class='kw'>NULL</span>,
+  check.cols = <span class='kw'>NULL</span>,
+  sort.cols = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

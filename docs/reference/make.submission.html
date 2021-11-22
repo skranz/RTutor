@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,12 +120,21 @@
     <p>The command will rerun and check all chunks of your problem set and grade it, i.e. it determines which tests are passed or not. The results are stored in a submission file: psname___username.sub, which will be part of the submitted solution. The function works similarly than check.problem.set, but makes sure that all exercies are checked.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>make.submission</span>(ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(), user.name = <span class='fu'>get.user.name</span>(),
-  ps.name = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>name</span>, stud.path = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.path</span>,
-  stud.short.file = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.short.file</span>, add.log = <span class='fl'>TRUE</span>, reset = <span class='fl'>TRUE</span>,
-  set.warning.1 = <span class='fl'>TRUE</span>, verbose = <span class='fl'>FALSE</span>, catch.errors = <span class='fl'>TRUE</span>,
-  from.knitr = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(), use.null.device = <span class='fl'>TRUE</span>,
-  ups.dir = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>ups.dir</span>)</pre>
+    <pre class="usage"><span class='fu'>make.submission</span>(
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  user.name = <span class='fu'>get.user.name</span>(),
+  ps.name = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>name</span>,
+  stud.path = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.path</span>,
+  stud.short.file = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.short.file</span>,
+  add.log = <span class='fl'>TRUE</span>,
+  reset = <span class='fl'>TRUE</span>,
+  set.warning.1 = <span class='fl'>TRUE</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  catch.errors = <span class='fl'>TRUE</span>,
+  from.knitr = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(),
+  use.null.device = <span class='fl'>TRUE</span>,
+  ups.dir = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>ups.dir</span>
+)</pre>
 
 
 

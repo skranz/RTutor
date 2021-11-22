@@ -37,10 +37,13 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/alexaehle/RTutorEconomicImpactsofCOVID19
   - shinyapps.io: https://alexaehle.shinyapps.io/RTutorEconomicImpactsOfCOVID19
 
+### What explains the employment drop in the great recession 2007-2009? (by Birgit Schroff)
+  - Github: https://github.com/bschroff/RTutorDropInEmployment
+  - shinyapps.io: https://bschroff.shinyapps.io/RTutorDropInEmployment
+
 ### Comparing the Environmental Damages of Driving Electric or Gasoline Cars (by Felix Stickel)
   - Github: https://github.com/felsti/RTutorECars
   - shinyapps.io: https://felsti.shinyapps.io/RTutorECars
-  - rstudio.cloud: https://rstudio.cloud/project/139129
 
 ### The causal effects of Sweden's CO2 Tax (by Theresa Graefe)
 

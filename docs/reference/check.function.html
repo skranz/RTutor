@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,9 +120,18 @@
     <p>Checks a function written by the student</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.function</span>(<span class='kw'>code</span>, <span class='kw'>...</span>, check.args = <span class='fl'>TRUE</span>, check.defaults = <span class='fl'>FALSE</span>,
-  check.args.order = <span class='fl'>TRUE</span>, allow.extra.arg = <span class='fl'>TRUE</span>, ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
-  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, verbose = <span class='fl'>FALSE</span>, part = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>check.function</span>(
+  <span class='kw'>code</span>,
+  <span class='kw'>...</span>,
+  check.args = <span class='fl'>TRUE</span>,
+  check.defaults = <span class='fl'>FALSE</span>,
+  check.args.order = <span class='fl'>TRUE</span>,
+  allow.extra.arg = <span class='fl'>TRUE</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  part = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

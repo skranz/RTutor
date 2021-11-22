@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,11 +120,23 @@
     <p>Helper function for custom test blocks. Check whether a certain null hypothesis is not significantly rejected</p>
     </div>
 
-    <pre class="usage"><span class='fu'>test.H0</span>(<span class='kw'>test.expr</span>, <span class='kw'>p.value</span>, test.name = <span class='st'>""</span>, alpha.warning = <span class='fl'>0.05</span>,
-  alpha.failure = <span class='fl'>0.001</span>, <span class='kw'>short.message</span>, <span class='kw'>warning.message</span>, <span class='kw'>failure.message</span>,
-  success.message = <span class='st'>"Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!"</span>,
-  check.warning = <span class='fl'>TRUE</span>, part = <span class='kw'>NULL</span>, ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
-  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>test.H0</span>(
+  <span class='kw'>test.expr</span>,
+  <span class='kw'>p.value</span>,
+  test.name = <span class='st'>""</span>,
+  alpha.warning = <span class='fl'>0.05</span>,
+  alpha.failure = <span class='fl'>0.001</span>,
+  <span class='kw'>short.message</span>,
+  <span class='kw'>warning.message</span>,
+  <span class='kw'>failure.message</span>,
+ 
+    success.message = <span class='st'>"Great, I could not significantly reject the null hypothesis from the test '{{test_name}}', p.value = {{p_value}}!"</span>,
+  check.warning = <span class='fl'>TRUE</span>,
+  part = <span class='kw'>NULL</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

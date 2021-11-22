@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,27 +120,56 @@
     <p>Main function to locally run a shiny based problem set in your browser. There are a lot of parameters that control the behavior of the problem set. Only the main parameters are explained below.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>show.ps</span>(<span class='kw'>ps.name</span>, user.name = <span class='st'>"default_user"</span>, auto.save.code = <span class='fl'>FALSE</span>,
-  clear.user = <span class='fl'>FALSE</span>, run.solved = <span class='fl'>FALSE</span>, sample.solution = <span class='fl'>FALSE</span>,
-  prev.chunks.sample.solution = <span class='kw'>show.solution.btn</span>, launch.browser = <span class='fl'>TRUE</span>,
-  catch.errors = <span class='fl'>TRUE</span>, dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(), rps.dir = <span class='kw'>dir</span>,
-  offline = <span class='op'>!</span><span class='fu'>can.connect.to.MathJax</span>(), left.margin = <span class='fl'>2</span>, right.margin = <span class='fl'>2</span>,
-  <span class='kw'>is.solved</span>, make.web.app = <span class='fl'>FALSE</span>, make.session.ps = <span class='kw'>make.web.app</span>,
-  save.nothing = <span class='fl'>FALSE</span>, show.revert.btn = <span class='fl'>FALSE</span>, show.solution.btn = <span class='fl'>NA</span>,
-  show.data.exp = <span class='fl'>TRUE</span>, show.download.rmarkdown = <span class='fl'>TRUE</span>,
-  disable.graphics.dev = <span class='fl'>TRUE</span>, check.whitelist = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>wl</span>), wl = <span class='kw'>NULL</span>,
-  verbose = <span class='fl'>FALSE</span>, html.data.frame = <span class='fl'>TRUE</span>, table.max.rows = <span class='fl'>25</span>,
-  round.digits = <span class='fl'>8</span>, signif.digits = <span class='fl'>8</span>,
+    <pre class="usage"><span class='fu'>show.ps</span>(
+  <span class='kw'>ps.name</span>,
+  user.name = <span class='st'>"default_user"</span>,
+  auto.save.code = <span class='fl'>FALSE</span>,
+  clear.user = <span class='fl'>FALSE</span>,
+  run.solved = <span class='fl'>FALSE</span>,
+  sample.solution = <span class='fl'>FALSE</span>,
+  prev.chunks.sample.solution = <span class='kw'>show.solution.btn</span>,
+  launch.browser = <span class='fl'>TRUE</span>,
+  catch.errors = <span class='fl'>TRUE</span>,
+  dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
+  rps.dir = <span class='kw'>dir</span>,
+  offline = <span class='op'>!</span><span class='fu'>can.connect.to.MathJax</span>(),
+  left.margin = <span class='fl'>2</span>,
+  right.margin = <span class='fl'>2</span>,
+  <span class='kw'>is.solved</span>,
+  make.web.app = <span class='fl'>FALSE</span>,
+  make.session.ps = <span class='kw'>make.web.app</span>,
+  save.nothing = <span class='fl'>FALSE</span>,
+  show.revert.btn = <span class='fl'>TRUE</span>,
+  show.solution.btn = <span class='fl'>NA</span>,
+  show.data.exp = <span class='fl'>TRUE</span>,
+  show.download.rmarkdown = <span class='fl'>TRUE</span>,
+  disable.graphics.dev = <span class='fl'>TRUE</span>,
+  check.whitelist = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>wl</span>),
+  wl = <span class='kw'>NULL</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  html.data.frame = <span class='fl'>TRUE</span>,
+  table.max.rows = <span class='fl'>25</span>,
+  round.digits = <span class='fl'>8</span>,
+  signif.digits = <span class='fl'>8</span>,
   knit.print.opts = <span class='fu'>make.knit.print.opts</span>(html.data.frame = <span class='kw'>html.data.frame</span>,
-  table.max.rows = <span class='kw'>table.max.rows</span>, round.digits = <span class='kw'>round.digits</span>, signif.digits =
-  <span class='kw'>signif.digits</span>, print.data.frame.fun = <span class='kw'>print.data.frame.fun</span>, print.matrix.fun =
-  <span class='kw'>print.matrix.fun</span>), print.data.frame.fun = <span class='kw'>NULL</span>, print.matrix.fun = <span class='kw'>NULL</span>,
-  precomp = <span class='fl'>FALSE</span>, noeval = <span class='fl'>FALSE</span>, need.login = <span class='fl'>FALSE</span>,
-  login.dir = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>dir</span>, <span class='st'>"/login"</span>), show.points = <span class='fl'>TRUE</span>,
-  stop.app.if.window.closes = <span class='op'>!</span><span class='kw'>make.session.ps</span>, sav.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>user.name</span>,
-  <span class='st'>"_"</span>, <span class='kw'>ps.name</span>, <span class='st'>".sav"</span>), load.sav = <span class='fl'>FALSE</span>, show.save.btn = <span class='fl'>FALSE</span>,
-  import.rmd = <span class='fl'>FALSE</span>, rmd.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>"_"</span>, <span class='kw'>user.name</span>,
-  <span class='st'>"_export.rmd"</span>), <span class='kw'>...</span>)</pre>
+    table.max.rows = <span class='kw'>table.max.rows</span>, round.digits = <span class='kw'>round.digits</span>, signif.digits =
+    <span class='kw'>signif.digits</span>, print.data.frame.fun = <span class='kw'>print.data.frame.fun</span>, print.matrix.fun =
+    <span class='kw'>print.matrix.fun</span>),
+  print.data.frame.fun = <span class='kw'>NULL</span>,
+  print.matrix.fun = <span class='kw'>NULL</span>,
+  precomp = <span class='fl'>FALSE</span>,
+  noeval = <span class='fl'>FALSE</span>,
+  need.login = <span class='fl'>FALSE</span>,
+  login.dir = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>dir</span>, <span class='st'>"/login"</span>),
+  show.points = <span class='fl'>TRUE</span>,
+  stop.app.if.window.closes = <span class='op'>!</span><span class='kw'>make.session.ps</span>,
+  sav.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>user.name</span>, <span class='st'>"_"</span>, <span class='kw'>ps.name</span>, <span class='st'>".sav"</span>),
+  load.sav = <span class='fl'>FALSE</span>,
+  show.save.btn = <span class='fl'>FALSE</span>,
+  import.rmd = <span class='fl'>FALSE</span>,
+  rmd.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>"_"</span>, <span class='kw'>user.name</span>, <span class='st'>"_export.rmd"</span>),
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

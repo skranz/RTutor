@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,11 +120,21 @@
     <p>The command will be put at the top of a student's problem set. It checks all exercises when the problem set is sourced. If something is wrong, an error is thrown and no more commands will be sourced.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.problem.set</span>(<span class='kw'>ps.name</span>, <span class='kw'>stud.path</span>, <span class='kw'>stud.short.file</span>, reset = <span class='fl'>FALSE</span>,
-  set.warning.1 = <span class='fl'>TRUE</span>, user.name = <span class='st'>"GUEST"</span>, do.check = <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(),
-  verbose = <span class='fl'>FALSE</span>, catch.errors = <span class='fl'>TRUE</span>,
+    <pre class="usage"><span class='fu'>check.problem.set</span>(
+  <span class='kw'>ps.name</span>,
+  <span class='kw'>stud.path</span>,
+  <span class='kw'>stud.short.file</span>,
+  reset = <span class='fl'>FALSE</span>,
+  set.warning.1 = <span class='fl'>TRUE</span>,
+  user.name = <span class='st'>"GUEST"</span>,
+  do.check = <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(),
+  verbose = <span class='fl'>FALSE</span>,
+  catch.errors = <span class='fl'>TRUE</span>,
   from.knitr = <span class='fu'><a href='https://rdrr.io/r/base/Logic.html'>isTRUE</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"knitr.in.progress"</span>)) <span class='op'>|</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>(),
-  use.null.device = <span class='fl'>TRUE</span>, just.init = <span class='fl'>FALSE</span>)</pre>
+  use.null.device = <span class='fl'>TRUE</span>,
+  just.init = <span class='fl'>FALSE</span>,
+  stud.code = <span class='kw'>NULL</span>
+)</pre>
 
 
 

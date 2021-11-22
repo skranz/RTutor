@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -67,7 +67,8 @@
 
       
 
-      </header><script src="02_ElementsSolutionFile_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="02_ElementsSolutionFile_files/header-attrs-2.5/header-attrs.js"></script><link href="02_ElementsSolutionFile_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="02_ElementsSolutionFile_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>2 Elements of a Solution File</h1>
@@ -170,22 +171,22 @@ plot(x=1:10,y= (1:10)^2)
 <h2 class="hasAnchor">
 <a href="#fill_in-blocks" class="anchor"></a>fill_in blocks</h2>
 <p>Sometimes, we would like students to fill in code at some place holders. For example, instead of writing a long line of ggplot commands, we want the user to just fill in the relevant aesthetics:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb7-1"><a href="#cb7-1"></a>ggplot(data, aes(x= ___, y = ___)) +</span>
-<span id="cb7-2"><a href="#cb7-2"></a>  geom_point() +</span>
-<span id="cb7-3"><a href="#cb7-3"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ggplot(data, aes(x= ___, y = ___)) +</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  geom_point() +</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span></code></pre></div>
 <p>You specification in your solution file would look like</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">#&lt; hint</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a>cat(<span class="st">"Just fill in the right values for x and y in the placeholders below."</span>)</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="co">#&lt; fill_in</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>ggplot(data, aes(x= ___, y = ___)) +</span>
-<span id="cb8-6"><a href="#cb8-6"></a>  geom_point() +</span>
-<span id="cb8-7"><a href="#cb8-7"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span>
-<span id="cb8-8"><a href="#cb8-8"></a><span class="co">#&gt;</span></span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co"># Below the fill_in block put the sample solution</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>ggplot(data, aes(x=weight, y = height)) +</span>
-<span id="cb8-11"><a href="#cb8-11"></a>  geom_point() +</span>
-<span id="cb8-12"><a href="#cb8-12"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&lt; hint</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cat(<span class="st">"Just fill in the right values for x and y in the placeholders below."</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&lt; fill_in</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ggplot(data, aes(x= ___, y = ___)) +</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  geom_point() +</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Below the fill_in block put the sample solution</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>ggplot(data, aes(x=weight, y = height)) +</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  geom_point() +</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  ggtitle(<span class="st">"My first ggplot!"</span>)</span></code></pre></div>
 <p>Please use three underscores <code>___</code> as placeholders or change the argument <code>placeholder</code> in <code>create.ps</code> if you want another placeholder string for your problem set. The problem is that most nice placeholder strings create syntactically incorrect R code, which would mess up hints. The default placeholder <code>___</code> will be internally converted to a variable name to allow parsing a student’s expression that still contains placeholders.</p>
 <p>You should try to set your placeholders such that you get a syntactically R expression if the placeholder were a valid R variable name. If that is not possible, you should add a <code>#</code> in front of <em>every</em> line of your <code>fill_in</code> block so that <code>create.ps</code> can correctly parse your expression. Here is an example:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
@@ -231,17 +232,17 @@ plot(x=1:10,y= (1:10)^2)
 <a href="#info-blocks" class="anchor"></a>info blocks</h2>
 <p>Info blocks are declared outside of code chunks and start with <code>#&lt; info</code> and end with <code>#&gt;</code>. In the shiny version of the problem set the content of an info block is shown inside a collapsible note. In the RStudio version, info blocks are less useful.</p>
 <p>Info blocks are helpful to keep the main problem set text brief enough, while at the same time allow a wide range of detailed background information. Here is an example:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1"></a>  #&lt; info "useful functions for numeric vectors"</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="bn">    Here are examples for useful R functions</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="bn">    ```{r}</span></span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="bn">    max(c(1,5,2)) # returns maximum</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a><span class="bn">    min(c(1,5,2)) # returns minimum</span></span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="bn">    </span></span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="bn">    sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA</span></span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="bn">    cumsum(c(1,5,2)) # returns cummulated sum</span></span>
-<span id="cb10-9"><a href="#cb10-9"></a><span class="bn">    diff(c(1,5,2)) # returns the vector of differences</span></span>
-<span id="cb10-10"><a href="#cb10-10"></a><span class="bn">    ``` </span></span>
-<span id="cb10-11"><a href="#cb10-11"></a>  #&gt;  </span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  #&lt; info "useful functions for numeric vectors"</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    Here are examples for useful R functions</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="in">```{r}</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="in">    max(c(1,5,2)) # returns maximum</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="in">    min(c(1,5,2)) # returns minimum</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="in">    sum(c(1,5,2,NA), na.rm=TRUE) # returns sum of all numbers, ignore NA</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="in">    cumsum(c(1,5,2)) # returns cummulated sum</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="in">    diff(c(1,5,2)) # returns the vector of differences</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="in">    ```</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  #&gt;  </span></code></pre></div>
 <p>An info block can contain normal text and also code chunks. When the problem set is created all info blocks will be compiled via the knitr and markdown packages to html text. Since info blocks will be complied already when the problem set is created, you cannot used any variables that are declared outside the info block in the info block code chunks.</p>
 <p>If you want info blocks with code chunks that the user can solve use a <em>note block</em>.</p>
 </div>
@@ -386,7 +387,15 @@ plot(1:10,(1:10)^2)
 var sc_project=12051162; 
 var sc_invisible=1; 
 var sc_security="60139410"; 
-</script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="web statistics" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="web statistics"></a></div></noscript>
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="web statistics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12051162/0/60139410/1/"
+alt="web statistics"></a></div></noscript>
 
   </body>
 </html>

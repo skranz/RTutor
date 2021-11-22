@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,17 +120,32 @@
     <p>Test: Compare the column col of the matrix or data.frame df with either the values from the given solutions or with the result of an expression that is evaluated in the students solution</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.col</span>(<span class='kw'>df</span>, <span class='kw'>col</span>, expr = <span class='kw'>NULL</span>, class.df = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.frame"</span>, <span class='st'>"data.table"</span>,
-  <span class='st'>"matrix"</span>), check.all = <span class='fl'>FALSE</span>, exists = <span class='kw'>check.all</span>, length = <span class='kw'>check.all</span>,
-  class = <span class='kw'>check.all</span>, values = <span class='kw'>check.all</span>, tol = <span class='kw'>.Machine</span><span class='op'>$</span><span class='kw'>double.eps</span><span class='op'>^</span><span class='fl'>0.5</span>,
+    <pre class="usage"><span class='fu'>check.col</span>(
+  <span class='kw'>df</span>,
+  <span class='kw'>col</span>,
+  expr = <span class='kw'>NULL</span>,
+  class.df = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.frame"</span>, <span class='st'>"data.table"</span>, <span class='st'>"matrix"</span>),
+  check.all = <span class='fl'>FALSE</span>,
+  exists = <span class='kw'>check.all</span>,
+  length = <span class='kw'>check.all</span>,
+  class = <span class='kw'>check.all</span>,
+  values = <span class='kw'>check.all</span>,
+  tol = <span class='kw'>.Machine</span><span class='op'>$</span><span class='kw'>double.eps</span><span class='op'>^</span><span class='fl'>0.5</span>,
   failure.exists = <span class='st'>"{{df}} does not have a column {{col}}."</span>,
-  failure.length = <span class='st'>"{{df}} has {{length_stud}} rows but it shall have {{length_sol}} rows."</span>,
-  failure.class = <span class='st'>"Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}."</span>,
+ 
+    failure.length = <span class='st'>"{{df}} has {{length_stud}} rows but it shall have {{length_sol}} rows."</span>,
+ 
+    failure.class = <span class='st'>"Column {{col}} of {{df}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}."</span>,
   failure.values = <span class='st'>"Column {{col}} of {{df}} has wrong values."</span>,
   failure.message.add = <span class='kw'>NULL</span>,
   success.message = <span class='st'>"Great, column {{col}} of {{df}} has correct {{tests}}."</span>,
-  part = <span class='kw'>NULL</span>, ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(), stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, verbose = <span class='fl'>FALSE</span>,
-  unsubst.expr = <span class='kw'>NULL</span>, str.expr = <span class='kw'>NULL</span>)</pre>
+  part = <span class='kw'>NULL</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  unsubst.expr = <span class='kw'>NULL</span>,
+  str.expr = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

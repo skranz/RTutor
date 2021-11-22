@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -67,7 +67,8 @@
 
       
 
-      </header><script src="01_RTutorOverview_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="01_RTutorOverview_files/header-attrs-2.5/header-attrs.js"></script><link href="01_RTutorOverview_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="01_RTutorOverview_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>1 RTutor Overview</h1>
@@ -92,7 +93,7 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>To install RTutor just run</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb1-1"><a href="#cb1-1"></a>install.packages(<span class="st">"RTutor"</span>,repos = c(<span class="st">"https://skranz-repo.github.io/drat/"</span>,getOption(<span class="st">"repos"</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>install.packages(<span class="st">"RTutor"</span>,repos = c(<span class="st">"https://skranz-repo.github.io/drat/"</span>,getOption(<span class="st">"repos"</span>)))</span></code></pre></div>
 <p>If you create problem sets that you want to host on shinyapps.io, you have to install all packages directly from Github. See the instructions on <a href="https://github.com/skranz/RTutor">https://github.com/skranz/RTutor</a>.</p>
 </div>
 <div id="create-an-r-markdown-solution-file" class="section level2">
@@ -194,10 +195,10 @@ failure: Try again.
 <h2 class="hasAnchor">
 <a href="#generate-a-structure-file-and-empty-problem-set-for-students" class="anchor"></a>Generate a structure file and empty problem set for students</h2>
 <p>To create an example problem set copy the example from <a href="https://raw.githubusercontent.com/skranz/RTutor/master/inst/examples/myps_sol.Rmd">here</a> and save it in <code>myps_sol.Rmd</code>. Then set the right working directory in the setup chunk.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1"></a>setwd("C:/folder_of_this_solution_file")<span class="st">"C:/folder_of_this_solution_file"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>setwd("C:/folder_of_this_solution_file")<span class="st">"C:/folder_of_this_solution_file"</span>)</span></code></pre></div>
 <p>Afterwards run the setup chunk in RStudio. (You may assign a keyboard shortcut to running the setup chunk.)</p>
 <p>The call to</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1"></a>   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = <span class="st">"quiz"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>   create.ps(sol.file=sol.file, ps.name=ps.name, libs=libs, addons = <span class="st">"quiz"</span>)</span></code></pre></div>
 <p>generates several files:</p>
 <ul>
 <li><p>myps.rps: a binary representation of the problem set structure</p></li>
@@ -216,7 +217,7 @@ failure: Try again.
 <h3 class="hasAnchor">
 <a href="#running-as-shiny-app-in-the-browser" class="anchor"></a>Running as shiny app in the browser</h3>
 <p>The call</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb6-1"><a href="#cb6-1"></a>show.ps(ps.name,launch.browser=TRUE, auto.save.code=FALSE,sample.solution=FALSE)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>show.ps(ps.name,launch.browser=TRUE, auto.save.code=FALSE,sample.solution=FALSE)</span></code></pre></div>
 <p>shows the problem set in your default browser. You can enter some code in the first chunk and check your solution by pressing the “check” button.</p>
 <p>If you set the argument <code>sample.solution=TRUE</code> all chunks are already filled with the sample solution.</p>
 </div>
@@ -350,7 +351,15 @@ failure: Try again.
 var sc_project=12051162; 
 var sc_invisible=1; 
 var sc_security="60139410"; 
-</script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script><noscript><div class="statcounter"><a title="web statistics" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/12051162/0/60139410/1/" alt="web statistics"></a></div></noscript>
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="web statistics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12051162/0/60139410/1/"
+alt="web statistics"></a></div></noscript>
 
   </body>
 </html>

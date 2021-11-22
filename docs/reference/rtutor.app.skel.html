@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,13 +120,24 @@
     <p>Generate a skeleton for a shinyapps.io app of a problem set</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rtutor.app.skel</span>(<span class='kw'>ps.name</span>, app.name = <span class='kw'>ps.name</span>, <span class='kw'>app.dir</span>,
-  rps.app = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>rps.dir</span>), pkg.name = <span class='kw'>NULL</span>, rps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>,
-  <span class='st'>".rps"</span>), rps.dir = <span class='kw'>NULL</span>, overwrite = <span class='fl'>FALSE</span>,
-  github.user = <span class='st'>"GITHUB_USERNAME"</span>, rtutor.fork = <span class='st'>"skranz"</span>, libs = <span class='kw'>NULL</span>,
-  ps.show.opts = <span class='kw'>NULL</span>, direct.execution = <span class='fl'>FALSE</span>,
-  shinyapps.account.info = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(name = <span class='st'>"&lt;SHINYAPPS_USERNAME&gt;"</span>, token =
-  <span class='st'>"&lt;TOKEN&gt;"</span>, secret = <span class='st'>"&lt;SECRET&gt;"</span>), <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>rtutor.app.skel</span>(
+  <span class='kw'>ps.name</span>,
+  app.name = <span class='kw'>ps.name</span>,
+  <span class='kw'>app.dir</span>,
+  rps.app = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='kw'>rps.dir</span>),
+  pkg.name = <span class='kw'>NULL</span>,
+  rps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>".rps"</span>),
+  rps.dir = <span class='kw'>NULL</span>,
+  overwrite = <span class='fl'>FALSE</span>,
+  github.user = <span class='st'>"GITHUB_USERNAME"</span>,
+  rtutor.fork = <span class='st'>"skranz"</span>,
+  libs = <span class='kw'>NULL</span>,
+  ps.show.opts = <span class='kw'>NULL</span>,
+  direct.execution = <span class='fl'>FALSE</span>,
+  shinyapps.account.info = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(name = <span class='st'>"&lt;SHINYAPPS_USERNAME&gt;"</span>, token = <span class='st'>"&lt;TOKEN&gt;"</span>,
+    secret = <span class='st'>"&lt;SECRET&gt;"</span>),
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

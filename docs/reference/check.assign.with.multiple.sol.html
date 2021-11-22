@@ -74,7 +74,7 @@ possibly correct solutions — check.assign.with.multiple.sol" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -123,8 +123,15 @@ possibly correct solutions</h1>
     <p>Can be called in a #&lt; test block for a custom test.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.assign.with.multiple.sol</span>(<span class='kw'>sol1</span>, <span class='kw'>sol2</span>, <span class='kw'>sol3</span>, <span class='kw'>sol4</span>, <span class='kw'>sol5</span>, <span class='kw'>...</span>,
-  sol.list = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>())</pre>
+    <pre class="usage"><span class='fu'>check.assign.with.multiple.sol</span>(
+  <span class='kw'>sol1</span>,
+  <span class='kw'>sol2</span>,
+  <span class='kw'>sol3</span>,
+  <span class='kw'>sol4</span>,
+  <span class='kw'>sol5</span>,
+  <span class='kw'>...</span>,
+  sol.list = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,11 +144,13 @@ possibly correct solutions</h1>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Assume the task is that x shall be a number </span>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='co'># Assume the task is that x shall be a number </span>
 <span class='co'># below 11 and divisible by 5</span>
 
 <span class='fu'>check.assign.with.multiple.sol</span>(<span class='kw'>x</span><span class='op'>&lt;-</span><span class='fl'>5</span>, <span class='kw'>x</span><span class='op'>&lt;-</span><span class='fl'>10</span>)
-</div><div class='output co'>#&gt; <span class='error'>Error in new.env(parent = ps$ps.baseenv): use of NULL environment is defunct</span></div></pre>
+</div><div class='output co'>#&gt; <span class='error'>Error in new.env(parent = ps$ps.baseenv): use of NULL environment is defunct</span></div><div class='input'><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

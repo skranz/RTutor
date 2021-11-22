@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,16 +120,29 @@
     <p>Test: Check whether a variable is equal to a specified expression</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.variable</span>(<span class='kw'>var</span>, <span class='kw'>expr</span>, length = <span class='kw'>check.all</span>, dim = <span class='kw'>check.all</span>,
-  class = <span class='kw'>check.all</span>, values = <span class='kw'>check.all</span>, check.all = <span class='fl'>TRUE</span>, <span class='kw'>...</span>,
+    <pre class="usage"><span class='fu'>check.variable</span>(
+  <span class='kw'>var</span>,
+  <span class='kw'>expr</span>,
+  length = <span class='kw'>check.all</span>,
+  dim = <span class='kw'>check.all</span>,
+  class = <span class='kw'>check.all</span>,
+  values = <span class='kw'>check.all</span>,
+  check.all = <span class='fl'>TRUE</span>,
+  <span class='kw'>...</span>,
   tol = <span class='kw'>.Machine</span><span class='op'>$</span><span class='kw'>double.eps</span><span class='op'>^</span><span class='fl'>0.5</span>,
   failure.exists = <span class='st'>"You have not yet generated the variable {{var}}."</span>,
-  failure.length = <span class='st'>"Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}."</span>,
+ 
+    failure.length = <span class='st'>"Your variable {{var}} has length {{length_stud}} but it shall have length {{length_sol}}."</span>,
   failure.dim = <span class='st'>"Your variable {{var}} has the wrong dimensions (rows x columns)."</span>,
-  failure.class = <span class='st'>"Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}."</span>,
+ 
+    failure.class = <span class='st'>"Your variable {{var}} has a wrong class. It should be {{class_sol}} but it is {{class_stud}}."</span>,
   failure.values = <span class='st'>"Your variable {{var}} has wrong values."</span>,
-  success.message = <span class='st'>"Great, {{var}} has correct {{tests}}."</span>, ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
-  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, verbose = <span class='fl'>FALSE</span>, part = <span class='kw'>NULL</span>)</pre>
+  success.message = <span class='st'>"Great, {{var}} has correct {{tests}}."</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  part = <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

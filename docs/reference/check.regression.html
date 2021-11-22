@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,11 +120,17 @@
     <p>Check whether an object from a call to lm, glm or some other regression function is correct</p>
     </div>
 
-    <pre class="usage"><span class='fu'>check.regression</span>(<span class='kw'>var</span>, <span class='kw'>str.expr</span>, part = <span class='kw'>NULL</span>, ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
-  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>, verbose = <span class='fl'>FALSE</span>,
-  failure.message = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"Hmm... your regression "</span>, <span class='kw'>var</span>,
-  <span class='st'>" seems incorrect."</span>), success.message = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"Great, your regression "</span>,
-  <span class='kw'>var</span>, <span class='st'>" looks correct."</span>), tol = <span class='fl'>1e-10</span>)</pre>
+    <pre class="usage"><span class='fu'>check.regression</span>(
+  <span class='kw'>var</span>,
+  <span class='kw'>str.expr</span>,
+  part = <span class='kw'>NULL</span>,
+  ps = <span class='fu'><a href='get.ps.html'>get.ps</a></span>(),
+  stud.env = <span class='kw'>ps</span><span class='op'>$</span><span class='kw'>stud.env</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  failure.message = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"Hmm... your regression "</span>, <span class='kw'>var</span>, <span class='st'>" seems incorrect."</span>),
+  success.message = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"Great, your regression "</span>, <span class='kw'>var</span>, <span class='st'>" looks correct."</span>),
+  tol = <span class='fl'>1e-10</span>
+)</pre>
 
 
 

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -120,12 +120,24 @@
     <p>Generate a package skeleton for a shiny based RTutor problem set that shall be deployed as a package</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rtutor.package.skel</span>(<span class='kw'>sol.file</span>, <span class='kw'>ps.name</span>, <span class='kw'>pkg.name</span>, <span class='kw'>pkg.parent.dir</span>,
-  author = <span class='st'>"AUTHOR_NAME"</span>, github.user = <span class='st'>"GITHUB_USERNAME"</span>,
-  date = <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>(), <span class='st'>"%Y-%d-%m"</span>), source.dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
-  rps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>".rps"</span>), libs = <span class='kw'>NULL</span>, extra.code.file = <span class='kw'>NULL</span>,
-  var.txt.file = <span class='kw'>NULL</span>, ps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>".Rmd"</span>),
-  overwrite = <span class='fl'>FALSE</span>, overwrite.ps = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>rtutor.package.skel</span>(
+  <span class='kw'>sol.file</span>,
+  <span class='kw'>ps.name</span>,
+  <span class='kw'>pkg.name</span>,
+  <span class='kw'>pkg.parent.dir</span>,
+  author = <span class='st'>"AUTHOR_NAME"</span>,
+  github.user = <span class='st'>"GITHUB_USERNAME"</span>,
+  date = <span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>(), <span class='st'>"%Y-%d-%m"</span>),
+  source.dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
+  rps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>".rps"</span>),
+  libs = <span class='kw'>NULL</span>,
+  extra.code.file = <span class='kw'>NULL</span>,
+  var.txt.file = <span class='kw'>NULL</span>,
+  ps.file = <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>ps.name</span>, <span class='st'>".Rmd"</span>),
+  overwrite = <span class='fl'>FALSE</span>,
+  overwrite.ps = <span class='fl'>TRUE</span>,
+  <span class='kw'>...</span>
+)</pre>
 
 
 

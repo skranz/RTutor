@@ -73,7 +73,7 @@ For problem sets stored in a local .rps file, use show.ps() instead" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -122,13 +122,25 @@ For problem sets stored in a local .rps file, use show.ps() instead" />
 For problem sets stored in a local .rps file, use show.ps() instead</p>
     </div>
 
-    <pre class="usage"><span class='fu'>run.ps</span>(<span class='kw'>user.name</span>, ps.name = <span class='kw'>info</span><span class='op'>$</span><span class='kw'>ps</span>[<span class='fl'>1</span>], dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(), package = <span class='kw'>NULL</span>,
-  auto.save.code = <span class='fl'>FALSE</span>, clear.user = <span class='fl'>FALSE</span>, run.solved = <span class='fl'>FALSE</span>,
-  sample.solution = <span class='fl'>FALSE</span>, show.solution.btn = <span class='fl'>NA</span>, launch.browser = <span class='fl'>TRUE</span>,
-  info = <span class='fu'>get.package.info</span>(<span class='kw'>package</span>), deploy.local = <span class='op'>!</span><span class='kw'>make.web.app</span>,
-  make.web.app = <span class='fl'>FALSE</span>, pkg.dir = <span class='fu'><a href='https://rdrr.io/r/base/find.package.html'>path.package</a></span>(<span class='kw'>info</span><span class='op'>$</span><span class='kw'>package</span>),
+    <pre class="usage"><span class='fu'>run.ps</span>(
+  <span class='kw'>user.name</span>,
+  ps.name = <span class='kw'>info</span><span class='op'>$</span><span class='kw'>ps</span>[<span class='fl'>1</span>],
+  dir = <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
+  package = <span class='kw'>NULL</span>,
+  auto.save.code = <span class='fl'>FALSE</span>,
+  clear.user = <span class='fl'>FALSE</span>,
+  run.solved = <span class='fl'>FALSE</span>,
+  sample.solution = <span class='fl'>FALSE</span>,
+  show.solution.btn = <span class='fl'>NA</span>,
+  launch.browser = <span class='fl'>TRUE</span>,
+  info = <span class='fu'>get.package.info</span>(<span class='kw'>package</span>),
+  deploy.local = <span class='op'>!</span><span class='kw'>make.web.app</span>,
+  make.web.app = <span class='fl'>FALSE</span>,
+  pkg.dir = <span class='fu'><a href='https://rdrr.io/r/base/find.package.html'>path.package</a></span>(<span class='kw'>info</span><span class='op'>$</span><span class='kw'>package</span>),
   rps.dir = <span class='fu'>find.pkg.rps.dir</span>(<span class='kw'>ps.name</span>, <span class='kw'>pkg.dir</span>),
-  material.dir = <span class='fu'>find.pkg.material.dir</span>(<span class='kw'>ps.name</span>, <span class='kw'>pkg.dir</span>), <span class='kw'>...</span>)</pre>
+  material.dir = <span class='fu'>find.pkg.material.dir</span>(<span class='kw'>ps.name</span>, <span class='kw'>pkg.dir</span>),
+  <span class='kw'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

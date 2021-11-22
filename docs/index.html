@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">RTutor</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.8.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2020.11.25</span>
       </span>
     </div>
 
@@ -79,9 +79,11 @@
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
-<p>RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). I have created an own Github based R repository, from which you can install RTutor by using the following code:</p>
+<p>RTutor and some required packages are not hosted on CRAN (while CRAN is great it takes a lot of time to maintain several packages there). You can install it from my <a href="https://skranz.r-universe.dev/ui#builds">r-universe repository</a> by using the following code:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"RTutor"</span>,repos = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"https://skranz-repo.github.io/drat/"</span>,<span class="fu"><a href="https://rdrr.io/r/base/options.html">getOption</a></span>(<span class="st">"repos"</span>)))
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(repos = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(skranz = <span class="st">'https://skranz.r-universe.dev'</span>,
+    CRAN = <span class="st">'https://cloud.r-project.org'</span>))
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"RTutor"</span>)
 </pre></div>
 <p><strong>Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.</strong></p>
 <div id="create-your-own-problem-sets" class="section level2">
@@ -105,6 +107,26 @@
 </li>
 </ul>
 </div>
+<div id="economic-impact-of-covid-19-by-alexandra-aehle" class="section level3">
+<h3 class="hasAnchor">
+<a href="#economic-impact-of-covid-19-by-alexandra-aehle" class="anchor"></a>Economic Impact of Covid-19 (by Alexandra Aehle)</h3>
+<ul>
+<li>Github: <a href="https://github.com/alexaehle/RTutorEconomicImpactsofCOVID19" class="uri">https://github.com/alexaehle/RTutorEconomicImpactsofCOVID19</a>
+</li>
+<li>shinyapps.io: <a href="https://alexaehle.shinyapps.io/RTutorEconomicImpactsOfCOVID19" class="uri">https://alexaehle.shinyapps.io/RTutorEconomicImpactsOfCOVID19</a>
+</li>
+</ul>
+</div>
+<div id="what-explains-the-employment-drop-in-the-great-recession-2007-2009-by-birgit-schroff" class="section level3">
+<h3 class="hasAnchor">
+<a href="#what-explains-the-employment-drop-in-the-great-recession-2007-2009-by-birgit-schroff" class="anchor"></a>What explains the employment drop in the great recession 2007-2009? (by Birgit Schroff)</h3>
+<ul>
+<li>Github: <a href="https://github.com/bschroff/RTutorDropInEmployment" class="uri">https://github.com/bschroff/RTutorDropInEmployment</a>
+</li>
+<li>shinyapps.io: <a href="https://bschroff.shinyapps.io/RTutorDropInEmployment" class="uri">https://bschroff.shinyapps.io/RTutorDropInEmployment</a>
+</li>
+</ul>
+</div>
 <div id="comparing-the-environmental-damages-of-driving-electric-or-gasoline-cars-by-felix-stickel" class="section level3">
 <h3 class="hasAnchor">
 <a href="#comparing-the-environmental-damages-of-driving-electric-or-gasoline-cars-by-felix-stickel" class="anchor"></a>Comparing the Environmental Damages of Driving Electric or Gasoline Cars (by Felix Stickel)</h3>
@@ -112,8 +134,6 @@
 <li>Github: <a href="https://github.com/felsti/RTutorECars" class="uri">https://github.com/felsti/RTutorECars</a>
 </li>
 <li>shinyapps.io: <a href="https://felsti.shinyapps.io/RTutorECars" class="uri">https://felsti.shinyapps.io/RTutorECars</a>
-</li>
-<li>rstudio.cloud: <a href="https://rstudio.cloud/project/139129" class="uri">https://rstudio.cloud/project/139129</a>
 </li>
 </ul>
 </div>
@@ -196,6 +216,16 @@
 <li>Github: <a href="https://github.com/b-lux/RTutorCarbonLeakage" class="uri">https://github.com/b-lux/RTutorCarbonLeakage</a>
 </li>
 <li>shinyapps.io: <a href="https://b-lux.shinyapps.io/RTutorCarbonLeakage/" class="uri">https://b-lux.shinyapps.io/RTutorCarbonLeakage/</a>
+</li>
+</ul>
+</div>
+<div id="insurance-and-the-church-by-adidti-malani" class="section level3">
+<h3 class="hasAnchor">
+<a href="#insurance-and-the-church-by-adidti-malani" class="anchor"></a>Insurance and the Church (by Adidti Malani)</h3>
+<ul>
+<li>Github: <a href="https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay" class="uri">https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay</a>
+</li>
+<li>shinyapps.io: <a href="https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/" class="uri">https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/</a>
 </li>
 </ul>
 </div>
@@ -342,7 +372,7 @@
 <a href="#courses-that-use-rtutor-problem-sets" class="anchor"></a>Courses that use RTutor problem sets</h2>
 <p>If you a have course that uses RTutor that you want to share, just send me an email and I add your course to the list!</p>
 <ul>
-<li><p>During the Cororona semester, I made an online course <a href="https://github.com/skranz/MarketAnalysis">Market Analysis with Econometrics and Machine Learning</a>. It consists of online shiny apps with videos and quizzes and many RTutor problem sets.</p></li>
+<li><p>Two courses from me: <a href="https://github.com/skranz/empecon">Empirical Economics with R</a> and <a href="https://github.com/skranz/MarketAnalysis">Market Analysis with Econometrics and Machine Learning</a>. Both consists of online shiny apps with videos and quizzes and many RTutor problem sets.</p></li>
 <li><p><a href="https://www.ocf.berkeley.edu/~jadebc/">Jade Benjamin-Chung</a> from UC Berkeley School of Public Health has created with RTutor online tutorials for an <a href="https://ucb-epi-r.github.io/">introductory R course for epidemiologists</a>. If you click on a tutorial the corresponding RTutor problem set can be directly solved on shinyapps.io. There is no need to log in.</p></li>
 <li><p>RTutor is also used in a compulsory <a href="https://github.com/AlexRieber/datascience-teaching">data science project course</a> taught by <a href="https://github.com/AlexRieber/">Alex Rieber</a> for business and economics students at Ulm University. The problem sets teach basic skills in R, including tidyverse data wrangling, as well as econometric and machine learning basic with economic applications. Alex published the problem sets and other course material <a href="https://github.com/AlexRieber/datascience-teaching">here on Github</a>. You find on the Github pages also links that allow you to test the problem sets on the rstudio cloud. The course is in German but Alex already started to make an English version of the problem sets, which will be added once finished.</p></li>
 </ul>
@@ -357,14 +387,14 @@
 <span class="fu">install.rtutor</span>(update.github=<span class="fl">TRUE</span>)
 </pre></div>
 <p>Depending on your devtools version, also the following code may work directly (yet source_gist is buggy in some devtools versions):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>if (!require(devtools)) </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>  install.packages(<span class="st">"devtools"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>install.rtutor(update.github=TRUE)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>library(RTutor)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>if (!require(devtools)) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  install.packages(<span class="st">"devtools"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">devtools::</span>source_gist(<span class="st">"gist.github.com/skranz/fad6062e5462c9d0efe4"</span>, filename=<span class="st">"install_rtutor.r"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>install.rtutor(update.github=TRUE)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>library(RTutor)</span></code></pre></div>
 <p>If you only want to update the RTutor package (and have the other packages already installed). You can just type:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode s"><code class="sourceCode gnuassembler"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">devtools::</span>install_github(<span class="st">"skranz/RTutor"</span>, upgrade=<span class="st">"ask"</span>)</span></code></pre></div>
 <p>(You may have to restart your R session / RStudio for the update to work.)</p>
 </div>
 <div id="suggestions--feedback" class="section level2">
