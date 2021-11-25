@@ -13,7 +13,6 @@ options(repos = c(skranz = 'https://skranz.r-universe.dev',
     CRAN = 'https://cloud.r-project.org'))
 install.packages("RTutor")
 ```
-**Note: If you want to create your own web-based RTutor problem sets and upload them on shinyapps.io, you need to install RTutor and required packages directly from Github and CRAN as explained fruther below. That is because shinyapps.io only works with R packages directly installed from Github or CRAN.**
 
 
 ## Create your own problem sets
