@@ -106,7 +106,7 @@ Edit the file "README.MD"
 
 Try to build the package with RStudio with the menu point
 	
-	Build -> Build and Reload
+	Build -> Clean and Rebuild
 
    - Afterwards check whether you can run the problem set as explained in the README.MD file	
    
@@ -173,17 +173,17 @@ There is no need to create the whole package with the package skeleton again.
 
 	- You can pick a user name that is related to your true name (first name and / or family name), like my user name "skranz" or some anonymous user name. I guess that is a matter of taste. Personally, I find names that link to the true name more convenient, but you can observe both on github.
 
-- If you use Windows install and start Github for Windows as explained here:
+- Install Github Desktop:
 
-	https://help.github.com/articles/getting-started-with-github-for-windows/
+	https://desktop.github.com/
+	
+	Documentation can be found here:
+	
+	https://docs.github.com/en/desktop
 
-- To add your package folder as github repository open github for windows and your windows explorer and drag'n'drop your package folder from the explorer on the left your github for windows window. See
+- To add your package folder as github repository open Github Desktop and your file explorer and drag'n'drop your package folder from the explorer on the left your Github Desktop window. 
 
-	https://help.github.com/categories/github-for-windows/
-
-- After you have created your github project or you have changed it, you can commit your changes and then synchronize your local changes with the Github version. See here:
-
-  https://help.github.com/articles/synchronizing-repositories/
+- After you have created your github project or you have changed it, you can commit your changes and then synchronize your local changes with the Github version.
 
 - Check whether you can see your package on the github webpage, as a repository under your username.
 
