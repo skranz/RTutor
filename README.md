@@ -107,8 +107,11 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: [https://github.com/msporer/RTutorEnvironmentalRegulation](https://github.com/msporer/RTutorEnvironmentalRegulation)
   - shinyapps.io: [https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/](https://msporer.shinyapps.io/RTutorEnvironmentalRegulations/)
 
+### Female Role Models for Potential Economics Students (by Stefanie Buda)
 
+  - GitHub: https://github.com/StefanieBuda/RTutorInfluenceOfFemaleRoleModels
 
+  - shinyapps.io: http://stefaniebuda.shinyapps.io/RTutorInfluenceOfFemaleRoleModels
 ### Predicting Effects of Carbon Pricing on US Electricity Production (by Daniel Dreyer)
 
   - Github: [(https://github.com/danieldreyer/RTutorCO2ReductionCosts]((https://github.com/danieldreyer/RTutorCO2ReductionCosts)
