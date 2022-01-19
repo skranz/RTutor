@@ -131,6 +131,11 @@ For the web-based interface, several students at Ulm University have created ver
   - shinyapps.io (Simon Hertle): https://shertle.shinyapps.io/RTutorBuildingCodes/
   - Github (Lisa Eilts): https://github.com/LEilts/RTutorBuildingCodes
 
+### Gasoline Prices and Consumer Behavior (by Melina Klenk)
+
+  - Github: https://github.com/melinakle/RTutorGasolineTaxes
+  - shinyapps.io: https://melina-kle.shinyapps.io/RTutorGasolineTaxes/
+
 ### Technological Progress and Fuel Economy of Cars (by Marius Breitmayer)
   - Github: https://github.com/MariusBreitmayer/RTutorAttributeTradeOffs
   - shinyapps.io: https://mariusbreitmayer.shinyapps.io/RTutorAttributeTradeOffs
