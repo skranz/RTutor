@@ -73,6 +73,8 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
   
   ps$ps.baseenv = new.env(parent=parent.env(globalenv()))
 
+  copy.into.env(dest = ps$ps.baseenv, source = ps.basenv.functions())
+  
   if (ps$precomp) {
     for (row in 1:NROW(rps$cdt)) {
       parent.env(rps$cdt$stud.env[[row]]) <- ps$ps.baseenv
@@ -178,6 +180,14 @@ init.ps = function(ps.name,user.name="", dir=getwd(), stud.short.file = paste0(p
 
   
   return(ps)
+}
+
+ps.basenv.functions = function() {
+  list(
+    install.packages = function(...) {
+      stop("Please don't call the function install.packages in your RTutor problem set. To load an already installed package, use the function library. To install packages, use a separate R script in which you write and run the install.packages command.")
+    }
+  )
 }
 
 load.ps.libs = function(libs) {

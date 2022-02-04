@@ -389,7 +389,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     }
   }  else if (cde$type == "var") {
     if (!from.assign)
-      hdisplay("You shall simply show the variable '",cde$na, "' by typing the variable name in your code.", start.char=start.char, end.char=end.char)
+      hdisplay("Just add to your code chunk the line\n\n",cde$na, "\n\nto show that variable.", start.char=start.char, end.char=end.char)
   }  else if (cde$type == "subset") {
     hint.str = scramble.text(deparse(call),"?",0.6, keep.char=c("[","]", "$",",","\n"))
     if (from.assign) {
