@@ -256,7 +256,7 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
   
   # We also show a scrambled version if there
   # are placeholders
-  scramble.fun = isTRUE(check.na == "filter") | has.place.holder
+  scramble.fun = isTRUE(check.na == "filter") | has.place.holder | isTRUE(!tolower(substring(check.na,1,1)) %in% base::letters)
   
   ggplot.chain = FALSE
   # Check possible ggplot chain
@@ -289,8 +289,12 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (length(stud.expr.li)==0) {
       if (!from.assign)
         hdisplay("You must correctly call the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
-      if (from.assign)
-        hdisplay("You must assign to '", lhs, "' a correct call to the function '", check.na,"'", part.str,".", start.char=start.char, end.char=end.char)
+      if (from.assign) {
+        
+        
+        hdisplay("You must assign to '", lhs, "' a correct call to the function '", check.na,"'. This means you should write a line starting\n\n",lhs," = ", check.na,"(  ...\n\nOf course, you must correctly complete the ...", start.char=start.char, end.char=end.char)
+        
+      }
       return(invisible())
     }
 
