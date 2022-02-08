@@ -250,13 +250,20 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
 
   has.place.holder = any(sapply(stud.expr.li, has.call.placeholder))
   
+  hint.id = list(call = call, stud.expr.li=stud.expr.li)
+  last.hint.id = getOption("last.rtutor.hint.id")
+  hint.twice = identical(hint.id, last.hint.id)
+  options(last.rtutor.hint.id = hint.id)
+
+  
   # For filter we show a scrambled version of the 
   # sample solution since arguments are not named
   # and the order does not matter
   
   # We also show a scrambled version if there
   # are placeholders
-  scramble.fun = isTRUE(check.na == "filter") | has.place.holder | isTRUE(!tolower(substring(check.na,1,1)) %in% base::letters)
+  scramble.fun = isTRUE(check.na == "filter") | has.place.holder |
+    ((isTRUE(!tolower(substring(check.na,1,1)) %in% base::letters) | hint.twice) & cde$type != "chain")
   
   ggplot.chain = FALSE
   # Check possible ggplot chain
@@ -341,6 +348,8 @@ hint.for.call = function(call, ps=get.ps(), env = ps$stud.env, stud.expr.li = ps
     if (from.assign)
       #hdisplay("Let's take a look at your assignment to '", lhs, "', which should call the function '", check.na, "'",part.str,":\n", analyse.str,start.char=start.char, end.char=end.char)
       cat(analyse.str,"\n")
+    
+    cat("\nFor a scrambled version of the solution ask directly for another hint.\n")
   } else if ( (cde$type == "fun" | (cde$type=="chain" & length(stud.expr.li)==1)) & scramble.fun) {
     #restore.point("jdhfjhdkfslfj")
     # Only scramble wrong parts if we have a single student
