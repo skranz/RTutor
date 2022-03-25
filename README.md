@@ -71,6 +71,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/julianlatzko/RTutorCompetitionPolicy
   - shinyapps.io: https://julianlatzko.shinyapps.io/RTutorCompetitionPolicy
 
+### Analyzing Mozart's letters: How emotions determine creativity (by Daniel Klinke)
+  - Github:  https://github.com/DKlinke/RTutorCreativity
+  - shinyapps.io: https://dklinke.shinyapps.io/RTutorCreativity/
+
 ### Assessing Free Trade Agreements (by Tobias Fischer)
   - Github: https://github.com/fischeruu/RTutorNAFTAfreetrade
   - shinyapps.io: https://fischeruu.shinyapps.io/RTutorNAFTAfreetrade/
