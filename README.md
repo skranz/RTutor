@@ -91,7 +91,7 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay 
   - shinyapps.io: https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/ 
 
-### Public Infrastrure Spending and Voting Behaviour (by Philipp Klotz)
+### Public Infrastructure Spending and Voting Behaviour (by Philipp Klotz)
   - Github: https://github.com/PhilippKlotz/RTutorPublicSpendingVotingBehavior
   - shinyapps.io: http://philippklotz.shinyapps.io/RTutorPublicSpendingVotingBehavior
 
