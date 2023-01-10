@@ -36,7 +36,6 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/SimonMaier1995/Chinas-Political-Promotion-Incentives
   - shinyapps.io: https://simonmaier.shinyapps.io/Chinas-Political-Promotion-Incentives/
 
-
 ### Economic Impact of Covid-19 (by Alexandra Aehle)
   - Github: https://github.com/alexaehle/RTutorEconomicImpactsofCOVID19
   - shinyapps.io: https://alexaehle.shinyapps.io/RTutorEconomicImpactsOfCOVID19
@@ -91,6 +90,10 @@ For the web-based interface, several students at Ulm University have created ver
 ### Insurance and the Church (by Adidti Malani)
   - Github: https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay 
   - shinyapps.io: https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/ 
+
+### Public Infrastrure Spending and Voting Behaviour (by Philipp Klotz)
+  - Github: https://github.com/PhilippKlotz/RTutorPublicSpendingVotingBehavior
+  - shinyapps.io: http://philippklotz.shinyapps.io/RTutorPublicSpendingVotingBehavior
 
 ### On the optimal taxation of top incomes (by Jonas Send)
   - Github: https://github.com/JonasSend/RTutorTopIncomeTaxation
