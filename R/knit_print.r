@@ -1,3 +1,16 @@
+knit.to.html = function(..., fragment.only=NULL) {
+  if (!is.null(fragment.only)) {
+    if (utils::packageVersion("markdown")>="1.3") {
+      knitr::knit2html(..., template=!fragment.only)
+    } else {
+      knitr::knit2html(..., fragment.only=fragment.only)
+    }
+  } else {
+    knitr::knit2html(...)
+  }
+}
+
+
 
 # We need now to explicitly call registerS3method
 # see https://github.com/yihui/knitr/issues/1580

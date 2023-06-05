@@ -126,9 +126,7 @@ create.rps.chunk.html = function(cdt, chunk.ind, chunk.env, success.message=isTR
   txt = c(header,sep.lines(txt),"```")
 
   html ="Evaluation error!"
-  html = try(
-    knitr::knit2html(text=txt, envir=chunk.env,fragment.only = TRUE,quiet = quiet)
-  )
+  html = try(knit.to.html(text=txt, envir=chunk.env,fragment.only = TRUE,quiet = quiet))
 
   nali = make.chunk.nali(chunk.name = name, chunk.ind = chunk.ind, ps=NULL)
   chunkUI = nali$chunkUI
@@ -165,7 +163,7 @@ create.task.chunk.html = function(chunk.ind,cdt, eval=FALSE, echo=TRUE, quiet=TR
   txt = c(header,sep.lines(txt),"```")
   html ="Evaluation error!"
   html = try(
-    knitr::knit2html(text=txt,fragment.only = TRUE,quiet = quiet)
+    knit.to.html(text=txt,fragment.only = TRUE,quiet = quiet)
   )
   
   nali = make.chunk.nali(chunk.name = name, chunk.ind = chunk.ind, ps=NULL)

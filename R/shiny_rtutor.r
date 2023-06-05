@@ -562,12 +562,12 @@ chunk.to.html = function(txt, chunk.ind, name=paste0("out_",ps$cdt$nali[[chunk.i
   if (isTRUE(ps$use.secure.eval)) {
     html = try(
       RTutor::rtutor.eval.secure(quote(
-        knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
+        knit.to.html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
       ), envir=environment())
     )
   } else {
     html = try(
-      knitr::knit2html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
+      knit.to.html(text=txt, envir=stud.env,fragment.only = TRUE,quiet = quiet)
     )
   }
   

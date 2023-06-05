@@ -159,7 +159,7 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/zeiherfabian/RTutorSozialeNetzwerke	
   - shinyapps.io: https://daprtp-fabian-zeiher.shinyapps.io/RTutorSozialeNetzwerke/
   
-### Long-Term Effects of Communism in Eastern Europe (by Benjamin Markert)  
+### Long-Term Effects of Communism in Eastern Europe (by Benjamin Markert)
   - Github: https://github.com/BenjaminMarkert/RTutorLongTermEffectsCommunism	
   - shinyapps.io: https://benjaminmarkert.shinyapps.io/RTutorLongTermEffectsCommunism
   
