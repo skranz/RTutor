@@ -87,6 +87,10 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/b-lux/RTutorCarbonLeakage
   - shinyapps.io: https://b-lux.shinyapps.io/RTutorCarbonLeakage/
 
+### The Effects of Defaults on Donations (by Stefanie Buda)
+  - Github: https://github.com/StefanieBuda/RTutorDefaultsAndDonations
+  - shinyapps.io: https://stefaniebuda.shinyapps.io/RTutorDefaultsAndDonations/  
+
 ### Insurance and the Church (by Adidti Malani)
   - Github: https://github.com/aditi-malani/RTutorGodInsuresThoseWhoPay 
   - shinyapps.io: https://aditi-malani.shinyapps.io/RTutorGodInsuresThoseWhoPay/ 
@@ -122,8 +126,8 @@ For the web-based interface, several students at Ulm University have created ver
 ### Female Role Models for Potential Economics Students (by Stefanie Buda)
 
   - GitHub: https://github.com/StefanieBuda/RTutorInfluenceOfFemaleRoleModels
-
   - shinyapps.io: http://stefaniebuda.shinyapps.io/RTutorInfluenceOfFemaleRoleModels
+  
 ### Predicting Effects of Carbon Pricing on US Electricity Production (by Daniel Dreyer)
 
   - Github: [(https://github.com/danieldreyer/RTutorCO2ReductionCosts]((https://github.com/danieldreyer/RTutorCO2ReductionCosts)
