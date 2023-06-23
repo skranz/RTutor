@@ -406,7 +406,8 @@ quiz.part.md = function(part, solution=FALSE, add.numbers=FALSE) {
     } else if (part$type=="mc" | part$type=="sc") {
       ans = part$choices
       if (add.numbers) {
-        answer = paste0("[", seq_along(ans),"]: ", ans, collapse="\n")
+        #answer = paste0("[", seq_along(ans),"]: ", ans, collapse="\n")
+        answer = paste0("(", seq_along(ans),") ", ans, collapse="\n")
       } else {
         answer = paste0("- ", ans, " [   ]\n", collapse="\n")
       }
@@ -474,3 +475,79 @@ click.check.quiz = function(app=getApp(), part.ind, qu, quiz.handler=NULL, ...) 
   }
 
 }
+
+
+replace.quizes.by.chunks = function(txt) {
+  #txt = readLines("C:/libraries/RTutor/examples/Quiz2_sol.Rmd")
+  
+  restore.point("replace.quizes.by.chunks")
+  start.lines = which(startsWith(txt, "#< quiz"))
+  if (length(start.lines)==0) return(txt)
+  
+  all.end.lines = which(startsWith(txt, "#>"))
+
+  end.lines = rep(0,length((start.lines)))
+  for (i in seq_along(start.lines)) {
+    end.lines[i] = min(all.end.lines[all.end.lines > start.lines[i]])
+  }
+  
+  i = 1
+  new.txt = sapply(seq_along(start.lines), function(i) {
+    str = txt[start.lines[i]:end.lines[i]]
+    qu = rtutor.quiz.block.parse(str)
+    
+    quiz = md = quiz.md(qu, solution=FALSE, add.numbers=TRUE)
+    
+    #str = trimws(str)
+    has.success = any(startsWith(str,"success:"))
+    has.failure = any(startsWith(str,"failure:"))
+    
+    part = qu$parts[[1]]
+    if (has.failure) {
+      hint.add = paste0(str.between(part$failure,"'red'>","</font>"),"\n")
+    } else {
+      hint.add = "If you do not know the correct answer, you can try out different ones.\n"
+    }
+    if (has.success) {
+      award.txt = paste0(
+'#< award "Quiz ', i,'"
+
+', part$success,'
+#>')
+    } else {
+      award.txt = ""
+    }
+    
+    
+    chunk = paste0(
+'
+
+```{r}
+#< fill_in
+# Replace the ___ by the correct answer 1-',length(qu$parts[[1]]$sc),' of the quiz.
+
+answer_number = ___
+#>
+answer_number = ',qu$parts[[1]]$correct.choices,'
+#< hint
+cat("For example, if you think the 2nd answer of the quiz above is correct then write
+
+answer_number = 2
+
+', hint.add,'
+")
+#>
+```
+')
+  paste0(md, chunk, award.txt)
+  })
+
+  txt[start.lines] = new.txt
+  del.lines = sapply(seq_along(start.lines), function(i) {
+    (start.lines[i]+1):end.lines[i]
+  }) %>% unlist()
+  txt = txt[-del.lines]
+  txt = sep.lines(txt)
+  txt
+}
+
