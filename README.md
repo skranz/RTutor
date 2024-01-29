@@ -79,7 +79,7 @@ For the web-based interface, several students at Ulm University have created ver
   - Github:  https://github.com/DKlinke/RTutorCreativity
   - shinyapps.io: https://dklinke.shinyapps.io/RTutorCreativity/
   
-### Estimating Central Bank Objectives using Text Analysis (by Julin Lenhardt)
+### Estimating Central Bank Objectives using Text Analysis (by Julian Lenhardt)
   - Github: https://github.com/JLenhardt/FEDwatch
   - shinyapps.io: https://fedwatch.shinyapps.io/FEDwatch/
 
