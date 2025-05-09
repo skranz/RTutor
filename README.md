@@ -78,6 +78,10 @@ For the web-based interface, several students at Ulm University have created ver
 ### Analyzing Mozart's letters: How emotions determine creativity (by Daniel Klinke)
   - Github:  https://github.com/DKlinke/RTutorCreativity
   - shinyapps.io: https://dklinke.shinyapps.io/RTutorCreativity/
+
+###
+  - GitHub: https://github.com/MuratSunmez/RTutorLessonsFromPollutionMonitoring 
+  - shinyapps.io: https://muratsunmez.shinyapps.io/LessonsFromPollutionMonitoringChina/ 
   
 ### Estimating Central Bank Objectives using Text Analysis (by Julian Lenhardt)
   - Github: https://github.com/JLenhardt/FEDwatch
