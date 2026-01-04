@@ -1,16 +1,8 @@
----
-title: An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
-author: Sebastian Kranz, Ulm University 
-date: 'Version from 2026-01-04'
-output:
-  pdf_document:
-    number_sections: yes
-    toc: yes
-  html_document:
-    theme: readable
-    toc: yes
----
+# An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 
+Sebastian Kranz, Ulm University 
+
+Version from 2026-01-04
 
 # Part 1: Overview of the main steps
 
