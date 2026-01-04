@@ -1,7 +1,7 @@
 ---
 title: An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 author: Sebastian Kranz, Ulm University 
-date: 'Version from 2019-02-19'
+date: 'Version from 2026-01-04'
 output:
   pdf_document:
     number_sections: yes
@@ -20,12 +20,15 @@ requires substantial time and work: you need to dig deep into the topic
 of the article, into econometric methods and into R programming.
 So this is not the easiest way for writing a thesis, but from most students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
 
+### Note on using AI
+
+A challenging Bachelor or Master thesis is a great opportunity to learn using modern AI tools. You are allowed and encouraged to use AI to improve the quality of your thesis, but you should be the main person that writes it and check and understand every aspect of your thesis. I will generate a separae document that gives some tips on using AI for your thesis. 
 
 ## Step 1: Find an interesting economic article
 
 First you need to find an interesting article for which the data (and ideally also the original code) is accessible. You can check out the following web app for this purpose:
 
-[http://econ.mathematik.uni-ulm.de:3200/ejd/](http://econ.mathematik.uni-ulm.de:3200/ejd/)
+[https://ejd.econ.mathematik.uni-ulm.de/](https://ejd.econ.mathematik.uni-ulm.de/)
 
 You should try to pick an article for which no RTutor problem set has already been generated according to the list on the RTutor Github site: [https://github.com/skranz/RTutor/](https://github.com/skranz/RTutor/)
 
@@ -48,10 +51,14 @@ These websites store the datasets from the Review of Economics and Statistics an
 (To find the corresponding articles, you have to google their names)
 
 ### Data and code
-From the articles website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is inaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
+
+From the article's website you can typically also download a zip file that contains the articles' data sets and codes. If you download and open the zip file, you typically find a README file (possibly in pdf or txt format). It describes the contributed data sets and codes. In particular, it is noted whether all data for replication is available or whether some data must be bought or is inaccessible. You should choose an article where all data is available, or at least most parts of the article can be replicated with the available data.
 
 ### Contributed code
-Most articles have contributed Stata code in `.do` files, which can be opened with any text editor. Sometimes there is also code in other languages like Matlab `.m` or C, Fortran, Python, R, ... As a rough rule of thumb, articles that only contain Stata code are easier to replicate than articles that also contain Matlab or other code. If you search for articles with JEL code, you see for many articles already an overview of the types and size of code files, e.g.
+
+Most articles have contributed Stata code in `.do` files, which can be opened with any text editor. Sometimes there is also code in other languages like Matlab `.m` or C, Fortran, Python, R, ... As a rough rule of thumb, articles that only contain Stata code are easier to replicate than articles that also contain Matlab or other code. 
+
+The search app under https://ejd.econ.mathematik.uni-ulm.de/ typically provides a short overview of the types and size of code files, e.g.
 ```
   Inventories, Lumpy Trade, and Large Devaluations (55.41 MB, aer, 2010/12)
   ...
@@ -59,12 +66,12 @@ Most articles have contributed Stata code in `.do` files, which can be opened wi
 ```
 This article has 54 KB of Stata code (in .do files) and 449 KB of Matlab code in (.m) files and around 206.6 MB of data files.
 
+If you press on `Advanced Options` you could also select in the field `Just code of type` the option `do`. Then you only find articles that only use Stata, oftne those are easier to replicate than articles that also use other programming languages.
 
 ### Selecting an article
 
-Best find some candidate articles and then talk with me before selecting one.
-Some constraints have to be satisfied, e.g. you should not take some article
-for which already a RTutor problem set has been created.
+Find some candidate articles and then talk with me before selecting one.
+Some constraints have to be satisfied. Most importantly the data must be available. I can also advice on which articles fit better for a Bachelor / Master thesis and which might be more complicated..
 
 ## Step 2: Take a look at an existing interactive problem set
 
