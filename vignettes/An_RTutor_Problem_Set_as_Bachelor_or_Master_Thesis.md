@@ -14,7 +14,9 @@ So this is not the easiest way for writing a thesis, but from most students who 
 
 ### Note on using AI
 
-A challenging Bachelor or Master thesis is a great opportunity to learn using modern AI tools. You are allowed and encouraged to use AI to improve the quality of your thesis. But you must still be the main person that designs and writes it and understand every aspect of your thesis. I will generate a separate document that gives some tips on using AI for your thesis. 
+A challenging Bachelor or Master thesis is a great opportunity to learn using modern AI tools. You are allowed and encouraged to use AI to improve the quality of your thesis. But you must still be the main person that designs and writes it and understand every aspect of your thesis. This separate document [https://github.com/skranz/RTutor/blob/master/vignettes/Using_AI_for_RTutor_Thesis.md](https://github.com/skranz/RTutor/blob/master/vignettes/Using_AI_for_RTutor_Thesis.md) gives some tips on using AI for your thesis. 
+
+You don't need to document where exactly you have used AI in preparation of your thesis. (Other supervisors may have a different policy, though.)
 
 ## Step 1: Find an interesting economic article
 
