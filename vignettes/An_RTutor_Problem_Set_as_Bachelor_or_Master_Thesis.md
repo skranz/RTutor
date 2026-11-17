@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # An RTutor Problem Set as Bachelor or Master Thesis -- A Guide
 
 Sebastian Kranz, Ulm University 
@@ -11,6 +16,17 @@ article as part of your Bachelor or Master thesis. Such a thesis
 requires substantial time and work: you need to dig deep into the topic
 of the article, into econometric methods and into R programming.
 So this is not the easiest way for writing a thesis, but from most students who have already mastered this challenge, I got a lot of positive feedback: You learn a lot, and it can be quite fun and rewarding to create and share a nice RTutor problem set.
+
+### New: Page Limit
+
+Please to stay between 40 and 80 pages for the final PDF of your thesis.
+
+You do not need to replicate every analyses done in the paper. It is perfectly fine to say that some analyses are outside the scope of the paper. The analyses you do perform shall be well explained. If you don't manage a good explanation given the page limit restructure the paper, e.g. leave out some analyses.
+
+
+If you really want additional analyses put them in an appendix. If the main part of the paper stays in the limit that is still fine.
+
+Earlier there was no page limit, but in the age of AI it becomes much more important to write a very well thesis on a limited number of pages than to add additional analyses. Also in my experience, theses that exceeded the page limit above often were harder to read.
 
 ### Note on using AI
 

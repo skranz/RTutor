@@ -123,6 +123,11 @@ For the web-based interface, several students at Ulm University have created ver
   - Github: https://github.com/mwentz93/RTutorWallStreet
   - shinyapps.io: https://mwentz93.shinyapps.io/RTutorWallStreet/
 
+### Teacher Grading Bias (by Pius Schöler)
+
+  - Github: https://github.com/piusschoeler/RTutorTeacherGradingBias
+  - shinyapp.io: https://01a1e48a-1639-d5f7-e3ba-cdb0b866665f.share.connect.posit.cloud/
+
 ### How much less effective are publicly assigned lawyers? (by Artemij Cadov)
   - Github: [https://github.com/KendamaQQ/LawyersLemon](https://github.com/KendamaQQ/LawyersLemon)
   - shinyapps.io: [https://kendamaqq.shinyapps.io/RTutorLawyers/](https://kendamaqq.shinyapps.io/RTutorLawyers/)
